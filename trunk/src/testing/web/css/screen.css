@@ -1,0 +1,212 @@
+﻿body
+{
+	font-family:Verdana, Arial, Helvetica, Sans-Serif;
+	font-size:11px;
+	text-align:left;
+	margin:0;
+	padding:10px 0 0 0;
+}
+
+#content,
+#header
+{
+	width:960px;
+	border:none;
+	border-left:solid 1px #d2d2d2;
+	border-right:solid 1px #d2d2d2;
+	padding:10px;
+}
+
+#header
+{
+	color:#fff;
+	font-size:10px;
+	font-weight:bold;
+	position:relative;
+	border-top:solid 1px #d2d2d2;
+}
+
+#navigation
+{
+	position:relative;
+	height: 50px;
+	left:100px;
+	top:30px;
+	clear:both;
+}
+
+#navigation ul,
+#subnav ul
+{
+	border: 0 none;
+	left:0px;
+	list-style-type:none;
+	margin:0;
+	padding:0;
+	top:0;
+}
+
+#navigation ul li,
+#subnav ul li
+{
+	display:block;
+	float:left;
+	left:0;
+	margin:0;
+	padding:0;
+	position:relative;
+	text-align:left;
+	top:0;
+}
+
+#navigation ul li a:link,
+#navigation ul li a:visited
+{
+	border:0 none;
+	display:block;
+	font-size:13px;
+	font-weight:normal ;
+	height:25px;
+	padding:2px 5px;
+	text-align:center;
+	text-decoration:none;
+}
+
+#subnav
+{
+	height:30px;
+	padding:0px 0pt 0pt;
+	position:relative;
+	left:110px;
+	top:0;
+}
+
+#subnav ul li
+{
+	padding-top:8px;
+	text-align:center;
+}
+
+#subnav div
+{
+	display:none;
+	height:30px;
+	left:0;
+	position:relative;
+	text-align:center;
+	top:0;
+	border:solid 1px;
+}
+
+#tools
+{
+	float:right;
+	margin-right:10px;
+}
+
+#content
+{
+	border-bottom:solid 1px #d2d2d2;
+	text-align:center;
+}
+
+.mctextbox
+{
+	border:solid 1px #d2d2d2;
+	display:block;
+	margin:2px;
+	height:15px;
+	line-height:15px;
+	color:#696969;
+}
+
+.adminform
+{
+	border:solid 1px #d2d2d2;
+	color:#696969;
+}
+
+.adminform label
+{
+	float:left;	
+	text-align:left;
+	margin:2px;
+	height:15px;
+	line-height:15px;
+}
+
+.adminform .mcbutton
+{
+	background:transparent url(../img/btn-sprite.gif) repeat-x scroll 0pt -43px;
+	width:auto;
+	padding:0px 3px;
+	border:solid 1px #d2d2d2;
+	font-size:98%;
+}
+
+.adminform h5
+{
+	color:#e54c05;
+	font-size:11px;
+	font-weight:bold;
+	margin:2px;
+}
+
+.adminform .savebtn,
+.adminform .cancelbtn
+{
+	border:none;
+	cursor:pointer;
+	cursor:hand;
+}
+
+.adminform .savebtn
+{
+	background:transparent url(../img/save-btn.gif) no-repeat;
+}
+
+.adminform .cancelbtn
+{
+	background:transparent url(../img/cancel-btn.gif) no-repeat;
+}
+
+h4
+{
+	background:transparent url(../img/tmid.jpg) repeat-x scroll 0 0;
+	margin:0;
+	color:#0078FF;
+	font-size:11px;
+	padding:3px;
+	border:solid 1px #d2d2d2;
+}
+
+select.mctextbox
+{
+	height:auto;
+}
+
+#mcError
+{
+	width:600px;
+	height:30px;
+	padding:8px 10px;
+	border:solid 1px #d2d2d2;
+	background-color:#F5F5F5;
+	margin:0 0 10px 0;
+	vertical-align:middle;
+	line-height:30px;
+	font-size:12px;
+	font-weight:bold;
+}
+
+div.msgerror
+{
+	background:transparent url(../img/error_image_big.gif) no-repeat scroll 0 0;
+}
+
+.hlogo
+{
+	background:transparent url(../img/miralogo.png) no-repeat;
+	width:97px;
+	height:78px;
+}

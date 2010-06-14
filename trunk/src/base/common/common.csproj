@@ -1,0 +1,116 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Nohros</RootNamespace>
+    <AssemblyName>nohros</AssemblyName>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(SolutionDir)bin\debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(SolutionDir)bin\release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.65.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="configuration\IConfiguration.cs" />
+    <Compile Include="data\CacheEntry.cs" />
+    <Compile Include="data\collections\trees\AndersonTree.cs" />
+    <Compile Include="data\collections\trees\AndersonTreeNode.cs" />
+    <Compile Include="data\ComparisonComparer.cs" />
+    <Compile Include="data\DataHelper.cs" />
+    <Compile Include="data\dto\TableTransferObject.cs" />
+    <Compile Include="data\dto\TableTransferObjectEnumerator.cs" />
+    <Compile Include="data\IValidator.cs" />
+    <Compile Include="data\json\JSONReader.cs" />
+    <Compile Include="data\providers\DataProvider.cs" />
+    <Compile Include="data\dto\TransferQueue.cs" />
+    <Compile Include="data\dto\DataTransferObject.cs" />
+    <Compile Include="data\dto\DataTransferObjects.cs" />
+    <Compile Include="data\dto\IDataTransferObject.cs" />
+    <Compile Include="data\dto\StringTransferObject.cs" />
+    <Compile Include="data\providers\IDataProvider.cs" />
+    <Compile Include="data\ParameterizedString.cs" />
+    <Compile Include="data\providers\Provider.cs" />
+    <Compile Include="data\values\DictionaryValue.cs" />
+    <Compile Include="data\values\FundamentalValue.cs" />
+    <Compile Include="data\values\ListValue.cs" />
+    <Compile Include="data\values\StringValue.cs" />
+    <Compile Include="data\values\Value.cs" />
+    <Compile Include="ProviderException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="security\auth\BasicPermission.cs" />
+    <Compile Include="security\auth\FieldCallback.cs" />
+    <Compile Include="security\auth\IAuthCallback.cs" />
+    <Compile Include="security\auth\IAuthCallbackHandler.cs" />
+    <Compile Include="security\auth\IConfigurationImpl.cs" />
+    <Compile Include="security\auth\ILoginConfiguration.cs" />
+    <Compile Include="security\auth\IPermission.cs" />
+    <Compile Include="security\auth\LoginConfiguration.cs" />
+    <Compile Include="security\auth\LoginException.cs" />
+    <Compile Include="security\auth\LoginModuleEntry.cs" />
+    <Compile Include="security\auth\PermissionBase.cs" />
+    <Compile Include="security\auth\NasUser.cs" />
+    <Compile Include="security\auth\SecurityContextBase.cs" />
+    <Compile Include="security\auth\LoginContext.cs" />
+    <Compile Include="security\auth\ILoginModule.cs" />
+    <Compile Include="security\auth\ModuleActivator.cs" />
+    <Compile Include="security\auth\SQLite.cs" />
+    <Compile Include="security\auth\Subject.cs" />
+    <Compile Include="security\auth\SubjectCaching.cs" />
+    <Compile Include="NSecurity.cs" />
+    <Compile Include="Thrower.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="nas.sqlite" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\resources\resources.csproj">
+      <Project>{A0341EAF-743E-4191-9012-87F9A7ACCBF3}</Project>
+      <Name>resources</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="third_party\sqlite\System.Data.SQLite.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.Increment.None" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
