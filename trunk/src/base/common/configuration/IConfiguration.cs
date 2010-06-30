@@ -80,40 +80,21 @@ namespace Nohros.Configuration
         /// <summary>
         /// Load the configuration values using the specified configuration file.
         /// </summary>
-        /// <param name="configFile">the XML config file used to load the configuration from</param>
+        /// <param name="config_file_name">The name of the configuration file.</param>
         /// <remarks>
-        /// The configuration file must be valid XML. It must contain at least one element
-        /// called <c>appconfig</c> that holds the configuration data.
+        /// This method assumes that the specified configuration file is located in the application
+        /// base directory.
         /// <para>
-        /// The config file could be specified in the applications configuration file (either
-        /// <c>MyAppNAme.exe.config</c> for a normal application on <c>Web.config</c> for an
-        /// ASP.NET application. To load the cofiguration use code like:
+        /// The configuration file must be valid XML. It must contain at least one element called
+        /// <paramref name="root_node_name"/> that contains the configuration data.
         /// </para>
-        /// <code>
-        /// using Nohros.Configuration;
-        /// using System.IO;
-        /// using System.Configuration;
-        /// 
-        /// ...
-        /// 
-        /// Load(new FileInfo(ConfigurationSettings.AppSettings["app-config-file"]));
-        /// </code>
-        /// <para> In your <c>.config</c> file you must specify the config file to
-        /// use like this:
-        /// </para>
-        /// <code>
-        /// &lt;configuration&gt;
-        ///		&lt;appSettings&gt;
-        ///			&lt;add key="app-config-file" value="MyCustom.config"/&gt;
-        ///		&lt;/appSettings&gt;
-        ///	&lt;/configuration&gt;
-        /// </code>
         /// </remarks>
-        /// <exception cref="FileNotFoundException">If the config file does not exists</exception>
-        /// <seealso cref="Load(FileInfo, String)"/>
-        public virtual void Load(FileInfo configFile)
+        /// <exception cref="FileNotFoundException">The configuration file does not exists or is not located in
+        /// the application base directory.</exception>
+        public virtual void Load(string config_file_name, string root_node_name)
         {
-            Load(configFile, "appconfig");
+            FileInfo config_file_info = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, config_file_name));
+            Load(config_file_info, root_node_name);
         }
 
         /// <summary>
@@ -145,7 +126,7 @@ namespace Nohros.Configuration
         ///		&lt;/appSettings&gt;
         ///	&lt;/configuration&gt;
         /// </code>
-        /// This configuration file must have a node named "customConfigNode".
+        /// In that case your configuration file must have a node named "customConfigNode".
         /// <para>
         /// If you need to monitor this file for changes and reload the configuration when the config
         /// file's contents changes then you should use the <see cref="LoadAndWatch"/>method instead.
@@ -153,7 +134,7 @@ namespace Nohros.Configuration
         /// </remarks>
         /// <exception cref="FileNotFoundException">If the config file does not exists</exception>
         /// <seealso cref="LoadAndWatch"/>
-        public virtual void Load(FileInfo configFile, string element)
+        public virtual void Load(FileInfo configFile, string root_node_name)
         {
             if (configFile != null)
             {
@@ -170,7 +151,7 @@ namespace Nohros.Configuration
                         doc.Load(fs);
 
                         // searching for the configuration element.
-                        Load((XmlElement)doc.SelectSingleNode(element));
+                        Load((XmlElement)doc.SelectSingleNode(root_node_name));
                     }
                     finally
                     {
@@ -186,23 +167,32 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Load the configuration values using the file specified, monitor the file for changes
+        /// Load the configuration values using the specified configuration file, monitor the file for changes
         /// and reload the configuration if a change is detected.
         /// </summary>
-        /// <param name="configFile">the XML config file to load the configuration from.</param>
+        /// <param name="config_file_name">The name of the configuration file.</param>
         /// <remarks>
-        /// The configuration file must be a valid XML. It must contain at least one element called
-        /// <c>appconfig</c> that contains the configuration data.
+        /// This method assumes that the specified configuration file is located in the application
+        /// base directory.
+        /// <para>
+        /// The configuration file must be valid XML. It must contain at least one element called
+        /// <paramref name="root_node_name"/> that contains the configuration data.
+        /// </para>
         /// <para>
         /// The config file will be monitored using a <see cref="FileSystemWatcher"/> and is dependant
         /// on the behavior of that class.
         /// </para>
+        /// <para>
+        /// The <see cref="Load(FileInfo, String)"/> method will be called to reload the cofiguration
+        /// values.
+        /// </para>
         /// </remarks>
-        /// <seealso cref="Load(FileInfo)"/>
-        /// <seealso cref="LoadAndWatch(FileInfo, String)"/>
-        public void LoadAndWatch(FileInfo configFile)
-        {
-            LoadAndWatch(configFile, "appconfig");
+        /// </remarks>
+        /// <exception cref="FileNotFoundException">The configuration file does not exists or is not located in
+        /// the application base directory.</exception>
+        public virtual void LoadAndWatch(string config_file_name, string root_node_name) {
+            FileInfo config_file_info = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, config_file_name));
+            Load(config_file_info, root_node_name);
         }
 
         /// <summary>
@@ -212,7 +202,7 @@ namespace Nohros.Configuration
         /// <param name="configFile">The XML config file to load the configuration from.</param>
         /// <remarks>
         /// The configuration file must be valid XML. It must contain at least one element called
-        /// <paramref name="node"/> that contains the configuration data.
+        /// <paramref name="root_node_name"/> that contains the configuration data.
         /// <para>
         /// The config file will be monitored using a <see cref="FileSystemWatcher"/> and is dependant
         /// on the behavior of that class.
@@ -224,16 +214,16 @@ namespace Nohros.Configuration
         /// </remarks>
         /// <seealso cref="Load(FileInfo)"/>
         /// <seealso cref="Load(FileInfo, String)"/>
-        public void LoadAndWatch(FileInfo configFile, string node)
+        public void LoadAndWatch(FileInfo config_file_info, string root_node_name)
         {
-            if(configFile != null)
+            if (config_file_info != null)
             {
                 // load the configuration file
-                Load(configFile, node);
+                Load(config_file_info, root_node_name);
 
                 // monitor the file and reload the configuration values
                 // whenever the config file is modified.
-                Watch(configFile);
+                Watch(config_file_info);
             }
         }
         #endregion
@@ -243,25 +233,19 @@ namespace Nohros.Configuration
         /// Monitor the configuration file for changes and reload the configuration values
         /// if a change is detected.
         /// </summary>
-        /// <param name="configFile">the XML config file to watch</param>
-        /// <remarks>
-        /// The configuration file must be valid XML. It must contain
-        /// at least one element called <paramref name="node"/> that holds
-        /// the configuration data.
-        /// <para>
-        /// The config file will be monitored useing a <see cref="FIleSystemWatcher"/>
-        /// and is dependant on the behavior of that class.
-        /// </para>
+        /// <param name="configFile">the XML configuration file to watch</param>
+        /// The config file will be monitored using a <see cref="FileSystemWatcher"/> and is dependant
+        /// on the behavior of that class.
         /// </remarks>
-        protected void Watch(FileInfo configFile)
+        void Watch(FileInfo config_file_info)
         {
-            config_file_ = configFile;
+            config_file_ = config_file_info;
 
             // create a new FileSystemWatcher and set its properties_.
             FileSystemWatcher watcher = new FileSystemWatcher();
 
-            watcher.Path = configFile.DirectoryName;
-            watcher.Filter = configFile.Name;
+            watcher.Path = config_file_info.DirectoryName;
+            watcher.Filter = config_file_info.Name;
 
             // set the notification filters
             watcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite | NotifyFilters.FileName;
