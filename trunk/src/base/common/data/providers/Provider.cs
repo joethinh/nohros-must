@@ -7,13 +7,6 @@ using Microsoft.Win32;
 
 namespace Nohros.Data
 {
-    public enum ExtensionType
-    {
-        Security,
-        Encription,
-        Unknown
-    }
-
     public enum ConfigurationRepository
     {
         WindowsRegistry = 0,
@@ -31,13 +24,12 @@ namespace Nohros.Data
 
     public class Provider
     {
-        string _name;
-        string _type;
-        ExtensionType _extensionType;
-        ConfigurationRepository _configRepository;
-        DataSourceType _dataSource;
-        NameValueCollection _attributes;
-        bool _isEncrypted = false;
+        string name_;
+        string type_;
+        ConfigurationRepository config_repository_;
+        DataSourceType data_source_;
+        NameValueCollection attributes_;
+        bool is_encrypted_;
 
         #region .ctor
 
@@ -46,12 +38,12 @@ namespace Nohros.Data
         /// </summary>
         Provider()
         {
-            _attributes = new NameValueCollection();
-            _extensionType = ExtensionType.Unknown;
+            attributes_ = new NameValueCollection();
+            is_encrypted_ = false;
 
             // default for compatibility with legacy applications
-            _configRepository = ConfigurationRepository.ConfigurationFile;
-            _dataSource = DataSourceType.Unknown;
+            config_repository_ = ConfigurationRepository.ConfigurationFile;
+            data_source_ = DataSourceType.Unknown;
         }
 
         /// <summary>
@@ -67,34 +59,17 @@ namespace Nohros.Data
         public Provider(XmlAttributeCollection attributes):this()
         {
             // Set the name and type of the provider
-            _name = attributes["name"].Value;
-            _type = attributes["type"].Value;
-
-            // Set the extensionType of the provider
-            XmlAttribute attribute = attributes["extensionType"];
-            if (attribute != null)
-            {
-                try
-                {
-                    _extensionType = (ExtensionType)Enum.Parse(typeof(ExtensionType), attribute.Value, true);
-                }
-                catch
-                {
-                    _extensionType = ExtensionType.Unknown;
-                }
-            }
+            name_ = attributes["name"].Value;
+            type_ = attributes["type"].Value;
 
             // Set the configuration repository of the provider
-            attribute = attributes["configRepository"];
-            if (attribute != null)
-            {
-                try
-                {
-                    _configRepository = (ConfigurationRepository)Enum.Parse(typeof(ConfigurationRepository), attribute.Value, true);
+            XmlAttribute attribute = attributes["configRepository"];
+            if (attribute != null) {
+                try {
+                    config_repository_ = (ConfigurationRepository)Enum.Parse(typeof(ConfigurationRepository), attribute.Value, true);
                 }
-                catch
-                {
-                    _configRepository = ConfigurationRepository.Unknown;
+                catch {
+                    config_repository_ = ConfigurationRepository.Unknown;
                 }
             }
 
@@ -104,26 +79,24 @@ namespace Nohros.Data
                 switch (attribute.Value.ToLower())
                 {
                     case "mssql":
-                        _dataSource = DataSourceType.MsSql;
+                        data_source_ = DataSourceType.MsSql;
                         break;
                     case "oledb":
-                        _dataSource = DataSourceType.OleDb;
+                        data_source_ = DataSourceType.OleDb;
                         break;
                     case "odbc":
-                        _dataSource = DataSourceType.Odbc;
+                        data_source_ = DataSourceType.Odbc;
                         break;
                     default:
                         break;
                 }
             }
 
-            // Store all the attributes in the attributes bucket
-            for (int i = 0, j = attributes.Count; i < j; i++)
-            {
+            // store all the attributes in the attributes bucket
+            for (int i = 0, j = attributes.Count; i < j; i++) {
                 attribute = attributes[i];
-                if ((attribute.Name != "name") && (attribute.Name != "type"))
-                {
-                    _attributes.Add(attribute.Name, attribute.Value);
+                if ((attribute.Name != "name") && (attribute.Name != "type")) {
+                    attributes_.Add(attribute.Name, attribute.Value);
                 }
             }
         }
@@ -142,53 +115,31 @@ namespace Nohros.Data
         {
             string[] atts = attributes.GetValueNames();
 
-            // if the key does not have values the provider configuration is invalid
-            // we can't throw an exception here because this class could be hosted
-            // by a windows service.
             if (atts == null)
                 Thrower.ThrowProviderException(ExceptionResource.DataProvider_Provider_Attributes);
 
             // Set the name of the provider
-            _name = (string)attributes.GetValue("Name", null);
-            _type = (string)attributes.GetValue("Type", null);
-            if (_name == null || _type == null)
+            name_ = (string)attributes.GetValue("name", null);
+            type_ = (string)attributes.GetValue("type", null);
+            if (name_ == null || type_ == null)
                 Thrower.ThrowProviderException(ExceptionResource.DataProvider_Provider_Attributes);
 
-            // Set the extensionType of the provider
-            string attribute = (string)attributes.GetValue("ExtensionType", null);
-            if (attribute != null)
-            {
-                try
-                {
-                    _extensionType = (ExtensionType)Enum.Parse(typeof(ExtensionType), attribute, true);
+            // set the configuration repository of the provider
+            string attribute = (string)attributes.GetValue("configRepository", null);
+            if (attribute != null) {
+                try {
+                    config_repository_ = (ConfigurationRepository)Enum.Parse(typeof(ConfigurationRepository), attribute, true);
                 }
-                catch
-                {
-                    _extensionType = ExtensionType.Unknown;
+                catch {
+                    config_repository_ = ConfigurationRepository.Unknown;
                 }
             }
 
-            // Set the configuration repository of the provider
-            attribute = (string)attributes.GetValue("configRepository", null);
-            if (attribute != null)
-            {
-                try
-                {
-                    _configRepository = (ConfigurationRepository)Enum.Parse(typeof(ConfigurationRepository), attribute, true);
-                }
-                catch
-                {
-                    _configRepository = ConfigurationRepository.Unknown;
-                }
-            }
-
-            // Store all the attributes in the attributes bucket
-            for (int i = 0, j = atts.Length; i < j; i++)
-            {
-                attribute = atts[i];
-                if ((attribute != "Name") && (attribute != "Type"))
-                {
-                    _attributes.Add(attribute, (string)attributes.GetValue(attribute, string.Empty));
+            // store all the attributes in the attributes bucket
+            for (int i = 0, j = atts.Length; i < j; i++) {
+                attribute = atts[i].ToLower();
+                if ((attribute != "name") && (attribute != "type")) {
+                    attributes_.Add(attribute, (string)attributes.GetValue(attribute, string.Empty));
                 }
             }
         }
@@ -199,37 +150,23 @@ namespace Nohros.Data
         /// </summary>
         public NameValueCollection Attributes
         {
-            get { return _attributes; }
-        }
-
-        public ExtensionType ExtensionType
-        {
-            get { return _extensionType; }
+            get { return attributes_; }
         }
 
         /// <summary>
-        /// Gets a value indicating where the provider is valid or not.
-        /// </summary>
-        [Obsolete("This class will throw an exception when it is invalid. This property will be removed on future versions.")]
-        public bool IsValid
-        {
-            get { return true; }
-        }
-
-        /// <summary>
-        /// Gets the name of the Provider
+        /// Gets the name of the Provider.
         /// </summary>
         public string Name
         {
-            get { return _name; }
+            get { return name_; }
         }
 
         /// <summary>
-        /// Gets the type of the Provider
+        /// Gets the type of the Provider.
         /// </summary>
         public string Type
         {
-            get { return _type; }
+            get { return type_; }
         }
 
         /// <summary>
@@ -237,7 +174,7 @@ namespace Nohros.Data
         /// </summary>
         public ConfigurationRepository ConfigurationRepository
         {
-            get { return _configRepository; }
+            get { return config_repository_; }
         }
 
         /// <summary>
@@ -245,15 +182,17 @@ namespace Nohros.Data
         /// </summary>
         public DataSourceType DataSourceType
         {
-            get { return _dataSource; }
+            get { return data_source_; }
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a connection string is encrypted
+        /// Gets or sets a value indicating whether a connection string is encrypted or not.
         /// </summary>
+        /// <remarks>The connection string must be encripted with the <see cref="BasicCryptoString(string)"/>
+        /// method of the <see cref="Nohros.NSecurity"/> class.</remarks>
         public bool IsEncrypted {
-            get { return _isEncrypted; }
-            set { _isEncrypted = value; }
+            get { return is_encrypted_; }
+            set { is_encrypted_ = value; }
         }
     }
 }

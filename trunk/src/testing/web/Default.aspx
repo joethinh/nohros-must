@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="tdd._Default" %>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="Nohros.Test.Web._Default" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,9 +8,6 @@
     <script type="text/javascript" language="javascript" src="js/nohrosnet/merge.js.ashx"></script>
     <link rel="stylesheet" type="text/css" href="css/nohrosnet/merge.css.ashx" />
     <script type="text/javascript" language="javascript">
-        jQuery(document).ready(function() {
-            jQuery.copy("GALO DOIDO");
-        });
     </script>
 </head>
 <body>

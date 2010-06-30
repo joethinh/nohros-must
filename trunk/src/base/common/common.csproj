@@ -56,6 +56,7 @@
     <Compile Include="data\dto\DataTransferObjects.cs" />
     <Compile Include="data\dto\IDataTransferObject.cs" />
     <Compile Include="data\dto\StringTransferObject.cs" />
+    <Compile Include="data\providers\GenericDataProvider.cs" />
     <Compile Include="data\providers\IDataProvider.cs" />
     <Compile Include="data\ParameterizedString.cs" />
     <Compile Include="data\providers\Provider.cs" />

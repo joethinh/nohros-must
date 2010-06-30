@@ -50,7 +50,7 @@ namespace Nohros.Security.Auth
 
             // load the login modules
             List<string> modules = new List<string>();
-            foreach(XmlNode node in _element.ChildNodes)
+            foreach(XmlNode node in element_.ChildNodes)
             {
                 string name = node.Name;
                 XmlAttributeCollection atts = node.Attributes;

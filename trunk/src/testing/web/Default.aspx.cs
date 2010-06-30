@@ -11,13 +11,13 @@ using System.Web.UI.HtmlControls;
 
 using Nohros.Net;
 
-namespace tdd
+namespace Nohros.Test.Web
 {
 	public partial class _Default : System.Web.UI.Page
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
-            Response.Write(VirtualPathUtility.ToAbsolute("~/miracle.config"));
+            NetSettings settings = new NetSettings();
 		}
 	}
 }

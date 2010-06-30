@@ -273,7 +273,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Set one or more CSS properties for the set of matched elements.
+        /// Set one or more CSS properties_ for the set of matched elements.
         /// </summary>
         /// <param name="selector">A string conaining a selector expression</param>
         /// <param name="cssattr">A CSS property name</param>

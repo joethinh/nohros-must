@@ -179,6 +179,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configuration error at &quot;{0}&quot;..
+        /// </summary>
+        internal static string Config_ErrorAt {
+            get {
+                return ResourceManager.GetString("Config_ErrorAt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to find the specified configuration file..
         /// </summary>
         internal static string Config_FileNotFound {
@@ -193,6 +202,15 @@ namespace Nohros.Resources {
         internal static string Config_FileNotFound_Path {
             get {
                 return ResourceManager.GetString("Config_FileNotFound_Path", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The configuration key &quot;{0}&quot; was not found..
+        /// </summary>
+        internal static string Config_KeyNotFound {
+            get {
+                return ResourceManager.GetString("Config_KeyNotFound", resourceCulture);
             }
         }
         

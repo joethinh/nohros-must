@@ -12,7 +12,7 @@ namespace Nohros.Net
 {
     public sealed class Utility
     {
-        public static string HandlerPath = "nohrosnet";
+        public const string kNetID = "nohrosnetid";
 
         private static NetSettings _settings = null;
         private static object _settingsLock = new object();
@@ -23,7 +23,7 @@ namespace Nohros.Net
         {
             get
             {
-                return Constant.NetID;
+                return kNetID;
             }
         }
 
