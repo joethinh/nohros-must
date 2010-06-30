@@ -142,6 +142,7 @@ namespace Nohros.Data
             return Set(path, CreateStringValue(in_value));
         }
 
+        #region Get...(..., out ...) overloads
         /// <summary>
         /// Gets the <typeparamref name="Nohros.Data.Value"/> associated with the given path starting
         /// from this object.
@@ -158,28 +159,9 @@ namespace Nohros.Data
         /// </returns>
         public bool Get(string path, out Value out_value)
         {
-            string key = path;
-            int delimiter_position = path.IndexOf('.', 0);
-            if (delimiter_position != -1) {
-                key = path.Substring(0, delimiter_position);
-            }
-
-            out_value = null;
-
-            Value entry;
-            if (!dictionary_.TryGetValue(key, out entry))
-                return false;
-
-            if (delimiter_position == -1) {
-                out_value = entry;
+            out_value = Get(path);
+            if (out_value == null)
                 return true;
-            }
-
-            if(entry.Type == ValueType.TYPE_DICTIONARY) {
-                DictionaryValue dictionary = entry as DictionaryValue;
-                return dictionary.Get(path.Substring(delimiter_position + 1), out out_value);
-            }
-
             return false;
         }
 
@@ -314,6 +296,125 @@ namespace Nohros.Data
 
             return true;
         }
+        #endregion
+
+        #region [Type] Get...(string) overloads
+        /// <summary>
+        /// Gets the <typeparamref name="Nohros.Data.Value"/> associated with the given path starting
+        /// from this object.
+        /// </summary>
+        /// <param name="path">The path to get</param>
+        /// <returns>The value of the last key in the path if it can be resolved successfully;
+        /// otherwise, it will return a null reference.
+        /// </returns>
+        /// <remarks>A path has the form "&lt;key&gt" or "&lt;key&gt.&lt;key&gt.[...]", where
+        /// "." indexes into the next <typeparamref name="Nohros.Data.DictionaryValue"/> down.
+        /// </remarks>
+
+        /// <summary>
+        /// Gets the <typeparamref name="Nohros.Data.Value"/> associated with the given path starting
+        /// from this object.
+        /// </summary>
+        /// <param name="path">The path to get</param>
+        /// <param name="out_value">When this method returns <paramref name="out_value"/> contains the
+        /// value for the last key in the path if it can be resolved successfully; otherwise, the <paramref name="out_value"/>
+        /// will contain a null reference.</param>
+        /// <remarks>A path has the form "&alt;key&gt" or "&alt;key&gt.&alt;key&gt.[...]", where
+        /// "." indexes into the next <typeparamref name="Nohros.Data.DictionaryValue"/> down.
+        /// </remarks>
+        public bool Get(string path, Value out_value)
+        {
+            out_value = Get(path);
+            if (out_value == null)
+                return true;
+            return false;
+        }
+
+        /// <summary>
+        /// This is a convenience form of <see cref="Nohros.Data.DictionaryValue.Get()"/>
+        /// </summary>
+        /// <param name="path">The path to get</param>
+        /// <returns>A reference to an <typeparamref name="System.String"/> object associated with the
+        /// specified path or null if the specified path is not found.</returns>
+        public string GetString(string path)
+        {
+            Value entry;
+            if (!Get(path, out entry))
+                return null;
+            return entry.GetAsString();
+        }
+
+        /// <summary>
+        /// This is a convenience form of <see cref="Nohros.Data.DictionaryValue.Get()"/>
+        /// </summary>
+        /// <param name="path">The path to get</param>
+        /// <returns>A reference to an <typeparamref name="Nohros.Data.DictionaryValue"/> object associated with the
+        /// specified path or null if the specified path is not found.</returns>
+        public DictionaryValue GetDictionary(string path)
+        {
+            Value value;
+            if (!Get(path, out value) || !value.IsType(ValueType.TYPE_DICTIONARY))
+                return null;
+
+            return value as DictionaryValue;
+        }
+
+        /// <summary>
+        /// This is a convenience form of <see cref="Nohros.Data.DictionaryValue.Get()"/>
+        /// </summary>
+        /// <param name="path">The path to get</param>
+        /// <param name="out_value">When this method returns <paramref name="out_value"/> will hold
+        /// a reference to an <typeparamref name="Nohros.Data.ListValue"/> object associated with the
+        /// specified path or null if the specified path is not found.</param>
+        /// <returns>A reference to an <typeparamref name="Nohros.Data.ListValue"/> object associated with the
+        /// specified path or null if the specified path is not found.</returns>
+        public ListValue GetList(string path)
+        {
+            Value value;
+            if (!Get(path, out value) || !value.IsType(ValueType.TYPE_LIST))
+                return null;
+
+            return value as ListValue;
+        }
+        #endregion
+
+        /// <summary>
+        /// Gets the <typeparamref name="Nohros.Data.Value"/> associated with the given path starting
+        /// from this object.
+        /// </summary>
+        /// <param name="path">The path to get</param>
+        /// <returns>The value of the last key in the path if it can be resolved successfully;
+        /// otherwise, it will return a null reference.
+        /// </returns>
+        /// <remarks>A path has the form "&lt;key&gt" or "&lt;key&gt.&lt;key&gt.[...]", where
+        /// "." indexes into the next <typeparamref name="Nohros.Data.DictionaryValue"/> down.
+        /// </remarks>
+        public Value Get(string path)
+        {
+            string key = path;
+            int delimiter_position = path.IndexOf('.', 0);
+            if (delimiter_position != -1)
+            {
+                key = path.Substring(0, delimiter_position);
+            }
+
+            Value entry;
+            if (!dictionary_.TryGetValue(key, out entry))
+                return null;
+
+            if (delimiter_position == -1)
+            {
+                return entry;
+            }
+
+            if (entry.Type == ValueType.TYPE_DICTIONARY)
+            {
+                DictionaryValue dictionary = entry as DictionaryValue;
+                return dictionary.Get(path.Substring(delimiter_position + 1));
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// Removes the <typeparamref name="Nohros.Data.Value"/> object with the specified path
@@ -326,6 +427,21 @@ namespace Nohros.Data
         /// <returns>true if the specified path is found and successfully removed; otherwise, false</returns>
         public bool Remove(string path, out Value out_value)
         {
+            out_value = Remove(path);
+            if (out_value == null)
+                return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Removes the <typeparamref name="Nohros.Data.Value"/> object with the specified path
+        /// from this dictionary(or one of its child dictionaries, if the path is more that just
+        /// a local key).
+        /// </summary>
+        /// <param name="path">The path of the item to remove</param>
+        /// <returns>A reference to the removed value or null if the specified path is not found.</returns>
+        public Value Remove(string path)
+        {
             string key = path;
 
             int delimiter_position = path.IndexOf('.', 0);
@@ -333,23 +449,20 @@ namespace Nohros.Data
                 key = path.Substring(0, delimiter_position);
             }
 
-            out_value = null;
-
             Value entry = null;
             if (!Get(path, out entry))
-                return false;
+                return null;
 
             if (delimiter_position == -1) {
-                out_value = entry;
                 dictionary_.Remove(path);
-                return true;
+                return entry;
             }
 
             if (entry.IsType(ValueType.TYPE_DICTIONARY)) {
-                return ((DictionaryValue)entry).Remove(path.Substring(delimiter_position + 1), out out_value);
+                return ((DictionaryValue)entry).Remove(path.Substring(delimiter_position + 1));
             }
 
-            return false;
+            return null;
         }
 
         public override Value DeepCopy()

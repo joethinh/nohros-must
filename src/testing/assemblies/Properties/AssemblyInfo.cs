@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Nohros Framework")]
-[assembly: AssemblyDescription("Dektop based framework")]
+[assembly: AssemblyTitle("Assemblies")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nohros Systems Inc")]
-[assembly: AssemblyProduct("Nohros Framework")]
-[assembly: AssemblyCopyright("Copyright © Nohros Systems Inc 2008")]
-[assembly: AssemblyTrademark("Copyright © Nohros Systems Inc 2008")]
+[assembly: AssemblyProduct("Assemblies")]
+[assembly: AssemblyCopyright("Copyright © Nohros Systems Inc 2010")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("aa45f5af-6f38-4e93-94d9-2e0cb4e1def1")]
+[assembly: Guid("d7ccace4-6fb4-4c3a-addc-4b5d867247a6")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -29,7 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("0.3.308.0")]
-[assembly: AssemblyFileVersion("0.3.308.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

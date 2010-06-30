@@ -89,7 +89,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Converts a string of values separated by [delimiter] to a array of [type]
+        /// Converts a string of values separated by a [delimiter] to a array of [type]
         /// </summary>
         /// <param name="values">String containing the values separated by a specific delimiter</param>
         /// <param name="type">The type of array to return</param>
@@ -114,9 +114,7 @@ namespace Nohros.Data
             if (type == "system.string")
                 return data;
 
-            /* try to get the Type object that represents the specified type
-             * 
-             */
+            // try to get the Type object that represents the specified type.
             Type m_type = Type.GetType(type, false, true);
             if (m_type == null || !m_type.IsValueType)
                 throw new ArgumentOutOfRangeException(type);

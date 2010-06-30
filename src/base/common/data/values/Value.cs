@@ -86,6 +86,7 @@ namespace Nohros.Data
             return new StringValue(in_value);
         }
 
+        #region bool GetAs[...](out ...) methods
         /// <summary>
         /// This method allow the convenient retrieval of settings. If the current
         /// setting object can be converted into a boolean type, the value is returned
@@ -137,6 +138,61 @@ namespace Nohros.Data
             out_value = null;
             return false;
         }
+        #endregion
+
+        #region [Type] GetAs[...]() methods
+        /// <summary>
+        /// This method allow the convenient retrieval of settings. If the current
+        /// setting object can be converted into a boolean type, the value is returned
+        /// through the <paramref="out_value"> parameter; otherwise a default bool value
+        /// is returned through the <paramref="out_value">.
+        /// </summary>
+        /// <returns>true if the current setting object can be converted into a boolean type;
+        /// otherwise, false.</returns>
+        public virtual bool GetAsBoolean()
+        {
+            return default(bool);
+        }
+
+        /// <summary>
+        /// This method allow the convenient retrieval of settings. If the current
+        /// setting object can be converted into a integer type, the value is returned
+        /// through the <paramref="out_value"> parameter; otherwise a default int value
+        /// is returned through the <paramref="out_value">.
+        /// </summary>
+        /// <returns>true if the current setting object can be converted into a integer type;
+        /// otherwise, false.</returns>
+        public virtual int GetAsInteger()
+        {
+            return default(int);
+        }
+
+        /// <summary>
+        /// This method allow the convenient retrieval of settings. If the current
+        /// setting object can be converted into a double type, the value is returned
+        /// through the <paramref="out_value">parameter; otherwise a default double value
+        /// is returned through the <paramref="out_value">.
+        /// </summary>
+        /// <returns>true if the current setting object can be converted into a double type;
+        /// otherwise, false.</returns>
+        public virtual double GetAsReal()
+        {
+            return default(double);
+        }
+
+        /// <summary>
+        /// This method allow the convenient retrieval of settings. If the current
+        /// setting object can be converted into a string type, the value is returned
+        /// through the <paramref="out_value">parameter; otherwise a null is returned
+        /// through the <paramref="out_value">.
+        /// </summary>
+        /// <returns>true if the current setting object can be converted into a string type;
+        /// otherwise, false.</returns>
+        public virtual string GetAsString()
+        {
+            return default(string);
+        }
+        #endregion
 
         /// <summary>
         /// Creates a deep copy of the entire Value tree.

@@ -102,15 +102,6 @@ namespace Nohros.Resources
 
         #region DataProvider
         /// <summary>
-        /// Looks up a localized string similar to [An invalid connection string argument has been supplied,
-        /// or a required connection string argument has not been supplied
-        /// </summary>
-        internal static string DataProvider_ConnectionString
-        {
-            get { return GetString("DataProvider_ConnectionString"); }
-        }
-
-        /// <summary>
         /// Looks up a localized string similar to [Instance of the requested data provider could not be
         /// created. Check the constructor implied by the IDataProvider interface.]
         /// </summary>
@@ -251,6 +242,15 @@ namespace Nohros.Resources
         #region Public resources
 
         /// <summary>
+        /// Looks up a localized string similar to [An invalid connection string argument has been supplied,
+        /// or a required connection string argument has not been supplied
+        /// </summary>
+        public static string DataProvider_ConnectionString
+        {
+            get { return GetString("DataProvider_ConnectionString"); }
+        }
+
+        /// <summary>
         /// Looks up a localized string similar to [Index was out of range. Must be non-negative and less than the
         /// size of the collection].
         /// </summary>
@@ -307,6 +307,22 @@ namespace Nohros.Resources
         public static string Config_FileNotFound_Path
         {
             get { return GetString("Config_FileNotFound_Path"); }
+        }
+
+        /// <summary>
+        /// Looks up a localized string similar to [The configuration key "{0}" was not found.].
+        /// </summary>
+        public static string Config_KeyNotFound
+        {
+            get { return GetString("Config_KeyNotFound"); }
+        }
+
+        /// <summary>
+        /// Looks up a localized string similar to [Configuration error at "{0}".].
+        /// </summary>
+        public static string Config_ErrorAt
+        {
+            get { return GetString("Config_ErrorAt"); }
         }
 
         /// <summary>

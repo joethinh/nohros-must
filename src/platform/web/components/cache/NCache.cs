@@ -307,7 +307,7 @@ namespace Nohros.Net
                     return local;
                 }
             }
-            throw new Exception("CacheEntry for key" + key + "does not exist. Please call a different overload of NCahe<T>.Get() to set the CacheEntry properties.");
+            throw new Exception("CacheEntry for key" + key + "does not exist. Please call a different overload of NCahe<T>.Get() to set the CacheEntry properties_.");
         }
 
         /// <summary>

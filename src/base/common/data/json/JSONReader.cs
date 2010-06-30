@@ -145,7 +145,7 @@ namespace Nohros.Data
         /// <param name="json">The JSON-compliant string to parse.</param>
         /// <param name="allow_trailing_comma">true to allow trailing commas in objects and arrays; otherwise , false.</param>
         /// <param name="check_root">true to require  the root object to be an object or an array; otherwise, false.</param>
-        /// <returns>A IDictionary&alt;string, string&gt; containing the parsed JSON string.</returns>
+        /// <returns>A IDictionary&lt;string, string&gt; containing the parsed JSON string.</returns>
         /// <exception cref="ArgumentException">The <paramref name="json"/> is not a properly formed JSON string.</exception>
         /// <remarks>
         /// If <paramref name="allow_trailing_comma"/> is true, we will ignore trailing commas in objects and

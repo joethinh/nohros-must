@@ -13,7 +13,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © Nohros Systems Inc 2008")]
 [assembly: AssemblyTrademark("Copyright © Nohros Systems Inc 2008")]
 [assembly: AssemblyCulture("")]
-[assembly: InternalsVisibleTo("Nohros.Testing"),
+[assembly: InternalsVisibleTo("Nohros.Test.Web"),
+           InternalsVisibleTo("Nohros.Test.Desktop"),
            InternalsVisibleTo("Nohros.Net"),
            InternalsVisibleTo("Nohros.Desktop")]
 
@@ -34,5 +35,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("0.4.284.0")]
-[assembly: AssemblyFileVersion("0.4.284.0")]
+[assembly: AssemblyVersion("0.4.399.0")]
+[assembly: AssemblyFileVersion("0.4.399.0")]

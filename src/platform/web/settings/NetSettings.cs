@@ -1,85 +1,84 @@
 using System;
+using System.Configuration;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
+using System.IO;
+
+using Nohros;
+using Nohros.Data;
+using Nohros.Resources;
 
 namespace Nohros.Net
 {
     internal class NetSettings
     {
-        string style_path_;
-        string script_path_;
-		bool is_path_in_url_;
-        string plugins_path_;
+        DictionaryValue config_;
 
-        // store the plugins and scripts information that will replace the defaults
-        List<string> plugins_;
-        ListDictionary scripts_;
+        #region Constants
+        public const string kPathNs = "paths";
+        public const string kCssPath = "css";
+        public const string kJsPath = "js";
+        public const string kPluginsPath = "plugins";
+        #endregion
 
         #region .ctor
+        /// <summary>
+        /// Initializes a new instance of the NetSettings class.
+        /// </summary>
+        /// <exception cref="KeyNotFoundException">the key "NohrosConfigurationFile" was not found into the application
+        /// configuration file.</exception>
+        /// <exception cref="FileNotFoundException">The file pointed by the "NohrosConfigurationFile" key value does not
+        /// exists.</exception>
         public NetSettings()
+        {
+            string config_file_path = ConfigurationManager.AppSettings["NohrosConfigurationFile"];
+            if(config_file_path == null || config_file_path.Length == 0)
+                throw new KeyNotFoundException(string.Format(StringResources.Config_KeyNotFound, "NohrosConfigurationFile"));
+
+            Configure(config_file_path);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the NetSettings class by using the specifed configuration file path.
+        /// </summary>
+        /// <param name="config_file_path">The path to the configuration file</param>
+        /// <exception cref="FileNotFoundException"><paramref name="config_file_path"/> was not found</exception>
+        public NetSettings(string config_file_path)
 		{
-			style_path_ = Utility.MapPath("~/css");
-			script_path_ = Utility.MapPath("~/js");
-			is_path_in_url_ = false;
-            scripts_ = new ListDictionary();
-            plugins_ = new List<string>();
-            plugins_path_ = null;
+            Configure(config_file_path);
         }
         #endregion
 
         /// <summary>
-        /// Gets or sets the path where the CSS files are stored.
+        /// Reads and parses the configuration file.
         /// </summary>
-        public string StylePath
-        {
-            get { return style_path_; }
-			set { style_path_ = Utility.MapPath(value); }
+        /// <param name="config_file_path">The fully qualified path of the configuration file</param>
+        void Configure(string config_file_path) {
+            if( config_file_path.StartsWith("~/"))
+                config_file_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, config_file_path.Substring(2));
+
+            if (!File.Exists(config_file_path))
+                throw new FileNotFoundException(string.Format(StringResources.Config_FileNotFound_Path));
+
+            JSONReader reader = new JSONReader();
+            using (StreamReader file_reader = new StreamReader(config_file_path)) {
+                string json = file_reader.ReadToEnd();
+                config_ = reader.JsonToValue(json, true, true) as DictionaryValue;
+            }
         }
 
         /// <summary>
-        /// Gets or sets the path where the javascript(.js) files are stored.
+        /// Gets a Value object associated with the specified <paramref name="key"/>.
         /// </summary>
-        public string ScriptPath
-        {
-            get { return script_path_; }
-			set { script_path_ = Utility.MapPath(value); }
-        }
-
-        /// <summary>
-        /// Gets a value indication wheter the path of the merge file is within the
-        /// requested URL or not.
-        /// </summary>
-		public bool IsPathInUrl
-		{
-			get { return is_path_in_url_; }
-			set { is_path_in_url_ = value; }
-		}
-
-        /// <summary>
-        /// Gets a list of user defined plugins that will be added to the output
-        /// </summary>
-        public List<string> Plugins
-        {
-            get { return plugins_; }
-        }
-
-        /// <summary>
-        /// Gets a table containing the scripts that will replace the library-defined scripts.
-        /// </summary>
-        public ListDictionary Scripts
-        {
-            get { return scripts_; }
-        }
-
-        /// <summary>
-        /// Gets or sets the path where the plugins files are stored.
-        /// </summary>
-        public string PluginsPath {
-            get { return plugins_path_; }
-            set { plugins_path_ = (value.EndsWith("\\")) ? value : value + "\\"; }
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public Value this[string key] {
+            get {
+                return config_.Get(key);
+            }
         }
     }
 }

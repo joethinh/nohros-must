@@ -6,47 +6,51 @@ using System.Collections;
 using System.IO;
 using System.Web;
 using System.Reflection;
+using System.Configuration;
 
+using Nohros.Resources;
 using Nohros.Data;
 
 namespace Nohros.Configuration
 {
+    /// <summary>
+    /// A class to be used like a base class for configuration.
+    /// </summary>
     public abstract class IConfiguration
     {
-        #region Member variables
-        
-        /// <summary>
-        /// key: propertie name, value: propertie value
-        /// </summary>
-        protected Hashtable properties = new Hashtable();
+        FileInfo config_file_;
+
+        protected Dictionary<string, Provider> providers_;
+        protected Dictionary<string, Value> properties_;
+        protected XmlElement element_;
+        protected const string kDefaultNamespace = "nhs-nsdefault";
+        protected const string kProvidersNodeName = "nhs-providers";
+
+        #region .ctor
+        static IConfiguration()
+        {
+        }
 
         /// <summary>
-        /// Hold the XmlElement used to load the configuration values
+        /// protected member initializer.
         /// </summary>
-        protected XmlElement _element;
-
-        /// <summary>
-        /// Hold informations about the cofiguration file.
-        /// </summary>
-        private FileInfo _configFile;
-
-        /// <summary>
-        /// An generic static object
-        /// </summary>
-        protected static object _lock = new object();
-
+        protected IConfiguration()
+        {
+            properties_ = new Dictionary<string, Value>(StringComparer.OrdinalIgnoreCase);
+            providers_ = new Dictionary<string, Provider>(StringComparer.OrdinalIgnoreCase);
+            element_ = null;
+        }
         #endregion
 
+        #region Load(...)overloads
         /// <summary>
-        /// Load the configuration values based on the application's
-        /// configuration settings.
+        /// Loads the configuration values based on the application's configuration settings.
         /// </summary>
         /// <remarks>
-        /// Each application has a configuration file. This has the same
-        /// name as the application whith ' .config ' appended.
-        /// This file is XML and calling this function prompts the
-        /// loader to look in that file for a section called
-        /// <c>appconfig</c> that contains the configuration data.
+        /// Each application has a configuration file. This has the same name as the application
+        /// whith ' .config ' appended. This file is XML and calling this function prompts the
+        /// loader to look in that file for a section called <c>appconfig</c> that contains the
+        /// configuration data.
         /// </remarks>
         public virtual void Load()
         {
@@ -54,39 +58,36 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Load the configuration values using a <c>appconfig</c> element
+        /// Load the configuration values using the specified XML element.
         /// </summary>
         /// <remarks>
-        /// Load the configuration from the XML element
-        /// supplied as <paramref name="element"/>
+        /// Load the configuration from the XML element supplied as <paramref name="element"/>
         /// <para>
-        /// All the Load(...) overloads will call this method at the end.
+        /// This is the main Load(...) overload. This method is called by all the others Load(...)
+        /// method overloads.
         /// </para>
         /// </remarks>
-        /// <param name="element">The element to parse</param>
+        /// <param name="element">The XmlElement containing the configuration values to parse.</param>
         public virtual void Load(XmlElement element)
         {
             if (element == null)
                 throw new ArgumentNullException("element");
 
-            _element = element;
+            element_ = element;
             Parse(element);
         }
 
         /// <summary>
-        /// Load the configuration values using the config file specified.
+        /// Load the configuration values using the specified configuration file.
         /// </summary>
-        /// <param name="configFile">the XML config file to load
-        /// the configuration from</param>
+        /// <param name="configFile">the XML config file used to load the configuration from</param>
         /// <remarks>
-        /// The configuration file must be valid XML. It must contain
-        /// at least one element called <c>appconfig</c> that holds
-        /// the configuration data.
+        /// The configuration file must be valid XML. It must contain at least one element
+        /// called <c>appconfig</c> that holds the configuration data.
         /// <para>
-        /// The config file could be specified in the applications
-        /// configuration file (either <c>MyAppNAme.exe.config</c> for a
-        /// normal application on <c>Web.config</c> for an ASP.NET application.
-        /// To load the cofigurationuse code like:
+        /// The config file could be specified in the applications configuration file (either
+        /// <c>MyAppNAme.exe.config</c> for a normal application on <c>Web.config</c> for an
+        /// ASP.NET application. To load the cofiguration use code like:
         /// </para>
         /// <code>
         /// using Nohros.Configuration;
@@ -116,17 +117,15 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Load the configuation values using the config file specified.
+        /// Load the configuation values using the specified configuration file and node name.
         /// </summary>
-        /// <param name="configFile">the XML config file to load
-        /// the configuration from</param>
-        /// <param name="element">the name of the element whose properties to get</param>
+        /// <param name="configFile">the XML configuration file to load the configuration from</param>
+        /// <param name="element">the name of the XmlNode that contains the configuration data</param>
         /// <remarks>
         /// <para>
-        /// The config file could be specified in the applications
-        /// configuration file (either <c>MyAppName.exe.config</c> for a
-        /// normal application on <c>Web.config</c> for an ASP.NET application
-        /// To load the configuration use code like:
+        /// The config file could be specified in the applications configuration file (either 
+        /// <c>MyAppName.exe.config</c> for a normal application on <c>Web.config</c> for an
+        /// ASP.NET application. To load the configuration use code like:
         /// </para>
         /// <code>
         /// using Nohros.Configuration;
@@ -135,22 +134,21 @@ namespace Nohros.Configuration
         /// 
         /// ...
         /// 
-        /// base.Load(new FileInfo(ConfigurationSettings.AppSettings["nhs-config-file"]));
+        /// base.Load(new FileInfo(ConfigurationSettings.AppSettings["my-custom-config-file-path"]), "customConfigNode");
         /// </code>
-        /// <para> In your <c>.config</c> file you must specify the config file to
-        /// use like this:
+        /// <para> In your application configuration file you must specify the configuration file to use like this:
         /// </para>
         /// <code>
         /// &lt;configuration&gt;
         ///		&lt;appSettings&gt;
-        ///			&lt;add key="nhs-config-file" value="MyCustom.config"/&gt;
+        ///			&lt;add key="my-custom-config-file-path" value="MyCustom.config"/&gt;
         ///		&lt;/appSettings&gt;
         ///	&lt;/configuration&gt;
         /// </code>
+        /// This configuration file must have a node named "customConfigNode".
         /// <para>
-        /// If you need to monitor this file for changes and reload the
-        /// configuration when the config file's contents changes then
-        /// you should use the <see cref="LoadAndWatch"/>method instead.
+        /// If you need to monitor this file for changes and reload the configuration when the config
+        /// file's contents changes then you should use the <see cref="LoadAndWatch"/>method instead.
         /// </para>
         /// </remarks>
         /// <exception cref="FileNotFoundException">If the config file does not exists</exception>
@@ -167,11 +165,11 @@ namespace Nohros.Configuration
                     FileStream fs = configFile.OpenRead();
                     try
                     {
-                        // Load the config file into a DOM
+                        // Loads the configuration file to memory.
                         XmlDocument doc = new XmlDocument();
                         doc.Load(fs);
 
-                        // load using the 'element' element
+                        // searching for the configuration element.
                         Load((XmlElement)doc.SelectSingleNode(element));
                     }
                     finally
@@ -191,15 +189,13 @@ namespace Nohros.Configuration
         /// Load the configuration values using the file specified, monitor the file for changes
         /// and reload the configuration if a change is detected.
         /// </summary>
-        /// <param name="configFile">the XML config file to load
-        /// the configuration from.</param>
+        /// <param name="configFile">the XML config file to load the configuration from.</param>
         /// <remarks>
-        /// the configuration file must be a valid XML. It must contain
-        /// at least one element called <c>appconfig</c> that hold
-        /// the configuration data.
+        /// The configuration file must be a valid XML. It must contain at least one element called
+        /// <c>appconfig</c> that contains the configuration data.
         /// <para>
-        /// the config file will be monitored using a <see cref="FileSystemWatcher"/>
-        /// and is dependant on the behavior of that class.
+        /// The config file will be monitored using a <see cref="FileSystemWatcher"/> and is dependant
+        /// on the behavior of that class.
         /// </para>
         /// </remarks>
         /// <seealso cref="Load(FileInfo)"/>
@@ -213,19 +209,17 @@ namespace Nohros.Configuration
         /// Load the configuration values using the file specified, monitor the file for changes
         /// and reload the configuration if a change is detected.
         /// </summary>
-        /// <param name="configFile">The XML config file to load
-        /// the configuration from.</param>
+        /// <param name="configFile">The XML config file to load the configuration from.</param>
         /// <remarks>
-        /// The configuration file must be valid XML. It must contain
-        /// at least one element called <paramref name="node"/> that holds
-        /// the configuration data.
+        /// The configuration file must be valid XML. It must contain at least one element called
+        /// <paramref name="node"/> that contains the configuration data.
         /// <para>
-        /// The config file will be monitored using a <see cref="FileSystemWatcher"/>
-        /// and is dependant on the behavior of that class.
+        /// The config file will be monitored using a <see cref="FileSystemWatcher"/> and is dependant
+        /// on the behavior of that class.
         /// </para>
         /// <para>
-        /// The <see cref="Load(FileInfo, String)"/> method will be called to reload
-        /// the cofiguration values.
+        /// The <see cref="Load(FileInfo, String)"/> method will be called to reload the cofiguration
+        /// values.
         /// </para>
         /// </remarks>
         /// <seealso cref="Load(FileInfo)"/>
@@ -242,6 +236,7 @@ namespace Nohros.Configuration
                 Watch(configFile);
             }
         }
+        #endregion
 
         #region Watch handler
         /// <summary>
@@ -260,9 +255,9 @@ namespace Nohros.Configuration
         /// </remarks>
         protected void Watch(FileInfo configFile)
         {
-            _configFile = configFile;
+            config_file_ = configFile;
 
-            // create a new FileSystemWatcher and set its properties.
+            // create a new FileSystemWatcher and set its properties_.
             FileSystemWatcher watcher = new FileSystemWatcher();
 
             watcher.Path = configFile.DirectoryName;
@@ -291,7 +286,7 @@ namespace Nohros.Configuration
         /// </remarks>
         private void Watcher_OnChanged(object source, FileSystemEventArgs e)
         {
-            Load(_configFile, _element.Name);
+            Load(config_file_, element_.Name);
         }
 
         /// <summary>
@@ -304,8 +299,8 @@ namespace Nohros.Configuration
         /// </remarks>
         private void Watcher_OnRenamed(object source, RenamedEventArgs e)
         {
-            _configFile = new FileInfo(e.FullPath);
-            Load(_configFile, _element.Name);
+            config_file_ = new FileInfo(e.FullPath);
+            Load(config_file_, element_.Name);
         }
         #endregion
 
@@ -313,53 +308,58 @@ namespace Nohros.Configuration
         /// Used internally to load the configuration values by parsing a DOM tree of XML elements.
         /// </summary>
         /// <param name="element">the root element to parse</param>
+        /// <remarks>
+        /// If a derived class contains a property whose name are equals to the name of an
+        /// XML attribute of the root node and if the property is writtable and it type is a
+        /// ValueType or a String, we will try to set the value of this property to the value
+        /// of the XML attribute. If the value of the XML attribute could not be converted to
+        /// the Type of the property it will not be setted.
+        /// <para>
+        /// We do not want to throw an exception inside a protected method. So, the caller must
+        /// ensure that the elelement is a valid XML element. If the specified XML element is a null
+        /// refrence this method will return silent.
+        /// </para>
+        /// </remarks>
         protected void Parse(XmlElement element)
         {
-            if(element == null)
-            {
+            if(element == null) {
                 return;
             }
-            
-            /* attributes of the parent element node will be
-             * set to the properties defined on the derived class
-             */
+
             XmlAttributeCollection attributes = element.Attributes;
 
             Type type = this.GetType();
             PropertyInfo[] properties = type.GetProperties();
 
-            foreach (XmlAttribute att in attributes)
-            {
+            foreach (XmlAttribute att in attributes) {
                 string propertyName = att.Name;
                 string propertyValue = att.Value;
 
                 PropertyInfo property = GetProperty(properties, propertyName);
                 Type propertyType = property.PropertyType;
 
-                if (property != null && property.CanWrite)
-                {
-                    if (propertyType.Name == "String")
-                    {
+                if (property != null && property.CanWrite) {
+                    if (propertyType.Name == "String") {
                         property.SetValue(this, propertyValue, null);
                     }
-                    else if(propertyType.IsValueType)
-                    {
-                        // try to convert the attribute value to the
-                        // type of the property
+                    else if(propertyType.IsValueType) {
+                        // try to convert the attribute value to the type of the property
                         ValueType value;
-                        if (DataHelper.TryParse(propertyType, propertyValue, out value))
-                        {
+                        if (DataHelper.TryParse(propertyType, propertyValue, out value)) {
                             property.SetValue(this, value, null);
                         }
                     }
                 }
             }
 
-            // Load the custom properties
-            foreach (XmlElement child in element.ChildNodes)
-            {
-                if (child.Name == "nhs-properties")
+            foreach (XmlElement child in element.ChildNodes) {
+                // load the dynamic properties
+                if (string.Compare(child.Name, "nhs-properties", StringComparison.OrdinalIgnoreCase) ==0)
                     GetProperties(child);
+
+                // load the data providers
+                if (child.Name == kProvidersNodeName)
+                    GetProviders(child);
             }
         }
 
@@ -369,14 +369,9 @@ namespace Nohros.Configuration
         {
             PropertyInfo property = null;
 
-            // case-insensitive lookup
-            propertyName = propertyName.ToLower();
-
-            for (int i = 0, j = properties.Length; i < j; i++)
-            {
+            for (int i = 0, j = properties.Length; i < j; i++) {
                 property = properties[i];
-                if (property.Name.ToLower() == propertyName)
-                {
+                if (string.Compare(property.Name, propertyName, StringComparison.OrdinalIgnoreCase) == 0) {
                     break;
                 }
             }
@@ -386,84 +381,192 @@ namespace Nohros.Configuration
         #endregion
 
         #region Dynamic Properties
-
         /// <summary>
-        /// 
+        /// Gets the value of a dynamic property by using the specified property namespace and name.
         /// </summary>
-        /// <param name="ns"></param>
-        /// <param name="property"></param>
-        /// <returns></returns>
+        /// <param name="ns">The namespace of the property</param>
+        /// <param name="property">The name of the property</param>
+        /// <returns>The value of the property within a given namespace or null if the property could not
+        /// be found.</returns>
         protected string PropertyKey(string ns, string property) {
             return string.Concat(ns.ToLower(), "-", property.ToLower());
         }
 
         /// <summary>
-        /// Get properties from a XML node.
+        /// Gets the dynamic properties_.
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="node">A XML node containing the dynamic properties_.</param>
+        /// <remarks>
+        /// If the namespace of a property is not defined then that property will be assigned
+        /// to the default namespace.
+        /// </remarks>
+        /// <exception cref=""></exception>
         protected void GetProperties(XmlNode node)
         {
             XmlAttribute att = node.Attributes["ns"];
-            string ns = (att != null) ? att.Value : "nhs-default";
-            foreach (XmlNode property in node.ChildNodes)
-            {
+            string ns = (att != null) ? att.Value : kDefaultNamespace;
+            foreach (XmlNode property in node.ChildNodes) {
                 XmlAttributeCollection atts = property.Attributes;
                 
                 string name, value, type;
                 
-                // the name of the propertie
                 att = atts["name"];
-                if (att == null)
-                    throw new ArgumentNullException("name");
-                name = atts["name"].Value;
+                name = (att == null) ? null : atts["name"].Value;
 
-                // tha value of the propertie
                 att = atts["value"];
-                if (atts == null)
-                    throw new ArgumentNullException("value");
-                value = atts["value"].Value;
+                value = (att == null) ? null : atts["value"].Value;
 
-                // the .NET type of the propertie value.
+                // the value and name are mandatory
+                if (name == null || value == null)
+                    throw new System.Configuration.ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, (name == null) ? "value" : "name"));
+
+                // the .NET type of the property value. System.String is the default type.
                 att = atts["type"];
                 type = (att == null) ? "string" : att.Value;
 
                 switch (type)
                 {
                     case "array":
-
-                        string subtype, delimiter;
-
-                        // the type of the elements of the array
-                        att = atts["subtype"];
-                        subtype = (att == null) ? "string" : att.Value;
-
-                        att = atts["operator"];
-                        delimiter = (att == null) ? ";" : att.Value;
-
-                        properties[PropertyKey(ns, name)] = DataHelper.StringToArray(value, subtype, delimiter[0]);
                         break;
 
                     default:
-                        properties[PropertyKey(ns, name)] = value;
+                        this[name, ns] = value;
                         break;
                 }
             }
-            properties[PropertyKey(ns, "NAMESPACE")] = ns;
+            this["NAMESPACE", ns] = ns;
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key and ns
+        /// Gets the value associated with the specified key within the default namespace.
         /// </summary>
-        /// <param name="key">The key whose value to get or set</param>
-        /// <param name="ns">The name of the ns</param>
-        public object this[string key, string ns]
+        /// <param name="key">The key whose value to get</param>
+        /// <returns>An string associated with the specified key within the given namespace.</returns>
+        public Value Get(string key)
+        {
+            return Get(key, kDefaultNamespace);
+        }
+
+        /// <summary>
+        /// Gets the value associated with the specified key within a given namespace.
+        /// </summary>
+        /// <param name="key">The key whose value to get</param>
+        /// <returns>An string associated with the specified key within the given namespace.</returns>
+        /// <seealso cref="IConfiguration[string, string]"/>
+        public Value Get(string key, string ns)
+        {
+            Value value;
+            properties_.TryGetValue(PropertyKey(kDefaultNamespace, key), out value);
+            return value;
+        }
+        
+        /// <summary>
+        /// Sets the value associated with the specified key within the default namespace.
+        /// </summary>
+        /// <param name="key">The key whose value to set</param>
+        /// <param name="value">An string associated with the specified key within the given namespace</param>
+        public void Set(string key, Value value)
+        {
+            Set(key, kDefaultNamespace, value);
+        }
+
+        /// <summary>
+        /// Sets the value associated with the specified key within a given namespace.
+        /// </summary>
+        /// <param name="key">The key whose value to set</param>
+        /// <param name="value">An string associated with the specified key within the given namespace</param>
+        public void Set(string key, string ns, Value value)
+        {
+            properties_[PropertyKey(ns, key)] = value;
+        }
+
+        /// <summary>
+        /// A convenient form of <code>Get(string) ans Set(string, Value)</code>.
+        /// </summary>
+        /// <param name="key">The key whose value to get or set.</param>
+        public string this[string key]
         {
             get {
-                return properties[PropertyKey(ns, key)];
+                return this[key, kDefaultNamespace];
             }
             set {
-                properties[PropertyKey(ns, key)] = value;
+                this[key, kDefaultNamespace] = value;
             }
+        }
+
+        /// <summary>
+        /// A convenient form of <code>Get(string, string) and Set(string, string, Value)</code>.
+        /// </summary>
+        /// <param name="key">The key whose value to get or set.</param>
+        /// <param name="ns">The name of the namespace.</param>
+        public string this[string key, string ns]
+        {
+            get {
+                Value value;
+                if (properties_.TryGetValue(PropertyKey(ns, key), out value))
+                    return value.GetAsString();
+                return null;
+            }
+            set {
+                properties_[PropertyKey(ns, key)] = Value.CreateStringValue(value);
+            }
+        }
+        #endregion
+
+        #region Data Providers
+        /// <summary>
+        /// Extract the data providers information from specified Xml Node.
+        /// </summary>
+        /// <param name="node">A XML node that contains information about the data providers.</param>
+        /// <remarks>
+        /// The XML node must contain an add node for each provider and, each node must contains at minimum
+        /// the name and the .NET class type of the provider implementor.
+        /// <example>
+        /// <code>
+        /// <![CDATA[
+        /// <nhs-providers>
+        ///   <add name="MyCustomDataProviderName"
+        ///         type=MyCustomDataProviderType, MyCustomDataProviderAssembly
+        ///         configRepository="ConfigurationFile"
+        ///         dataSourceType="MSSQL"/>
+        /// </nhs-providers>
+        /// ]]>
+        /// </code>
+        /// </example>
+        /// </remarks>
+        void GetProviders(XmlNode node)
+        {
+            foreach (XmlNode provider in node.ChildNodes)
+            {
+                XmlAttributeCollection attributes = provider.Attributes;
+                switch(provider.Name) {
+                    case "add":
+                        XmlAttribute name = attributes["name"];
+                        if(name == null || name.Value == null || name.Value.Length == 0)
+                            throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, kProvidersNodeName), provider);
+
+                        providers_.Add(name.Value, new Provider(attributes));
+                        break;
+
+                    default:
+                        throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, kProvidersNodeName), provider);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets informations about a data provider by using the specified provider name.
+        /// </summary>
+        /// <param name="provider_name">The name of the data provider to get informations from</param>
+        /// <returns>A <see cref="Provider"/> object that contains information about the provider
+        /// associated with the specified <paramref name="provider_name"/> or null if the <paramref name="provider_name"/>
+        /// could not be found.
+        /// </returns>
+        public Provider GetProvider(string provider_name)
+        {
+            Provider provider = null;
+            providers_.TryGetValue(provider_name, out provider);
+            return provider;
         }
         #endregion
     }

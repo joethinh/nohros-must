@@ -7,8 +7,8 @@
     <ProjectGuid>{4B87B8C8-6B0C-437D-9435-F44BB20F2CE3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nohros.Testing</RootNamespace>
-    <AssemblyName>nohros.testing</AssemblyName>
+    <RootNamespace>Nohros.Test.Desktop</RootNamespace>
+    <AssemblyName>nohros.test.desktop</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

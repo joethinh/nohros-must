@@ -5,7 +5,7 @@ using System.Text;
 namespace Nohros.Data
 {
     /// <summary>
-    /// Defines properties and methods that objects that must be validate before it usage
+    /// Defines properties_ and methods that objects that must be validate before it usage
     /// should implement.
     /// </summary>
     public interface IValidator

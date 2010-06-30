@@ -74,7 +74,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the TableTransferObject class by using the specified columns
+        /// Initializes a new instance of the TableTransferObject class by using the specified column names.
         /// </summary>
         /// <param name="columns">An string array containing the names of the columns</param>
         public TableTransferObject(params string[] columns)
@@ -120,8 +120,7 @@ namespace Nohros.Data
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than one.-or- index
         /// is greater than <see cref="Count"/></exception>
         /// <remarks>The TableTransferObject is optimized for sequential access.
-        /// <para>Remove is a non-sequential method, which should be avoided should be avoided in
-        /// performance-sensitive code paths.</para>
+        /// <para>Remove is a non-sequential method, which should be avoided in performance-sensitive code paths.</para>
         /// </remarks>
         public void Remove(int index)
         {
@@ -171,14 +170,16 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Gets a JSON-compliant string that represents the underlying class and
-        /// is formatted like a JSON array element.
+        /// Gets a JSON-compliant string that represents the underlying class and is formatted
+        /// like a JSON array element.
         /// </summary>
         /// <returns>A string formatted like an JSON array which elements are JSON arrays.</returns>
         /// <remarks>
         /// Calling the <see cref="DataTransferObjectSet<T>.ToJsElement()"/> method when
         /// "T" represents a TableTransferObject will produce a JSON-compliant string
-        /// representing an array of array of arrays that looks like: [ [ ["A1", "A2"], ["B1", "B2"] ] ]
+        /// representing an array of array of arrays that looks like: [ [ ["A1", "A2"], ["B1", "B2"] ] ]. If you
+        /// intend to produce only an array of array that looks like: [ ["A1", "A2" ], ["B1", "B2"] ] call this
+        /// method directly.
         /// </remarks>
         public string ToJsElement()
         {
