@@ -15,14 +15,17 @@ namespace Nohros.Security.Auth
     /// </summary>
     public partial class Subject
     {
-        IList<IPermission> _permissions;
+        IList<IPermission> permissions_;
         string _id;
 
         #region .ctor
 
+        /// <summary>
+        /// Initializes a new instance of the Subject class.
+        /// </summary>
         public Subject()
         {
-            _permissions = new List<IPermission>();
+            permissions_ = new List<IPermission>();
         }
 
         /// <summary>
@@ -41,30 +44,30 @@ namespace Nohros.Security.Auth
         /// Determines whether the access request indicated by the specified permission should be allowed
         /// or denied, based on the current security context.
         /// </summary>
-        /// <param name="perm">The requested permission</param>
+        /// <param name="permission">The requested permission</param>
         /// <returns>true if the access request is permitted; otherwise false</returns>
         public bool CheckPermission(IPermission permission)
         {
-            for(int i=0, j=_permissions.Count;i<j;i++) {
-                if (_permissions[i].Implies(permission))
+            for(int i=0, j=permissions_.Count;i<j;i++) {
+                if (permissions_[i].Implies(permission))
                     return true;
             }
             return false;
         }
 
         /// <summary>
-        /// Gets the <see cref="Dictionary&alt;TKey, TValue&gt;"/> of <see cref="IPermission"/> associated
+        /// Gets the <see cref="Dictionary&lt;TKey, TValue&gt;"/> of <see cref="IPermission"/> associated
         /// with this Subject. Each <see cref="IPermission"/> represents an access to a system resource.
         /// </summary>
         /// <remarks>
-        /// The returned <see cref="Dictionary&alt;TKey, TValue&gt;"/> is backed by this Subject's internal
-        /// <see cref="IPermission"/> <see cref="Dictionary&alt;TKey, TValue&gt;"/>. Any modification to the
-        /// returned <see cref="Dictionary&alt;TKey, TValue&gt;"/> affects the internal <see cref="IPermission"/>
+        /// The returned <see cref="Dictionary&lt;TKey, TValue&gt;"/> is backed by this Subject's internal
+        /// <see cref="IPermission"/> <see cref="Dictionary&lt;TKey, TValue&gt;"/>. Any modification to the
+        /// returned <see cref="Dictionary&lt;TKey, TValue&gt;"/> affects the internal <see cref="IPermission"/>
         /// <see cref="Dictionary&alt;TKey, TValue&gt;"/> as well.
         /// </remarks>
         public IList<IPermission> Permissions
         {
-            get { return _permissions; }
+            get { return permissions_; }
         }
 
         /// <summary>

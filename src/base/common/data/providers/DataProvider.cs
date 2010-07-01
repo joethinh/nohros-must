@@ -1,25 +1,53 @@
 using System;
-using System.Configuration;
-using System.Web;
-using Microsoft.Win32;
+using System.Collections.Generic;
 using System.Text;
+using System.Data;
+
+using Nohros.Resources;
+using Nohros.Configuration;
 
 namespace Nohros.Data
 {
-    public class DataProvider
+    /// <summary>
+    /// An generic abstract implementation of the IDataProvider interface
+    /// </summary>
+    public class DataProvider<T> : IDataProvider where T : class, IDataProvider
     {
-        const string kDefaultDatabaseOwner = "dbo";
+        /// <summary>
+        /// The name of the data base owner.
+        /// </summary>
+        protected string databaseOwner_;
+
+        /// <summary>
+        /// The connection string used to open the database.
+        /// </summary>
+        protected string connectionString_;
+
+        /// <summary>
+        /// Initializes a new instance of the GenericDataProvider by using the specified
+        /// connection string and database owner.
+        /// </summary>
+        /// <param name="databaseOwner">The name of the database owner.</param>
+        /// <param name="connectionString">A string used to open a database.</param>
+        /// <remarks>
+        /// This constructor is called by the DataProvider.CreateInstance&lt;T&gt; method.
+        /// </remarks>
+        protected DataProvider(string databaseOwner, string connectionString)
+        {
+            databaseOwner_ = databaseOwner;
+            connectionString_ = connectionString;
+        }
 
         /// <summary>
         /// Creates an instance of the type designated by the specified generic type parameter using the
         /// constructor implied by the <see cref="IDataProvider"/> interface.
         /// </summary>
-        /// <param name="dataProvider">A <see cref="Provider"/> object containing the informations like
+        /// <param name="provider">A <see cref="Provider"/> object containing the informations like
         /// connection string, database owner, etc; that will be used to creates the designated type</param>
         /// <returns>A reference to the newly created object.</returns>
         /// <remarks>
-        /// The <typeparamref name="T"/> parameter must be a class that implements the <see cref="IDataProvider"/>
-        /// interface a class that derives from the <see cref="GenericDataProvider"/> class.
+        /// The <typeparamref name="T"/> parameter must be a class that implements or derive from a class
+        /// that implements the <see cref="IDataProvider"/> interface.
         /// <para>
         /// The connection string and database owner parameters passed to the IDataProvider constructor will
         /// be extracted from the specified dataProvider object.
@@ -33,22 +61,14 @@ namespace Nohros.Data
         /// <exception cref="ArgumentNullException">dataProvider is null</exception>
         /// <exception cref="ProviderException">The type could not be created.</exception>
         /// <exception cref="ProviderException"><paramref name="dataProvider"/> is invalid.</exception>
-        public static T CreateInstance<T>(Provider dataProvider) where T : class, IDataProvider
+        public static T CreateInstance(Provider provider)
         {
-            // finding the current attributes
-            string connectionString = null;
-            string dbOwner = null;
-
-            DataProvider.GetDataStoreParameters(dataProvider, out connectionString, out dbOwner);
-            if (connectionString == null)
-                Thrower.ThrowProviderException(ExceptionResource.DataProvider_InvalidProvider, null);
-
             // Get the type.
-            Type type = Type.GetType(dataProvider.Type);
-            
+            Type type = Type.GetType(provider.Type);
+
             T newObject = null;
             if (type != null) {
-                newObject = (T)Activator.CreateInstance(type, new object[] { dbOwner, connectionString });
+                newObject = (T)Activator.CreateInstance(type, new object[] { provider.DatabaseOwner, provider.ConnectionString });
             }
 
             // If a instance could not be created a exception will be thrown.
@@ -59,114 +79,42 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Gets the default connection string.
+        /// Creates an instance of the type designated by the specified generic type parameter using the
+        /// constructor implied by the <see cref="IDataProvider"/> interface.
         /// </summary>
-        /// <history>
-        ///     [neylor] - 2009-02-15 - Release
-        /// </history>
-        public static string GetConnectionString() {
-            return GetConnectionString("SiteSqlServer", ConfigurationRepository.ConfigurationFile, null);
+        /// <typeparam name="T">A type of a class that implements the IDataProvider interface.</typeparam>
+        /// <param name="provider_name">The name of the data provider.</param>
+        /// <param name="configuration">A class that implements the IConfiguration class containing the information
+        /// about the application data provides.</param>
+        /// <remarks>
+        /// This method will try to get the data provider information from the <see cref="IConfiguration.GetProvider(string)"/>
+        /// method using the specified provider name.
+        /// </remarks>
+        /// <returns>An instance of the type <typeparam name="T"/> if the provider information could be found and
+        /// the class could be instantiated.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="provider_name"/> provider was not
+        /// found in the <paramref name="configuration"/></exception>
+        /// <exception cref="ThrowProviderException">The provider type is invalid or could not be instantiated.</exception>
+        protected static T CreateInstance(string provider_name, IConfiguration configuration)
+        {
+            Provider provider = configuration.GetProvider(provider_name);
+            if (provider == null)
+                throw new ArgumentNullException(StringResources.DataProvider_InvalidProvider);
+            return CreateInstance(provider);
         }
 
         /// <summary>
-        /// Gets the specified connection string.
+        /// Gets the string used to open the connection.
         /// </summary>
-        /// <param name="connectionStringName">Name of the connection string to return</param>
-        /// <returns>The connection string</returns>
-        /// <history>
-        ///     [neylor] - 2009-02-15
-        ///         Release
-        /// </history>
-        public static string GetConnectionString(string connectionStringName, ConfigurationRepository repository, string regkey)
-        {
-            switch (repository)
-            {
-                case ConfigurationRepository.ConfigurationFile:
-                    ConnectionStringSettings strs = ConfigurationManager.ConnectionStrings[connectionStringName];
-                    if(strs != null)
-                        return strs.ConnectionString;
-
-                    break;
-
-                case ConfigurationRepository.WindowsRegistry:
-                    if (string.IsNullOrEmpty(regkey))
-                        regkey = "HKEY_LOCAL_MACHINE\\Software\\Nohros\\ConnectionStrings";
-
-                    return (string)Registry.GetValue(regkey, connectionStringName, null);
-            }
-            return null;
+        public string ConnectionString {
+            get { return databaseOwner_; }
         }
 
         /// <summary>
-        /// Gets the default database owner.
+        /// Gets the name of the owner of the database.
         /// </summary>
-        /// <history>
-        ///     [neylor] - 2009-02-15
-        ///         Release
-        /// </history>
-        public static string GetDatabaseOwner()
-        {
-            return GetDatabaseOwner("SiteSqlServerOwner", ConfigurationRepository.ConfigurationFile, null);
+        public string DatabaseOwner {
+            get { return connectionString_; }
         }
-
-        /// <summary>
-        /// Gets the specified database owner.
-        /// </summary>
-        /// <param name="dbOwnerStringName">Name of the database owner string</param>
-        /// <history>
-        ///     [neylor] - 2009-02-15
-        ///         Release
-        /// </history>
-        public static string GetDatabaseOwner(string dbOwnerStringName, ConfigurationRepository repository, string regkey)
-        {
-            switch (repository)
-            {
-                case ConfigurationRepository.ConfigurationFile:
-                    ConnectionStringSettings strs = ConfigurationManager.ConnectionStrings[dbOwnerStringName];
-                    if (strs != null)
-                        return strs.ConnectionString;
-
-                    break;
-
-                case ConfigurationRepository.WindowsRegistry:
-                    if(string.IsNullOrEmpty(regkey))
-                        regkey = "HKEY_LOCAL_MACHINE\\Software\\Nohros\\ConnectionStrings";
-
-                    return (string)Registry.GetValue(regkey, dbOwnerStringName, null);
-            }
-            return kDefaultDatabaseOwner;
-        }
-
-        /// <summary>
-        /// Gets the connection string and database owner of the specified Provider
-        /// </summary>
-        /// <param name="dataProvider">Provider to get data</param>
-        /// <param name="connectionString">The connection string of the Provider</param>
-        /// <param name="dbOwner">The database owner of the Provider</param>
-        /// <history>
-        ///     [neylor] - 2009-02-16
-        ///         Release
-        /// </history>
-        public static void GetDataStoreParameters(Provider dataProvider, out string connectionString, out string dbOwner)
-        {
-            ConfigurationRepository reposiroty = dataProvider.ConfigurationRepository;
-
-            dbOwner = dataProvider.Attributes["databaseOwner"];
-            if ((dbOwner == null) || (dbOwner.Trim().Length == 0))
-            {
-                dbOwner = dataProvider.Attributes["databaseOwnerStringName"];
-                dbOwner = (dbOwner == null || dbOwner.Trim().Length == 0) ? kDefaultDatabaseOwner : GetDatabaseOwner(dbOwner, reposiroty, null);
-            }
-            
-            connectionString = dataProvider.Attributes["connectionString"];
-            if ((connectionString == null) || (connectionString.Trim().Length == 0))
-            {
-                connectionString = GetConnectionString(dataProvider.Attributes["connectionStringName"], reposiroty, null);
-
-                // decrypt the connection string if it is encrypted
-                if (dataProvider.IsEncrypted)
-                    connectionString = NSecurity.BasicDeCryptoString(connectionString);
-            }
-        }
-    }
+   }
 }

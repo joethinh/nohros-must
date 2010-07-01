@@ -46,9 +46,9 @@ namespace Nohros.Security.Auth
                     // store the subjet
                     SQLiteCommand cmd = new SQLiteCommand(conn);
                     cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = "INSERT INTO nas_subject(key, utcexpires, utccreated) values(@key, @utcexpires, @utccreated);SELECT last_insert_rowid();";
+                    cmd.CommandText = "INSERT INTO nas_subject(registry_key, utcexpires, utccreated) values(@registry_key, @utcexpires, @utccreated);SELECT last_insert_rowid();";
 
-                    cmd.Parameters.Add("@key", DbType.String, 100).Value = e.Key;
+                    cmd.Parameters.Add("@registry_key", DbType.String, 100).Value = e.Key;
                     cmd.Parameters.Add("@utcexpires", DbType.DateTime).Value = e.UtcExpires;
                     cmd.Parameters.Add("@utccreated", DbType.DateTime).Value = e.UtcCreated;
 
@@ -155,11 +155,11 @@ namespace Nohros.Security.Auth
                     SQLiteCommand cmd = new SQLiteCommand(conn);
                     cmd.CommandType = CommandType.Text;
                     cmd.CommandText =
-                        @"SELECT key,
+                        @"SELECT registry_key,
                         utcexpires,
                         utccreated
                    from nas_subject s
-                   where key ='" + id + @"';
+                   where registry_key ='" + id + @"';
                    SELECT type,
                         name,
                         mask,
@@ -167,7 +167,7 @@ namespace Nohros.Security.Auth
                     from nas_subject s inner join
                         nas_subjectpermission sp on sp.subjectid = s.subjectid inner join
                         nas_permission p on p.permissionid = sp.permissionid
-                    where key=" + id;
+                    where registry_key=" + id;
 
                     conn.Open();
 
@@ -176,7 +176,7 @@ namespace Nohros.Security.Auth
                     {
                         // build the subject and the cache entry
                         Subject subject = new Subject();
-                        subject._id = (string)dr["key"];
+                        subject._id = (string)dr["registry_key"];
 
                         entry = new CacheEntry(subject.ID, subject, (DateTime)dr["utcexpires"], CacheEntry.NoSlidingExpiration);
                         entry._utcCreated = (DateTime)dr["utccreated"];

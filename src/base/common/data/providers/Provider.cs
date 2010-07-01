@@ -3,15 +3,27 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
 using Microsoft.Win32;
 
 namespace Nohros.Data
 {
-    public enum ConfigurationRepository
+    #region enumerations
+
+    /// <summary>
+    /// Indicates where the connection strings is located.
+    /// </summary>
+    public enum ConnectionStringsRepository
     {
+        /// <summary>
+        /// The connection strings are located  in the windows registry.
+        /// </summary>
         WindowsRegistry = 0,
+
+        /// <summary>
+        /// The connection strings are located on the configuration file.
+        /// </summary>
         ConfigurationFile = 1,
-        Unknown = 2
     }
 
     public enum DataSourceType
@@ -21,15 +33,32 @@ namespace Nohros.Data
         Odbc = 2,
         Unknown = 100
     }
+    #endregion
 
+    /// <summary>
+    /// Stores all the data needed to create instances of the IDataProvider provider's implementation
+    /// of the data source classes.
+    /// </summary>
     public class Provider
     {
+        const string kRepositoryKey = "repository";
+        const string kDataSourceTypeKey = "dataSourceType";
+        const string kNameKey = "name";
+        const string kTypeKey = "type";
+        const string kDataBaseOwnerKey = "databaseOwner";
+        const string kConnectionStringKey = "connectionString";
+        const string kIsEncryptedKey = "encrypted";
+
         string name_;
         string type_;
-        ConfigurationRepository config_repository_;
+        string database_owner_;
+        string connection_string_;
+        bool is_encrypted_;
+
+        ConnectionStringsRepository repository_;
         DataSourceType data_source_;
         NameValueCollection attributes_;
-        bool is_encrypted_;
+        
 
         #region .ctor
 
@@ -42,106 +71,147 @@ namespace Nohros.Data
             is_encrypted_ = false;
 
             // default for compatibility with legacy applications
-            config_repository_ = ConfigurationRepository.ConfigurationFile;
+            repository_ = ConnectionStringsRepository.ConfigurationFile;
             data_source_ = DataSourceType.Unknown;
+            database_owner_ = "dbo";
+            connection_string_ = null;
         }
 
         /// <summary>
         /// Initializes a new instanceof the <see cref="Provider"/> class by using
         /// the specified attributes
         /// </summary>
-        /// <param name="attributes">A <see cref="XmlAttributeCollection"/> containing
-        /// the attributes of the provider</param>
+        /// <param name="node">A <see cref="XmlNode"/> that contains informations about the provider.</param>
         /// <remarks>If the <paramref name="attributes"/> argumentdoes not have
         /// a definition for the configReposirory attribute, this constructor will
-        /// set the <see cref="Provider.ConfigurationRepository"/> property to
-        /// <see cref="ConfigurationRepository.ConfigurationFile"/></remarks>
-        public Provider(XmlAttributeCollection attributes):this()
+        /// set the <see cref="Provider.ConnectionStringsRepository"/> property to
+        /// <see cref="Nohros.Data.ConnectionStringsRepository.ConfigurationFile"/></remarks>
+        public Provider(XmlNode node):this()
         {
-            // Set the name and type of the provider
-            name_ = attributes["name"].Value;
-            type_ = attributes["type"].Value;
+            if (node == null)
+                Thrower.ThrowArgumentNullException(ExceptionArgument.any);
 
-            // Set the configuration repository of the provider
-            XmlAttribute attribute = attributes["configRepository"];
-            if (attribute != null) {
-                try {
-                    config_repository_ = (ConfigurationRepository)Enum.Parse(typeof(ConfigurationRepository), attribute.Value, true);
-                }
-                catch {
-                    config_repository_ = ConfigurationRepository.Unknown;
-                }
-            }
-
-            attribute = attributes["dataSourceType"];
-            if (attribute != null)
-            {
-                switch (attribute.Value.ToLower())
-                {
-                    case "mssql":
-                        data_source_ = DataSourceType.MsSql;
-                        break;
-                    case "oledb":
-                        data_source_ = DataSourceType.OleDb;
-                        break;
-                    case "odbc":
-                        data_source_ = DataSourceType.Odbc;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            // store all the attributes in the attributes bucket
+            XmlAttributeCollection attributes = node.Attributes;
             for (int i = 0, j = attributes.Count; i < j; i++) {
-                attribute = attributes[i];
-                if ((attribute.Name != "name") && (attribute.Name != "type")) {
-                    attributes_.Add(attribute.Name, attribute.Value);
+                XmlAttribute attribute = attributes[i];
+                switch(attribute.Name) {
+                    case kNameKey:
+                        name_ = attribute.Value;
+                        break;
+
+                    case kTypeKey:
+                        type_ = attribute.Value;
+                        break;
+
+                    case kConnectionStringKey:
+                        connection_string_ = attribute.Value;
+                        break;
+
+                    case kDataBaseOwnerKey:
+                        database_owner_ = attribute.Value;
+                        break;
+
+                    case kRepositoryKey:
+                        repository_ = DataHelper.ParseStringEnum<ConnectionStringsRepository>(attribute.Value, ConnectionStringsRepository.ConfigurationFile);
+                        break;
+
+                    case kIsEncryptedKey:
+                        is_encrypted_ = (string.Compare("true", attribute.Value, StringComparison.OrdinalIgnoreCase) ==0) ? true : false;
+                        break;
+
+                    case kDataSourceTypeKey:
+                        data_source_ = DataHelper.ParseStringEnum<DataSourceType>(attribute.Value, DataSourceType.Unknown);
+                        break;
+
+                    default:
+                        attributes_.Add(attribute.Name, attribute.Value);
+                        break;
                 }
             }
+
+            // the name, type and connection string parameters are mandatory.
+            if (name_ == null || type_ == null || connection_string_ == null)
+                Thrower.ThrowProviderException((connection_string_== null) ? ExceptionResource.DataProvider_ConnectionString : ExceptionResource.DataProvider_Provider_Attributes);
+
+            if(repository_ == ConnectionStringsRepository.ConfigurationFile) {
+                try {
+                    XmlNode xml_node = node.OwnerDocument.FirstChild.SelectSingleNode(database_owner_);
+                    if (xml_node != null)
+                        database_owner_ = xml_node.Value;
+                } catch (XPathException) {
+                    database_owner_ = "dbo";
+                }
+
+                try {
+                    XmlNode xml_node = node.OwnerDocument.FirstChild.SelectSingleNode(connection_string_);
+                    if (xml_node != null)
+                        connection_string_ = xml_node.Value;
+                }
+                catch (XPathException) {
+                    // connection string are mandatory.
+                    Thrower.ThrowProviderException(ExceptionResource.DataProvider_ConnectionString);
+                }
+            }
+
+            if (is_encrypted_)
+                connection_string_ = NSecurity.BasicDeCryptoString(connection_string_);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Provider"/> class by using
-        /// the specified <see cref="RegistryKey"/> like a attributes repository.
+        /// Initializes a new instance of the <see cref="Provider"/> class by using the specified
+        /// registry key repository.
         /// </summary>
-        /// <param name="attributes">A key-level node in the windows registry containing
+        /// <param name="attributes">A registry_key-level node in the windows registry containing
         /// the attributes for the provider.</param>
         /// <remarks>If the <paramref name="attributes"/> argument does not have
         /// a definition for the configReposirory attribute, this constructor will
-        /// set the <see cref="Provider.ConfigurationRepository"/> property to
-        /// <see cref="ConfigurationRepository.ConfigurationFile"/></remarks>
+        /// set the <see cref="Provider.ConnectionStringsRepository"/> property to
+        /// <see cref="Nohros.Data.ConnectionStringsRepository.ConfigurationFile"/></remarks>
         public Provider(RegistryKey attributes):this()
         {
-            string[] atts = attributes.GetValueNames();
+            string[] keys = attributes.GetValueNames();
 
-            if (atts == null)
-                Thrower.ThrowProviderException(ExceptionResource.DataProvider_Provider_Attributes);
+            if (attributes != null) {
+                for (int i = 0, j = keys.Length; i < j; i++) {
+                    switch (keys[i]) {
+                        case kNameKey:
+                            name_ = (string)attributes.GetValue(kNameKey, null);
+                            break;
 
-            // Set the name of the provider
-            name_ = (string)attributes.GetValue("name", null);
-            type_ = (string)attributes.GetValue("type", null);
-            if (name_ == null || type_ == null)
-                Thrower.ThrowProviderException(ExceptionResource.DataProvider_Provider_Attributes);
+                        case kTypeKey:
+                            type_ = (string)attributes.GetValue(kTypeKey, null);
+                            break;
 
-            // set the configuration repository of the provider
-            string attribute = (string)attributes.GetValue("configRepository", null);
-            if (attribute != null) {
-                try {
-                    config_repository_ = (ConfigurationRepository)Enum.Parse(typeof(ConfigurationRepository), attribute, true);
-                }
-                catch {
-                    config_repository_ = ConfigurationRepository.Unknown;
+                        case kConnectionStringKey:
+                            connection_string_ = (string)attributes.GetValue(kConnectionStringKey, null);
+                            break;
+
+                        case kDataBaseOwnerKey:
+                            database_owner_ = attributes.GetValue(kDataBaseOwnerKey, null) as string;
+                            break;
+
+                        case kRepositoryKey:
+                            repository_ = DataHelper.ParseStringEnum<ConnectionStringsRepository>(
+                                (string)attributes.GetValue(kRepositoryKey, null),
+                                ConnectionStringsRepository.ConfigurationFile);
+                            break;
+
+                        case kIsEncryptedKey:
+                            is_encrypted_ = (string.Compare("true",
+                                (string)attributes.GetValue(kIsEncryptedKey, null),
+                                StringComparison.OrdinalIgnoreCase) == 0);
+                            break;
+
+                        default:
+                            attributes_.Add(keys[i], (string)attributes.GetValue(keys[i], null));
+                            break;
+                    }
                 }
             }
 
-            // store all the attributes in the attributes bucket
-            for (int i = 0, j = atts.Length; i < j; i++) {
-                attribute = atts[i].ToLower();
-                if ((attribute != "name") && (attribute != "type")) {
-                    attributes_.Add(attribute, (string)attributes.GetValue(attribute, string.Empty));
-                }
-            }
+            // the name, type and connection string parameters are mandatory.
+            if (name_ == null || type_ == null || connection_string_ == null)
+                Thrower.ThrowProviderException(ExceptionResource.DataProvider_Provider_Attributes);
         }
         #endregion
 
@@ -172,9 +242,9 @@ namespace Nohros.Data
         /// <summary>
         /// Gets the repository used to store the configuration values.
         /// </summary>
-        public ConfigurationRepository ConfigurationRepository
+        public ConnectionStringsRepository ConnectionStringsRepository
         {
-            get { return config_repository_; }
+            get { return repository_; }
         }
 
         /// <summary>
@@ -186,13 +256,17 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a connection string is encrypted or not.
+        /// Gets the name of the owner of the database
         /// </summary>
-        /// <remarks>The connection string must be encripted with the <see cref="BasicCryptoString(string)"/>
-        /// method of the <see cref="Nohros.NSecurity"/> class.</remarks>
-        public bool IsEncrypted {
-            get { return is_encrypted_; }
-            set { is_encrypted_ = value; }
+        public string DatabaseOwner {
+            get { return database_owner_; }
+        }
+
+        /// <summary>
+        /// Gets a connection string taht can be used to open the database.
+        /// </summary>
+        public string ConnectionString {
+            get { return connection_string_; }
         }
     }
 }

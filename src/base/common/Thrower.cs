@@ -15,9 +15,9 @@ namespace Nohros
     /// Following is an example:
     /// <code>
     ///     C# source
-    ///         throw new ArgumentNullException("key", Resources.ArgumentNull_Key)
+    ///         throw new ArgumentNullException("registry_key", Resources.ArgumentNull_Key)
     ///     IL code:
-    ///         IL_0000:     ldstr   "key"
+    ///         IL_0000:     ldstr   "registry_key"
     ///         IL_0005:     call   Nohros.Resources::get_ArgumentNull_Key()
     ///         IL_000a:     newobj instance void System.ArgumentNullException::.ctor(string, string)
     ///         IL_000f:     throw
@@ -28,7 +28,7 @@ namespace Nohros
     /// argument name and resource in a small integer. The source code will be changed to
     /// 
     ///     C# source
-    ///         Thrower.ThrowArgumentNullException(ExceptionArgument.key, ExceptionResource.ArgumentNull_Key);
+    ///         Thrower.ThrowArgumentNullException(ExceptionArgument.registry_key, ExceptionResource.ArgumentNull_Key);
     ///     IL code:m
     ///         IL_0000:    ldc.i4.4
     ///         IL_0001:    ldc.i4.5    25
@@ -59,7 +59,7 @@ namespace Nohros
                     break;
 
                 case ExceptionArgument.key:
-                    argumentName = "key";
+                    argumentName = "registry_key";
                     break;
 
                 case ExceptionArgument.obj:

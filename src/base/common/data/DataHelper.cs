@@ -160,6 +160,21 @@ namespace Nohros.Data
         #endregion
 
         #region General helpers
+        internal static T ParseStringEnum<T>(string in_value, T out_default)
+        {
+            T[] values;
+            string[] names;
+
+            names = Enum.GetNames(typeof(T));
+            values = (T[])Enum.GetValues(typeof(T));
+
+            for (int i = 0, j = names.Length; i < j; i++) {
+                if (string.Compare(in_value, names[i], StringComparison.OrdinalIgnoreCase) == 0)
+                    return values[i];
+            }
+            return out_default;
+        }
+
         /// <summary>
         /// Returns a ValueType with the specified <paramref name="Type"/> and whose
         /// value is equivalent to the specified <paramref name="s"/>
