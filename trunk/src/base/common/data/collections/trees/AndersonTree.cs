@@ -110,12 +110,12 @@ namespace Nohros.Data
 
         /// <summary>
         /// Retieves the AndersonTreeNode object in the AndersonTree associated with
-        /// the specified key.
+        /// the specified registry_key.
         /// </summary>
-        /// <param name="key">The key of the node to search for</param>
-        /// <returns>The AndersonTreeNode associated with the specified key, if the
-        /// key is found; otherwise an AndersonTreeNode with level zero - sentinel node</returns>
-        /// <exception cref="ArgumentNullException">key is null</exception>
+        /// <param name="registry_key">The registry_key of the node to search for</param>
+        /// <returns>The AndersonTreeNode associated with the specified registry_key, if the
+        /// registry_key is found; otherwise an AndersonTreeNode with level zero - sentinel node</returns>
+        /// <exception cref="ArgumentNullException">registry_key is null</exception>
         internal AndersonTreeNode<TKey, TValue> FindNode(TKey key)
         {
             if (key == null)
@@ -132,7 +132,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Performs  in-order traversal on the <see cref="AndersonTree&alt;,&gt;"/>
+        /// Performs  in-order traversal on the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>
         /// </summary>
         /// <param name="action">A method used to perform some action with each
         /// each node in the tree</param>
@@ -168,7 +168,7 @@ namespace Nohros.Data
         /// <summary>
         /// Inserts an item to the AndersonTree
         /// </summary>
-        /// <param name="key">The key of the value to insert into the tree</param>
+        /// <param name="registry_key">The registry_key of the value to insert into the tree</param>
         /// <param name="value">The value to insert into the tree</param>
         /// <param name="add">a value indicating when the item will be added or modified</param>
         private void Insert(TKey key, TValue value, bool add)
@@ -245,7 +245,7 @@ namespace Nohros.Data
         /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
-        /// <returns>A <see cref="IEnumerator&alt;,&gt;"/>that can be used to iterate through the collection</returns>
+        /// <returns>A <see cref="IEnumerator&lt;,&gt;"/>that can be used to iterate through the collection</returns>
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             if (_root.Level != 0)
@@ -278,17 +278,17 @@ namespace Nohros.Data
         #region ICollection<KeyValuePair<TKey, TValue>> members
 
         /// <summary>
-        /// Adds an item to the <see cref="ICollection&alt;,&gt;"/>
+        /// Adds an item to the <see cref="ICollection&lt;,&gt;"/>
         /// </summary>
-        /// <param name="item">The <see cref="KeyValuePair&alt;,&gt;"/> to add to
-        /// the <see cref="AndersonTree&alt;,&gt;"/></param>
+        /// <param name="item">The <see cref="KeyValuePair&lt;,&gt;"/> to add to
+        /// the <see cref="AndersonTree&lt;TKey,TValue&gt;"/></param>
         public void Add(KeyValuePair<TKey, TValue> item)
         {
             Add(item.Key, item.Value);
         }
 
         /// <summary>
-        /// Removes all items from the <see cref="AndersonTree&alt;,&gt;"/>
+        /// Removes all items from the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>
         /// </summary>
         public void Clear()
         {
@@ -297,9 +297,9 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Determines whether a value is in the <see cref="AndersonTree&alt;,&gt;"/>
+        /// Determines whether a value is in the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>
         /// </summary>
-        /// <param name="keyValuePair">The value to locate in the <see cref="AndersonTree&alt;,&gt;"/></param>
+        /// <param name="keyValuePair">The value to locate in the <see cref="AndersonTree&lt;TKey,TValue&gt;"/></param>
         /// <returns>true if the item is found in the</returns>
         public bool Contains(KeyValuePair<TKey, TValue> keyValuePair)
         {
@@ -308,19 +308,19 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Copies the elements of the <see cref="AndersonTree&alt;,&gt;"/> to an
+        /// Copies the elements of the <see cref="AndersonTree&lt;TKey,TValue&gt;"/> to an
         /// <see cref="Array"/>, starting at a particular <see cref="Array"/> index.
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="Array"/> that is
-        /// the destination of the elements copied form the <see cref="Andersontree&alt;,&gt;"/>
+        /// the destination of the elements copied form the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>
         /// The array must have zero-based indexing</param>
         /// <param name="index">The zero-based index in array at which copying begins</param>
         /// <exception cref="ArgumentOutOfRangeException">index is less than 0</exception>
         /// <exception cref="ArgumentNullException">array is null</exception>
         /// <exception cref="ArgumentException">array is multidimensional.-or-<paramref name="index"/>
         /// is equal to or greater than the length of the array.-or-The number of elements in the
-        /// source <see cref="AndersonTree&alt;,&gt;"/>is greater than the available space from
-        /// <paramref name="index"/>to the end of the destination array.-or-Type <see cref=" KeyValuePair&alt;TKey, TValue&gt;"/>
+        /// source <see cref="AndersonTree&lt;TKey,TValue&gt;"/>is greater than the available space from
+        /// <paramref name="index"/>to the end of the destination array.-or-Type <see cref=" KeyValuePair&lt;TKey, TValue&gt;"/>
         /// cannot be cast automatically to the type of the destination array</exception>
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int index)
         {
@@ -341,18 +341,18 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Removes the first occurrence of a specified object from the <see cref="AndersonTree&alt;,&gt;"/>
+        /// Removes the first occurrence of a specified object from the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>
         /// </summary>
-        /// <param name="item">The object to remove from the <see cref="AndersonTree&alt;,&gt"/></param>
-        /// <returns>true if the item was suscesfully removed from the <see cref="AndersonTree&alt;,&gt;"/>; otherwise, false.
-        /// This method also returns false if item is not found in the original <see cref="AndersonTree&alt;,&gt;"/></returns>
+        /// <param name="item">The object to remove from the <see cref="AndersonTree&lt;,&gt"/></param>
+        /// <returns>true if the item was suscesfully removed from the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>; otherwise, false.
+        /// This method also returns false if item is not found in the original <see cref="AndersonTree&lt;TKey,TValue&gt;"/></returns>
         bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
         {
             return Remove(item.Key);
         }
 
         /// <summary>
-        /// Gets the number of nodes contained in the <see cref="AndersonTree&alt;,&gt;"/>
+        /// Gets the number of nodes contained in the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>
         /// </summary>
         public int Count
         {
@@ -360,7 +360,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Gets a value indicating whether the <see cref="AndersonTree&alt;,&gt;"/>
+        /// Gets a value indicating whether the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>
         /// object is read-only
         /// </summary>
         public bool IsReadOnly
@@ -396,27 +396,27 @@ namespace Nohros.Data
         #region IDictionary<Tkey, TValue>
 
         /// <summary>
-        /// Adds the specified key and value to the tree.
+        /// Adds the specified registry_key and value to the tree.
         /// </summary>
-        /// <param name="key">The value of the element to add. The value can be
+        /// <param name="registry_key">The value of the element to add. The value can be
         /// null for reference types</param>
-        /// <param name="value">The key of the element to add</param>
-        /// <exception cref="ArgumentException">An element with the same key already
+        /// <param name="value">The registry_key of the element to add</param>
+        /// <exception cref="ArgumentException">An element with the same registry_key already
         /// exists in the AndersonTree<,></exception>
-        /// <exception cref="ArgumentNullException">key is null</exception>
+        /// <exception cref="ArgumentNullException">registry_key is null</exception>
         public void Add(TKey key, TValue value)
         {
             Insert(key, value, true);
         }
 
         /// <summary>
-        /// Determines whether the <see cref="AndersonTree&alt;,&gt;"/>constains and element
-        /// with the specified key.
+        /// Determines whether the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>constains and element
+        /// with the specified registry_key.
         /// </summary>
-        /// <param name="key">The key to locate in the  <see cref="AndersonTree&alt;,&gt;"/></param>
-        /// <returns>true if the <see cref="AndersonTree&alt;,&gt;"/>constains ans element
-        /// with the key; otherwise, false</returns>
-        /// <exception cref="ArgumentNullException">key is null</exception>
+        /// <param name="registry_key">The registry_key to locate in the  <see cref="AndersonTree&lt;TKey,TValue&gt;"/></param>
+        /// <returns>true if the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>constains ans element
+        /// with the registry_key; otherwise, false</returns>
+        /// <exception cref="ArgumentNullException">registry_key is null</exception>
         public bool ContainsKey(TKey key)
         {
             AndersonTreeNode<TKey, TValue> node = FindNode(key);
@@ -427,13 +427,13 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Removes the element with the specified <paramref name="key"/> from the
-        /// <see cref="AndersonTree&alt;&gt;"/>
+        /// Removes the element with the specified <paramref name="registry_key"/> from the
+        /// <see cref="AndersonTree&lt;TKey, TValue&gt;"/>
         /// </summary>
-        /// <param name="key">The key of the element to remove</param>
+        /// <param name="registry_key">The registry_key of the element to remove</param>
         /// <returns>true if the element is successfully removed; otherwise, false.
-        /// This method also returns false if key was not found in the tree</returns>
-        /// <exception cref="ArgumentNullException">key is null</exception>
+        /// This method also returns false if registry_key was not found in the tree</returns>
+        /// <exception cref="ArgumentNullException">registry_key is null</exception>
         public bool Remove(TKey key)
         {
             if (key == null)
@@ -448,7 +448,7 @@ namespace Nohros.Data
             {
                 path.Add(node);
 
-                // the key was not found
+                // the registry_key was not found
                 if (node.Level == 0)
                     return false;
 
@@ -483,7 +483,7 @@ namespace Nohros.Data
                     // left link is not allowed, the non-sentinel node will never be
                     // the left node - in single child case only.
                     //
-                    // If a node with a key less than the root key is inserted into
+                    // If a node with a registry_key less than the root registry_key is inserted into
                     // the tree a left horizontal link will be created and the split
                     // operation will rotate the tree left on the rebalance.
                     _root = node.Right;
@@ -551,15 +551,15 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Gets the value associated with the specified registry_key.
         /// </summary>
-        /// <param name="key">The key of the value to get</param>
+        /// <param name="registry_key">The registry_key of the value to get</param>
         /// <param name="value">When this method returns, contain the value associated
-        /// with the specified key, if the is found; otherwise, the default value for
+        /// with the specified registry_key, if the is found; otherwise, the default value for
         /// the type of the <paramref name="value"/> parameter. This parameter is passed
         /// uninitialized</param>
         /// <returns>true if the AndersonTree contains an element with the specified
-        /// key; otherwise, false</returns>
+        /// registry_key; otherwise, false</returns>
         public bool TryGetValue(TKey key, out TValue value)
         {
             AndersonTreeNode<TKey, TValue> node = FindNode(key);
@@ -573,21 +573,21 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key
+        /// Gets or sets the value associated with the specified registry_key
         /// </summary>
-        /// <param name="key">The key whose value to get or set</param>
-        /// <returns>The value associated with the specified key. If the specified
-        /// key is not found, attempting to get it throws a <see cref="KeyNotFoundException"/>
-        /// ,and attempting to set it creates a new element with the specified key</returns>
-        /// <exception cref="ArgumentNullException">key is null</exception>
-        /// <exception cref="KeyNotFoundException">The key does not exists in the tree</exception>
+        /// <param name="registry_key">The registry_key whose value to get or set</param>
+        /// <returns>The value associated with the specified registry_key. If the specified
+        /// registry_key is not found, attempting to get it throws a <see cref="KeyNotFoundException"/>
+        /// ,and attempting to set it creates a new element with the specified registry_key</returns>
+        /// <exception cref="ArgumentNullException">registry_key is null</exception>
+        /// <exception cref="KeyNotFoundException">The registry_key does not exists in the tree</exception>
         public TValue this[TKey key]
         {
             get
             {
                 AndersonTreeNode<TKey, TValue> node = FindNode(key);
                 if (node.Level == 0)
-                    throw new KeyNotFoundException("key");
+                    throw new KeyNotFoundException("registry_key");
 
                 return node.Value;
             }

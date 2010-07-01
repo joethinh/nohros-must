@@ -32,7 +32,7 @@ namespace Nohros.Security.Auth
             if (i == 0)
                 Thrower.ThrowEmptyArgumentException(ExceptionArgument.name);
 
-            _name = name;
+            name_ = name;
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Nohros.Security.Auth
 
             BasicPermission local = perm as BasicPermission;
 
-            return (ignoreCase) ? _name.ToLower() == local._name.ToLower() : _name == local._name;
+            return (ignoreCase) ? name_.ToLower() == local.name_.ToLower() : name_ == local.name_;
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Nohros.Security.Auth
         /// </summary>
         public override string Name
         {
-            get { return _name; }
+            get { return name_; }
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Nohros.Data
         /// </example>
         /// <returns>A JSON-compliant string of characters formatted like a JSON array element.</returns>
         /// <remarks>
-        /// <see cref="http://www.ietf.org/rfc/rfc4627.txt"/>
+        /// JSON spec: "http://www.ietf.org/rfc/rfc4627.txt"
         /// The returned string will be scaped with quotation marks.
         /// </remarks>
         string ToJsElement();
@@ -33,7 +33,7 @@ namespace Nohros.Data
         /// </example>
         /// <returns>A JSON-compliant string of characters formatted like a JSON object.</returns>
         /// <remarks>
-        /// <see cref="http://www.ietf.org/rfc/rfc4627.txt"/>
+        /// JSON spec: "http://www.ietf.org/rfc/rfc4627.txt"
         /// The strings inside the object will be escaped with quotation marks.
         /// </remarks>
         string ToJsObject();

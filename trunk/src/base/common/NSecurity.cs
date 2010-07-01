@@ -17,6 +17,12 @@ namespace Nohros
         public string enc;
     }
 
+    /// <summary>
+    /// Generic static security class.
+    /// </summary>
+    /// <remarks>
+    /// This class resides on the Nohros namespace for legacy compatibility.
+    /// </remarks>
     public sealed class NSecurity
     {
         private static readonly byte[] sign = new byte[] { 77, 105, 114, 97, 99, 108, 101, 83, 105, 103, 110, 68, 97, 116, 97 };
@@ -45,8 +51,8 @@ namespace Nohros
 
             try
             {
-                // Generate a new RSA public/private key pair
-                // This key will be used to signature the DES IV and Key.
+                // Generate a new RSA public/private registry_key pair
+                // This registry_key will be used to signature the DES IV and Key.
                 RSACryptoServiceProvider jRsa = new RSACryptoServiceProvider();
 
                 byte[] signature = jRsa.SignData(sign, new MD5CryptoServiceProvider());
@@ -91,7 +97,6 @@ namespace Nohros
             try
             {
                 // Check if the signature is valid.
-                //
                 RSACryptoServiceProvider jRsa = new RSACryptoServiceProvider();
                 jRsa.FromXmlString(Encoding.ASCII.GetString(Convert.FromBase64String(jpbkey)));
 
@@ -114,8 +119,7 @@ namespace Nohros
 
                     CryptoStream cStream = new CryptoStream(mStream, decryptor, CryptoStreamMode.Read);
 
-                    using (StreamReader reader = new StreamReader(cStream))
-                    {
+                    using (StreamReader reader = new StreamReader(cStream)) {
                         decData = reader.ReadToEnd();
                     }
 
@@ -127,6 +131,16 @@ namespace Nohros
             return decData;
         }
 
+        /// <summary>
+        /// Provides a very basic mechanism to encrypt strings.
+        /// </summary>
+        /// <param name="dec">The decrypted string to encrypt</param>
+        /// <returns>The encrypted form of the <paramref name="dec"/> string.</returns>
+        /// <remarks>
+        /// Strings encrypted with the <see cref="BasicCryptoString(string)"/> are not really secure. Its is
+        /// used only to provide a very basic security mechanism. Anyone with with basic knowledge of programing
+        /// could decrypt strings encrypted with this method. Do not use them to protect sensitive data.
+        /// </remarks>
         public static string BasicCryptoString(string dec)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(dec);
@@ -135,6 +149,17 @@ namespace Nohros
             return Convert.ToBase64String(bytes);
         }
 
+        /// <summary>
+        /// Decrypts a string encrypted with the <see cref="BasicCryptoString(string)"/> method.
+        /// </summary>
+        /// <param name="enc">A string encrypted with the to <see cref="BasicCryptoString(string)"/> method.</param>
+        /// <returns>The encrypted form of the <paramref name="enc"/>string.</returns>
+        /// <remarks>
+        /// Strings encrypted with the <see cref="BasicCryptoString(string)"/> are not really secure. Its is
+        /// used only to provide a very basic security mechanism. Anyone with with basic knowledge of programing
+        /// could decrypt strings encrypted with this method. Do not use them to protect sensitive data.
+        /// </remarks>
+        /// <seealso cref="BasicDeCryptoString(string)"/>
         public static string BasicDeCryptoString(string enc)
         {
             byte[] bytes = Convert.FromBase64String(enc);
@@ -144,7 +169,7 @@ namespace Nohros
         }
 
         /// <summary>
-        /// Implements teh left circular shift
+        /// Implements the left circular shift.
         /// </summary>
         /// <param name="x">The value to be shifted</param>
         /// <param name="n">The number of bits to rotate</param>

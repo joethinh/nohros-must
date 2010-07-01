@@ -142,11 +142,19 @@ namespace Nohros.Data
         }
 
         #region IEnumerable
+        /// <summary>
+        /// Returns an enumerator that iterates through a colletion.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerator"/> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return (IEnumerator)GetEnumerator();
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through a colletion.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerator"/> object that can be used to iterate through the collection.</returns>
         public TableTransferObjectEnumerator GetEnumerator()
         {
             return new TableTransferObjectEnumerator(this);

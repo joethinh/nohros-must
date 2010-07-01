@@ -13,8 +13,15 @@ namespace Nohros.Security.Auth
     /// </summary>
     public abstract class PermissionBase : IPermission
     {
-        protected string _name;
-        protected long _mask;
+        /// <summary>
+        /// Permission name
+        /// </summary>
+        protected string name_;
+
+        /// <summary>
+        /// Permission actions bitmask
+        /// </summary>
+        protected long mask_;
 
         #region .ctor
         /// <summary>
@@ -31,8 +38,8 @@ namespace Nohros.Security.Auth
         /// <param name="context">An object that describes the source or destination of the serialized data.</param>
         protected PermissionBase(SerializationInfo info , StreamingContext context)
         {
-            _name = info.GetString("name");
-            _mask = info.GetInt64("mask");
+            name_ = info.GetString("name");
+            mask_ = info.GetInt64("mask");
         }
         #endregion
 
@@ -43,8 +50,8 @@ namespace Nohros.Security.Auth
         /// <param name="context">The destination <see cref="StreamingContext"/>for this serialization</param>
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("name", _name, typeof(string));
-            info.AddValue("mask", _mask, typeof(long));
+            info.AddValue("name", name_, typeof(string));
+            info.AddValue("mask", mask_, typeof(long));
         }
 
         /// <summary>

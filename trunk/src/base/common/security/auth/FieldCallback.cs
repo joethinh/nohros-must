@@ -5,33 +5,39 @@ using System.Text;
 namespace Nohros.Security.Auth
 {
     /// <summary>
-    /// Underlying security services instantiate and pass a WebTextCallback to the hanlde method of a
-    /// <see cref="CallbackHandler"/> to retrieve a form field information from the current HttpRequest.
+    /// Underlying security services instantiate and pass a FieldCallback to the hanlde method of a
+    /// <see cref="IAuthCallbackHandler"/> to retrieve a form field information from the current <see cref="System.Web.HttpRequest"/>.
     /// </summary>
     public class FieldCallback : IAuthCallback
     {
-        string _name;
-        string _value;
+        string name_;
+        string value_;
 
         /// <summary>
-        /// Initializes a new instance of the FormFieldCallback class by using the specified field name
+        /// Initializes a new instance of the FieldCallback class by using the specified field name.
         /// </summary>
-        /// <param name="name">The name of the field to retrieve from the current <see cref="HttpRequest"/></param>
+        /// <param name="name">The name of the field to retrieve from the current <see cref="System.Web.HttpRequest"/></param>
         public FieldCallback(string name)
         {
-            _name = name;
-            _value = null;
+            name_ = name;
+            value_ = null;
         }
 
+        /// <summary>
+        /// Gets the value of the field.
+        /// </summary>
         public string Value
         {
-            get { return _value; }
-            set { _value = value; }
+            get { return value_; }
+            set { value_ = value; }
         }
 
+        /// <summary>
+        /// Gets the name of the field.
+        /// </summary>
         public string Name
         {
-            get { return _name; }
+            get { return name_; }
         }
     }
 }

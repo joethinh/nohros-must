@@ -20,10 +20,26 @@ namespace Nohros.Configuration
     {
         FileInfo config_file_;
 
+        Dictionary<string, Value> properties_;
+
+        /// <summary>
+        /// A collection of the parsed data providers.
+        /// </summary>
         protected Dictionary<string, Provider> providers_;
-        protected Dictionary<string, Value> properties_;
+
+        /// <summary>
+        /// The configuration root node.
+        /// </summary>
         protected XmlElement element_;
+
+        /// <summary>
+        /// Default namespace name.
+        /// </summary>
         protected const string kDefaultNamespace = "nhs-nsdefault";
+
+        /// <summary>
+        /// The name of the providers registry_key.
+        /// </summary>
         protected const string kProvidersNodeName = "nhs-providers";
 
         #region .ctor
@@ -81,6 +97,7 @@ namespace Nohros.Configuration
         /// Load the configuration values using the specified configuration file.
         /// </summary>
         /// <param name="config_file_name">The name of the configuration file.</param>
+        /// <param name="root_node_name">the name of the XmlNode that contains the configuration data.</param>
         /// <remarks>
         /// This method assumes that the specified configuration file is located in the application
         /// base directory.
@@ -100,8 +117,8 @@ namespace Nohros.Configuration
         /// <summary>
         /// Load the configuation values using the specified configuration file and node name.
         /// </summary>
-        /// <param name="configFile">the XML configuration file to load the configuration from</param>
-        /// <param name="element">the name of the XmlNode that contains the configuration data</param>
+        /// <param name="config_file_info">the XML configuration file to load the configuration from.</param>
+        /// <param name="root_node_name">the name of the XmlNode that contains the configuration data.</param>
         /// <remarks>
         /// <para>
         /// The config file could be specified in the applications configuration file (either 
@@ -122,28 +139,27 @@ namespace Nohros.Configuration
         /// <code>
         /// &lt;configuration&gt;
         ///		&lt;appSettings&gt;
-        ///			&lt;add key="my-custom-config-file-path" value="MyCustom.config"/&gt;
+        ///			&lt;add registry_key="my-custom-config-file-path" value="MyCustom.config"/&gt;
         ///		&lt;/appSettings&gt;
         ///	&lt;/configuration&gt;
         /// </code>
         /// In that case your configuration file must have a node named "customConfigNode".
         /// <para>
         /// If you need to monitor this file for changes and reload the configuration when the config
-        /// file's contents changes then you should use the <see cref="LoadAndWatch"/>method instead.
+        /// file's contents changes then you should use the <see cref="LoadAndWatch(FileInfo, string)"/>method instead.
         /// </para>
         /// </remarks>
         /// <exception cref="FileNotFoundException">If the config file does not exists</exception>
-        /// <seealso cref="LoadAndWatch"/>
-        public virtual void Load(FileInfo configFile, string root_node_name)
+        public virtual void Load(FileInfo config_file_info, string root_node_name)
         {
-            if (configFile != null)
+            if (config_file_info != null)
             {
-                // Have to use File.Exists() rather than configFile.Exists()
-                // because configFile.Exists() caches the value, not what we want.
-                if (File.Exists(configFile.FullName))
+                // Have to use File.Exists() rather than config_file_info.Exists()
+                // because config_file_info.Exists() caches the value, not what we want.
+                if (File.Exists(config_file_info.FullName))
                 {
                     // Open the file for reading
-                    FileStream fs = configFile.OpenRead();
+                    FileStream fs = config_file_info.OpenRead();
                     try
                     {
                         // Loads the configuration file to memory.
@@ -161,7 +177,7 @@ namespace Nohros.Configuration
                 }
                 else
                 {
-                    throw new System.IO.FileNotFoundException(configFile.FullName);
+                    throw new System.IO.FileNotFoundException(config_file_info.FullName);
                 }
             }
         }
@@ -171,6 +187,7 @@ namespace Nohros.Configuration
         /// and reload the configuration if a change is detected.
         /// </summary>
         /// <param name="config_file_name">The name of the configuration file.</param>
+        /// <param name="root_node_name">the name of the XmlNode that contains the configuration data</param>
         /// <remarks>
         /// This method assumes that the specified configuration file is located in the application
         /// base directory.
@@ -187,7 +204,6 @@ namespace Nohros.Configuration
         /// values.
         /// </para>
         /// </remarks>
-        /// </remarks>
         /// <exception cref="FileNotFoundException">The configuration file does not exists or is not located in
         /// the application base directory.</exception>
         public virtual void LoadAndWatch(string config_file_name, string root_node_name) {
@@ -199,7 +215,8 @@ namespace Nohros.Configuration
         /// Load the configuration values using the file specified, monitor the file for changes
         /// and reload the configuration if a change is detected.
         /// </summary>
-        /// <param name="configFile">The XML config file to load the configuration from.</param>
+        /// <param name="config_file_info">The XML config file to load the configuration from.</param>
+        /// <param name="root_node_name">the name of the XmlNode that contains the configuration data</param>
         /// <remarks>
         /// The configuration file must be valid XML. It must contain at least one element called
         /// <paramref name="root_node_name"/> that contains the configuration data.
@@ -212,8 +229,6 @@ namespace Nohros.Configuration
         /// values.
         /// </para>
         /// </remarks>
-        /// <seealso cref="Load(FileInfo)"/>
-        /// <seealso cref="Load(FileInfo, String)"/>
         public void LoadAndWatch(FileInfo config_file_info, string root_node_name)
         {
             if (config_file_info != null)
@@ -233,7 +248,8 @@ namespace Nohros.Configuration
         /// Monitor the configuration file for changes and reload the configuration values
         /// if a change is detected.
         /// </summary>
-        /// <param name="configFile">the XML configuration file to watch</param>
+        /// <param name="config_file_info">the XML configuration file to watch</param>
+        /// <remarks>
         /// The config file will be monitored using a <see cref="FileSystemWatcher"/> and is dependant
         /// on the behavior of that class.
         /// </remarks>
@@ -384,7 +400,6 @@ namespace Nohros.Configuration
         /// If the namespace of a property is not defined then that property will be assigned
         /// to the default namespace.
         /// </remarks>
-        /// <exception cref=""></exception>
         protected void GetProperties(XmlNode node)
         {
             XmlAttribute att = node.Attributes["ns"];
@@ -422,21 +437,22 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key within the default namespace.
+        /// Gets the value associated with the specified registry_key within the default namespace.
         /// </summary>
-        /// <param name="key">The key whose value to get</param>
-        /// <returns>An string associated with the specified key within the given namespace.</returns>
+        /// <param name="registry_key">The registry_key whose value to get</param>
+        /// <returns>An string associated with the specified registry_key within the given namespace.</returns>
         public Value Get(string key)
         {
             return Get(key, kDefaultNamespace);
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key within a given namespace.
+        /// Gets the value associated with the specified registry_key within a given namespace.
         /// </summary>
-        /// <param name="key">The key whose value to get</param>
-        /// <returns>An string associated with the specified key within the given namespace.</returns>
-        /// <seealso cref="IConfiguration[string, string]"/>
+        /// <param name="registry_key">The registry_key whose value to get</param>
+        /// <param name="ns">The name of the namespace.</param>
+        /// <returns>An string associated with the specified registry_key within the given namespace.</returns>
+        /// <seealso cref="this[string, string]"/>
         public Value Get(string key, string ns)
         {
             Value value;
@@ -445,29 +461,30 @@ namespace Nohros.Configuration
         }
         
         /// <summary>
-        /// Sets the value associated with the specified key within the default namespace.
+        /// Sets the value associated with the specified registry_key within the default namespace.
         /// </summary>
-        /// <param name="key">The key whose value to set</param>
-        /// <param name="value">An string associated with the specified key within the given namespace</param>
+        /// <param name="registry_key">The registry_key whose value to set</param>
+        /// <param name="value">An string associated with the specified registry_key within the given namespace</param>
         public void Set(string key, Value value)
         {
             Set(key, kDefaultNamespace, value);
         }
 
         /// <summary>
-        /// Sets the value associated with the specified key within a given namespace.
+        /// Sets the value associated with the specified registry_key within a given namespace.
         /// </summary>
-        /// <param name="key">The key whose value to set</param>
-        /// <param name="value">An string associated with the specified key within the given namespace</param>
+        /// <param name="registry_key">The registry_key whose value to set</param>
+        /// <param name="ns">The name of the namespace.</param>
+        /// <param name="value">An string associated with the specified registry_key within the given namespace</param>
         public void Set(string key, string ns, Value value)
         {
             properties_[PropertyKey(ns, key)] = value;
         }
 
         /// <summary>
-        /// A convenient form of <code>Get(string) ans Set(string, Value)</code>.
+        /// A convenient form of <code>Get(string) and Set(string, Value)</code>.
         /// </summary>
-        /// <param name="key">The key whose value to get or set.</param>
+        /// <param name="registry_key">The registry_key whose value to get or set.</param>
         public string this[string key]
         {
             get {
@@ -481,7 +498,7 @@ namespace Nohros.Configuration
         /// <summary>
         /// A convenient form of <code>Get(string, string) and Set(string, string, Value)</code>.
         /// </summary>
-        /// <param name="key">The key whose value to get or set.</param>
+        /// <param name="registry_key">The registry_key whose value to get or set.</param>
         /// <param name="ns">The name of the namespace.</param>
         public string this[string key, string ns]
         {
@@ -529,7 +546,7 @@ namespace Nohros.Configuration
                         if(name == null || name.Value == null || name.Value.Length == 0)
                             throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, kProvidersNodeName), provider);
 
-                        providers_.Add(name.Value, new Provider(attributes));
+                        providers_.Add(name.Value, new Provider(provider));
                         break;
 
                     default:

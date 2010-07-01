@@ -28,9 +28,9 @@ namespace Nohros.Net
         /// <summary>
         /// Initializes a new instance of the NetSettings class.
         /// </summary>
-        /// <exception cref="KeyNotFoundException">the key "NohrosConfigurationFile" was not found into the application
+        /// <exception cref="KeyNotFoundException">the registry_key "NohrosConfigurationFile" was not found into the application
         /// configuration file.</exception>
-        /// <exception cref="FileNotFoundException">The file pointed by the "NohrosConfigurationFile" key value does not
+        /// <exception cref="FileNotFoundException">The file pointed by the "NohrosConfigurationFile" registry_key value does not
         /// exists.</exception>
         public NetSettings()
         {
@@ -71,9 +71,9 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Gets a Value object associated with the specified <paramref name="key"/>.
+        /// Gets a Value object associated with the specified <paramref name="registry_key"/>.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="registry_key"></param>
         /// <returns></returns>
         public Value this[string key] {
             get {

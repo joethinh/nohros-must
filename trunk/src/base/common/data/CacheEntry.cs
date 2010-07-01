@@ -29,10 +29,10 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance onf the CacheEntry class by using the specified item key and value and
+        /// Initializes a new instance onf the CacheEntry class by using the specified item registry_key and value and
         /// expiration police.
         /// </summary>
-        /// <param name="key">The cache key used to reference the item.</param>
+        /// <param name="registry_key">The cache registry_key used to reference the item.</param>
         /// <param name="value">The item to be added to the cache.</param>
         /// <param name="utcAbsoluteExpiration">The time at which the added object expires and is removed
         /// from the cache. If the sliding expiration will be used, the <paramref name="utcAbsoluteExpiration"/>

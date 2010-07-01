@@ -27,7 +27,7 @@ namespace Nohros.Security.Auth
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string configFile = ConfigurationManager.AppSettings["LoginConfigurationFile"] as string;
             if (configFile == null)
-                throw new LoginException("The LoginConfigurationFile key was not defined");
+                throw new LoginException("The LoginConfigurationFile registry_key was not defined");
 
             if (configFile.StartsWith("~/"))
                 configFile = Path.Combine(basePath, configFile.Substring(2));
@@ -43,7 +43,6 @@ namespace Nohros.Security.Auth
         /// Loads the configuration file and the login modules.
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref="LoadAndWatch(FileInfo, string)"/>
         public override void Load()
         {
             base.LoadAndWatch(_configFile, "//LoginModules");

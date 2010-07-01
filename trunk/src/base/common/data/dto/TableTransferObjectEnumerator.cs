@@ -56,7 +56,7 @@ namespace Nohros.Data
         /// </summary>
         /// <returns>An string array containing the values of the current row.</returns>
         /// <exception cref="InvalidOperationException">The enumerator is positioned before the first row of
-        /// the <see cref="Nohros.Data.TableTrasferObject"/> object of after the last row of the
+        /// the <see cref="Nohros.Data.TableTransferObject"/> object of after the last row of the
         /// <see cref="Nohros.Data.TableTransferObject"/> object.</exception>
         public object Current
         {
