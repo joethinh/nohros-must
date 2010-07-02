@@ -251,6 +251,15 @@ namespace Nohros.Resources
         }
 
         /// <summary>
+        /// Looks up a localized string similar to [An IDbConnection instance could not be created. Verify
+        /// if your connection string and data source type were correctly specified.]
+        /// </summary>
+        public static string DataProvider_Connection
+        {
+            get { return GetString("DataProvider_Connection"); }
+        }
+
+        /// <summary>
         /// Looks up a localized string similar to [Index was out of range. Must be non-negative and less than the
         /// size of the collection].
         /// </summary>

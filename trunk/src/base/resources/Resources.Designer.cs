@@ -215,6 +215,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An IDbConnection instance could not be created. Verify if your connection string is valid and if your data source type was correctly specified..
+        /// </summary>
+        internal static string DataProvider_Connection {
+            get {
+                return ResourceManager.GetString("DataProvider_Connection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An invalid connection string argument has been supplied, or a required connection string argument has not been supplied..
         /// </summary>
         internal static string DataProvider_ConnectionString {
