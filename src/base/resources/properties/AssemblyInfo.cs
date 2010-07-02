@@ -35,5 +35,10 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
+<<<<<<< .mine
+[assembly: AssemblyVersion("0.1.392.0")]
+[assembly: AssemblyFileVersion("0.1.392.0")]
+=======
 [assembly: AssemblyVersion("0.1.495.0")]
 [assembly: AssemblyFileVersion("0.1.495.0")]
+>>>>>>> .r9
