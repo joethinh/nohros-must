@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
+using System.Data.SqlClient;
+using System.Data.OleDb;
+using System.Data.Odbc;
 
 using Nohros.Resources;
 using Nohros.Configuration;
@@ -16,12 +19,17 @@ namespace Nohros.Data
         /// <summary>
         /// The name of the data base owner.
         /// </summary>
-        protected string databaseOwner_;
+        protected string database_owner_;
 
         /// <summary>
         /// The connection string used to open the database.
         /// </summary>
-        protected string connectionString_;
+        protected string connection_string_;
+
+        /// <summary>
+        /// The type of the underlying data source provider.
+        /// </summary>
+        protected DataSourceType data_source_type_;
 
         /// <summary>
         /// Initializes a new instance of the GenericDataProvider by using the specified
@@ -34,8 +42,8 @@ namespace Nohros.Data
         /// </remarks>
         protected DataProvider(string databaseOwner, string connectionString)
         {
-            databaseOwner_ = databaseOwner;
-            connectionString_ = connectionString;
+            database_owner_ = databaseOwner;
+            connection_string_ = connectionString;
         }
 
         /// <summary>
@@ -75,6 +83,8 @@ namespace Nohros.Data
             if (newObject == null)
                 Thrower.ThrowProviderException(ExceptionResource.DataProvider_CreateInstance, null);
 
+            newObject.DataSourceType = provider.DataSourceType;
+
             return newObject;
         }
 
@@ -94,7 +104,7 @@ namespace Nohros.Data
         /// the class could be instantiated.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="provider_name"/> provider was not
         /// found in the <paramref name="configuration"/></exception>
-        /// <exception cref="ThrowProviderException">The provider type is invalid or could not be instantiated.</exception>
+        /// <exception cref="Nohros.Data.ProviderException">The provider type is invalid or could not be instantiated.</exception>
         protected static T CreateInstance(string provider_name, IConfiguration configuration)
         {
             Provider provider = configuration.GetProvider(provider_name);
@@ -104,17 +114,53 @@ namespace Nohros.Data
         }
 
         /// <summary>
+        /// Gets an IDbConnection instance that can be used to query a data source.
+        /// </summary>
+        /// <returns>An IDbConnection instance that can be used to query a data source.</returns>
+        /// <remarks>
+        /// The returned type depends on the value of the <see cref="DataSourceType"/> property.
+        /// </remarks>
+        public IDbConnection GetDbConnection()
+        {
+            try
+            {
+                switch (data_source_type_)
+                {
+                    case DataSourceType.MsSql:
+                        return new SqlConnection(connection_string_);
+                    case DataSourceType.Odbc:
+                        return new OdbcConnection(connection_string_);
+                    case DataSourceType.OleDb:
+                        return new OleDbConnection(connection_string_);
+                }
+            }
+            catch(Exception e) {
+                throw new ProviderException(StringResources.DataProvider_Connection, e);
+            }
+            throw new ProviderException(StringResources.DataProvider_Connection, e);
+        }
+
+        /// <summary>
         /// Gets the string used to open the connection.
         /// </summary>
         public string ConnectionString {
-            get { return databaseOwner_; }
+            get { return database_owner_; }
         }
 
         /// <summary>
         /// Gets the name of the owner of the database.
         /// </summary>
         public string DatabaseOwner {
-            get { return connectionString_; }
+            get { return connection_string_; }
+        }
+
+        /// <summary>
+        /// Gets the type of the underlying data source provider.
+        /// </summary>
+        public DataSourceType DataSourceType
+        {
+            get { return data_source_type_; }
+            set { data_source_type_ = value; }
         }
    }
 }

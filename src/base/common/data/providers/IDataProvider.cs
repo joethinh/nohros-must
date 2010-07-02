@@ -6,7 +6,7 @@ using System.Data;
 namespace Nohros.Data
 {
     /// <summary>
-    /// Allows an object to implements a DataProvider, and represents a set of methods and properties_ used
+    /// Allows an object to implements a DataProvider, and represents a set of methods and properties used
     /// to query database.
     /// </summary>
     public interface IDataProvider
@@ -20,5 +20,10 @@ namespace Nohros.Data
         /// Gets the name of the owner of the database.
         /// </summary>
         string DatabaseOwner { get; }
+
+        /// <summary>
+        /// Gets the data source type. ex. mssql, oracle, oledb...
+        /// </summary>
+        DataSourceType DataSourceType { get; set; }
     }
 }
