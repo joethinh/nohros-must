@@ -69,7 +69,7 @@ namespace Nohros.Data
         /// <exception cref="ArgumentNullException">dataProvider is null</exception>
         /// <exception cref="ProviderException">The type could not be created.</exception>
         /// <exception cref="ProviderException"><paramref name="dataProvider"/> is invalid.</exception>
-        public static T CreateInstance(Provider provider)
+        protected static T CreateInstance(Provider provider)
         {
             // Get the type.
             Type type = Type.GetType(provider.Type);
@@ -120,38 +120,38 @@ namespace Nohros.Data
         /// <remarks>
         /// The returned type depends on the value of the <see cref="DataSourceType"/> property.
         /// </remarks>
-        public IDbConnection GetDbConnection()
+        protected U GetDbConnection<U>() where U : class, IDbConnection
         {
             try
             {
                 switch (data_source_type_)
                 {
                     case DataSourceType.MsSql:
-                        return new SqlConnection(connection_string_);
+                        return new SqlConnection(connection_string_) as U;
                     case DataSourceType.Odbc:
-                        return new OdbcConnection(connection_string_);
+                        return new OdbcConnection(connection_string_) as U;
                     case DataSourceType.OleDb:
-                        return new OleDbConnection(connection_string_);
+                        return new OleDbConnection(connection_string_) as U;
                 }
             }
             catch(Exception e) {
                 throw new ProviderException(StringResources.DataProvider_Connection, e);
             }
-            throw new ProviderException(StringResources.DataProvider_Connection, e);
+            throw new ProviderException(StringResources.DataProvider_Connection);
         }
 
         /// <summary>
         /// Gets the string used to open the connection.
         /// </summary>
         public string ConnectionString {
-            get { return database_owner_; }
+            get { return connection_string_; }
         }
 
         /// <summary>
         /// Gets the name of the owner of the database.
         /// </summary>
         public string DatabaseOwner {
-            get { return connection_string_; }
+            get { return database_owner_; }
         }
 
         /// <summary>

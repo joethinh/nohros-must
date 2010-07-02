@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
+using System.Data.SqlClient;
 
 using Nohros.Data;
 
@@ -23,7 +24,7 @@ namespace Nohros.Test
                     />
                 </providers>
                 <strings>
-                    <mssql dbowner=""dbo"" dbstring=""datasource=; usr=; pwd="" />
+                    <mssql dbowner=""dbo"" dbstring=""Data Source='localhost';Initial Catalog='Hydra';User ID='nohros';Password='Noors03';Asynchronous Processing=true;"" />
                 </strings>
               </xml>";
 
@@ -41,6 +42,13 @@ namespace Nohros.Test
         }
 
         protected GenericDataProvider(string owner, string dbstring):base(owner, dbstring) {
+        }
+
+        public void QuerySomething() {
+            Assert.DoesNotThrow(delegate() {
+                using (SqlConnection conn = GetDbConnection<SqlConnection>()) {
+                }
+            });
         }
 
         public static GenericDataProvider Instance
@@ -71,7 +79,7 @@ namespace Nohros.Test
                     />
                 </providers>
                 <strings>
-                    <mssql dbowner=""dbo"" dbstring=""datasource=; usr=; pwd="" />
+                    <mssql dbowner=""dbo"" dbstring=""Data Source='localhost';Initial Catalog='Hydra';User ID='nohros';Password='Noors03';Asynchronous Processing=true;"" />
                 </strings>
               </xml>";
 
@@ -86,7 +94,7 @@ namespace Nohros.Test
                     />
                 </providers>
                 <strings>
-                    <mssql dbowner=""dbo"" dbstring=""datasource=; usr=; pwd="" />
+                    <mssql dbowner=""dbo"" dbstring=""Data Source='localhost';Initial Catalog='Hydra';User ID='nohros';Password='Noors03';Asynchronous Processing=true;"" />
                 </strings>
               </xml>";
 
@@ -105,7 +113,7 @@ namespace Nohros.Test
 
             document.LoadXml(xml_node_repository);
             provider = new Provider(document.SelectSingleNode("//providers/add"));
-            Assert.AreEqual(provider.ConnectionString, "datasource=; usr=; pwd=");
+            Assert.AreEqual(provider.ConnectionString, "Data Source='localhost';Initial Catalog='Hydra';User ID='nohros';Password='Noors03';Asynchronous Processing=true;");
             Assert.AreEqual(provider.DatabaseOwner, "dbo");
             Assert.AreEqual(provider.ConnectionStringsRepository, ConnectionStringsRepository.ConfigurationFile);
             Assert.AreEqual(provider.DataSourceType, DataSourceType.MsSql);
@@ -116,8 +124,10 @@ namespace Nohros.Test
         {
             GenericDataProvider data_provider_impl = GenericDataProvider.Instance;
             Assert.AreEqual(data_provider_impl.DatabaseOwner, "dbo");
-            Assert.AreEqual(data_provider_impl.ConnectionString, "datasource=; usr=; pwd=");
+            Assert.AreEqual(data_provider_impl.ConnectionString, "Data Source='localhost';Initial Catalog='Hydra';User ID='nohros';Password='Noors03';Asynchronous Processing=true;");
             Assert.IsInstanceOf<SqlGenericDataProvider>(data_provider_impl);
+
+            data_provider_impl.QuerySomething();
         }
     }
 }
