@@ -74,10 +74,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\base\common\common.csproj">
-      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
-      <Name>common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\platform\web\web.csproj">
       <Project>{ABF8260D-F80B-453C-8016-44AA75670DA3}</Project>
       <Name>web</Name>
