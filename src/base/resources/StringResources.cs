@@ -187,6 +187,14 @@ namespace Nohros.Resources
             get { return GetString("Generic_SyntaxError"); }
         }
 
+        /// <summary>
+        /// Looks up a localized string similar to [The number of specified fields is less than the number of columns.].
+        /// </summary>
+        internal static string DataHelper_OrdArrInvalidOfLen
+        {
+            get { return GetString("DataHelper_OrdArrInvalidOfLen"); }
+        }
+
         #region JSON
         /// <summary>
         ///   Looks up a localized string similar to [Root value must be an array or object].

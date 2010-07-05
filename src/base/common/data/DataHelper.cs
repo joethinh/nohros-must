@@ -6,6 +6,8 @@ using System.Data;
 using System.Reflection;
 using System.IO;
 
+using Nohros.Resources;
+
 namespace Nohros.Data
 {
     /// <summary>
@@ -14,6 +16,29 @@ namespace Nohros.Data
     public class DataHelper
     {
         #region SQL helpers
+
+        /// <summary>
+        /// Return the indexes of the named fields.
+        /// </summary>
+        /// <param name="dr">The IDataReader that contains the fileds to get ordinals.</param>
+        /// <param name="names">A string array containing the names of the fields to find.</param>
+        /// <returns>An array containing the indexes  of the specified column names within the <paramref name="IDataReader"/></returns>
+        /// <remarks>Ordinal-based lookups are more efficient than name lookups, it is inefficient to call
+        /// <see cref="IDataReader.GetOrdinal"/> within loop. This method provides a convenient way to call the <see cref="IDataReader.GetOrdinal"/>
+        /// method for a set of columns defined within the <paramref name="IDataReader"/> and reduce the code len used for that purpose.
+        /// <exception cref="ArgumentOutOfRangeException">The number of specified fields is less than the number of columns.</exception>
+        public static int[] GetOrdinals(IDataReader dr, params object[] names) {
+            int[] ordinals = new int[names.Length];
+
+            int j = names.Length;
+            if (dr.FieldCount < j)
+                throw new ArgumentOutOfRangeException(StringResources.DataHelper_OrdArrInvalidOfLen);
+
+            for (int i = 0; i < j; i++)
+                ordinals[i] = dr.GetOrdinal((string)names[i]);
+            return ordinals;
+        }
+
         /// <summary>
         /// Return the indexes of the named fields.
         /// </summary>
