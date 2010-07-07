@@ -51,8 +51,8 @@ namespace Nohros
 
             try
             {
-                // Generate a new RSA public/private registry_key pair
-                // This registry_key will be used to signature the DES IV and Key.
+                // Generate a new RSA public/private key pair
+                // This key will be used to signature the DES IV and Key.
                 RSACryptoServiceProvider jRsa = new RSACryptoServiceProvider();
 
                 byte[] signature = jRsa.SignData(sign, new MD5CryptoServiceProvider());

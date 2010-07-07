@@ -161,7 +161,7 @@ namespace Nohros.Data
         /// Initializes a new instance of the <see cref="Provider"/> class by using the specified
         /// registry key repository.
         /// </summary>
-        /// <param name="attributes">A registry_key-level node in the windows registry containing
+        /// <param name="attributes">A key-level node in the windows registry containing
         /// the attributes for the provider.</param>
         /// <remarks>If the <paramref name="attributes"/> argument does not have
         /// a definition for the configReposirory attribute, this constructor will

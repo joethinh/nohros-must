@@ -141,7 +141,7 @@ namespace Nohros.Configuration
         /// <code>
         /// &lt;configuration&gt;
         ///		&lt;appSettings&gt;
-        ///			&lt;add registry_key="my-custom-config-file-path" value="MyCustom.config"/&gt;
+        ///			&lt;add key="my-custom-config-file-path" value="MyCustom.config"/&gt;
         ///		&lt;/appSettings&gt;
         ///	&lt;/configuration&gt;
         /// </code>

@@ -18,7 +18,7 @@ namespace Nohros.Net
     {
         /// <summary>
         /// To enable the client to poll for the results of the asynchronous call,
-        /// create a state class taht maintains registry_key information about the method call.
+        /// create a state class taht maintains key information about the method call.
         /// We need this information to resynchronoze the results from the callback with
         /// the caller's original request context.
         /// </summary>
@@ -118,7 +118,7 @@ namespace Nohros.Net
 
         /// <summary>
         /// Callback method. When the results are returned from the called method, they are stored
-        /// in the data store by using the MethodGuid as the registry_key until the data is polled for and
+        /// in the data store by using the MethodGuid as the key until the data is polled for and
         /// retrieved by the client.
         /// </summary>
         /// <param name="result"></param>

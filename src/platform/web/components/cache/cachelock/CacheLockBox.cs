@@ -17,10 +17,10 @@ namespace Nohros.Net
         /// <summary>
         /// Adds the specified lock entry to the lock entries table.
         /// </summary>
-        /// <param name="registry_key">the identifier for the lock entry to add</param>
+        /// <param name="key">the identifier for the lock entry to add</param>
         /// <param name="entry">the lock entry to add</param>
         /// <remarks>
-        /// If the registry_key already exists this last used property will be updated
+        /// If the key already exists this last used property will be updated
         /// </remarks>
         public static void Add(string key, CacheEntry entry)
         {
@@ -61,7 +61,7 @@ namespace Nohros.Net
                 if (TryGetCacheEntry(key, out entry))
                     return entry.InternalLocker;
 
-                return new Exception("Cache entry for registry_key" + key + "does not exist. We need to set a CacheEntry first.");
+                return new Exception("Cache entry for key" + key + "does not exist. We need to set a CacheEntry first.");
             }
         }
 
@@ -69,15 +69,15 @@ namespace Nohros.Net
         /// Gets an object that can be used to synchronize access to a
         /// cached object.
         /// </summary>
-        /// <param name="registry_key">the identifier for the cached object</param>
+        /// <param name="key">the identifier for the cached object</param>
         /// <returns>An object that can  be used to synchronize access to a
         /// cached object</returns>
         /// <remarks>
-        /// This method must be used only when you sure of the existence of the registry_key.
-        /// If you does not know if the registry_key exists or not use
+        /// This method must be used only when you sure of the existence of the key.
+        /// If you does not know if the key exists or not use
         /// the <see cref="GetLock(String, TimeSpan, TimeSpan, NCache.CacheLoaderDelegate)"/> overload.
         /// </remarks>
-        /// <exception cref="KeyNotFoundException">the registry_key does not exists in the lock entries table</exception>
+        /// <exception cref="KeyNotFoundException">the key does not exists in the lock entries table</exception>
         /// <seealso cref="GetLock(String, TimeSpan, TimeSpan, NCache.CacheLoaderDelegate)"/>
         public static object GetLock(string key)
         {
@@ -89,14 +89,14 @@ namespace Nohros.Net
                     entry.LastUse = DateTime.Now;
                     return entry.Locker;
                 }
-                return new KeyNotFoundException("the registry_key does not exists in the lock box");
+                return new KeyNotFoundException("the key does not exists in the lock box");
             }
         }
 
         /// <summary>
-        /// Gets a cache entry lock for the object related with the specified registry_key
+        /// Gets a cache entry lock for the object related with the specified key
         /// </summary>
-        /// <param name="registry_key">the identifier for the cache item to retrieve</param>
+        /// <param name="key">the identifier for the cache item to retrieve</param>
         /// <param name="refreshInterval"></param>
         /// <param name="slidingExpiration">the interval between the time the added object
         /// was last accessed and the time at wich that object expires. If
@@ -106,7 +106,7 @@ namespace Nohros.Net
         /// the object when it is removed from the cache</param>
         /// <returns>an object that can be used to synchronize access to the cached object</returns>
         /// <remarks>
-        /// If the specified registry_key is not found, a new lock entry will be created for it.
+        /// If the specified key is not found, a new lock entry will be created for it.
         /// </remarks>
         public static object GetLock(string key, TimeSpan refreshInterval, TimeSpan slidingExpiration, NCache.CacheLoaderDelegate cacheLoader)
         {
@@ -136,9 +136,9 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Updates the time the lock entry related with the specified registry_key was last used.
+        /// Updates the time the lock entry related with the specified key was last used.
         /// </summary>
-        /// <param name="registry_key">the identifier for the lock entry</param>
+        /// <param name="key">the identifier for the lock entry</param>
         /// <param name="lastUpdate">The time the current entry lock was last used</param>
         public static void UpdateCacheEntry(string key, DateTime lastUpdate)
         {
@@ -151,17 +151,17 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Removes the element with the specified registry_key from the lock entries table.
+        /// Removes the element with the specified key from the lock entries table.
         /// </summary>
-        /// <param name="registry_key">the registry_key of the element to remove</param>
-        /// <exception cref="ArgumentNullException">registry_key is null</exception>
+        /// <param name="key">the key of the element to remove</param>
+        /// <exception cref="ArgumentNullException">key is null</exception>
         /// <returns>true if the element is sucessfully found and removed; otherwise, false.
-        /// This method returns false if registry_key is not found.
+        /// This method returns false if key is not found.
         /// </returns>
         public static bool Remove(string key)
         {
             if (key == null)
-                throw new ArgumentNullException("registry_key is null");
+                throw new ArgumentNullException("key is null");
 
             lock(_writeLock)
                 return Instance.Remove(key);

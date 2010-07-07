@@ -39,8 +39,8 @@ namespace Nohros.Net
         /// </summary>
         /// <param name="equalityComparer">The IEqualityComparer object that defines the hash code
         /// provider and the comparer to use with the NHashtable object.-or- null to use the default
-        /// hash code provider and the default comparer. The default hash code provider is each registry_key's
-        /// implementation of GetHashCode and the default comparer is each registry_key's implementation of Equals.
+        /// hash code provider and the default comparer. The default hash code provider is each key's
+        /// implementation of GetHashCode and the default comparer is each key's implementation of Equals.
         /// </param>
         public NHashtable(IEqualityComparer equalityComparer)
             : this(0, (float)1f, equalityComparer) {
@@ -65,8 +65,8 @@ namespace Nohros.Net
         /// <param name="d">The IDictionary object to copy to a new NHashtable object.</param>
         /// <param name="equalityComparer">The IEqualityComparer object that defines the hash code provider and
         /// the comparer to use with the NHashtable.-or- null to use the default hash code provider and the default
-        /// comparer. The default hash code provider is each registry_key's implementation og GetHashCode and the default
-        /// comparer is each registry_key's implementation of Equals.</param>
+        /// comparer. The default hash code provider is each key's implementation og GetHashCode and the default
+        /// comparer is each key's implementation of Equals.</param>
         /// <exception cref="ArgumentNullException">d is null</exception>
         public NHashtable(IDictionary d, IEqualityComparer equalityComparer)
             : this(d, (float)1f, equalityComparer) {
@@ -93,8 +93,8 @@ namespace Nohros.Net
         /// <param name="capacity">The approximate number of elements that the NHashtable object can initially contain.</param>
         /// <param name="equalityComparer">The IEqualityComparer object that defines the hash code provider and the
         /// comparer to use with the Hashtable.-or- null to use the default hash code provider and the default comparer.
-        /// The default hash code provider is each registry_key's implementation of GetHashCode and the default comparer is each
-        /// registry_key's implementation of Equals.</param>
+        /// The default hash code provider is each key's implementation of GetHashCode and the default comparer is each
+        /// key's implementation of Equals.</param>
         /// <exception cref="ArgumentOutOfRangeException">capacity is less than zero.</exception>
         public NHashtable(int capacity, IEqualityComparer equalityComparer)
             : this(capacity, (float)1f, equalityComparer) {
@@ -123,8 +123,8 @@ namespace Nohros.Net
         /// default value which provides the best performance. The result is the maximum ratio of elements to buckets.</param>
         /// <param name="equalityComparer">The IEqualityComparer object that defines the hash code provider and
         /// the comparer to use with the Hashtable.-or- null to use the default hash code provider and the default
-        /// comparer. The default hash code provider is each registry_key's implementation of GetHashCode and the default
-        /// comparer is each registry_key's implementation of Equals.</param>
+        /// comparer. The default hash code provider is each key's implementation of GetHashCode and the default
+        /// comparer is each key's implementation of Equals.</param>
         public NHashtable(IDictionary d, float loadFactor, IEqualityComparer equalityComparer): base(d, loadFactor, equalityComparer) {
             _hashkey = Guid.NewGuid().ToString("N");
         }
@@ -138,8 +138,8 @@ namespace Nohros.Net
         /// value which provides the best performance. The result is the maximum ratio of elements to buckets.</param>
         /// <param name="equalityComparer">The IEqualityComparer object that defines the hash code provider and the
         /// comparer to use with the Hashtable.-or- null to use the default hash code provider and the default comparer.
-        /// The default hash code provider is each registry_key's implementation of GetHashCode and the default comparer is each
-        /// registry_key's implementation of Equals.</param>
+        /// The default hash code provider is each key's implementation of GetHashCode and the default comparer is each
+        /// key's implementation of Equals.</param>
         public NHashtable(int capacity, float loadFactor, IEqualityComparer equalityComparer): base(capacity, loadFactor, equalityComparer) {
             _hashkey = Guid.NewGuid().ToString("N");
         }
@@ -147,19 +147,19 @@ namespace Nohros.Net
 
         #region void Add(...)
         /// <summary>
-        /// Adds an element with the specified registry_key and value into the NHashtable
+        /// Adds an element with the specified key and value into the NHashtable
         /// </summary>
-        /// <param name="registry_key">The value of the element to add. The value can be null</param>
-        /// <param name="value">The registry_key of the element to add</param>
+        /// <param name="key">The value of the element to add. The value can be null</param>
+        /// <param name="value">The key of the element to add</param>
         public void Add(string key, object value)
         {
             base[CacheKey(key, _hashkey)] = value;
         }
 
         /// <summary>
-        /// Adds an item to the NHashtable by using the specified registry_key and expiration.
+        /// Adds an item to the NHashtable by using the specified key and expiration.
         /// </summary>
-        /// <param name="registry_key">The registry_key used to reference the item.</param>
+        /// <param name="key">The key used to reference the item.</param>
         /// <param name="value">The item to be added to the cache.</param>
         /// <param name="slidingExpiration">The interval between the time the added object was last accessed
         /// and the timeat which that objetc expires. If this value is the equivalent of 1 minute, the object expires
@@ -202,9 +202,9 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Removes the element with the specified registry_key from the NHashtable
+        /// Removes the element with the specified key from the NHashtable
         /// </summary>
-        /// <param name="registry_key">The registry_key of the element to remove</param>
+        /// <param name="key">The key of the element to remove</param>
         public void Remove(string key)
         {
             string cacheKey = CacheKey(key, _hashkey);
@@ -224,9 +224,9 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Gets a registry_key thats uniquely identifies a item on the ASP.NET cache.
+        /// Gets a key thats uniquely identifies a item on the ASP.NET cache.
         /// </summary>
-        /// <param name="registry_key"></param>
+        /// <param name="key"></param>
         /// <returns></returns>
         internal static string CacheKey(string key, string hashkey)
         {
@@ -236,7 +236,7 @@ namespace Nohros.Net
         /// <summary>
         /// Callback function used to re-insert a expired cached object into the cache
         /// </summary>
-        /// <param name="registry_key">The registry_key used to put the object on the cache</param>
+        /// <param name="key">The key used to put the object on the cache</param>
         internal static object InternalCallback(string cacheKey)
         {
             CacheEntry cacheEntry = null;
@@ -262,7 +262,7 @@ namespace Nohros.Net
         /// <summary>
         /// Callback method called when a object is removed for the ASP.NET cache.
         /// </summary>
-        /// <param name="registry_key"></param>
+        /// <param name="key"></param>
         /// <param name="value"></param>
         /// <param name="reason">The reason an item was removed from the ASP.NET cache</param>
         internal static void ItemRemovedCallback(string cacheKey, object value, CacheItemRemovedReason reason)

@@ -30,9 +30,9 @@ namespace Nohros.Data
 
         /// <summary>
         /// Initializes a new instance of the AndersonTreeNode by using the
-        /// specified registry_key, value and sentinel node.
+        /// specified key, value and sentinel node.
         /// </summary>
-        /// <param name="registry_key">The registry_key of the node</param>
+        /// <param name="key">The key of the node</param>
         /// <param name="value">The value of the node</param>
         /// <param name="sentinel">The sentinel node</param>
         public AndersonTreeNode(TKey key, TValue value, AndersonTreeNode<TKey, TValue> sentinel)
@@ -88,7 +88,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Gets or sets the registry_key of the current node.
+        /// Gets or sets the key of the current node.
         /// </summary>
         public TKey Key
         {

@@ -52,7 +52,7 @@ namespace Nohros.Security.Auth
     /// are passed directly to the underlying login modules. Options are defined by the login module itself,
     /// and control the behavior within it. For example, a login module may define options to support
     /// debugging/testing capabilities. The default way to specify options in the configuration is by
-    /// using the following syntax: <optionname>optionvalue</optionname>. The registry_key must be a child node
+    /// using the following syntax: <optionname>optionvalue</optionname>. The key must be a child node
     /// of a the module node and the value should be the value of that node. If a string in the
     /// form ${system.enviroment.property}, occurs in the value, it will be expanded to the value of the
     /// system property. Note that there is no limit to the number of options a login module may define.
@@ -88,7 +88,7 @@ namespace Nohros.Security.Auth
     /// <see cref="ILoginConfiguration.LoginConfiguration()"/> instantiate the default LoginConfiguration
     /// implementation(a default subclass implementation of this abstract class). The default
     /// LoginConfiguration subclass implementation can be changed by setting the value of the
-    /// LoginConfigurationProvider registry_key of the AppSettings node of the application configuration file
+    /// LoginConfigurationProvider key of the AppSettings node of the application configuration file
     /// to the fully qualified name of the desired ILoginConfiguration subclass implementation. The
     /// application configuration file is either <c>MyAppNAme.exe.config</c> for a normal application
     /// or <c>Web.config</c> for an ASP.NET application.
@@ -112,7 +112,7 @@ namespace Nohros.Security.Auth
         /// <returns>A instance of the ILoginConfiguration class</returns>
         /// <remarks>
         /// The default LoginConfiguration implementation can be changed by setting the value of the
-        /// LoginConfigurationProvider registry_key of the AppSettings node of the application configuration file
+        /// LoginConfigurationProvider key of the AppSettings node of the application configuration file
         /// to the fully qualified name of the desired ILoginConfiguration subclass implementation
         /// </remarks>
         public static ILoginConfiguration LoginConfiguration

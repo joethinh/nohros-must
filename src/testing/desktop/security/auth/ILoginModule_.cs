@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 using Nohros.Security.Auth;
 
-namespace Assemblies
+namespace Nohros.Test.Security.Auth
 {
     public class ILoginModule_ : ILoginModule
     {
