@@ -4,10 +4,10 @@ using System.Text;
 using NUnit.Framework;
 using Nohros.Data;
 
-namespace Nohros.Testing
+namespace Nohros.Test.Data.JSon
 {
     [TestFixture]
-    public class _JSONReader
+    public class JSONReader_
     {
         [Test]
         public void ParseInt()
@@ -20,29 +20,29 @@ namespace Nohros.Testing
 
             // int parse
             int i;
-            Assert.AreEqual(dict.GetInteger("number", out i), true);
+            Assert.AreEqual(true, dict.GetInteger("number", out i));
             Assert.AreEqual(i, 10);
 
             // exponential int
-            Assert.AreEqual(dict.GetInteger("numbere", out i), true);
+            Assert.AreEqual(true, dict.GetInteger("numbere", out i));
             Assert.AreEqual(i, 10e5);
 
             // real number
             double d;
-            Assert.AreEqual(dict.GetReal("real", out d), true);
+            Assert.AreEqual(true, dict.GetReal("real", out d));
             Assert.AreEqual(d, 10.01);
 
             // fractional
-            Assert.AreEqual(dict.GetReal("frac", out d), true);
+            Assert.AreEqual(true, dict.GetReal("frac", out d));
             Assert.AreEqual(d, -10.00e-5);
 
             // string parse
             string s;
-            Assert.AreEqual(dict.GetString("string", out s), true);
+            Assert.AreEqual(true, dict.GetString("string", out s));
             Assert.AreEqual(s, "5478\n965");
 
             // comment
-            Assert.AreEqual(dict.GetString("string_comment", out s), true);
+            Assert.AreEqual(true, dict.GetString("string_comment", out s));
             Assert.AreEqual(s, "teste50125");
 
             // invalid numbers

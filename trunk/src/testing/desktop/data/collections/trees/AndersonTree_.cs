@@ -5,10 +5,10 @@ using NUnit.Framework;
 
 using Nohros.Data;
 
-namespace desktdd
+namespace Nohros.Test.Data.Tree
 {
     [TestFixture]
-    public class AndersonTreeTest
+    public class AndersonTree_
     {
         [Test]
         public void Add()
