@@ -40,11 +40,11 @@
   <ItemGroup>
     <Compile Include="data\collections\trees\AndersonTree_.cs" />
     <Compile Include="configuration\IConfiguration_.cs" />
-    <Compile Include="Provider_.cs" />
+    <Compile Include="data\Provider_.cs" />
     <Compile Include="security\auth\LoginContext_.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="security\auth\SampleLoginModule.cs" />
+    <Compile Include="security\auth\ILoginModule_.cs" />
     <Compile Include="Thrower_.cs" />
     <Compile Include="data\dto\TransferQueue_.cs" />
     <Compile Include="data\json\JSONReader_.cs" />

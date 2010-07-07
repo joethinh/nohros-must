@@ -291,9 +291,9 @@ namespace Nohros.Net
         /// <summary>
         /// Retrieves the specified item from the NCache object.
         /// </summary>
-        /// <param name="registry_key">the identifier for the cache item to retrieve</param>
+        /// <param name="key">the identifier for the cache item to retrieve</param>
         /// <returns>the retrieved cache item</returns>
-        /// <exception cref="KeyNotFoundException">the registry_key does not exists in cache</exception>
+        /// <exception cref="KeyNotFoundException">the key does not exists in cache</exception>
         public static T Get(string key)
         {
             CacheEntry entry = null;
@@ -307,13 +307,13 @@ namespace Nohros.Net
                     return local;
                 }
             }
-            throw new Exception("CacheEntry for registry_key" + key + "does not exist. Please call a different overload of NCahe<T>.Get() to set the CacheEntry properties_.");
+            throw new Exception("CacheEntry for key" + key + "does not exist. Please call a different overload of NCahe<T>.Get() to set the CacheEntry properties_.");
         }
 
         /// <summary>
         /// Retrieves the specified item from the NCache object.
         /// </summary>
-        /// <param name="registry_key">The cache registry_key used to reference the item</param>
+        /// <param name="key">The cache key used to reference the item</param>
         /// <param name="refreshIntervalSeconds"></param>
         /// <param name="slidingExpirationSeconds">The interval between the time the added
         /// object was last accessed and the time at which that object expires. If this value
@@ -323,7 +323,7 @@ namespace Nohros.Net
         /// <param name="loaderDelegate">A delegate that, if provided, is called to reload the
         /// object when it is removed from the cache.
         /// </param>
-        /// <returns>The retrieved cache item, or null if the registry_key is not found and the
+        /// <returns>The retrieved cache item, or null if the key is not found and the
         /// <paramref name="loaderDelegate"/> was not supplied</returns>
         public static T Get(string key, int refreshIntervalSeconds, int slidingExpirationSeconds, NCache.CacheLoaderDelegate loaderDelegate)
         {
@@ -333,7 +333,7 @@ namespace Nohros.Net
         /// <summary>
         /// Retrieves the specified item from the NCache object.
         /// </summary>
-        /// <param name="registry_key">The cache registry_key used to reference the item</param>
+        /// <param name="key">The cache key used to reference the item</param>
         /// <param name="refreshInterval"></param>
         /// <param name="slidingExpiration">The interval between the time the added
         /// object was last accessed and the time at which that object expires. If this value
@@ -343,10 +343,10 @@ namespace Nohros.Net
         /// <param name="loaderDelegate">A delegate that, if provided, is called to reload the
         /// object when it is removed from the cache.
         /// </param>
-        /// <returns>The retrieved cache item, or null if the registry_key is not found and the
+        /// <returns>The retrieved cache item, or null if the key is not found and the
         /// <paramref name="loaderDelegate"/> was not supplied</returns>
         /// <remarks>
-        /// If the registry_key is not found this method tries to call the <paramref name="loaderDelegate"/> delegate to
+        /// If the key is not found this method tries to call the <paramref name="loaderDelegate"/> delegate to
         /// load the object and then adds the result to the cache.
         /// </remarks>
         public static T Get(string key, TimeSpan refreshInterval, TimeSpan slidingExpiration, NCache.CacheLoaderDelegate loaderDelegate)
@@ -363,7 +363,7 @@ namespace Nohros.Net
         /// <summary>
         /// Updates a cached object
         /// </summary>
-        /// <param name="registry_key">the identifier for the cached object</param>
+        /// <param name="key">the identifier for the cached object</param>
         /// <returns>true if the object is found and updated</returns>
         /// <remarks>
         /// The object will be update by using the loader delegate that was

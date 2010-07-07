@@ -168,10 +168,10 @@ namespace Nohros.Data
         /// </summary>
         /// <param name="path">The path to get</param>
         /// <param name="out_value"></param>
-        /// <returns>A path has the form "&alt;registry_key&gt" or "&alt;registry_key&gt.&alt;registry_key&gt.[...]", where
+        /// <returns>A path has the form "&alt;key&gt" or "&alt;key&gt.&alt;key&gt.[...]", where
         /// "." indexes into the next <typeparamref name="Nohros.Data.DictionaryValue"/> down.
         /// <para>
-        /// If the path can be resolved successfully, the value for the last registry_key in the path will
+        /// If the path can be resolved successfully, the value for the last key in the path will
         /// be returned through the "value" parameter, and the function will return true.
         /// Otherwise, it will return false and "value" will contains null.
         /// </para>
@@ -323,10 +323,10 @@ namespace Nohros.Data
         /// from this object.
         /// </summary>
         /// <param name="path">The path to get</param>
-        /// <returns>The value of the last registry_key in the path if it can be resolved successfully;
+        /// <returns>The value of the last key in the path if it can be resolved successfully;
         /// otherwise, it will return a null reference.
         /// </returns>
-        /// <remarks>A path has the form "&lt;registry_key&gt" or "&lt;registry_key&gt.&lt;registry_key&gt.[...]", where
+        /// <remarks>A path has the form "&lt;key&gt" or "&lt;key&gt.&lt;key&gt.[...]", where
         /// "." indexes into the next <typeparamref name="Nohros.Data.DictionaryValue"/> down.
         /// </remarks>
 
@@ -336,9 +336,9 @@ namespace Nohros.Data
         /// </summary>
         /// <param name="path">The path to get</param>
         /// <param name="out_value">When this method returns <paramref name="out_value"/> contains the
-        /// value for the last registry_key in the path if it can be resolved successfully; otherwise, the <paramref name="out_value"/>
+        /// value for the last key in the path if it can be resolved successfully; otherwise, the <paramref name="out_value"/>
         /// will contain a null reference.</param>
-        /// <remarks>A path has the form "&alt;registry_key&gt" or "&alt;registry_key&gt.&alt;registry_key&gt.[...]", where
+        /// <remarks>A path has the form "&alt;key&gt" or "&alt;key&gt.&alt;key&gt.[...]", where
         /// "." indexes into the next <typeparamref name="Nohros.Data.DictionaryValue"/> down.
         /// </remarks>
         public bool Get(string path, Value out_value)

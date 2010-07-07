@@ -27,7 +27,7 @@ namespace Nohros.Security.Auth
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string configFile = ConfigurationManager.AppSettings["LoginConfigurationFile"] as string;
             if (configFile == null)
-                throw new LoginException("The LoginConfigurationFile registry_key was not defined");
+                throw new LoginException("The LoginConfigurationFile key was not defined");
 
             if (configFile.StartsWith("~/"))
                 configFile = Path.Combine(basePath, configFile.Substring(2));

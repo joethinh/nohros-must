@@ -269,7 +269,7 @@ namespace Nohros.Data
                             if (dict_key_value == null)
                                 return null;
 
-                            // Converts the registry_key into a string.
+                            // Converts the key into a string.
                             string dict_key;
                             bool success = dict_key_value.GetAsString(out dict_key);
 
@@ -287,7 +287,7 @@ namespace Nohros.Data
 
                             (node as DictionaryValue).Set(dict_key, dict_value);
 
-                            // After a registry_key value pair, we expect a comma or the end of the object
+                            // After a key value pair, we expect a comma or the end of the object
                             token = ParseToken();
                             if (token.type == Token.TokenType.LIST_SEPARATOR) {
                                 json_pos_ += token.length;

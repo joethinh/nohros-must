@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 
 using Nohros.Data;
 
-namespace Nohros.Test
+namespace Nohros.Test.Data
 {
     public abstract class GenericDataProvider : DataProvider<GenericDataProvider>
     {
@@ -17,7 +17,7 @@ namespace Nohros.Test
                 <providers>
                     <add
                         name=""GenericProvider""
-                        type=""Nohros.Test.SqlGenericDataProvider, nohros.test.assemblies""
+                        type=""Nohros.Test.Data.SqlGenericDataProvider, nohros.test.desktop""
                         databaseOwner=""strings/mssql/@dbowner""
                         connectionString=""strings/mssql/@dbstring""
                         dataSourceType=""mssql""
@@ -72,7 +72,7 @@ namespace Nohros.Test
                 <providers>
                     <add
                         name=""GenericProvider""
-                        type=""Nohros.Test.ProviderType_, nohros.test.assemblies""
+                        type=""Nohros.Test.ProviderType_, nohros.test.desktop""
                         databaseOwner=""strings/mssql/@dbowner""
                         connectionString=""strings/mssql/@dbstring""
                         dataSourceType=""mssql""
@@ -88,7 +88,7 @@ namespace Nohros.Test
                 <providers>
                     <add
                         name=""MyName""
-                        type=""Nohros.Test.ProviderType_, nohros.test.assemblies""
+                        type=""Nohros.Test.ProviderType_, nohros.test.desktop""
                         databaseOwner=""strings/mssql/@dbowner""
                         dataSourceType=""mssql""
                     />
