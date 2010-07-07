@@ -5,10 +5,10 @@ using NUnit.Framework;
 
 using Nohros.Data;
 
-namespace desktdd
+namespace Nohros.Test.Data.DataTransferObjects
 {
     [TestFixture]
-    public class TransferQueueTest
+    public class TransferQueue_
     {
         [Test]
         public void Enqueue()

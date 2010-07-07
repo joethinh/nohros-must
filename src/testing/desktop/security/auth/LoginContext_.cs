@@ -6,10 +6,10 @@ using NUnit.Framework;
 using Nohros.Security;
 using Nohros.Security.Auth;
 
-namespace desktdd
+namespace Nohros.Test.Security.Auth
 {
     [TestFixture]
-    public class LoginContextTests
+    public class LoginContext_
     {
         [Test]
         public void ctor()
