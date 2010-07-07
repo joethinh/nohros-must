@@ -20,7 +20,7 @@ namespace Nohros.Configuration
     {
         FileInfo config_file_;
 
-        Dictionary<string, Value> properties_;
+        DictionaryValue properties_;
 
         /// <summary>
         /// A collection of the parsed data providers.
@@ -37,24 +37,26 @@ namespace Nohros.Configuration
         /// </summary>
         protected const string kDefaultNamespace = "nhs-nsdefault";
 
-        /// <summary>
-        /// The name of the providers registry_key.
-        /// </summary>
-        protected const string kProvidersNodeName = "nhs-providers";
+        string providers_node_name_;
+        string properties_node_name_;
 
         #region .ctor
-        static IConfiguration()
-        {
+        /// <summary>
+        /// Protected member initializer.
+        /// </summary>
+        protected IConfiguration(): this("nhs-properties", "nhs_providers") {
         }
 
         /// <summary>
-        /// protected member initializer.
+        /// Initializes a new instance of the IConfiguration class by using th specified
+        /// properties and providers node name.
         /// </summary>
-        protected IConfiguration()
-        {
-            properties_ = new Dictionary<string, Value>(StringComparer.OrdinalIgnoreCase);
+        protected IConfiguration(string providers_node_name, string properties_node_name) {
+            properties_ = new DictionaryValue();
             providers_ = new Dictionary<string, Provider>(StringComparer.OrdinalIgnoreCase);
             element_ = null;
+            properties_node_name_ = properties_node_name;
+            providers_node_name_ = providers_node_name;
         }
         #endregion
 
@@ -97,7 +99,7 @@ namespace Nohros.Configuration
         /// Load the configuration values using the specified configuration file.
         /// </summary>
         /// <param name="config_file_name">The name of the configuration file.</param>
-        /// <param name="root_node_name">the name of the XmlNode that contains the configuration data.</param>
+        /// <param name="root_node_name">the xpath of the node that contains the configuration data.</param>
         /// <remarks>
         /// This method assumes that the specified configuration file is located in the application
         /// base directory.
@@ -118,7 +120,7 @@ namespace Nohros.Configuration
         /// Load the configuation values using the specified configuration file and node name.
         /// </summary>
         /// <param name="config_file_info">the XML configuration file to load the configuration from.</param>
-        /// <param name="root_node_name">the name of the XmlNode that contains the configuration data.</param>
+        /// <param name="root_node_name">the xpath of the node that contains the configuration data.</param>
         /// <remarks>
         /// <para>
         /// The config file could be specified in the applications configuration file (either 
@@ -177,7 +179,7 @@ namespace Nohros.Configuration
                 }
                 else
                 {
-                    throw new System.IO.FileNotFoundException(config_file_info.FullName);
+                    throw new System.IO.FileNotFoundException(string.Format(StringResources.Config_FileNotFound_Path, config_file_info.FullName));
                 }
             }
         }
@@ -187,7 +189,7 @@ namespace Nohros.Configuration
         /// and reload the configuration if a change is detected.
         /// </summary>
         /// <param name="config_file_name">The name of the configuration file.</param>
-        /// <param name="root_node_name">the name of the XmlNode that contains the configuration data</param>
+        /// <param name="root_node_name">the xpath of the node that contains the configuration data.</param>
         /// <remarks>
         /// This method assumes that the specified configuration file is located in the application
         /// base directory.
@@ -216,7 +218,7 @@ namespace Nohros.Configuration
         /// and reload the configuration if a change is detected.
         /// </summary>
         /// <param name="config_file_info">The XML config file to load the configuration from.</param>
-        /// <param name="root_node_name">the name of the XmlNode that contains the configuration data</param>
+        /// <param name="root_node_name">the xpath of the node that contains the configuration data.</param>
         /// <remarks>
         /// The configuration file must be valid XML. It must contain at least one element called
         /// <paramref name="root_node_name"/> that contains the configuration data.
@@ -310,14 +312,14 @@ namespace Nohros.Configuration
         /// <param name="element">the root element to parse</param>
         /// <remarks>
         /// If a derived class contains a property whose name are equals to the name of an
-        /// XML attribute of the root node and if the property is writtable and it type is a
-        /// ValueType or a String, we will try to set the value of this property to the value
-        /// of the XML attribute. If the value of the XML attribute could not be converted to
-        /// the Type of the property it will not be setted.
+        /// XML attribute of the <paramref name="element"/> node and if the property is writtable
+        /// and it type is a ValueType or a String, we will try to set the value of this property to
+        /// the value of the XML attribute. If the value of the XML attribute could not be converted to
+        /// the Type of the property the property value will not be set.
         /// <para>
         /// We do not want to throw an exception inside a protected method. So, the caller must
         /// ensure that the elelement is a valid XML element. If the specified XML element is a null
-        /// refrence this method will return silent.
+        /// refrence this method returns silently.
         /// </para>
         /// </remarks>
         protected void Parse(XmlElement element)
@@ -354,11 +356,11 @@ namespace Nohros.Configuration
 
             foreach (XmlElement child in element.ChildNodes) {
                 // load the dynamic properties
-                if (string.Compare(child.Name, "nhs-properties", StringComparison.OrdinalIgnoreCase) ==0)
-                    GetProperties(child);
+                if (string.Compare(child.Name, properties_node_name_, StringComparison.OrdinalIgnoreCase) == 0)
+                    GetProperties(child, string.Empty);
 
                 // load the data providers
-                if (child.Name == kProvidersNodeName)
+                if (child.Name == providers_node_name_)
                     GetProviders(child);
             }
         }
@@ -393,123 +395,72 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Gets the dynamic properties_.
+        /// Recursively gets the dynamic properties.
         /// </summary>
-        /// <param name="node">A XML node containing the dynamic properties_.</param>
+        /// <param name="node">A XML node containing the dynamic properties.</param>
+        /// <param name="path">The path to the node value.</param>
         /// <remarks>
-        /// If the namespace of a property is not defined then that property will be assigned
+        /// If the namespace of the property is not defined it will be assigned
         /// to the default namespace.
         /// </remarks>
-        protected void GetProperties(XmlNode node)
+        void GetProperties(XmlNode node, string path)
         {
-            XmlAttribute att = node.Attributes["ns"];
-            string ns = (att != null) ? att.Value : kDefaultNamespace;
-            foreach (XmlNode property in node.ChildNodes) {
-                XmlAttributeCollection atts = property.Attributes;
-                
-                string name, value, type;
-                
-                att = atts["name"];
-                name = (att == null) ? null : atts["name"].Value;
+            if (node != null && node.ChildNodes.Count > 0) {
+                foreach (XmlNode inner_node in node.ChildNodes) {
+                    if (inner_node.NodeType == XmlNodeType.Element) {
+                        if (inner_node.ChildNodes.Count > 0) {
+                            GetProperties(inner_node, path + "." + inner_node.Name);
+                        } else {
+                            XmlAttributeCollection properties = inner_node.Attributes;
+                            if (properties.Count == 0)
+                                return;
 
-                att = atts["value"];
-                value = (att == null) ? null : atts["value"].Value;
-
-                // the value and name are mandatory
-                if (name == null || value == null)
-                    throw new System.Configuration.ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, (name == null) ? "value" : "name"));
-
-                // the .NET type of the property value. System.String is the default type.
-                att = atts["type"];
-                type = (att == null) ? "string" : att.Value;
-
-                switch (type)
-                {
-                    case "array":
-                        break;
-
-                    default:
-                        this[name, ns] = value;
-                        break;
+                            DictionaryValue keys = new DictionaryValue();
+                            foreach (XmlAttribute property in properties) {
+                                keys.SetString(property.Name, property.Value);
+                            }
+                            properties_.Set(path, keys);
+                        }
+                    }
                 }
             }
-            this["NAMESPACE", ns] = ns;
         }
 
         /// <summary>
-        /// Gets the value associated with the specified registry_key within the default namespace.
+        /// Gets the value associated with the specified key.
         /// </summary>
-        /// <param name="registry_key">The registry_key whose value to get</param>
-        /// <returns>An string associated with the specified registry_key within the given namespace.</returns>
+        /// <param name="key">The key whose value to get</param>
+        /// <returns>An string associated with the specified key.</returns>
+        /// <seealso cref="this[string]"/>
         public Value Get(string key)
         {
-            return Get(key, kDefaultNamespace);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified registry_key within a given namespace.
-        /// </summary>
-        /// <param name="registry_key">The registry_key whose value to get</param>
-        /// <param name="ns">The name of the namespace.</param>
-        /// <returns>An string associated with the specified registry_key within the given namespace.</returns>
-        /// <seealso cref="this[string, string]"/>
-        public Value Get(string key, string ns)
-        {
-            Value value;
-            properties_.TryGetValue(PropertyKey(kDefaultNamespace, key), out value);
-            return value;
+            return properties_.Get(key);
         }
         
         /// <summary>
-        /// Sets the value associated with the specified registry_key within the default namespace.
+        /// Sets the value associated with the specified key within the default namespace.
         /// </summary>
-        /// <param name="registry_key">The registry_key whose value to set</param>
-        /// <param name="value">An string associated with the specified registry_key within the given namespace</param>
+        /// <param name="key">The key whose value to set</param>
+        /// <param name="value">An string associated with the specified key within the given namespace</param>
         public void Set(string key, Value value)
         {
-            Set(key, kDefaultNamespace, value);
-        }
-
-        /// <summary>
-        /// Sets the value associated with the specified registry_key within a given namespace.
-        /// </summary>
-        /// <param name="registry_key">The registry_key whose value to set</param>
-        /// <param name="ns">The name of the namespace.</param>
-        /// <param name="value">An string associated with the specified registry_key within the given namespace</param>
-        public void Set(string key, string ns, Value value)
-        {
-            properties_[PropertyKey(ns, key)] = value;
-        }
-
-        /// <summary>
-        /// A convenient form of <code>Get(string) and Set(string, Value)</code>.
-        /// </summary>
-        /// <param name="registry_key">The registry_key whose value to get or set.</param>
-        public string this[string key]
-        {
-            get {
-                return this[key, kDefaultNamespace];
-            }
-            set {
-                this[key, kDefaultNamespace] = value;
-            }
+            properties_.Set(key, value);
         }
 
         /// <summary>
         /// A convenient form of <code>Get(string, string) and Set(string, string, Value)</code>.
         /// </summary>
-        /// <param name="registry_key">The registry_key whose value to get or set.</param>
-        /// <param name="ns">The name of the namespace.</param>
-        public string this[string key, string ns]
+        /// <param name="key">The key whose value to get or set.</param>
+        public string this[string key]
         {
             get {
                 Value value;
-                if (properties_.TryGetValue(PropertyKey(ns, key), out value))
+                if (properties_.Get(key, out value))
                     return value.GetAsString();
                 return null;
             }
             set {
-                properties_[PropertyKey(ns, key)] = Value.CreateStringValue(value);
+                Set(key, Value.CreateStringValue(value));
             }
         }
         #endregion
@@ -544,13 +495,13 @@ namespace Nohros.Configuration
                     case "add":
                         XmlAttribute name = attributes["name"];
                         if(name == null || name.Value == null || name.Value.Length == 0)
-                            throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, kProvidersNodeName), provider);
+                            throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, providers_node_name_), provider);
 
                         providers_.Add(name.Value, new Provider(provider));
                         break;
 
                     default:
-                        throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, kProvidersNodeName), provider);
+                        throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, providers_node_name_), provider);
                 }
             }
         }
