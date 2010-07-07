@@ -4,6 +4,25 @@ using System.Text;
 
 namespace Nohros.Data
 {
+    /// <summary>
+    /// A recursive data storage class optimized for the namely storing a hierarchical
+    /// tree of simple <see cref="Values"/>.
+    /// <remarks>
+    /// This class specifies a recursive data storage class. So it is fairly expressive.
+    /// However, the API is optimized for the common case, namely storing a hierarchical
+    /// tree of simple values. Given a DictionaryValue root, you can easily do things like:
+    /// <para>
+    /// <code>
+    /// root.SetString("global.pages.homepage", "http://sys.nohros.com");
+    /// string homepage = "http://nohros.com";  // default/fallback value
+    /// homepage = root.GetString("global.pages.homepage", out homepage);
+    /// </code>
+    /// </para>
+    /// where "global" and "pages" are also DictionaryValues, and "homepage"
+    /// is a string setting.  If some elements of the path didn't exist yet,
+    /// the SetString() method would create the missing elements and attach them
+    /// to root before attaching the homepage value.
+    /// </summary>
     public class DictionaryValue : Value
     {
         Dictionary<string, Value> dictionary_;
@@ -34,12 +53,12 @@ namespace Nohros.Data
 
         /// <summary>
         /// Determines whether the <typeparamref name="Nohros.Data.DictionaryValue"/> contains
-        /// the specified registry_key.
+        /// the specified key.
         /// </summary>
-        /// <param name="registry_key">The registry_key to locate in the<typeparamref name="Nohros.Data.DictionaryValue"/></param>
+        /// <param name="key">The key to locate in the<typeparamref name="Nohros.Data.DictionaryValue"/></param>
         /// <returns>true if the <typeparamref name="Nohros.Data.DictionaryValue"/> contains an element with the
-        /// specified registry_key; otherwise, false.</returns>
-        /// <exception cref="ArgumentNullException">registry_key is null</exception>
+        /// specified key; otherwise, false.</returns>
+        /// <exception cref="ArgumentNullException">key is null</exception>
         public bool HasKey(string key)
         {
             return dictionary_.ContainsKey(key);
@@ -52,13 +71,13 @@ namespace Nohros.Data
         /// <param name="path">The path of the value to set.</param>
         /// <param name="in_value">The value to set.</param>
         /// <returns>true if the <typeparamref name="Nohros.Data.DictionaryValue"/> contains an
-        /// element with the specified registry_key; otherwise, false</returns>
+        /// element with the specified key; otherwise, false</returns>
         /// <remarks>
-        /// A path has the form "&alt;registry_key&gt" or "&alt;registry_key&gt.&alt;registry_key&gt.[...]", where
+        /// A path has the form "&lt;key&gt" or "&lt;key&gt.&lt;key&gt.[...]", where
         /// "." indexes into the next <typeparamref name="Nohros.Data.DictionaryValue"/> down. Obviously,
-        /// "." can't be used within a registry_key, but there are no other restrictions on keys.
+        /// "." can't be used within a key, but there are no other restrictions on keys.
         /// <para>
-        /// If the registry_key at any step of the way doesn't exist, or exists but isn't
+        /// If the key at any step of the way doesn't exist, or exists but isn't
         /// a <typeparamref name="Nohros.Data.DictionaryValue"/>, a new <typeparamref name="Nohros.Data.DictionaryValue"/>
         /// will be created and attached to the path in that location.
         /// </para>
@@ -97,7 +116,7 @@ namespace Nohros.Data
         /// <param name="path">The path to set</param>
         /// <param name="in_value">The boolean value to set</param>
         /// <returns>true if the <typeparamref name="Nohros.Data.DictionaryValue"/> contains an
-        /// element with the specified registry_key; otherwise, false</returns>
+        /// element with the specified key; otherwise, false</returns>
         public bool SetBoolean(string path, bool in_value)
         {
             return Set(path, CreateBooleanValue(in_value));
@@ -110,7 +129,7 @@ namespace Nohros.Data
         /// <param name="path">The path to set</param>
         /// <param name="in_value">The integer value to set</param>
         /// <returns>true if the <typeparamref name="Nohros.Data.DictionaryValue"/> contains an
-        /// element with the specified registry_key; otherwise, false</returns>
+        /// element with the specified key; otherwise, false</returns>
         public bool SetInteger(string path, int in_value)
         {
             return Set(path, CreateIntegerValue(in_value));
@@ -123,7 +142,7 @@ namespace Nohros.Data
         /// <param name="path">The path to set</param>
         /// <param name="in_value">The double value to set</param>
         /// <returns>true if the <typeparamref name="Nohros.Data.DictionaryValue"/> contains an
-        /// element with the specified registry_key; otherwise, false</returns>
+        /// element with the specified key; otherwise, false</returns>
         public bool SetReal(string path, double in_value)
         {
             return Set(path, CreateRealValue(in_value));
@@ -136,7 +155,7 @@ namespace Nohros.Data
         /// <param name="path">The path to set</param>
         /// <param name="in_value">The string value to set</param>
         /// <returns>true if the <typeparamref name="Nohros.Data.DictionaryValue"/> contains an
-        /// element with the specified registry_key; otherwise, false</returns>
+        /// element with the specified key; otherwise, false</returns>
         public bool SetString(string path, string in_value)
         {
             return Set(path, CreateStringValue(in_value));
@@ -161,8 +180,8 @@ namespace Nohros.Data
         {
             out_value = Get(path);
             if (out_value == null)
-                return true;
-            return false;
+                return false;
+            return true;
         }
 
         /// <summary>
@@ -383,10 +402,10 @@ namespace Nohros.Data
         /// from this object.
         /// </summary>
         /// <param name="path">The path to get</param>
-        /// <returns>The value of the last registry_key in the path if it can be resolved successfully;
+        /// <returns>The value of the last key in the path if it can be resolved successfully;
         /// otherwise, it will return a null reference.
         /// </returns>
-        /// <remarks>A path has the form "&lt;registry_key&gt" or "&lt;registry_key&gt.&lt;registry_key&gt.[...]", where
+        /// <remarks>A path has the form "&lt;key&gt" or "&lt;key&gt.&lt;key&gt.[...]", where
         /// "." indexes into the next <typeparamref name="Nohros.Data.DictionaryValue"/> down.
         /// </remarks>
         public Value Get(string path)
@@ -419,7 +438,7 @@ namespace Nohros.Data
         /// <summary>
         /// Removes the <typeparamref name="Nohros.Data.Value"/> object with the specified path
         /// from this dictionary(or one of its child dictionaries, if the path is more that just
-        /// a local registry_key).
+        /// a local key).
         /// </summary>
         /// <param name="path">The path of the item to remove</param>
         /// <param name="out_value">When this method returns <paramref name="out_value"/> will contain a
@@ -436,7 +455,7 @@ namespace Nohros.Data
         /// <summary>
         /// Removes the <typeparamref name="Nohros.Data.Value"/> object with the specified path
         /// from this dictionary(or one of its child dictionaries, if the path is more that just
-        /// a local registry_key).
+        /// a local key).
         /// </summary>
         /// <param name="path">The path of the item to remove</param>
         /// <returns>A reference to the removed value or null if the specified path is not found.</returns>

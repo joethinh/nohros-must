@@ -165,7 +165,7 @@ namespace Nohros
         #region Throws
         internal static void ThrowArgumentException(ExceptionResource resource)
         {
-            throw new ArgumentNullException(GetResourceByName(resource));
+            throw new ArgumentException(GetResourceByName(resource));
         }
 
         internal static void ThrowEmptyArgumentException(ExceptionArgument argument)
