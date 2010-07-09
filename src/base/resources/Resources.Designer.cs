@@ -348,5 +348,14 @@ namespace Nohros.Resources {
                 return ResourceManager.GetString("JSON_UnquotedDictionaryKey", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instance of the requested type could not be created. Check the constructor implied by the {0}..
+        /// </summary>
+        internal static string Type_CreateInstanceOf {
+            get {
+                return ResourceManager.GetString("Type_CreateInstanceOf", resourceCulture);
+            }
+        }
     }
 }

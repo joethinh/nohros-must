@@ -214,4 +214,7 @@
   <data name="JSON_UnquotedDictionaryKey" xml:space="preserve">
     <value>Dictionary keys must be quoted at "{0}".</value>
   </data>
+  <data name="Type_CreateInstanceOf" xml:space="preserve">
+    <value>Instance of the requested type could not be created. Check the constructor implied by the {0}.</value>
+  </data>
 </root>

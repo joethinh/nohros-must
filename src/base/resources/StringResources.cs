@@ -357,6 +357,14 @@ namespace Nohros.Resources
         {
             get { return GetString("InvalidOperation_FullQueue"); }
         }
+
+        /// <summary>
+        /// Looks up a localized string similar to [Instance of the requested type could not be created.
+        /// Check the constructor implied by the {0}.].
+        /// </summary>
+        public static string Type_CreateInstanceOf {
+            get { return GetString("Type_CreateInstanceOf"); }
+        }
         #endregion
     }
 }
