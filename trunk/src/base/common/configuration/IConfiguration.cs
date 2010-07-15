@@ -291,6 +291,7 @@ namespace Nohros.Configuration
         /// </remarks>
         private void Watcher_OnChanged(object source, FileSystemEventArgs e)
         {
+            CleanUp();
             Load(config_file_, element_.Name);
         }
 
@@ -304,10 +305,20 @@ namespace Nohros.Configuration
         /// </remarks>
         private void Watcher_OnRenamed(object source, RenamedEventArgs e)
         {
+            CleanUp();
             config_file_ = new FileInfo(e.FullPath);
             Load(config_file_, element_.Name);
         }
         #endregion
+
+        /// <summary>
+        /// Cleans the configuration values for reload.
+        /// </summary>
+        private void CleanUp() {
+            properties_.Clear();
+            providers_.Clear();
+
+        }
 
         /// <summary>
         /// Used internally to load the configuration values by parsing a DOM tree of XML elements.
