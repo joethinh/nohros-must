@@ -76,7 +76,7 @@ namespace Nohros.Data
 
             T newObject = null;
             if (type != null) {
-                newObject = (T)Activator.CreateInstance(type, new object[] { provider.DatabaseOwner, provider.ConnectionString });
+                newObject = (T)Activator.CreateInstance(type, provider.DatabaseOwner, provider.ConnectionString);
             }
 
             // If a instance could not be created a exception will be thrown.
