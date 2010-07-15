@@ -135,7 +135,7 @@ namespace Nohros.Data
 
             if(repository_ == ConnectionStringsRepository.ConfigurationFile) {
                 try {
-                    XmlNode xml_node = node.OwnerDocument.FirstChild.SelectSingleNode(database_owner_);
+                    XmlNode xml_node = node.OwnerDocument.SelectSingleNode(database_owner_);
                     if (xml_node != null)
                         database_owner_ = xml_node.Value;
                 } catch (XPathException) {
@@ -143,7 +143,7 @@ namespace Nohros.Data
                 }
 
                 try {
-                    XmlNode xml_node = node.OwnerDocument.FirstChild.SelectSingleNode(connection_string_);
+                    XmlNode xml_node = node.OwnerDocument.SelectSingleNode(connection_string_);
                     if (xml_node != null)
                         connection_string_ = xml_node.Value;
                 }

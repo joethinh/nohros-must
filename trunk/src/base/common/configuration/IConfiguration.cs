@@ -39,6 +39,7 @@ namespace Nohros.Configuration
 
         string providers_node_name_;
         string properties_node_name_;
+        DateTime version_;
 
         #region .ctor
         /// <summary>
@@ -82,7 +83,7 @@ namespace Nohros.Configuration
         /// Load the configuration from the XML element supplied as <paramref name="element"/>
         /// <para>
         /// This is the main Load(...) overload. This method is called by all the others Load(...)
-        /// method overloads.
+        /// methods overloads.
         /// </para>
         /// </remarks>
         /// <param name="element">The XmlElement containing the configuration values to parse.</param>
@@ -92,6 +93,8 @@ namespace Nohros.Configuration
                 throw new ArgumentNullException("element");
 
             element_ = element;
+            version_ = DateTime.Now;
+
             Parse(element);
         }
 
@@ -365,6 +368,13 @@ namespace Nohros.Configuration
             }
         }
 
+        /// <summary>
+        /// Gets the date and time when the <see cref="Load()"/> method was last called.
+        /// </summary>
+        public DateTime Version {
+            get { return version_; }
+        }
+
         #region Derived properties
 
         private PropertyInfo GetProperty(PropertyInfo[] properties, string propertyName)
@@ -490,6 +500,9 @@ namespace Nohros.Configuration
         {
             foreach (XmlNode provider in node.ChildNodes)
             {
+                if (provider.NodeType != XmlNodeType.Element)
+                    continue;
+
                 XmlAttributeCollection attributes = provider.Attributes;
                 switch(provider.Name) {
                     case "add":
