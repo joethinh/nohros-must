@@ -16,6 +16,7 @@ namespace Nohros.Test.Desktop
         {
             CommandLine command_line = new CommandLine("nohros.exe");
             Assert.AreEqual("nohros.exe", command_line.Program);
+            Assert.AreEqual("nohros.exe", command_line.CommandLineString);
         }
 
         [Test]
@@ -45,21 +46,53 @@ namespace Nohros.Test.Desktop
         }
 
         [Test]
+        public void CommandLine_AppendSwitch() {
+            CommandLine command_line = new CommandLine("nohros.exe");
+            command_line.AppendSwitch("V", "/");
+            Assert.AreEqual(1, command_line.SwitchCount);
+            Assert.AreEqual(true, command_line.HasSwitch("V"));
+            Assert.AreEqual(string.Empty, command_line.GetSwitchValue("V"));
+            Assert.AreEqual("nohros.exe /V", command_line.CommandLineString);
+        }
+
+        [Test]
+        public void CommandLine_AppendSwitchWithValue() {
+            CommandLine command_line = new CommandLine("nohros.exe");
+            command_line.AppendSwitchWithValue("path", "o", "c:\\mypath with space", ':');
+            Assert.AreEqual(1, command_line.SwitchCount);
+            Assert.AreEqual(true, command_line.HasSwitch("path"));
+            Assert.AreEqual("c:\\mypath with space", command_line.GetSwitchValue("path"));
+            Assert.AreEqual("nohros.exe -path:\"c:\\mypath with space\"", command_line.CommandLineString);
+        }
+
+        [Test]
         public void CommandLine_Fail() {
             CommandLine command_line = new CommandLine("nohros.exe");
+            command_line.AppendSwitch("V", "/");
+            Assert.AreEqual(1, command_line.SwitchCount);
+            Assert.AreEqual(true, command_line.HasSwitch("V"));
+            Assert.AreEqual(string.Empty, command_line.GetSwitchValue("V"));
+            Assert.AreEqual("nohros.exe /V", command_line.CommandLineString);
+
+            command_line.AppendSwitchWithValue("path", "o", "c:\\mypath with space", ':');
+            Assert.AreEqual(2, command_line.SwitchCount);
+            Assert.AreEqual(true, command_line.HasSwitch("path"));
+            Assert.AreEqual("c:\\mypath with space", command_line.GetSwitchValue("path"));
+            Assert.AreEqual("nohros.exe /V -path:\"c:\\mypath with space\"", command_line.CommandLineString);
+
 
             command_line.ParseFromString("nohros.exe \"");
-            Assert.AreEqual(command_line.Program, "nohros.exe");
+            Assert.AreEqual("nohros.exe", command_line.Program);
             Assert.AreEqual(1, command_line.LooseValues.Count);
 
             command_line.Reset();
             command_line.ParseFromString("nohros.exe \"galo doido --switch_00 /switch_01");
-            Assert.AreEqual(command_line.Program, "nohros.exe");
+            Assert.AreEqual("nohros.exe", command_line.Program);
             Assert.AreEqual(1, command_line.LooseValues.Count);
 
             command_line.Reset();
             command_line.ParseFromString("nohros.exe \"galo doido\" --switch_00 /switch_01");
-            Assert.AreEqual(command_line.Program, "nohros.exe");
+            Assert.AreEqual("nohros.exe", command_line.Program);
             Assert.AreEqual(1, command_line.LooseValues.Count);
         }
     }

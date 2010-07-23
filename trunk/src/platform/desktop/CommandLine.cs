@@ -90,9 +90,86 @@ namespace Nohros.Desktop
         public CommandLine(string program) {
             Reset();
             program_ = program;
-            command_line_string_ = "\"" + program_ + "\"";
+            command_line_string_ = QuoteIfNeed(program_);
         }
         #endregion
+
+        /// <summary>
+        /// Encloses a string in quotes if has spaces within it.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        string QuoteIfNeed(string value) {
+            if ((value != null) &&
+                (value.Trim().Length != 0) &&
+                (value.IndexOf(' ') != -1) &&
+                (value[0] != '"') &&
+                (value[value.Length - 1] != '"')) {
+                value = string.Concat('"', value, '"');
+            }
+            return value;
+        }
+
+
+        /// <summary>
+        /// Gets a valid switch prefix based on the specified switch.
+        /// </summary>
+        /// <param name="switch_prefix">An switch to validate.</param>
+        /// <returns>The specified switch prefix or "-" if the specified switch prefix is not valid.</returns>
+        /// <remarks>
+        /// Valid switch prefixes are: "-", "--", "/".
+        /// </remarks>
+        string GetSwitchPrefix(string switch_prefix) {
+            switch(switch_prefix) {
+                case "--":
+                case "-":
+                case "/":
+                    return switch_prefix;
+            }
+            return "-";
+        }
+
+        /// <summary>
+        /// Appends the given switch string (preceded by a space and a switch prefix)
+        /// to the given string.
+        /// </summary>
+        /// <param name="switch_string">The switch string to append.</param>
+        /// <param name="switch_prefix">The switch prefix to append.</param>
+        public void AppendSwitch(string switch_string, string switch_prefix) {
+            if (switch_string == null || switch_string.Trim().Length == 0)
+                return;
+
+            switch_prefix = GetSwitchPrefix(switch_prefix);
+
+            command_line_string_ += string.Concat(' ', switch_prefix, switch_string);
+            switches_[switch_string] = string.Empty;
+        }
+
+        /// <summary>
+        /// Appends the given switch string(preceded by a space and a switch prefix)
+        /// to the given string, with the given value attached.
+        /// </summary>
+        public void AppendSwitchWithValue(string switch_string, string switch_prefix, string switch_value, char switch_value_separator) {
+            if (switch_string == null || switch_string.Trim().Length == 0)
+                return;
+
+            command_line_string_ += string.Concat(' ',
+                GetSwitchPrefix(switch_prefix),
+                switch_string,
+                switch_value_separator,
+                QuoteIfNeed(switch_value));
+
+            switches_[switch_string] = switch_value;
+        }
+
+        /// <summary>
+        /// Append a loose value to the command line.
+        /// </summary>
+        /// <param name="value"></param>
+        public void AppendLooseValue(string value) {
+            command_line_string_ = string.Concat(' ', QuoteIfNeed(value));
+            loose_values_.Add(value);
+        }
 
         /// <summary>
         /// Resets the command line.
