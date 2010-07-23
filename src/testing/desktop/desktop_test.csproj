@@ -38,6 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLine_.cs" />
     <Compile Include="data\collections\trees\AndersonTree_.cs" />
     <Compile Include="configuration\IConfiguration_.cs" />
     <Compile Include="data\Provider_.cs" />
@@ -53,6 +54,10 @@
     <ProjectReference Include="..\..\base\common\common.csproj">
       <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
       <Name>common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\platform\desktop\desktop.csproj">
+      <Project>{7B7DCA88-945A-4FA9-985C-5F3CB667C2BC}</Project>
+      <Name>desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
