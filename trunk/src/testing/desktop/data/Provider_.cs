@@ -18,8 +18,8 @@ namespace Nohros.Test.Data
                     <add
                         name=""GenericProvider""
                         type=""Nohros.Test.Data.SqlGenericDataProvider, nohros.test.desktop""
-                        databaseOwner=""strings/mssql/@dbowner""
-                        connectionString=""strings/mssql/@dbstring""
+                        databaseOwner=""xml/strings/mssql/@dbowner""
+                        connectionString=""xml/strings/mssql/@dbstring""
                         dataSourceType=""mssql""
                     />
                 </providers>
@@ -73,8 +73,8 @@ namespace Nohros.Test.Data
                     <add
                         name=""GenericProvider""
                         type=""Nohros.Test.ProviderType_, nohros.test.desktop""
-                        databaseOwner=""strings/mssql/@dbowner""
-                        connectionString=""strings/mssql/@dbstring""
+                        databaseOwner=""xml/strings/mssql/@dbowner""
+                        connectionString=""xml/strings/mssql/@dbstring""
                         dataSourceType=""mssql""
                     />
                 </providers>
