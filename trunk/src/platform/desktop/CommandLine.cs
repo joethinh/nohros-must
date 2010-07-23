@@ -167,7 +167,7 @@ namespace Nohros.Desktop
         /// </summary>
         /// <param name="value"></param>
         public void AppendLooseValue(string value) {
-            command_line_string_ = string.Concat(' ', QuoteIfNeed(value));
+            command_line_string_ += string.Concat(' ', QuoteIfNeed(value));
             loose_values_.Add(value);
         }
 
