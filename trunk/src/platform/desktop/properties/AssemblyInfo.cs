@@ -13,6 +13,14 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © Nohros Systems Inc 2008")]
 [assembly: AssemblyTrademark("Copyright © Nohros Systems Inc 2008")]
 [assembly: AssemblyCulture("")]
+[assembly: InternalsVisibleTo("Nohros.Test.Web"),
+           InternalsVisibleTo("Nohros.Test.Desktop"),
+           InternalsVisibleTo("Nohros.Test.Common"),
+           InternalsVisibleTo("Nohros.Test.Data"),
+           InternalsVisibleTo("Nohros.Test.Configuration"),
+           InternalsVisibleTo("Nohros.Test.Desktop"),
+           InternalsVisibleTo("Nohros.Net"),
+           InternalsVisibleTo("Nohros.Desktop")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -31,5 +39,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("0.3.353.0")]
-[assembly: AssemblyFileVersion("0.3.353.0")]
+[assembly: AssemblyVersion("0.3.504.0")]
+[assembly: AssemblyFileVersion("0.3.504.0")]
