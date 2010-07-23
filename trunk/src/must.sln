@@ -84,6 +84,6 @@ Global
 		{C4248ECD-04B2-4797-88C1-0ED8E0CDF9E7} = {58950AA5-9A5F-47F2-AC22-A45A29728345}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_BuildVersioningStyle = None.None.Increment.None
+		BuildVersion_BuildVersioningStyle = None.None.None.None
 	EndGlobalSection
 EndGlobal
