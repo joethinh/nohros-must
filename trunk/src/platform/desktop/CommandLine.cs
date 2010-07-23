@@ -180,8 +180,8 @@ namespace Nohros.Desktop
                         begin = token.begin + 1;
                         while (token.type != Token.TokenType.END_OF_INPUT) {
                             token = tokens[++i];
-                            if (token.type == Token.TokenType.STRING || token.type == Token.TokenType.END_OF_INPUT) {
-                                switch_value = command_line_string_.Substring(begin, token.begin - begin + token.length);
+                            if (token.type == Token.TokenType.SPACE || token.type == Token.TokenType.END_OF_INPUT) {
+                                switch_value = command_line_string_.Substring(begin, token.begin - begin);
                                 if (switch_string == null)
                                     loose_values_.Add(switch_value);
                                 else {
@@ -189,9 +189,6 @@ namespace Nohros.Desktop
                                     switch_string = null;
                                 }
                                 break;
-                            }
-                            else if (token.type == Token.TokenType.SWITCH_BEGIN) {
-                                begin = token.begin + 1;
                             }
                         }
                         break;
@@ -201,7 +198,7 @@ namespace Nohros.Desktop
                         while (token.type != Token.TokenType.END_OF_INPUT) {
                             token = tokens[++i];
                             if (token.type == Token.TokenType.SPACE || token.type == Token.TokenType.END_OF_INPUT) {
-                                loose_values_.Add(command_line_string_.Substring(begin, token.begin - begin + token.length));
+                                loose_values_.Add(command_line_string_.Substring(begin, token.begin - begin));
                                 break;
                             }
                         }
@@ -220,47 +217,34 @@ namespace Nohros.Desktop
         /// <summary>
         /// Parses a sequence of characters into a <see cref="Token.TokenType.STRING"/>.
         /// </summary>
-        /// <remarks>A string token parsing ends when quote character is found.</remarks>
-        /// <returns>A Token of the type <see cref="Token.TokenType.STRING"/> containing the parsed
-        /// sequence of characters.</returns>
-        /// <returns></returns>
-        Token ParseQuoteToken() {
-            Token token = new Token(Token.TokenType.STRING, command_line_pos_, 1);
-            int pos = command_line_pos_;
-            char c = command_line_string_[pos];
-
-            while (++pos < command_line_length_) {
-                ++token.length;
-                c = command_line_string_[pos];
-                if (c == '"') break;
-            }
-            return token;
-        }
-
-        /// <summary>
-        /// Parses a sequence of characters into a <see cref="Token.TokenType.STRING"/>.
-        /// </summary>
-        /// <remarks>A string token parsing ends when a switch separator or an argument separator is found.</remarks>
+        /// <remarks>A string token parsing ends when a space character is found.</remarks>
         /// <returns>A Token of the type <see cref="Token.TokenType.STRING"/> containing the parsed
         /// sequence of characters.</returns>
         Token ParseStringToken() {
             Token token = new Token(Token.TokenType.STRING, command_line_pos_, 1);
             int pos = command_line_pos_;
-            char c = command_line_string_[command_line_pos_];
+            char c = command_line_string_[pos];
 
-            while (++pos < command_line_length_) {
-                c = command_line_string_[pos];
-                switch (c) {
-                    case ':':
-                    case '=':
-                    case '-':
-                    case '/':
-                    case ' ':
-                        return token;
-
-                    default:
-                        ++token.length;
-                        break;
+            if(c == '"') {
+                while (++pos < command_line_length_) {
+                    ++token.length;
+                    c = command_line_string_[pos];
+                    if( c == '"') break;
+                }
+            } else {
+                while (++pos < command_line_length_) {
+                    c = command_line_string_[pos];
+                    switch (c) {
+                        case ':':
+                        case '=':
+                        case '-':
+                        case '/':
+                        case ' ':
+                            return token;
+                        default:
+                            ++token.length;
+                            break;
+                    }
                 }
             }
             return token;
@@ -297,7 +281,7 @@ namespace Nohros.Desktop
                     break;
 
                 case '"':
-                    token = ParseQuoteToken();
+                    token = ParseStringToken();
                     break;
 
                 default:

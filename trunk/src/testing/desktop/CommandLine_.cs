@@ -9,7 +9,7 @@ namespace Nohros.Test.Desktop
     [TestFixture]
     public class CommandLine_
     {
-        const string kTestCommandLine = "nohros.exe loose_00 loose_01 --switch_00=00 --switch_01 -switch_02=02";
+        const string kTestCommandLine = "nohros.exe loose_00 loose_01 --switch_00=00 --switch_01 -switch_02=02 --switch_03:J:\\sex\\bigass.avi";
 
         [Test]
         public void CommandLine_ctor()
@@ -29,6 +29,8 @@ namespace Nohros.Test.Desktop
             CommandLine command_line = new CommandLine("nohros.exe");
             command_line.ParseFromString(kTestCommandLine);
             Assert.AreEqual(2, command_line.LooseValues.Count);
+            Assert.AreEqual("loose_00", command_line.LooseValues[0]);
+            Assert.AreEqual("loose_01", command_line.LooseValues[1]);
         }
 
         [Test]
@@ -39,6 +41,7 @@ namespace Nohros.Test.Desktop
             Assert.AreEqual("00", command_line.GetSwitchValue("switch_00"));
             Assert.AreEqual(string.Empty, command_line.GetSwitchValue("switch_01"));
             Assert.AreEqual("02", command_line.GetSwitchValue("switch_02"));
+            Assert.AreEqual("J:\\sex\\bigass.avi", command_line.GetSwitchValue("switch_03"));
         }
 
         [Test]
