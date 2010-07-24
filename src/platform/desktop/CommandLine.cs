@@ -104,10 +104,23 @@ namespace Nohros.Desktop
                 (value.Trim().Length != 0) &&
                 (value.IndexOf(' ') != -1) &&
                 (value[0] != '"') &&
-                (value[value.Length - 1] != '"')) {
+                (value[value.Length - 1] != '"'))
                 value = string.Concat('"', value, '"');
-            }
             return value;
+        }
+
+        /// <summary>
+        /// Removes the quotes that enclose a string.
+        /// </summary>
+        /// <param name="quoted_value"></param>
+        /// <returns></returns>
+        string RemoveQuotes(string quoted_value) {
+            if ((quoted_value != null) &&
+                (quoted_value.Length > 2) &&
+                (quoted_value[0] == '"') &&
+                (quoted_value[quoted_value.Length - 1] == '"'))
+                quoted_value = quoted_value.Substring(1, quoted_value.Length - 1);
+            return quoted_value;
         }
 
 
@@ -245,7 +258,7 @@ namespace Nohros.Desktop
                         while (token.type != Token.TokenType.END_OF_INPUT) {
                             token = tokens[++i];
                             if (token.type == Token.TokenType.STRING || token.type == Token.TokenType.END_OF_INPUT) {
-                                switch_string = command_line_string_.Substring(begin, token.begin - begin + token.length);
+                                switch_string = RemoveQuotes(command_line_string_.Substring(begin, token.begin - begin + token.length));
                                 break;
                             } else if (token.type == Token.TokenType.SWITCH_BEGIN) {
                                 begin = token.begin + 1;
@@ -260,9 +273,9 @@ namespace Nohros.Desktop
                             if (token.type == Token.TokenType.SPACE || token.type == Token.TokenType.END_OF_INPUT) {
                                 switch_value = command_line_string_.Substring(begin, token.begin - begin);
                                 if (switch_string == null)
-                                    loose_values_.Add(switch_value);
+                                    loose_values_.Add(RemoveQuotes(switch_value));
                                 else {
-                                    switches_[switch_string] = switch_value;
+                                    switches_[switch_string] = RemoveQuotes(switch_value);
                                     switch_string = null;
                                 }
                                 break;
@@ -275,7 +288,9 @@ namespace Nohros.Desktop
                         while (token.type != Token.TokenType.END_OF_INPUT) {
                             token = tokens[++i];
                             if (token.type == Token.TokenType.SPACE || token.type == Token.TokenType.END_OF_INPUT) {
-                                loose_values_.Add(command_line_string_.Substring(begin, token.begin - begin));
+                                loose_values_.Add(
+                                    RemoveQuotes(command_line_string_.Substring(begin, token.begin - begin)
+                                    ));
                                 break;
                             }
                         }
