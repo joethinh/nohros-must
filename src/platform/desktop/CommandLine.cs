@@ -260,8 +260,6 @@ namespace Nohros.Desktop
                             if (token.type == Token.TokenType.STRING || token.type == Token.TokenType.END_OF_INPUT) {
                                 switch_string = RemoveQuotes(command_line_string_.Substring(begin, token.begin - begin + token.length));
                                 break;
-                            } else if (token.type == Token.TokenType.SWITCH_BEGIN) {
-                                begin = token.begin + 1;
                             }
                         }
                         break;
@@ -365,7 +363,10 @@ namespace Nohros.Desktop
                     break;
 
                 case '-':
-                    token = new Token(Token.TokenType.SWITCH_BEGIN, command_line_pos_, 1);
+                    token = new Token(
+                        Token.TokenType.SWITCH_BEGIN,
+                        command_line_pos_,
+                        (command_line_string_[command_line_pos_] == '-') ? 2 : 1);
                     break;
 
                 case ' ':
