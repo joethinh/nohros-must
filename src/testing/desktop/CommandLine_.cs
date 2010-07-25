@@ -36,8 +36,7 @@ namespace Nohros.Test.Desktop
 
         [Test]
         public void CommandLine_GetSwitchValue() {
-            CommandLine command_line = new CommandLine("nohros.exe");
-            command_line.ParseFromString(kTestCommandLine);
+            CommandLine command_line = CommandLine.FromString(kTestCommandLine);
 
             Assert.AreEqual("00", command_line.GetSwitchValue("switch_00"));
             Assert.AreEqual(string.Empty, command_line.GetSwitchValue("switch_01"));

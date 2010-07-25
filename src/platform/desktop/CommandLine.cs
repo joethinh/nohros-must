@@ -6,10 +6,14 @@ namespace Nohros.Desktop
 {
     /// <summary>
     /// This class works with command lines: building and parsing.
-    /// Switches can optionally have a value attached using an equals sign,
-    /// as in "-switch=value, /switch=value or --switch=value". Arguments that aren't prefixed with a
-    /// switch prefix are considered "loose parameters". Switch names are
-    /// case-insensitive.
+    /// Switches can optionally have a value attached using an equals sign or a
+    /// colon sign as in "-switch=value, -switch:value". Arguments that aren't
+    /// prefixed with a switch prefix are considered  as "loose parameters". An
+    /// argument of "--"  will terminate switch parsing , causing everything after
+    /// to be considered as "loose parameters".
+    /// <para>
+    /// Switch names are case-insensitive.
+    /// </para>
     /// <para>
     /// There is a singleton read-only CommandLine that represents the command
     /// line that the current process was started with.
@@ -26,6 +30,7 @@ namespace Nohros.Desktop
                 SWITCH_VALUE_PAIR_SEPARATOR,
                 SWITCH_BEGIN,
                 STRING,
+                STOP_PARSING,
                 END_OF_INPUT
             }
 
@@ -95,6 +100,18 @@ namespace Nohros.Desktop
         #endregion
 
         /// <summary>
+        /// Initializes a new instance of the CommandLine class by parsing the specified
+        /// command line string.
+        /// </summary>
+        /// <returns>An instance of the CommandLine class.</returns>
+        /// <remarks>The program name is assumed to be the item in the string.</remarks>
+        public static CommandLine FromString(string command_line) {
+            CommandLine cmd = new CommandLine();
+            cmd.ParseFromString(command_line);
+            return cmd;
+        }
+
+        /// <summary>
         /// Encloses a string in quotes if has spaces within it.
         /// </summary>
         /// <param name="value"></param>
@@ -110,7 +127,7 @@ namespace Nohros.Desktop
         }
 
         /// <summary>
-        /// Removes the quotes that enclose a string.
+        /// Removes the quotes that encloses a string.
         /// </summary>
         /// <param name="quoted_value"></param>
         /// <returns></returns>
@@ -254,33 +271,40 @@ namespace Nohros.Desktop
                 token = tokens[i];
                 switch (token.type) {
                     case Token.TokenType.SWITCH_BEGIN:
-                        begin = token.begin + 1;
+                        begin = token.begin + token.length;
+                        // everything between a switch begin and a space or a switch value pair separator
+                        // is a switch string identifier; even if another switch begin is found on the way.
                         while (token.type != Token.TokenType.END_OF_INPUT) {
                             token = tokens[++i];
-                            if (token.type == Token.TokenType.STRING || token.type == Token.TokenType.END_OF_INPUT) {
-                                switch_string = RemoveQuotes(command_line_string_.Substring(begin, token.begin - begin + token.length));
-                                break;
-                            }
-                        }
-                        break;
-
-                    case Token.TokenType.SWITCH_VALUE_PAIR_SEPARATOR:
-                        begin = token.begin + 1;
-                        while (token.type != Token.TokenType.END_OF_INPUT) {
-                            token = tokens[++i];
-                            if (token.type == Token.TokenType.SPACE || token.type == Token.TokenType.END_OF_INPUT) {
-                                switch_value = command_line_string_.Substring(begin, token.begin - begin);
-                                if (switch_string == null)
-                                    loose_values_.Add(RemoveQuotes(switch_value));
-                                else {
-                                    switches_[switch_string] = RemoveQuotes(switch_value);
+                            if(token.type == Token.TokenType.SPACE) {
+                                if (switch_string != null) {
+                                    switch_value = command_line_string_.Substring(begin, token.begin - begin);
+                                    switches_[RemoveQuotes(switch_string)] = RemoveQuotes(switch_value);
                                     switch_string = null;
+                                } else {
+                                    switch_string = command_line_string_.Substring(begin, token.begin - begin);
                                 }
                                 break;
+                            } else if (token.type == Token.TokenType.SWITCH_VALUE_PAIR_SEPARATOR && switch_string == null) {
+                                switch_string = command_line_string_.Substring(begin, token.begin - begin);
+                                begin = token.begin + token.length;
+                            } else if (token.type == Token.TokenType.END_OF_INPUT) {
+                                // a non null switch_string at this point means that a switch
+                                // with no value attached was specifie at the end of the command line
+                                // string. Usually it's represents an error condition but we will
+                                // handle this like an excentric form of switch specification.
+                                if (switch_string == null)
+                                    switch_string = command_line_string_.Substring(begin, token.begin - begin);
+                                switches_[RemoveQuotes(switch_string)] = string.Empty;
+                                switch_string = null;
+                                break;
                             }
                         }
                         break;
 
+                    // A switch value separator not preceeded by a switch begin/switch string
+                    // is an extra argument(aka loose value).
+                    case Token.TokenType.SWITCH_VALUE_PAIR_SEPARATOR:
                     case Token.TokenType.STRING:
                         begin = token.begin;
                         while (token.type != Token.TokenType.END_OF_INPUT) {
@@ -294,10 +318,15 @@ namespace Nohros.Desktop
                         }
                         break;
 
-                    case Token.TokenType.SPACE:
-                    case Token.TokenType.END_OF_INPUT:
-                        if (switch_string != null)
-                            switches_[switch_string] = string.Empty;
+                    case Token.TokenType.STOP_PARSING:
+                        begin = token.begin + token.length;
+                        while (token.type != Token.TokenType.END_OF_INPUT) {
+                            if (token.type == Token.TokenType.SPACE) {
+                                switch_value = command_line_string_.Substring(command_line_pos_, token.begin - begin);
+                                loose_values_.Add(RemoveQuotes(switch_value));
+                                begin = token.begin + token.length;
+                            }
+                        }
                         break;
                 }
                 ++i;
@@ -363,10 +392,15 @@ namespace Nohros.Desktop
                     break;
 
                 case '-':
-                    token = new Token(
-                        Token.TokenType.SWITCH_BEGIN,
-                        command_line_pos_,
-                        (command_line_string_[command_line_pos_] == '-') ? 2 : 1);
+                    if (command_line_string_[command_line_pos_ + 1] == '-') {
+                        if (command_line_string_[command_line_pos_ + 2] == ' ') {
+                            token = new Token(Token.TokenType.STOP_PARSING, command_line_pos_, 2);
+                            break;
+                        }
+                        token = new Token(Token.TokenType.SWITCH_BEGIN, command_line_pos_, 2);
+                        break;
+                    }
+                    token = new Token(Token.TokenType.SWITCH_BEGIN, command_line_pos_, 1);
                     break;
 
                 case ' ':
