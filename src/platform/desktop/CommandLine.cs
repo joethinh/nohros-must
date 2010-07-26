@@ -136,7 +136,7 @@ namespace Nohros.Desktop
                 (quoted_value.Length > 2) &&
                 (quoted_value[0] == '"') &&
                 (quoted_value[quoted_value.Length - 1] == '"'))
-                quoted_value = quoted_value.Substring(1, quoted_value.Length - 1);
+                quoted_value = quoted_value.Substring(1, quoted_value.Length - 2);
             return quoted_value;
         }
 
@@ -279,25 +279,26 @@ namespace Nohros.Desktop
                             if(token.type == Token.TokenType.SPACE) {
                                 if (switch_string != null) {
                                     switch_value = command_line_string_.Substring(begin, token.begin - begin);
-                                    switches_[RemoveQuotes(switch_string)] = RemoveQuotes(switch_value);
-                                    switch_string = null;
                                 } else {
                                     switch_string = command_line_string_.Substring(begin, token.begin - begin);
+                                    switch_value = string.Empty;
                                 }
+                                switches_[RemoveQuotes(switch_string)] = RemoveQuotes(switch_value);
+                                switch_string = null;
                                 break;
                             } else if (token.type == Token.TokenType.SWITCH_VALUE_PAIR_SEPARATOR && switch_string == null) {
                                 switch_string = command_line_string_.Substring(begin, token.begin - begin);
                                 begin = token.begin + token.length;
-                            } else if (token.type == Token.TokenType.END_OF_INPUT) {
-                                // a non null switch_string at this point means that a switch
-                                // with no value attached was specifie at the end of the command line
-                                // string. Usually it's represents an error condition but we will
-                                // handle this like an excentric form of switch specification.
-                                if (switch_string == null)
+                            } else if(token.type == Token.TokenType.END_OF_INPUT) {
+                                if (switch_string != null) {
+                                    switch_value = command_line_string_.Substring(begin, token.begin - begin);
+                                }
+                                else {
                                     switch_string = command_line_string_.Substring(begin, token.begin - begin);
-                                switches_[RemoveQuotes(switch_string)] = string.Empty;
+                                    switch_value = string.Empty;
+                                }
+                                switches_[RemoveQuotes(switch_string)] = RemoveQuotes(switch_value);
                                 switch_string = null;
-                                break;
                             }
                         }
                         break;
@@ -318,15 +319,20 @@ namespace Nohros.Desktop
                         }
                         break;
 
+                        
+                    // an argument of "--"  cause everything after to be considered as "loose parameters".
                     case Token.TokenType.STOP_PARSING:
                         begin = token.begin + token.length;
                         while (token.type != Token.TokenType.END_OF_INPUT) {
-                            if (token.type == Token.TokenType.SPACE) {
-                                switch_value = command_line_string_.Substring(command_line_pos_, token.begin - begin);
+                            token = tokens[++i];
+                            if (token.type == Token.TokenType.SPACE || token.type == Token.TokenType.END_OF_INPUT) {
+                                switch_value = command_line_string_.Substring(begin, token.begin - begin);
                                 loose_values_.Add(RemoveQuotes(switch_value));
                                 begin = token.begin + token.length;
                             }
                         }
+
+                        // token type equals to END_OF_INPUT
                         break;
                 }
                 ++i;
@@ -394,7 +400,7 @@ namespace Nohros.Desktop
                 case '-':
                     if (command_line_string_[command_line_pos_ + 1] == '-') {
                         if (command_line_string_[command_line_pos_ + 2] == ' ') {
-                            token = new Token(Token.TokenType.STOP_PARSING, command_line_pos_, 2);
+                            token = new Token(Token.TokenType.STOP_PARSING, command_line_pos_, 3);
                             break;
                         }
                         token = new Token(Token.TokenType.SWITCH_BEGIN, command_line_pos_, 2);

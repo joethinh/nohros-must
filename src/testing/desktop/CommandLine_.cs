@@ -65,6 +65,15 @@ namespace Nohros.Test.Desktop
         }
 
         [Test]
+        public void CommandLine_AppendLooseValue() {
+            CommandLine command_line = new CommandLine("nohros.exe");
+            command_line.AppendLooseValue("debug");
+            Assert.AreEqual(1, command_line.LooseValues.Count);
+            Assert.AreEqual("debug", command_line.LooseValues[0]);
+            Assert.AreEqual("nohros.exe debug", command_line.CommandLineString);
+        }
+
+        [Test]
         public void CommandLine_Fail() {
             CommandLine command_line = new CommandLine("nohros.exe");
             command_line.AppendSwitch("V", "/");
@@ -79,20 +88,41 @@ namespace Nohros.Test.Desktop
             Assert.AreEqual("c:\\mypath with space", command_line.GetSwitchValue("path"));
             Assert.AreEqual("nohros.exe /V -path:\"c:\\mypath with space\"", command_line.CommandLineString);
 
+            command_line.AppendLooseValue("debug");
+            Assert.AreEqual(1, command_line.LooseValues.Count);
+            Assert.AreEqual("debug", command_line.LooseValues[0]);
+            Assert.AreEqual("nohros.exe /V -path:\"c:\\mypath with space\" debug", command_line.CommandLineString);
+            Assert.AreEqual("c:\\mypath with space", command_line.GetSwitchValue("path"));
+            Assert.AreEqual("debug", command_line.LooseValues[0]);
 
-            command_line.ParseFromString("nohros.exe \"");
+            command_line = CommandLine.FromString("nohros.exe \"");
             Assert.AreEqual("nohros.exe", command_line.Program);
             Assert.AreEqual(1, command_line.LooseValues.Count);
 
-            command_line.Reset();
-            command_line.ParseFromString("nohros.exe \"galo doido --switch_00 /switch_01");
+            command_line = CommandLine.FromString("nohros.exe \"galo doido\" --switch_00 /switch_01");
             Assert.AreEqual("nohros.exe", command_line.Program);
             Assert.AreEqual(1, command_line.LooseValues.Count);
+            Assert.AreEqual("galo doido", command_line.LooseValues[0]);
+            Assert.AreEqual(true, command_line.HasSwitch("switch_00"));
+            Assert.AreEqual(true, command_line.HasSwitch("switch_01"));
 
-            command_line.Reset();
-            command_line.ParseFromString("nohros.exe \"galo doido\" --switch_00 /switch_01");
-            Assert.AreEqual("nohros.exe", command_line.Program);
-            Assert.AreEqual(1, command_line.LooseValues.Count);
+            command_line = CommandLine.FromString("nohros.exe \"galo doido\" --switch_00 /path:J:switch-inside-string=: =loose_with_switch_separator /switch_:");
+            Assert.AreEqual(false, command_line.HasSwitch("galo doido"));
+            Assert.AreEqual(true, command_line.HasSwitch("switch_00"));
+            Assert.AreEqual(true, command_line.HasSwitch("path"));
+            Assert.AreEqual("J:switch-inside-string=:", command_line.GetSwitchValue("path"));
+            Assert.AreEqual(true, command_line.HasSwitch("switch_"));
+            Assert.AreEqual(string.Empty, command_line.GetSwitchValue("switch_"));
+            Assert.AreEqual("=loose_with_switch_separator", command_line.LooseValues[1]);
+
+            command_line = CommandLine.FromString("nohros.exe \"galo doido\" --switch_00 -- /path:J:switch-inside-string=: =loose_with_switch_separator /switch_:");
+            Assert.AreEqual(false, command_line.HasSwitch("galo doido"));
+            Assert.AreEqual(true, command_line.HasSwitch("switch_00"));
+            Assert.AreEqual(false, command_line.HasSwitch("path"));
+            Assert.AreEqual(false, command_line.HasSwitch("switch_"));
+            Assert.AreEqual("/path:J:switch-inside-string=:", command_line.LooseValues[1]);
+            Assert.AreEqual("=loose_with_switch_separator", command_line.LooseValues[2]);
+            Assert.AreEqual("/switch_:", command_line.LooseValues[3]);
         }
     }
 }
