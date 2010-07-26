@@ -260,6 +260,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The assembly could not be loaded. {0}..
+        /// </summary>
+        internal static string DataProvider_LoadAssembly {
+            get {
+                return ResourceManager.GetString("DataProvider_LoadAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An invalid attributes collection has been supplied, or a required attribute has not been supplied..
         /// </summary>
         internal static string DataProvider_Provider_Attributes {

@@ -110,6 +110,11 @@ namespace Nohros.Resources
             get { return GetString("DataProvider_CreateInstance"); }
         }
 
+        internal static string DataProvider_LoadAssembly
+        {
+            get { return GetString("DataProvider_LoadAssembly"); }
+        }
+
         /// <summary>
         /// Looks up a localized string similar to [The Provider is invalid.]
         /// </summary>
