@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Data.OleDb;
 using System.Data.Odbc;
+using System.Reflection;
 
 using Nohros.Resources;
 using Nohros.Configuration;
@@ -52,6 +53,52 @@ namespace Nohros.Data
         /// </summary>
         /// <param name="provider">A <see cref="Provider"/> object containing the informations like
         /// connection string, database owner, etc; that will be used to creates the designated type</param>
+        /// <param name="assembly">The assembly where the class will be loaded from.</param>
+        /// <returns>A reference to the newly created object.</returns>
+        /// <remarks>
+        /// The <typeparamref name="T"/> parameter must be a class that implements or derive from a class
+        /// that implements the <see cref="IDataProvider"/> interface.
+        /// <para>
+        /// The connection string and database owner parameters passed to the IDataProvider constructor will
+        /// be extracted from the specified dataProvider object.
+        /// </para>
+        /// <para>
+        /// The type T must have a constructor that accepts two strings as parameters. The first parameter
+        /// will be set to the provider database owner and the second parameter will be set to the
+        /// provider connection string.
+        /// </para>
+        /// <para>If the <paramref name="assembly"/> is null this method will try to load related assembly related with
+        /// the specified type from the application base directory.</para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">dataProvider is null</exception>
+        /// <exception cref="ProviderException">The type could not be created.</exception>
+        /// <exception cref="ProviderException"><paramref name="dataProvider"/> is invalid.</exception>
+        protected static T CreateInstance(Provider provider, Assembly assembly)
+        {
+            // Get the type.
+            Type type = (assembly == null) ? Type.GetType(provider.Type) : assembly.GetType(provider.Type);
+
+            T newObject = null;
+            if (type != null) {
+                newObject = (T)Activator.CreateInstance(type, provider.DatabaseOwner, provider.ConnectionString);
+            }
+
+            // If a instance could not be created a exception will be thrown.
+            if (newObject == null)
+                Thrower.ThrowProviderException(ExceptionResource.DataProvider_CreateInstance, null);
+
+            newObject.DataSourceType = provider.DataSourceType;
+
+            return newObject;
+        }
+
+
+        /// <summary>
+        /// Creates an instance of the type designated by the specified generic type parameter using the
+        /// constructor implied by the <see cref="IDataProvider"/> interface.
+        /// </summary>
+        /// <param name="provider">A <see cref="Provider"/> object containing the informations like
+        /// connection string, database owner, etc; that will be used to creates the designated type</param>
         /// <returns>A reference to the newly created object.</returns>
         /// <remarks>
         /// The <typeparamref name="T"/> parameter must be a class that implements or derive from a class
@@ -69,23 +116,8 @@ namespace Nohros.Data
         /// <exception cref="ArgumentNullException">dataProvider is null</exception>
         /// <exception cref="ProviderException">The type could not be created.</exception>
         /// <exception cref="ProviderException"><paramref name="dataProvider"/> is invalid.</exception>
-        protected static T CreateInstance(Provider provider)
-        {
-            // Get the type.
-            Type type = Type.GetType(provider.Type);
-
-            T newObject = null;
-            if (type != null) {
-                newObject = (T)Activator.CreateInstance(type, provider.DatabaseOwner, provider.ConnectionString);
-            }
-
-            // If a instance could not be created a exception will be thrown.
-            if (newObject == null)
-                Thrower.ThrowProviderException(ExceptionResource.DataProvider_CreateInstance, null);
-
-            newObject.DataSourceType = provider.DataSourceType;
-
-            return newObject;
+        protected static T CreateInstance(Provider provider) {
+            return CreateInstance(provider, null);
         }
 
         /// <summary>
@@ -99,6 +131,11 @@ namespace Nohros.Data
         /// <remarks>
         /// This method will try to get the data provider information from the <see cref="IConfiguration.GetProvider(string)"/>
         /// method using the specified provider name.
+        /// <para>
+        /// The type T must have a constructor that accepts two strings as parameters. The first parameter
+        /// will be set to the provider database owner and the second parameter will be set to the
+        /// provider connection string.
+        /// </para>
         /// </remarks>
         /// <returns>An instance of the type <typeparam name="T"/> if the provider information could be found and
         /// the class could be instantiated.</returns>
@@ -111,6 +148,38 @@ namespace Nohros.Data
             if (provider == null)
                 throw new ArgumentNullException(StringResources.DataProvider_InvalidProvider);
             return CreateInstance(provider);
+        }
+
+        /// <summary>
+        /// Creates an instance of the type designated by the specified generic type parameter using the
+        /// constructor implied by the <see cref="IDataProvider"/> interface.
+        /// </summary>
+        /// <typeparam name="T">A type of a class that implements the IDataProvider interface.</typeparam>
+        /// <param name="provider_name">The name of the data provider.</param>
+        /// <param name="configuration">A class that implements the IConfiguration class containing the information
+        /// about the application data provides.</param>
+        /// <param name="assembly">The assembly where the class will be loaded from.</param>
+        /// <remarks>
+        /// This method will try to get the data provider information from the <see cref="IConfiguration.GetProvider(string)"/>
+        /// method using the specified provider name.
+        /// <para>
+        /// The type T must have a constructor that accepts two strings as parameters. The first parameter
+        /// will be set to the provider database owner and the second parameter will be set to the
+        /// provider connection string.
+        /// </para>
+        /// <para>If the <paramref name="assembly"/> is null this method will try to load related assembly related with
+        /// the specified type from the application base directory.</para>
+        /// </remarks>
+        /// <returns>An instance of the type <typeparam name="T"/> if the provider information could be found and
+        /// the class could be instantiated.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="provider_name"/> provider was not
+        /// found in the <paramref name="configuration"/></exception>
+        /// <exception cref="Nohros.Data.ProviderException">The provider type is invalid or could not be instantiated.</exception>
+        protected static T CreateInstance(string provider_name, IConfiguration configuration, Assembly assembly) {
+            Provider provider = configuration.GetProvider(provider_name);
+            if (provider == null)
+                throw new ArgumentNullException(StringResources.DataProvider_InvalidProvider);
+            return CreateInstance(provider, assembly);
         }
 
         /// <summary>
