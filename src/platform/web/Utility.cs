@@ -12,65 +12,7 @@ namespace Nohros.Net
 {
     public sealed class Utility
     {
-        public const string kNetID = "nohrosnetid";
-
-        private static NetSettings _settings = null;
-        private static object _settingsLock = new object();
-
-        internal static HybridDictionary pages = new HybridDictionary();
-
-        public static string NetID
-        {
-            get
-            {
-                return kNetID;
-            }
-        }
-
-        #region Internals
-        internal static string GetSessionUri()
-        {
-            string cookieUri = "";
-
-            if(HttpContext.Current.Session != null && HttpContext.Current.Session.IsCookieless)
-                cookieUri = "(" + HttpContext.Current.Request.ServerVariables["HTTP_ASPFILTERSESSIONID"] + ")";
-
-            if(cookieUri != null && cookieUri.Length != 0)
-                cookieUri += "/";
-
-            return cookieUri;
-        }
-
-        internal static NetSettings Settings
-        {
-            get
-            {
-                if (_settings != null)
-                    return _settings;
-
-                lock (_settingsLock)
-                {
-                    if (_settings != null)
-                        return _settings; // Ok, one other thread has already initialized this value.
-
-                    NetSettings settings = null;
-
-                    try
-                    {
-                        settings = (NetSettings)ConfigurationManager.GetSection("nohrosNet");
-                    }
-
-                    catch (ConfigurationException) {}
-
-                    if (settings == null)
-                        settings = new NetSettings();
-
-                    _settings = settings;
-
-                    return _settings;
-                }
-            }
-        }
+        private static NetSettings settings_ = null;
 
 		internal static string MapPath(string path)
 		{
@@ -100,7 +42,6 @@ namespace Nohros.Net
                 return AppDomain.CurrentDomain.BaseDirectory;
             }
         }
-        #endregion
 
         #region Web utility
         /// <summary>

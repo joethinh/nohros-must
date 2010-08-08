@@ -91,6 +91,7 @@ namespace Nohros.Test.Data
                         type=""Nohros.Test.ProviderType_, nohros.test.desktop""
                         databaseOwner=""strings/mssql/@dbowner""
                         dataSourceType=""mssql""
+                        assemblyLocation=""/""
                     />
                 </providers>
                 <strings>

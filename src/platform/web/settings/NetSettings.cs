@@ -16,56 +16,99 @@ namespace Nohros.Net
 {
     internal class NetSettings : IConfiguration
     {
-        public const string kPathNs = "paths";
-        public const string kCssPath = "css";
-        public const string kJsPath = "js";
-        public const string kPluginsPath = "plugins";
+        const string kPathsKey = "paths.";
+        const string kCssPathKey = "paths.css";
+        const string kJsPathKey = "paths.js";
+        const string kPluginsPathKey = "paths.plugins";
+        const string kMergeGroupsKey = "groups.";
+
+        string config_file_path_, root_node_name_, js_path_, css_path_, plugins_path_;
 
         #region .ctor
-        /// <summary>
-        /// Initializes a new instance of the NetSettings class.
-        /// </summary>
-        /// <remarks>
-        /// If the name of the configuration file is specified into the main application file, that file must
-        /// have a node with the following xpath "//nohros/net" containing the configuration data.
-        /// </remarks>
-        /// <exception cref="KeyNotFoundException">the key "NohrosConfigurationFile" was not found into the application
-        /// configuration file.</exception>
-        /// <exception cref="FileNotFoundException">The file pointed by the "NohrosConfigurationFile" key value does not
-        /// exists.</exception>
-        public NetSettings()
-        {
-            string config_file_path = ConfigurationManager.AppSettings["NohrosConfigurationFile"];
-            if(config_file_path == null || config_file_path.Length == 0)
-                throw new KeyNotFoundException(string.Format(StringResources.Config_KeyNotFound, "NohrosConfigurationFile"));
-
-            //(config_file_path, "//nohros/net");
-        }
-
         /// <summary>
         /// Initializes a new instance of the NetSettings class by using the specifed configuration file path.
         /// </summary>
         /// <param name="config_file_path">The path to the configuration file</param>
         /// <param name="root_node_name"></param>
         /// <exception cref="FileNotFoundException"><paramref name="config_file_path"/> was not found</exception>
-        public NetSettings(string config_file_path, string root_node_name)
+        public NetSettings(string config_file_path, string root_node_name):base(null, "settings")
 		{
             if (config_file_path.StartsWith("~/"))
                 config_file_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, config_file_path.Substring(2));
 
-            Load(config_file_path, root_node_name);
+            config_file_path_ = config_file_path;
+            root_node_name_ = root_node_name;
         }
         #endregion
 
+        public enum ContentType {
+            HTML,
+            Javascript,
+            StyleSheet
+        }
+
         /// <summary>
-        /// Gets a Value object associated with the specified <paramref name="key"/>.
+        /// Loads and parses the configuration file.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public Value this[string key] {
-            get {
-                return config_.Get(key);
+        public override void Load() {
+            Load(config_file_path_, root_node_name_);
+            
+            // parse the paths
+            string string_value, base_dir = AppDomain.CurrentDomain.BaseDirectory;
+
+            string_value = this[kCssPathKey];
+            css_path_ = (string_value == null) ? Path.Combine(base_dir, "css") : string_value;
+
+            string_value = this[kPluginsPathKey];
+            plugins_path_ = (string_value == null) ? Path.Combine(base_dir, "plugins") : string_value;
+
+            string_value = this[kJsPathKey];
+            js_path_ = (string_value == null) ? Path.Combine(base_dir, "js") : string_value;
+        }
+
+        /// <summary>
+        /// Gets a path related with the specified path.
+        /// </summary>
+        /// <param name="name">A string that identifies the path to retrieve.</param>
+        /// <returns>A string that contains the path related with the specified name.</returns>
+        public string GetPath(string name) {
+            return this[kPathsKey + name];
+        }
+
+        public string[] GetStyleSheetFiles(string group_name) {
+            return GetGroup(kCssPathKey + name);
+        }
+
+        public string[] GetJavascriptFiles(string group_name) {
+            return GetGroup(kCssPathKey + name);
+        }
+
+        string[] GetGroupFiles(string path, string group_name) {
+            DictionaryValue value = Get(key) as DictionaryValue;
+            if (value != null) {
+
             }
+        }
+
+        /// <summary>
+        /// Gets the path where the java script files are stored.
+        /// </summary>
+        public string JsPath {
+            get { return js_path_; }
+        }
+
+        /// <summary>
+        /// Gets the path where the stylesheet files are stored.
+        /// </summary>
+        public string CssPath {
+            get { return css_path_; }
+        }
+
+        /// <summary>
+        /// Gets the path where the plugins files are stored.
+        /// </summary>
+        public string PluginsPath {
+            get { return plugins_path_; }
         }
     }
 }
