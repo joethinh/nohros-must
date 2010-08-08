@@ -46,6 +46,7 @@
     <Compile Include="components\cache\NCache.cs" />
     <Compile Include="components\LongRunningTask.cs" />
     <Compile Include="components\Sevens.cs" />
+    <Compile Include="MergeHttpHandler.cs" />
     <Compile Include="security\auth\callback\WebCallbackHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="security\auth\NasHttpModule.cs" />
@@ -73,7 +74,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

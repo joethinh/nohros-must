@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.XPath;
 using Microsoft.Win32;
+using System.IO;
 
 namespace Nohros.Data
 {
@@ -48,11 +49,13 @@ namespace Nohros.Data
         const string kDataBaseOwnerKey = "databaseOwner";
         const string kConnectionStringKey = "connectionString";
         const string kIsEncryptedKey = "encrypted";
+        const string kAssemblyLocationKey = "assemblyLocation";
 
         string name_;
         string type_;
         string database_owner_;
         string connection_string_;
+        string assembly_location_;
         bool is_encrypted_;
 
         ConnectionStringsRepository repository_;
@@ -75,6 +78,7 @@ namespace Nohros.Data
             data_source_ = DataSourceType.Unknown;
             database_owner_ = "dbo";
             connection_string_ = null;
+            assembly_location_ = null;
         }
 
         /// <summary>
@@ -121,6 +125,10 @@ namespace Nohros.Data
 
                     case kDataSourceTypeKey:
                         data_source_ = DataHelper.ParseStringEnum<DataSourceType>(attribute.Value, DataSourceType.Unknown);
+                        break;
+
+                    case kAssemblyLocationKey:
+                        assembly_location_ = attribute.Value;
                         break;
 
                     default:
@@ -267,6 +275,18 @@ namespace Nohros.Data
         /// </summary>
         public string ConnectionString {
             get { return connection_string_; }
+        }
+
+        /// <summary>
+        /// Gets a string representing the fully qualified path to the directory where
+        /// the assembly related with the provider is located.
+        /// </summary>
+        /// <remarks>
+        /// This must be an absolute path or a path relative to the configuration file.
+        /// </remarks>
+        public string AssemblyLocation {
+            get { return assembly_location_; }
+            internal set { assembly_location_ = value; }
         }
     }
 }

@@ -37,6 +37,7 @@ namespace Nohros.Configuration
         /// </summary>
         protected const string kDefaultNamespace = "nhs-nsdefault";
 
+        string location_;
         string providers_node_name_;
         string properties_node_name_;
         DateTime version_;
@@ -91,6 +92,9 @@ namespace Nohros.Configuration
         {
             if (element == null)
                 throw new ArgumentNullException("element");
+
+            if (location_ == null)
+                location_ = Assembly.GetCallingAssembly().Location;
 
             element_ = element;
             version_ = DateTime.Now;
@@ -170,6 +174,9 @@ namespace Nohros.Configuration
                         // Loads the configuration file to memory.
                         XmlDocument doc = new XmlDocument();
                         doc.Load(fs);
+
+                        // retrieve the configuration file location
+                        location_ = Path.GetDirectoryName(config_file_info.FullName);
 
                         // searching for the configuration element.
                         Load((XmlElement)doc.SelectSingleNode(root_node_name));
@@ -317,7 +324,6 @@ namespace Nohros.Configuration
         private void CleanUp() {
             properties_.Clear();
             providers_.Clear();
-
         }
 
         /// <summary>
@@ -521,7 +527,16 @@ namespace Nohros.Configuration
                         if(name == null || name.Value == null || name.Value.Length == 0)
                             throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, providers_node_name_), provider);
 
-                        providers_.Add(name.Value, new Provider(provider));
+                        Provider p = new Provider(provider);
+
+                        // if the provider assembly location property is a relative path we need to resolve it
+                        // using the configuration file location.
+                        string location = p.AssemblyLocation;
+                        if (location != null && !Path.IsPathRooted(location) && location_ != null) {
+                            p.AssemblyLocation = Path.Combine(location_, location);
+                        }
+
+                        providers_.Add(name.Value, p);
                         break;
 
                     default:
