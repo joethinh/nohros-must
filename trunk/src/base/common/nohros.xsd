@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="nohros"
+	targetNamespace="http://nohros.com/schemas/nohros.xsd"
+	elementFormDefault="qualified"
+	xmlns="http://nohros.com/schemas/nohros.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+	<xs:element name="nohros">
+		<xs:complexType>
+			<xs:sequence minOccurs="1">
+				<xs:element name="repositories" type="Repositories" minOccurs="1" maxOccurs="1" />
+				<xs:any minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="Repositories">
+		<xs:sequence minOccurs ="1" maxOccurs ="1">
+			<xs:element name="common" type="ConfigurationRepository" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="web" type="ConfigurationRepository" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="auth" type="ConfigurationRepository" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ConfigurationRepository">
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="path" type="xs:string" use="required"/>
+		<xs:attribute name="root" type="xs:string" use="required"/>
+	</xs:complexType>
+	
+</xs:schema>

@@ -80,7 +80,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="nohros.json" />
+    <Content Include="nohros.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v8.0\WebApplications\Microsoft.WebApplication.targets" />
