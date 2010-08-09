@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="web"
+	targetNamespace="http://nohros.com/schemas/nohros-web.xsd"
+	elementFormDefault="qualified"
+	xmlns="http://nohros.com/schemas/nohros-web.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+	<xs:element name="folders" type ="BuildFolders" />
+	
+	<xs:complexType name="BuildFolders">
+		<xs:sequence>
+			<xs:element name="content" minOccurs="0" maxOccurs="un" type="Plugin"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Plugin">
+		<xs:attribute name="type" type="xs:string" />
+		<xs:sequence minOccurs="0" maxOccurs="unbounded"/>
+		<xs:attribute name="css" type="xs:string"/>
+		<xs:attribute name="javascript" type="xs:string"/>
+		<xs:attribute name="plugins" type="xs:string"/>
+		<xs:anyAttribute/>
+	</xs:complexType>
+</xs:schema>
