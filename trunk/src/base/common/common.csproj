@@ -48,9 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="configuration\IConfiguration.cs" />
+    <Compile Include="configuration\NohrosConfiguration.cs" />
     <Compile Include="data\CacheEntry.cs" />
-    <Compile Include="data\collections\trees\AndersonTree.cs" />
-    <Compile Include="data\collections\trees\AndersonTreeNode.cs" />
+    <Compile Include="data\type\collections\trees\AndersonTree.cs" />
+    <Compile Include="data\type\collections\trees\AndersonTreeNode.cs" />
     <Compile Include="data\ComparisonComparer.cs" />
     <Compile Include="data\DataHelper.cs" />
     <Compile Include="data\dto\TableTransferObject.cs" />
@@ -66,11 +67,13 @@
     <Compile Include="data\providers\IDataProvider.cs" />
     <Compile Include="data\ParameterizedString.cs" />
     <Compile Include="data\providers\Provider.cs" />
-    <Compile Include="data\values\DictionaryValue.cs" />
-    <Compile Include="data\values\FundamentalValue.cs" />
-    <Compile Include="data\values\ListValue.cs" />
-    <Compile Include="data\values\StringValue.cs" />
-    <Compile Include="data\values\Value.cs" />
+    <Compile Include="data\type\collections\values\DictionaryValue.cs" />
+    <Compile Include="data\type\collections\values\FundamentalValue.cs" />
+    <Compile Include="data\type\collections\values\ListValue.cs" />
+    <Compile Include="data\type\collections\values\StringValue.cs" />
+    <Compile Include="data\type\collections\values\Value.cs" />
+    <Compile Include="data\type\IPointer.cs" />
+    <Compile Include="data\type\Pointer.cs" />
     <Compile Include="ProviderException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="security\auth\BasicPermission.cs" />
@@ -111,9 +114,6 @@
     <None Include="nohros.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="nohros-web.xsd">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -125,7 +125,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

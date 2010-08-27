@@ -123,6 +123,12 @@
   <data name="Arg_IndexOutOfRange" xml:space="preserve">
     <value>index is outside the range of valid indexes for array.</value>
   </data>
+  <data name="Arg_OutOfRange" xml:space="preserve">
+    <value>Not a valid value.</value>
+  </data>
+  <data name="Arg_RangeNotBetween" xml:space="preserve">
+    <value>The range of valid values are {0} to {1}.</value>
+  </data>
   <data name="Argument_AddingDuplicate" xml:space="preserve">
     <value>An entry with the same key already exists.</value>
   </data>
@@ -159,6 +165,9 @@
   </data>
   <data name="Config_ErrorAt" xml:space="preserve">
     <value>Configuration error at "{0}".</value>
+  </data>
+  <data name="Config_FileInvalid" xml:space="preserve">
+    <value>The configuration file is invalid.</value>
   </data>
   <data name="Config_FileNotFound" xml:space="preserve">
     <value>Unable to find the specified configuration file.</value>

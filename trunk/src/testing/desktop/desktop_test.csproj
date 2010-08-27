@@ -39,9 +39,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLine_.cs" />
-    <Compile Include="data\collections\trees\AndersonTree_.cs" />
+    <Compile Include="configuration\NohrosConfiguration_.cs" />
+    <Compile Include="data\type\collections\trees\AndersonTree_.cs" />
     <Compile Include="configuration\IConfiguration_.cs" />
-    <Compile Include="data\Provider_.cs" />
+    <Compile Include="data\type\collections\values\Value_.cs" />
+    <Compile Include="data\type\Pointer_.cs" />
     <Compile Include="security\auth\LoginContext_.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -49,6 +51,10 @@
     <Compile Include="Thrower_.cs" />
     <Compile Include="data\dto\TransferQueue_.cs" />
     <Compile Include="data\json\JSONReader_.cs" />
+    <Compile Include="toolkit\CorrectBehavior.cs" />
+    <Compile Include="toolkit\Exceptions_.cs" />
+    <Compile Include="toolkit\mailchecker\MailChecker_.cs" />
+    <Compile Include="toolkit\mailchecker\SmtpReply_.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\base\common\common.csproj">
@@ -59,13 +65,17 @@
       <Project>{7B7DCA88-945A-4FA9-985C-5F3CB667C2BC}</Project>
       <Name>desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\platform\toolkit\toolkit.csproj">
+      <Project>{2AAB1652-4EBB-4917-AED8-7F157F884E3B}</Project>
+      <Name>toolkit</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
     </None>
-    <None Include="sample.config">
+    <Content Include="desktop.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

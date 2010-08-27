@@ -206,7 +206,7 @@ namespace Nohros.Net
 			string cache_key = Constant.NetID + key + content_type.Replace("text/", "");
 
             // If the file does not exists we can assume:
-            //  . that the user is requesting only the library-defined resources.
+            //  . that the user is requesting only the library-defined lib_resources_.
             //  . that the user wants to debug the files.
             //  . that the file does not exists
             if (!File.Exists(merge_index_path))
