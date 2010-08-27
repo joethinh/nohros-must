@@ -30,6 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "(sqlite)", "(sqlite)", "{C4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "common", "base\common\common.csproj", "{903B5354-C424-4ADD-BC2B-892E1AA4342A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "toolkit", "platform\toolkit\toolkit.csproj", "{2AAB1652-4EBB-4917-AED8-7F157F884E3B}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -68,6 +70,10 @@ Global
 		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.debug|Any CPU.Build.0 = Debug|Any CPU
 		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.release|Any CPU.ActiveCfg = Release|Any CPU
 		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.release|Any CPU.Build.0 = Release|Any CPU
+		{2AAB1652-4EBB-4917-AED8-7F157F884E3B}.debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AAB1652-4EBB-4917-AED8-7F157F884E3B}.debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AAB1652-4EBB-4917-AED8-7F157F884E3B}.release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AAB1652-4EBB-4917-AED8-7F157F884E3B}.release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{9AD42568-07A4-4D8B-9C6D-1FD54683EF4B} = {0E238FD8-B69D-41F3-9C7A-B6BB76B0503D}
 		{7B7DCA88-945A-4FA9-985C-5F3CB667C2BC} = {750864A8-5D01-4AA7-AFC5-0A16110E058E}
 		{ABF8260D-F80B-453C-8016-44AA75670DA3} = {750864A8-5D01-4AA7-AFC5-0A16110E058E}
+		{2AAB1652-4EBB-4917-AED8-7F157F884E3B} = {750864A8-5D01-4AA7-AFC5-0A16110E058E}
 		{C4248ECD-04B2-4797-88C1-0ED8E0CDF9E7} = {58950AA5-9A5F-47F2-AC22-A45A29728345}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

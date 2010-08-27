@@ -147,7 +147,7 @@ namespace Nohros.Data
         /// <exception cref="ArgumentNullException">The <paramref name="provider_name"/> provider was not
         /// found in the <paramref name="configuration"/></exception>
         /// <exception cref="Nohros.Data.ProviderException">The provider type is invalid or could not be instantiated.</exception>
-        protected static T CreateInstance(string provider_name, IConfiguration configuration)
+        protected static T CreateInstance(string provider_name, NohrosConfiguration configuration)
         {
             Provider provider = configuration.GetProvider(provider_name);
             if (provider == null)

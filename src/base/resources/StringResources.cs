@@ -4,12 +4,13 @@ using System.Text;
 using System.Resources;
 using System.Threading;
 using System.Globalization;
+using System.Reflection;
 
 namespace Nohros.Resources
 {
     public sealed class StringResources
     {
-        ResourceManager resources;
+        ResourceManager lib_resources_;
         static StringResources loader;
 
         /// <summary>
@@ -17,15 +18,14 @@ namespace Nohros.Resources
         /// </summary>
         internal StringResources()
         {
-            resources = new ResourceManager("Nohros.Resources.Resources", base.GetType().Assembly);
+            lib_resources_ = new ResourceManager("Nohros.Resources.Resources", base.GetType().Assembly);
         }
 
         static StringResources Loader
         {
             get
             {
-                if (loader == null)
-                {
+                if (loader == null) {
                     Interlocked.CompareExchange<StringResources>(ref loader, new StringResources(), null);
                 }
                 return loader;
@@ -44,7 +44,7 @@ namespace Nohros.Resources
             if (loader == null)
                 return null;
 
-            return loader.resources.GetString(name, Culture);
+            return loader.lib_resources_.GetString(name, Culture);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Nohros.Resources
             if (loader == null)
                 return null;
 
-            string format = loader.resources.GetString(name, Culture);
+            string format = loader.lib_resources_.GetString(name, Culture);
             if ((args == null) || (args.Length <= 0))
                 return format;
 
@@ -90,7 +90,7 @@ namespace Nohros.Resources
             }
         }
 
-        #region Internal resources
+        #region Internal lib_resources_
 
         /// <summary>
         /// Looks up a localized string similar to [An entry with the same key already exists]
@@ -252,7 +252,7 @@ namespace Nohros.Resources
 
         #endregion
 
-        #region Public resources
+        #region Public lib_resources_
 
         /// <summary>
         /// Looks up a localized string similar to [An invalid connection string argument has been supplied,
@@ -316,6 +316,20 @@ namespace Nohros.Resources
         }
 
         /// <summary>
+        /// Looks up a localized string similar to [Not a valid value].
+        /// </summary>
+        public static string Arg_OutOfRange {
+            get { return GetString("Arg_OutOfRange"); }
+        }
+
+        /// <summary>
+        /// Looks up a localized string similar to [The range of valid values are {0} to {1}].
+        /// </summary>
+        public static string Arg_RangeNotBetween {
+            get { return GetString("Arg_RangeNotBetween"); }
+        }
+
+        /// <summary>
         /// Looks up a localized string similar to [Unable to find the specified configuration file].
         /// </summary>
         public static string Config_FileNotFound
@@ -337,6 +351,13 @@ namespace Nohros.Resources
         public static string Config_KeyNotFound
         {
             get { return GetString("Config_KeyNotFound"); }
+        }
+
+        /// <summary>
+        /// Looks up a localized string similar to [Configuration file is invalid.].
+        /// </summary>
+        public static string Config_FileInvalid {
+            get { return GetString("Config_FileInvalid"); }
         }
 
         /// <summary>

@@ -20,45 +20,22 @@ namespace Nohros.Configuration
     {
         FileInfo config_file_;
 
-        DictionaryValue properties_;
-
-        /// <summary>
-        /// A collection of the parsed data providers.
-        /// </summary>
-        protected Dictionary<string, Provider> providers_;
-
         /// <summary>
         /// The configuration root node.
         /// </summary>
         protected XmlElement element_;
 
-        /// <summary>
-        /// Default namespace name.
-        /// </summary>
-        protected const string kDefaultNamespace = "nhs-nsdefault";
-
         string location_;
-        string providers_node_name_;
-        string properties_node_name_;
         DateTime version_;
 
         #region .ctor
         /// <summary>
-        /// Protected member initializer.
+        /// Initializezs a new instance of the IConfiguration calss.
         /// </summary>
-        protected IConfiguration(): this("nhs-properties", "nhs_providers") {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the IConfiguration class by using th specified
-        /// properties and providers node name.
-        /// </summary>
-        protected IConfiguration(string providers_node_name, string properties_node_name) {
-            properties_ = new DictionaryValue();
-            providers_ = new Dictionary<string, Provider>(StringComparer.OrdinalIgnoreCase);
+        protected IConfiguration()
+        {
             element_ = null;
-            properties_node_name_ = properties_node_name;
-            providers_node_name_ = providers_node_name;
+            location_ = null;
         }
         #endregion
 
@@ -74,6 +51,7 @@ namespace Nohros.Configuration
         /// </remarks>
         public virtual void Load()
         {
+            location_ = AppDomain.CurrentDomain.BaseDirectory;
             Load((XmlElement)System.Configuration.ConfigurationManager.GetSection("appconfig"));
         }
 
@@ -93,8 +71,9 @@ namespace Nohros.Configuration
             if (element == null)
                 throw new ArgumentNullException("element");
 
-            if (location_ == null)
-                location_ = Assembly.GetCallingAssembly().Location;
+            // the location could not be set here
+            // if it is not set yet this value will be null
+            // location_ =
 
             element_ = element;
             version_ = DateTime.Now;
@@ -298,7 +277,6 @@ namespace Nohros.Configuration
         /// </remarks>
         private void Watcher_OnChanged(object source, FileSystemEventArgs e)
         {
-            CleanUp();
             Load(config_file_, element_.Name);
         }
 
@@ -312,19 +290,10 @@ namespace Nohros.Configuration
         /// </remarks>
         private void Watcher_OnRenamed(object source, RenamedEventArgs e)
         {
-            CleanUp();
             config_file_ = new FileInfo(e.FullPath);
             Load(config_file_, element_.Name);
         }
         #endregion
-
-        /// <summary>
-        /// Cleans the configuration values for reload.
-        /// </summary>
-        private void CleanUp() {
-            properties_.Clear();
-            providers_.Clear();
-        }
 
         /// <summary>
         /// Used internally to load the configuration values by parsing a DOM tree of XML elements.
@@ -342,7 +311,7 @@ namespace Nohros.Configuration
         /// refrence this method returns silently.
         /// </para>
         /// </remarks>
-        protected void Parse(XmlElement element)
+        internal virtual void Parse(XmlElement element)
         {
             if(element == null) {
                 return;
@@ -373,27 +342,14 @@ namespace Nohros.Configuration
                     }
                 }
             }
-
-            foreach (XmlElement child in element.ChildNodes) {
-                // load the dynamic properties
-                if (string.Compare(child.Name, properties_node_name_, StringComparison.OrdinalIgnoreCase) == 0)
-                    GetProperties(child, string.Empty);
-
-                // load the data providers
-                if (child.Name == providers_node_name_)
-                    GetProviders(child);
-            }
         }
 
         /// <summary>
-        /// Gets the date and time when the <see cref="Load()"/> method was last called.
+        /// 
         /// </summary>
-        public DateTime Version {
-            get { return version_; }
-        }
-
-        #region Derived properties
-
+        /// <param name="properties"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
         private PropertyInfo GetProperty(PropertyInfo[] properties, string propertyName)
         {
             PropertyInfo property = null;
@@ -407,158 +363,20 @@ namespace Nohros.Configuration
             return property;
         }
 
-        #endregion
-
-        #region Dynamic Properties
         /// <summary>
-        /// Gets the value of a dynamic property by using the specified property namespace and name.
+        /// Gets the date and time when the <see cref="Load()"/> method was last called.
         /// </summary>
-        /// <param name="ns">The namespace of the property</param>
-        /// <param name="property">The name of the property</param>
-        /// <returns>The value of the property within a given namespace or null if the property could not
-        /// be found.</returns>
-        protected string PropertyKey(string ns, string property) {
-            return string.Concat(ns.ToLower(), "-", property.ToLower());
+        public DateTime Version {
+            get { return version_; }
         }
 
         /// <summary>
-        /// Recursively gets the dynamic properties.
+        /// Gets the directory path where the configuration file is stored.
         /// </summary>
-        /// <param name="node">A XML node containing the dynamic properties.</param>
-        /// <param name="path">The path to the node value.</param>
-        /// <remarks>
-        /// If the namespace of the property is not defined it will be assigned
-        /// to the default namespace.
-        /// </remarks>
-        void GetProperties(XmlNode node, string path)
-        {
-            if (node != null && node.ChildNodes.Count > 0) {
-                foreach (XmlNode inner_node in node.ChildNodes) {
-                    if (inner_node.NodeType == XmlNodeType.Element) {
-                        if (inner_node.ChildNodes.Count > 0) {
-                            GetProperties(inner_node, path + "." + inner_node.Name);
-                        } else {
-                            XmlAttributeCollection properties = inner_node.Attributes;
-                            if (properties.Count == 0)
-                                return;
-
-                            DictionaryValue keys = new DictionaryValue();
-                            foreach (XmlAttribute property in properties) {
-                                keys.SetString(property.Name, property.Value);
-                            }
-                            properties_.Set(path, keys);
-                        }
-                    }
-                }
-            }
+        /// <returns>An string that represents the location of the configuration file or null if the location
+        /// could not be retrieved.</returns>
+        public string Location {
+            get { return location_; }
         }
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="key">The key whose value to get</param>
-        /// <returns>An string associated with the specified key.</returns>
-        /// <seealso cref="this[string]"/>
-        public Value Get(string key)
-        {
-            return properties_.Get(key);
-        }
-        
-        /// <summary>
-        /// Sets the value associated with the specified key within the default namespace.
-        /// </summary>
-        /// <param name="key">The key whose value to set</param>
-        /// <param name="value">An string associated with the specified key within the given namespace</param>
-        public void Set(string key, Value value)
-        {
-            properties_.Set(key, value);
-        }
-
-        /// <summary>
-        /// A convenient form of <code>Get(string, string) and Set(string, string, Value)</code>.
-        /// </summary>
-        /// <param name="key">The key whose value to get or set.</param>
-        public string this[string key]
-        {
-            get {
-                Value value;
-                if (properties_.Get(key, out value))
-                    return value.GetAsString();
-                return null;
-            }
-            set {
-                Set(key, Value.CreateStringValue(value));
-            }
-        }
-        #endregion
-
-        #region Data Providers
-        /// <summary>
-        /// Extract the data providers information from specified Xml Node.
-        /// </summary>
-        /// <param name="node">A XML node that contains information about the data providers.</param>
-        /// <remarks>
-        /// The XML node must contain an add node for each provider and, each node must contains at minimum
-        /// the name and the .NET class type of the provider implementor.
-        /// <example>
-        /// <code>
-        /// <![CDATA[
-        /// <nhs-providers>
-        ///   <add name="MyCustomDataProviderName"
-        ///         type=MyCustomDataProviderType, MyCustomDataProviderAssembly
-        ///         configRepository="ConfigurationFile"
-        ///         dataSourceType="MSSQL"/>
-        /// </nhs-providers>
-        /// ]]>
-        /// </code>
-        /// </example>
-        /// </remarks>
-        void GetProviders(XmlNode node)
-        {
-            foreach (XmlNode provider in node.ChildNodes)
-            {
-                if (provider.NodeType != XmlNodeType.Element)
-                    continue;
-
-                XmlAttributeCollection attributes = provider.Attributes;
-                switch(provider.Name) {
-                    case "add":
-                        XmlAttribute name = attributes["name"];
-                        if(name == null || name.Value == null || name.Value.Length == 0)
-                            throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, providers_node_name_), provider);
-
-                        Provider p = new Provider(provider);
-
-                        // if the provider assembly location property is a relative path we need to resolve it
-                        // using the configuration file location.
-                        string location = p.AssemblyLocation;
-                        if (location != null && !Path.IsPathRooted(location) && location_ != null) {
-                            p.AssemblyLocation = Path.Combine(location_, location);
-                        }
-
-                        providers_.Add(name.Value, p);
-                        break;
-
-                    default:
-                        throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, providers_node_name_), provider);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets informations about a data provider by using the specified provider name.
-        /// </summary>
-        /// <param name="provider_name">The name of the data provider to get informations from</param>
-        /// <returns>A <see cref="Provider"/> object that contains information about the provider
-        /// associated with the specified <paramref name="provider_name"/> or null if the <paramref name="provider_name"/>
-        /// could not be found.
-        /// </returns>
-        public Provider GetProvider(string provider_name)
-        {
-            Provider provider = null;
-            providers_.TryGetValue(provider_name, out provider);
-            return provider;
-        }
-        #endregion
     }
 }

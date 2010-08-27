@@ -198,6 +198,10 @@ namespace Nohros
             throw new KeyNotFoundException();
         }
 
+        internal static void ThrowConfigurationException() {
+            throw new System.Configuration.ConfigurationErrorsException(StringResources.Config_FileInvalid);
+        }
+
         internal static void ThrowProviderException(ExceptionResource resource)
         {
             throw new ProviderException(GetResourceByName(resource));
