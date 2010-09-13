@@ -53,7 +53,7 @@
     <Content Include="img\nh_alertb.jpg" />
     <Content Include="img\nh_alerth.jpg" />
     <Content Include="img\nh_alertsource.jpg" />
-    <Content Include="js\merge.js" />
+    <Content Include="js\common.js" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -74,12 +74,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\base\common\common.csproj">
+      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
+      <Name>common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\platform\web\web.csproj">
       <Project>{ABF8260D-F80B-453C-8016-44AA75670DA3}</Project>
       <Name>web</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="js\base.js" />
     <Content Include="nohros.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -33,12 +33,14 @@
       <HintPath>..\third_party\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLine_.cs" />
+    <Compile Include="configuration\NetSettings_.cs" />
     <Compile Include="configuration\NohrosConfiguration_.cs" />
     <Compile Include="data\type\collections\trees\AndersonTree_.cs" />
     <Compile Include="configuration\IConfiguration_.cs" />
@@ -68,6 +70,10 @@
     <ProjectReference Include="..\..\platform\toolkit\toolkit.csproj">
       <Project>{2AAB1652-4EBB-4917-AED8-7F157F884E3B}</Project>
       <Name>toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\platform\web\web.csproj">
+      <Project>{ABF8260D-F80B-453C-8016-44AA75670DA3}</Project>
+      <Name>web</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

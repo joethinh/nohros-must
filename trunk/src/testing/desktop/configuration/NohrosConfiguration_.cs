@@ -83,9 +83,9 @@ namespace Nohros.Test.Configuration
         }
 
         public void NohrosConfiguration_ContentGroup() {
-            ListValue content_group = configuration_.GetContentGroup("common", "release", "text/css");
-            Assert.AreEqual(1, content_group.Size);
-            Assert.AreEqual("jquery.js", content_group[0].GetAsString());
+            ContentGroup content_group = configuration_.GetContentGroup("common", "release", "text/css");
+            Assert.AreEqual(1, content_group.Files.Count);
+            Assert.AreEqual("jquery.js", content_group.Files[0]);
         }
 
         public long Timeout {

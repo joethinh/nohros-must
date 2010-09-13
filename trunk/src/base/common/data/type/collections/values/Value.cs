@@ -14,7 +14,8 @@ namespace Nohros.Data
             TYPE_REAL = 3,
             TYPE_STRING = 4,
             TYPE_DICTIONARY = 5,
-            TYPE_LIST = 6
+            TYPE_LIST = 6,
+            TYPE_GENERIC = 7
         }
         #endregion
 
@@ -84,6 +85,17 @@ namespace Nohros.Data
         /// <returns>A Value object which ValueType is equals to TYPE_STRING</returns>
         public static Value CreateStringValue(string in_value) {
             return new StringValue(in_value);
+        }
+
+        /// <summary>
+        /// Convenience method for creating Valut of type TYPE_GENERIC without thinking
+        /// about which class implements it.
+        /// </summary>
+        /// <typeparam name="T">The type of the <paramref name="in_value"/> parameter</typeparam>
+        /// <param name="in_value">The underlying <typeparamref name="T"/>value<</param>
+        /// <returns></returns>
+        public static Value CreateGenericValue<T>(T in_value) where T : class {
+            return new GenericValue<T>(in_value);
         }
 
         #region bool GetAs[...](out ...) methods

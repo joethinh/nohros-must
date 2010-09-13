@@ -35,7 +35,7 @@ namespace Nohros.Configuration
         protected IConfiguration()
         {
             element_ = null;
-            location_ = null;
+            Location = null;
         }
         #endregion
 
@@ -51,7 +51,6 @@ namespace Nohros.Configuration
         /// </remarks>
         public virtual void Load()
         {
-            location_ = AppDomain.CurrentDomain.BaseDirectory;
             Load((XmlElement)System.Configuration.ConfigurationManager.GetSection("appconfig"));
         }
 
@@ -155,10 +154,24 @@ namespace Nohros.Configuration
                         doc.Load(fs);
 
                         // retrieve the configuration file location
-                        location_ = Path.GetDirectoryName(config_file_info.FullName);
+                        Location = Path.GetDirectoryName(config_file_info.FullName);
 
                         // searching for the configuration element.
-                        Load((XmlElement)doc.SelectSingleNode(root_node_name));
+                        XmlNode node = null;
+                        if (root_node_name == null) {
+                            foreach (XmlNode n in doc.ChildNodes) {
+                                if (n.NodeType == XmlNodeType.Element) {
+                                    node = n;
+                                    break;
+                                }
+                            }
+                        } else {
+                            XmlNodeList nodes = doc.GetElementsByTagName(root_node_name);
+                            if (nodes.Count > 0)
+                                node = nodes[0];
+                        }
+
+                        Load((XmlElement)node);
                     }
                     finally
                     {
@@ -377,6 +390,13 @@ namespace Nohros.Configuration
         /// could not be retrieved.</returns>
         public string Location {
             get { return location_; }
+            protected set {
+                if (value == null)
+                    location_ = AppDomain.CurrentDomain.BaseDirectory;
+                else {
+                    location_ = value;
+                }
+            }
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Nohros.Data
             return (out_value != null);
         }
 
-        public Value DeepCopy()
+        public override Value DeepCopy()
         {
             return CreateStringValue(value_);
         }

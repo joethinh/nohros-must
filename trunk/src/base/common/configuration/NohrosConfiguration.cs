@@ -43,6 +43,8 @@ namespace Nohros.Configuration
         const string kIsEncryptedKey = "encrypted";
         const string kAssemblyLocationKey = "assembly-location";
 
+        const string kConfigurationFileNodeName = "NohrosConfigurationFile";
+
         DictionaryValue properties_;
         Dictionary<string, Value> name_value_pairs_;
 
@@ -62,6 +64,26 @@ namespace Nohros.Configuration
             name_value_pairs_ = new Dictionary<string, Value>();
         }
         #endregion
+
+        /// <summary>
+        /// Loads the configuration values based on the application's configuration settings.
+        /// </summary>
+        /// <remarks>
+        /// Each application has a configuration file. This has the same name as the application
+        /// whith ' .config ' appended. This file is XML and calling this function prompts the
+        /// loader to look in that file for a key named NohrosConfigurationFile that contains the
+        /// relative path for the configuration file.
+        /// </remarks>
+        public override void Load() {
+            string config_file_path = ConfigurationManager.AppSettings[kConfigurationFileNodeName];
+            if (config_file_path == null)
+                throw new ConfigurationErrorsException(string.Format(StringResources.Config_KeyNotFound, kConfigurationFileNodeName));
+
+            if (!Path.IsPathRooted(config_file_path))
+                config_file_path = Path.Combine(Location, config_file_path);
+
+            Load(new FileInfo(config_file_path), null);
+        }
 
         #region Parsers
         internal override void Parse(XmlElement element) {
@@ -101,7 +123,13 @@ namespace Nohros.Configuration
                         string name = null, relative_path = null;
                         if (!(GetAttributeValue(n, "name", out name) && GetAttributeValue(n, "relative-path", out relative_path)))
                             Thrower.ThrowConfigurationException();
-                        name_value_pairs_[PathKey(name)] = Value.CreateStringValue(relative_path);
+
+                        // resolve the relative path
+                        if(Path.IsPathRooted(relative_path))
+                            throw new ConfigurationErrorsException(StringResources.Config_PathIsRooted);
+
+                        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relative_path);
+                        name_value_pairs_[PathKey(name)] = Value.CreateStringValue(path);
                     }
                 }
             }
@@ -181,7 +209,7 @@ namespace Nohros.Configuration
                         // if the provider assembly location property is a relative path we need to resolve it
                         // using the configuration file location.
                         string location = attribute.Value;
-                        if (location != null && !Path.IsPathRooted(location) && Location != null) {
+                        if (location != null && !Path.IsPathRooted(location)) {
                             location = Path.Combine(Location, location);
                         }
                         provider.AssemblyLocation = location;
@@ -244,9 +272,29 @@ namespace Nohros.Configuration
                 Thrower.ThrowConfigurationException();
             }
 
-            ListValue files = new ListValue();
-            name_value_pairs_[ContentGroupKey(name, build, mime_type)] = files;
+            // sanity check the build type
+            if (build != "release" && build != "debug")
+                // TODO: log the exception.
+                // TODO: explain the exception.
+                Thrower.ThrowConfigurationException();  
 
+            // resolve the base path
+            if (!Path.IsPathRooted(path_ref)) {
+                Value value = null;
+                if (name_value_pairs_.TryGetValue(PathKey(path_ref), out value)) {
+                    path_ref = value.GetAsString();
+                } else {
+                    // TODO: explain the exception.
+                    Thrower.ThrowConfigurationException();
+                }
+            }
+
+            List<string> files = new List<string>();
+            ContentGroup content_group = new ContentGroup(name, (build == "release" ? BuildType.Release : BuildType.Debug), mime_type, path_ref, files);
+
+            // store the content group into the cache
+            name_value_pairs_[ContentGroupKey(name, build, mime_type)] = Value.CreateGenericValue<ContentGroup>(content_group);
+            
             string file_name = null;
             foreach (XmlNode file_node in group_node.ChildNodes) {
                 if (string.Compare(file_node.Name, "add", StringComparison.OrdinalIgnoreCase) == 0) {
@@ -254,7 +302,7 @@ namespace Nohros.Configuration
                         // TODO: log the exception.
                         Thrower.ThrowConfigurationException();
                     }
-                    files.Append(Value.CreateStringValue(file_name));
+                    files.Add(file_name);
                 }
             }
         }
@@ -433,10 +481,14 @@ namespace Nohros.Configuration
         /// <param name="build">The build version</param>
         /// <param name="mime_type">The mime type of the group.</param>
         /// <returns></returns>
-        public ListValue GetContentGroup(string name, string build, string mime_type) {
+        public ContentGroup GetContentGroup(string name, string build, string mime_type) {
             if (name == null || build == null || mime_type == null)
                 throw new ArgumentException((name == null) ? (build == null) ? "mime_type" : "build" : "name");
-            return name_value_pairs_[ContentGroupKey(name, build, mime_type)] as ListValue;
+
+            Value content_group;
+            if (name_value_pairs_.TryGetValue(ContentGroupKey(name, build, mime_type), out content_group))
+                return (content_group as GenericValue<ContentGroup>).TValue;
+            return null;
         }
         #endregion
     }
