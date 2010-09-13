@@ -65,6 +65,11 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="auth" minOccurs="0" maxOccurs ="1">
+        <xs:complexType>
+          
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   

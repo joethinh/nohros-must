@@ -14,29 +14,28 @@ namespace Nohros.Security.Auth
 {
     internal class IConfigurationImpl : IConfiguration
     {
-        ListDictionary _modules;
+        ListDictionary modules_;
 
-        FileInfo _configFile;
+        FileInfo config_file_;
 
         /// <summary>
-        /// This class is used by the LoginConfiguration class to parse
-        /// the login configuration file.
+        /// This class is used by the LoginConfiguration class to parse the login configuration file.
         /// </summary>
         public IConfigurationImpl()
         {
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string configFile = ConfigurationManager.AppSettings["LoginConfigurationFile"] as string;
-            if (configFile == null)
+            string base_path = AppDomain.CurrentDomain.BaseDirectory;
+            string config_file = ConfigurationManager.AppSettings["LoginConfigurationFile"] as string;
+            if (config_file == null)
                 throw new LoginException("The LoginConfigurationFile key was not defined");
 
-            if (configFile.StartsWith("~/"))
-                configFile = Path.Combine(basePath, configFile.Substring(2));
+            if (config_file.StartsWith("~/"))
+                config_file = Path.Combine(base_path, config_file.Substring(2));
 
-            if (!File.Exists(configFile))
-                throw new LoginException("The specified configuration file does not exists. Path:" + configFile);
+            if (!File.Exists(config_file))
+                throw new LoginException("The specified configuration file does not exists. Path:" + config_file);
             
-            _configFile = new FileInfo(configFile);
-            _modules = new ListDictionary();
+            config_file_ = new FileInfo(config_file);
+            modules_ = new ListDictionary();
         }
 
         /// <summary>
@@ -45,7 +44,7 @@ namespace Nohros.Security.Auth
         /// <remarks></remarks>
         public override void Load()
         {
-            base.LoadAndWatch(_configFile, "//LoginModules");
+            base.LoadAndWatch(config_file_, "//LoginModules");
 
             // load the login modules
             List<string> modules = new List<string>();
@@ -78,7 +77,7 @@ namespace Nohros.Security.Auth
 
                 LoginModuleEntry entry = new LoginModuleEntry(name, t, controlFlag, options);
 
-                _modules[name] = entry;
+                modules_[name] = entry;
             }
         }
 
@@ -117,7 +116,7 @@ namespace Nohros.Security.Auth
         /// or null if there are no entry for the specified <paramref name="name"/></returns>
         public LoginModuleEntry GetLoginModuleEntry(string name)
         {
-            return _modules[name] as LoginModuleEntry;
+            return modules_[name] as LoginModuleEntry;
         }
 
         /// <summary>
@@ -129,9 +128,9 @@ namespace Nohros.Security.Auth
         {
             get
             {
-                LoginModuleEntry[] entries = new LoginModuleEntry[_modules.Count];
+                LoginModuleEntry[] entries = new LoginModuleEntry[modules_.Count];
                 int i = 0;
-                foreach(LoginModuleEntry entry in _modules.Values)
+                foreach(LoginModuleEntry entry in modules_.Values)
                     entries[i++] = entry;
                 return entries;
             }

@@ -48,8 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="configuration\BuildType.cs" />
+    <Compile Include="configuration\CommonNode.cs" />
     <Compile Include="configuration\ContentGroup.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
+    <Compile Include="configuration\IConfigurationNode.cs" />
     <Compile Include="configuration\NohrosConfiguration.cs" />
     <Compile Include="data\CacheEntry.cs" />
     <Compile Include="data\type\collections\trees\AndersonTree.cs" />
