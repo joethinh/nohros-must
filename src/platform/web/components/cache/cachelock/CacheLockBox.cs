@@ -168,7 +168,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Gets an instance of the Dictionary<string, CacheEntry>, wich is used
+        /// Gets an instance_ of the Dictionary<string, CacheEntry>, wich is used
         /// to store the lock entries.
         /// </summary>
         private static Dictionary<string, CacheEntry> Instance

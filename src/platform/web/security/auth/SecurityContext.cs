@@ -41,7 +41,7 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Initializes a new instance of the SecurityContext class by using the specified
+        /// Initializes a new instance_ of the SecurityContext class by using the specified
         /// <see cref="Subject"/>
         /// </summary>
         /// <param name="subject">The current subject</param>

@@ -242,6 +242,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &quot;{0}&quot; path must be relative to the application base directory..
+        /// </summary>
+        internal static string Config_PathIsRooted {
+            get {
+                return ResourceManager.GetString("Config_PathIsRooted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The number of specified fields is less than the number of columns..
         /// </summary>
         internal static string DataHelper_OrdArrInvalidOfLen {

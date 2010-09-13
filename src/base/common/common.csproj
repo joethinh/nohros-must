@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="configuration\BuildType.cs" />
+    <Compile Include="configuration\ContentGroup.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\NohrosConfiguration.cs" />
     <Compile Include="data\CacheEntry.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="data\providers\Provider.cs" />
     <Compile Include="data\type\collections\values\DictionaryValue.cs" />
     <Compile Include="data\type\collections\values\FundamentalValue.cs" />
+    <Compile Include="data\type\collections\values\GenericValue.cs" />
     <Compile Include="data\type\collections\values\ListValue.cs" />
     <Compile Include="data\type\collections\values\StringValue.cs" />
     <Compile Include="data\type\collections\values\Value.cs" />

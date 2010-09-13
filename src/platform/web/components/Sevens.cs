@@ -17,14 +17,14 @@ namespace Nohros.Net
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the Sevens class that is empty and has the default initial capacity.
+        /// Initializes a new instance_ of the Sevens class that is empty and has the default initial capacity.
         /// </summary>
         public Sevens():this(0)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the Sevens class by using the specified capacity
+        /// Initializes a new instance_ of the Sevens class by using the specified capacity
         /// </summary>
         /// <param name="capacity">The initial number of events that the Sevens can contain</param>
         public Sevens(int capacity)

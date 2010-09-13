@@ -202,6 +202,10 @@ namespace Nohros
             throw new System.Configuration.ConfigurationErrorsException(StringResources.Config_FileInvalid);
         }
 
+        internal static void ThrowConfigurationException(string message) {
+            throw new System.Configuration.ConfigurationErrorsException(message);
+        }
+
         internal static void ThrowProviderException(ExceptionResource resource)
         {
             throw new ProviderException(GetResourceByName(resource));

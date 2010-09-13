@@ -14,7 +14,7 @@ namespace Nohros.Net
 
         #region .ctor
         /// <summary>
-        /// Initializes a new empty instance of the Nhashtable class using
+        /// Initializes a new empty instance_ of the Nhashtable class using
         /// the default initial capacity, load factor, hash code provider, and comparer.
         /// </summary>
         public NHashtable()
@@ -22,7 +22,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Initializes a new instance of the NHashtable class by copying the elements
+        /// Initializes a new instance_ of the NHashtable class by copying the elements
         /// from the specified dictionary to the new Nhashtable object. The new NHashtable
         /// object has an initial capacity equal to the number of elements copied, and uses
         /// the default load factor, hash code provider, and comparer.
@@ -34,7 +34,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Initializes a new, empty instance of the NHashtable class using the default initial
+        /// Initializes a new, empty instance_ of the NHashtable class using the default initial
         /// capacity and load factor, and the specified IEqualityComparer object.
         /// </summary>
         /// <param name="equalityComparer">The IEqualityComparer object that defines the hash code
@@ -47,7 +47,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Initializes a new, empty instance of the NHashtable class using the specified initial capacity,
+        /// Initializes a new, empty instance_ of the NHashtable class using the specified initial capacity,
         /// and the default load factor, hash code provider, and comparer.
         /// </summary>
         /// <param name="capacity">The approximate number of elements that the NHashtable object can initially contain.</param>
@@ -57,7 +57,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Initializes a new instance of the NHashtable class by copying the elements from the specified
+        /// Initializes a new instance_ of the NHashtable class by copying the elements from the specified
         /// dictionary to a new NHashtable object. The new NHashtable object hasn an initial capacity equal
         /// to the number of elements copied, and uses the default load factor and the specified IEqualityComparer
         /// object.
@@ -73,7 +73,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Initializes a new instance of the NHashtable class by copying the elements from the specified dictionary
+        /// Initializes a new instance_ of the NHashtable class by copying the elements from the specified dictionary
         /// to the new NHashtable object. The new NHashtable object has an initial capacity equal to the number of
         /// elements copied, and uses load factor, and the default hash code provider and comparer.
         /// </summary>
@@ -87,7 +87,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Initializes a new, empty instance of the NHashtable class using the specified initial capacity and
+        /// Initializes a new, empty instance_ of the NHashtable class using the specified initial capacity and
         /// IEqualityComparer, and the default load factor.
         /// </summary>
         /// <param name="capacity">The approximate number of elements that the NHashtable object can initially contain.</param>
@@ -101,7 +101,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Initializes a new, empty instance of the Hashtable class using the specified initial capacity and load factor,
+        /// Initializes a new, empty instance_ of the Hashtable class using the specified initial capacity and load factor,
         /// and the default hash code provider and comparer.
         /// </summary>
         /// <param name="capacity">The approximate number of elements that the Hashtable object can initially contain.</param>
@@ -114,7 +114,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Initializes a new instance of the Hashtable class by copying the elements from the specified
+        /// Initializes a new instance_ of the Hashtable class by copying the elements from the specified
         /// dictionary to the new Hashtable object. The new Hashtable object has an initial capacity equal
         /// to the number of elements copied, and uses the specified load factor and IEqualityComparer object.
         /// </summary>
@@ -130,7 +130,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Initializes a new, empty instance of the Hashtable class using the specified initial capacity,
+        /// Initializes a new, empty instance_ of the Hashtable class using the specified initial capacity,
         /// load factor, and IEqualityComparer object.
         /// </summary>
         /// <param name="capacity">The approximate number of elements that the Hashtable object can initially contain.</param>

@@ -354,6 +354,13 @@ namespace Nohros.Resources
         }
 
         /// <summary>
+        /// Looks up a localized string similar to [The "{0}" path must be relative to the application base directory.]
+        /// </summary>
+        public static string Config_PathIsRooted {
+            get { return GetString("Config_PathIsRooted"); }
+        }
+
+        /// <summary>
         /// Looks up a localized string similar to [Configuration file is invalid.].
         /// </summary>
         public static string Config_FileInvalid {

@@ -31,7 +31,7 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Initializes a new instance of the WebAuthCallback by using the specified username and
+        /// Initializes a new instance_ of the WebAuthCallback by using the specified username and
         /// password information.
         /// </summary>
         /// <param name="username">The name of the user</param>
