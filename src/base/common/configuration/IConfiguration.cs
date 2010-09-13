@@ -166,9 +166,12 @@ namespace Nohros.Configuration
                                 }
                             }
                         } else {
-                            XmlNodeList nodes = doc.GetElementsByTagName(root_node_name);
-                            if (nodes.Count > 0)
-                                node = nodes[0];
+                            node = doc.SelectSingleNode(root_node_name); // for compatibility
+                            if (node == null) {
+                                XmlNodeList nodes = doc.GetElementsByTagName(root_node_name);
+                                if (nodes.Count > 0)
+                                    node = nodes[0];
+                            }
                         }
 
                         Load((XmlElement)node);
