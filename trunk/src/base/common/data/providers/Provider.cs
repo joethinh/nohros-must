@@ -9,16 +9,6 @@ using System.IO;
 
 namespace Nohros.Data
 {
-    #region enumerations
-    public enum DataSourceType
-    {
-        MsSql = 0,
-        OleDb = 1,
-        Odbc = 2,
-        Unknown = 100
-    }
-    #endregion
-
     /// <summary>
     /// Stores all the data needed to create instances of the IDataProvider provider's implementation
     /// of the data source classes.

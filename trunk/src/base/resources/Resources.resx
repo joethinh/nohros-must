@@ -163,6 +163,9 @@
   <data name="Caching_Invalid_expiration_combination" xml:space="preserve">
     <value>absoluteExpiration must be DateTime.MaxValue or slidingExpiration must be timeSpan.Zero.</value>
   </data>
+  <data name="Config_ArgOutOfRange" xml:space="preserve">
+    <value>{0} is not a valid value for {1}.</value>
+  </data>
   <data name="Config_ErrorAt" xml:space="preserve">
     <value>Configuration error at "{0}".</value>
   </data>
@@ -177,6 +180,9 @@
   </data>
   <data name="Config_KeyNotFound" xml:space="preserve">
     <value>The configuration key "{0}" was not found.</value>
+  </data>
+  <data name="Config_MissingAt" xml:space="preserve">
+    <value>Missing configuration information for {0} at {1}.</value>
   </data>
   <data name="Config_PathIsRooted" xml:space="preserve">
     <value>The "{0}" path must be relative to the application base directory.</value>
