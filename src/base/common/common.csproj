@@ -49,10 +49,17 @@
   <ItemGroup>
     <Compile Include="configuration\BuildType.cs" />
     <Compile Include="configuration\CommonNode.cs" />
+    <Compile Include="configuration\ConfigurationNode.cs" />
+    <Compile Include="configuration\ConnectionStringNode.cs" />
     <Compile Include="configuration\ContentGroup.cs" />
+    <Compile Include="configuration\ContentGroupNode.cs" />
+    <Compile Include="data\providers\DataSourceType.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\IConfigurationNode.cs" />
     <Compile Include="configuration\NohrosConfiguration.cs" />
+    <Compile Include="configuration\ProviderNode.cs" />
+    <Compile Include="data\StringMap.cs" />
+    <Compile Include="configuration\WebNode.cs" />
     <Compile Include="data\CacheEntry.cs" />
     <Compile Include="data\type\collections\trees\AndersonTree.cs" />
     <Compile Include="data\type\collections\trees\AndersonTreeNode.cs" />
@@ -130,7 +137,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

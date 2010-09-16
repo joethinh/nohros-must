@@ -106,6 +106,10 @@ namespace Nohros
                     argumentName = "any variable";
                     break;
 
+                case ExceptionArgument.capacity:
+                    argumentName = "capacity";
+                    break;
+
                 default:
                     Debug.Assert(false , "The enum value is not defined, please checked ExceptionArgumentName Enum");
                     return string.Empty;
@@ -232,7 +236,8 @@ namespace Nohros
         type,
         value,
         collection,
-        any
+        any,
+        capacity
     }
 
     internal enum ExceptionResource

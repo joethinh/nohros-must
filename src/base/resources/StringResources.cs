@@ -368,6 +368,20 @@ namespace Nohros.Resources
         }
 
         /// <summary>
+        /// Looks up a localized string similar to [Missing configuration information for {0} at {1}.].
+        /// </summary>
+        public static string Config_MissingAt {
+            get { return GetString("Config_MissingAt"); }
+        }
+
+        /// <summary>
+        /// Looks up a localized string similar to [{0} is not a valid value for {1}.].
+        /// </summary>
+        public static string Config_ArgOutOfRange {
+            get { return GetString("Config_ArgOutOfRange"); }
+        }
+
+        /// <summary>
         /// Looks up a localized string similar to [Configuration error at "{0}".].
         /// </summary>
         public static string Config_ErrorAt

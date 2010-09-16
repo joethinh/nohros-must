@@ -197,6 +197,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is not a valid value for {1}..
+        /// </summary>
+        internal static string Config_ArgOutOfRange {
+            get {
+                return ResourceManager.GetString("Config_ArgOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configuration error at &quot;{0}&quot;..
         /// </summary>
         internal static string Config_ErrorAt {
@@ -238,6 +247,15 @@ namespace Nohros.Resources {
         internal static string Config_KeyNotFound {
             get {
                 return ResourceManager.GetString("Config_KeyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing configuration information for {0} at {1}..
+        /// </summary>
+        internal static string Config_MissingAt {
+            get {
+                return ResourceManager.GetString("Config_MissingAt", resourceCulture);
             }
         }
         
