@@ -48,7 +48,7 @@ namespace Nohros.Net
         HttpContext context_;
         NetSettings settings_;
 
-        private FileCacheItem UpdateFileCache(ContentGroup content_group, string cache_key)
+        private FileCacheItem UpdateFileCache(ContentGroupNode content_group, string cache_key)
         {
             CacheDependency cd;
             StringBuilder merged = new StringBuilder();
@@ -104,7 +104,7 @@ namespace Nohros.Net
                 kBuildVersion);
 
             // check if this group is defined
-            ContentGroup content_group = settings_.GetContentGroup(content_group_name, kBuildVersion, mime_type);
+            ContentGroupNode content_group = settings_.GetContentGroup(content_group_name, kBuildVersion, mime_type);
             if (content_group == null) {
                 context_.Response.StatusCode = kResourceNotFoundCode;
                 context_.Response.End();

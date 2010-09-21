@@ -23,7 +23,11 @@ namespace Nohros.Configuration
         /// Initializes a new instance of the ConfigurationNode class by using the specified XML node.
         /// </summary>
         /// <param name="name">The name of the node.</param>
-        public ConfigurationNode(string name):this(name, null) { }
+        public ConfigurationNode(string name) {
+            name_ = name;
+            parent_node_ = null;
+            child_nodes_ = new Dictionary<string, ConfigurationNode>(StringComparer.OrdinalIgnoreCase);
+        }
 
         /// <summary>
         /// Initializes a nes instance of the ConfigurationNode class by using the specified XML node.
@@ -31,32 +35,13 @@ namespace Nohros.Configuration
         /// <param name="name">The name of the node.</param>
         /// <param name="parent_node">The parent node.</param>
         /// <exception cref="ArgumentNullException"><paramref name="parent_node"/>is null.</exception>
-        public ConfigurationNode(string name, ConfigurationNode parent_node) {
+        public ConfigurationNode(string name, ConfigurationNode parent_node): this(name) {
             if (parent_node == null)
                 throw new ArgumentNullException("parent_node");
 
             parent_node_ = parent_node;
-            name_ = name;
-            child_nodes_ = new Dictionary<string, ConfigurationNode>(StringComparer.OrdinalIgnoreCase);
         }
         #endregion
-
-        /// <summary>
-        /// Selects the first <see cref="XmlNode"/> that matches the specified name.
-        /// </summary>
-        /// <param name="node">The parent node.</param>
-        /// <param name="name">The name of the node.</param>
-        /// <returns>The first <see cref="XmlNode"/> that matches the XPath query or null if no matching node is found.</returns>
-        public static XmlNode SelectNode(XmlNode node, string name) {
-            if (node == null || name == null)
-                throw new ArgumentNullException((node == null) ? "name" : "xpath");
-
-            foreach (XmlNode n in node.ChildNodes) {
-                if (string.Compare(n.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
-                    return n;
-            }
-            return null;
-        }
 
         /// <summary>
         /// Gets the value of an attribute of a xml node.

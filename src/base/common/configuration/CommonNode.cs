@@ -27,6 +27,7 @@ namespace Nohros.Configuration
         /// <param name="name">The name of the node.</param>
         public CommonNode(NohrosConfiguration configuration):base(kCommonNodeName) {
             configuration_ = configuration;
+            paths_ = new StringMap();
         }
         #endregion
 
@@ -41,9 +42,9 @@ namespace Nohros.Configuration
         /// </summary>
         public override void Parse(XmlNode node) {
             // parse the repository node.
-            XmlNode data_node = SelectNode(node, kRepositoryNodeName);
+            XmlNode data_node = IConfiguration.SelectNode(node, kRepositoryNodeName);
             if (data_node != null) {
-                foreach (XmlNode n in node.ChildNodes) {
+                foreach (XmlNode n in data_node.ChildNodes) {
                     if (string.Compare(n.Name, "add") == 0) {
                         string name = null, relative_path = null;
                         if (!(GetAttributeValue(n, "name", out name) && GetAttributeValue(n, "relative-path", out relative_path)))
@@ -59,7 +60,7 @@ namespace Nohros.Configuration
             }
 
             // parse the connection strings
-            data_node = SelectNode(node, kConnectionStringsNodeName);
+            data_node = IConfiguration.SelectNode(node, kConnectionStringsNodeName);
             if (data_node != null) {
                 foreach (XmlNode n in data_node.ChildNodes) {
                     if (string.Compare(n.Name, "add") == 0) {
@@ -67,7 +68,7 @@ namespace Nohros.Configuration
                         if (!(GetAttributeValue(n, "name", out name)))
                             Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", kNodeTree + kConnectionStringsNodeName));
 
-                        ConnectionStringNode conn_string_node = new ConnectionStringNode(name);
+                        ConnectionStringNode conn_string_node = new ConnectionStringNode(name, this);
                         conn_string_node.Parse(n);
                         this[ConnectionStringKey(conn_string_node.Name)] = conn_string_node;
                     }
@@ -75,9 +76,9 @@ namespace Nohros.Configuration
             }
 
             // parse the providers
-            data_node = SelectNode(node, kProvidersNodeName);
+            data_node = IConfiguration.SelectNode(node, kProvidersNodeName);
             if (data_node != null) {
-                foreach (XmlNode n in node.ChildNodes) {
+                foreach (XmlNode n in data_node.ChildNodes) {
                     if (string.Compare(n.Name, "add", StringComparison.OrdinalIgnoreCase) == 0) {
                         string name = null;
                         if (!(GetAttributeValue(n, "name", out name)))
@@ -85,7 +86,7 @@ namespace Nohros.Configuration
 
                         ProviderNode provider = new ProviderNode(name, this);
                         provider.Parse(n);
-                        this[ConnectionStringKey(provider.Name)] = provider;
+                        this[ProviderNodeKey(provider.Name)] = provider;
                     }
                 }
             }
