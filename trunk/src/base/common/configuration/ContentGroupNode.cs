@@ -34,8 +34,6 @@ namespace Nohros.Configuration
         /// </summary>
         /// <param name="common_node">A WebNode object which this provider belongs.</param>
         public ContentGroupNode(string name, WebNode web_node): base(name, web_node) {
-            if (web_node == null)
-                throw new ArgumentNullException("web_node");
             web_node_ = web_node;
             files_ = new List<string>();
             base_path_ = AppDomain.CurrentDomain.BaseDirectory;

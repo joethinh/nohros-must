@@ -11,5 +11,9 @@ namespace Nohros.Test.Configuration
     [TestFixture]
     public class NetSettings_
     {
+        [Test]
+        public void ForCurrentProcess() {
+            NetSettings settings = NetSettings.ForCurrentProcess;
+        }
     }
 }

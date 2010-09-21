@@ -34,8 +34,8 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="connection-string">
-        <xs:complexType id="connection-string">
+      <xs:element name="connection-strings">
+        <xs:complexType id="connection-strings">
           <xs:sequence minOccurs ="0" maxOccurs="unbounded">
             <xs:element name="add">
               <xs:complexType>

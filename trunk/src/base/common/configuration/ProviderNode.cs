@@ -39,7 +39,13 @@ namespace Nohros.Configuration
         /// through the specified common_node. If a reference could not be resolved we assume the reference as
         /// the final data.
         /// </remarks>
-        public ProviderNode(string name, CommonNode parent_node): base(name, parent_node) { }
+        public ProviderNode(string name, CommonNode parent_node): base(name, parent_node) {
+            attributes_ = new NameValueCollection();
+            type_ = null;
+            database_owner_ = "dbo";
+            connection_string_ = null;
+            assembly_location_ = null;
+        }
         #endregion
 
         public override void Parse(XmlNode node) {
@@ -74,7 +80,7 @@ namespace Nohros.Configuration
                         // using the configuration file location.
                         string location = attribute.Value;
                         if (location != null && !Path.IsPathRooted(location)) {
-                            location = Path.Combine((ParentNode.ParentNode as CommonNode).Configuration.Location, location);
+                            location = Path.Combine((ParentNode as CommonNode).Configuration.Location, location);
                         }
                         assembly_location_ = location;
                         break;

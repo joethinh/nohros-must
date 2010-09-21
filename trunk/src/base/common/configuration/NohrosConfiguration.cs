@@ -11,17 +11,14 @@ using Nohros.Resources;
 namespace Nohros.Configuration
 {
     /// <summary>
-    /// 
+    /// A abstract implementation of the <see cref="IConfiguration"/> used to parse the nohros configuration file.
     /// </summary>
     public abstract class NohrosConfiguration : IConfiguration
     {
-        const string kCommonNodeName = "x:common";
-        const string kWebNodeName = "x:web";
-
-        const string kConfigurationFileNodeName = "NohrosConfigurationFile";
+        const string kNohrosNodeName = "nohros";
+        const string kConfigurationFileKey = "NohrosConfigurationFile";
 
         DictionaryValue properties_;
-        Dictionary<string, IConfigurationNode> nodes_;
 
         CommonNode common_node_;
         WebNode web_node_;
@@ -49,41 +46,75 @@ namespace Nohros.Configuration
         /// </summary>
         /// <remarks>
         /// Each application has a configuration file. This has the same name as the application
-        /// whith ' .config ' appended. This file is XML and calling this function prompts the
-        /// loader to look in that file for a key named NohrosConfigurationFile that contains the
-        /// relative path for the configuration file.
+        /// whith ' .config ' appended.
+        /// <para>This file is XML and calling this function prompts the loader to look in that file
+        /// for a key named [NohrosConfigurationFile] that contains the path for the configuration file.
+        /// </para>
+        /// <para>
+        /// The value of the [NohrosConfigurationFile] must be absolute or relative to the application
+        /// base directory.
+        /// </para>
         /// </remarks>
         public override void Load() {
-            string config_file_path = ConfigurationManager.AppSettings[kConfigurationFileNodeName];
+            Load((string)null);
+        }
+
+        /// <summary>
+        /// Loads the configuration values based on the application's configuration settings.
+        /// </summary>
+        /// <remarks>
+        /// Each application has a configuration file. This has the same name as the application
+        /// whith ' .config ' appended. This file is XML and calling this function prompts the loader to
+        /// look in that file for a key named [NohrosConfigurationFile] that contains the path for the
+        /// configuration file.
+        /// <para>
+        /// The value of the [NohrosConfigurationFile] must be absolute or relative to the application
+        /// base directory.
+        /// </para>
+        /// <para>
+        /// The configuration file must be valid XML. It must contain at least one element called
+        /// <paramref name="root_node_name"/> that contains the configuration data.
+        /// </para>
+        /// </remarks>
+        public override void Load(string root_node_name) {
+            string config_file_path = ConfigurationManager.AppSettings[kConfigurationFileKey];
             if (config_file_path == null)
-                throw new ConfigurationErrorsException(string.Format(StringResources.Config_KeyNotFound, kConfigurationFileNodeName));
+                throw new ConfigurationErrorsException(string.Format(StringResources.Config_KeyNotFound, kConfigurationFileKey));
 
-            if (!Path.IsPathRooted(config_file_path))
-                config_file_path = Path.Combine(Location, config_file_path);
+            if (Path.IsPathRooted(config_file_path))
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_PathIsRooted, config_file_path));
 
-            Load(new FileInfo(config_file_path), null);
+            config_file_path = Path.Combine(Location, config_file_path);
+
+            Load(new FileInfo(config_file_path), root_node_name);
         }
 
         internal override void Parse(XmlElement element) {
             base.Parse(element);
 
-            XmlNodeList nodes = element_.GetElementsByTagName("nohros");
-            if (nodes == null || nodes.Count == 0)
-                Thrower.ThrowConfigurationException();
+            // attempt to get the "nohros" node.
+            XmlNode root_node = null;
+            if (string.Compare(element.Name, kNohrosNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
+                root_node = element as XmlNode;
+            } else {
+                root_node = element.SelectSingleNode(kNohrosNodeName); // for backward compatibility
+                if (root_node == null) {
+                    XmlNodeList nodes = element.GetElementsByTagName(kNohrosNodeName);
+                    if (nodes.Count > 0)
+                        root_node = nodes[0];
+                }
+            }
 
-            // If the nohros root node has a namespace we need to
-            // set it on the namespace manager in order to retrieve nodes.
-            XmlNode root_node = nodes[0];
-            XmlNamespaceManager namespace_manager = new XmlNamespaceManager(element.OwnerDocument.NameTable);
-            namespace_manager.AddNamespace("x", root_node.NamespaceURI);
+            if (root_node == null)
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_KeyNotFound, kNohrosNodeName));
 
             // parse the common node
-            XmlNode node = root_node.SelectSingleNode(kCommonNodeName, namespace_manager);
+            XmlNode node = IConfiguration.SelectNode(root_node, CommonNode.kCommonNodeName);
             if (node != null) {
                 common_node_ = CommonNode.FromXmlNode(node, this);
 
                 // parse the web node
-                node = root_node.SelectSingleNode(kWebNodeName, namespace_manager);
+                node = IConfiguration.SelectNode(root_node, WebNode.kWebNodeName);
                 if (node != null)
                     web_node_ = WebNode.FromXmlNode(node, common_node_);
             }

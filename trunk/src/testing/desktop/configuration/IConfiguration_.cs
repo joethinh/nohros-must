@@ -1,54 +1,114 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using NUnit.Framework;
+using System.IO;
 
+using NUnit.Framework;
 using Nohros.Configuration;
 
 namespace Nohros.Test.Configuration
 {
     [TestFixture]
-    public class IConfiguration_ : IConfiguration
+    public class IConfiguration_
     {
-        long timeout_;
-        string name_;
-        bool debug_;
-        
-        public IConfiguration_()
+        #region TestingConfiguration
+        public class TestingConfiguration : IConfiguration
         {
-            timeout_ = 0;
-            debug_ = false;
-            name_ = "web";
+            long timeout_;
+            string name_;
+            bool debug_;
+
+            #region .ctor
+            public TestingConfiguration() {
+                name_ = null;
+                timeout_ = 0;
+                debug_ = false;
+            }
+            #endregion
+
+            public long Timeout {
+                get { return timeout_; }
+                internal set { timeout_ = value; }
+            }
+
+            public string Name {
+                get { return name_; }
+                internal set { name_ = value; }
+            }
+
+            public bool Debug {
+                get { return debug_; }
+                internal set { debug_ = value; }
+            }
+        }
+        #endregion
+
+        [Test]
+        public void DefaultConstructor() {
+            TestingConfiguration config = new TestingConfiguration();
+            Assert.AreEqual(0, config.Timeout);
+            Assert.AreEqual(false, config.Debug);
+            Assert.AreEqual(null, config.Name);
         }
 
         [Test]
-        public void IConfiguration_Load() {
-            Assert.AreEqual("web", Name);
-            Assert.AreEqual(0, Timeout);
-            Assert.AreEqual(false, Debug);
-
-            this.Load("desktop.config", "/root/desktop");
-            Assert.AreEqual("desktop", Name);
-            Assert.AreEqual(3000, Timeout);
-            Assert.AreEqual(true, Debug);
-
-            Assert.GreaterOrEqual(DateTime.Now, Version);
-            Assert.AreEqual(Location, AppDomain.CurrentDomain.BaseDirectory);
+        [ExpectedException(typeof(FileNotFoundException))]
+        public void LoadWithInvalidFileInfo() {
+            TestingConfiguration config = new TestingConfiguration();
+            config.LoadAndWatch(new FileInfo("C:\\WINDOWS\\desktop.config"), null);
         }
 
-        public long Timeout {
-            get { return timeout_; }
-            internal set { timeout_ = value; }
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void LoadWithInvalidRootElement() {
+            TestingConfiguration config = new TestingConfiguration();
+            config.Load("desktop.config", "testing");
         }
 
-        public string Name {
-            get { return name_; }
-            internal set { name_ = value; }
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void LoadWithNullFileInfo() {
+            TestingConfiguration config = new TestingConfiguration();
+            config.LoadAndWatch((FileInfo)null, null);
         }
 
-        public bool Debug {
-            get { return debug_; }
-            internal set { debug_ = value; }
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void LoadWithNullFileName() {
+            TestingConfiguration config = new TestingConfiguration();
+            config.LoadAndWatch((string)null, null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void LoadWithNullRootElement() {
+            TestingConfiguration config = new TestingConfiguration();
+            config.Load((string)null);
+        }
+
+        [Test]
+        public void LocationNull() {
+            string base_path = AppDomain.CurrentDomain.BaseDirectory;
+
+            TestingConfiguration config = new TestingConfiguration();
+            Assert.AreEqual(base_path, config.Location);
+        }
+
+        [Test]
+        public void AutoLoadProperties() {
+            TestingConfiguration config = new TestingConfiguration();
+            Assert.AreEqual(false, config.Debug);
+            Assert.AreEqual(0, config.Timeout);
+
+            config.Load("desktop.config", "desktop");
+            Assert.AreEqual(true, config.Debug);
+            Assert.AreEqual(3000, config.Timeout);
+        }
+
+        [Test]
+        public void Version() {
+            TestingConfiguration config = new TestingConfiguration();
+            Assert.LessOrEqual(DateTime.Now, config.Version);
         }
     }
 }

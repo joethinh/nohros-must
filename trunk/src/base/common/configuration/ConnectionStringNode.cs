@@ -19,7 +19,7 @@ namespace Nohros.Configuration
         /// <summary>
         /// Initializes a new instance of the ConnectionStringNode.
         /// </summary>
-        public ConnectionStringNode(string name): base(name) { }
+        public ConnectionStringNode(string name, ConfigurationNode parent_node) : base(name, parent_node) { }
         #endregion
 
         /// <summary>

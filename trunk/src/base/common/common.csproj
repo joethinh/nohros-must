@@ -51,7 +51,6 @@
     <Compile Include="configuration\CommonNode.cs" />
     <Compile Include="configuration\ConfigurationNode.cs" />
     <Compile Include="configuration\ConnectionStringNode.cs" />
-    <Compile Include="configuration\ContentGroup.cs" />
     <Compile Include="configuration\ContentGroupNode.cs" />
     <Compile Include="data\providers\DataSourceType.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
