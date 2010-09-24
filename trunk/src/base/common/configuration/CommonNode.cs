@@ -90,6 +90,14 @@ namespace Nohros.Configuration
                     }
                 }
             }
+
+            // parse the login modules
+            data_node = IConfiguration.SelectNode(node, kLoginModulesNodeName);
+            if (data_node != null) {
+                foreach (XmlNode n in data_node.ChildNodes) {
+                    if()
+                }
+            }
         }
 
         string ConnectionStringKey(string name) {

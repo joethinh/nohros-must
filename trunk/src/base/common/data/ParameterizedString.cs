@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Nohros.Data
 {
+    /// <summary>
+    /// Represents a string that has embedded parameters.
+    /// </summary>
     public class ParameterizedString
     {
         #region Parameter

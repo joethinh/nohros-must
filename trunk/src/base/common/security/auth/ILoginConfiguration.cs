@@ -96,15 +96,13 @@ namespace Nohros.Security.Auth
     /// </remarks>
     public abstract class ILoginConfiguration
     {
-        static ILoginConfiguration _lognConfig = null;
-        static object _syncLock = new object();
+        static ILoginConfiguration config_ = null;
+        static object lock_ = new object();
 
         /// <summary>
-        /// Sole constructor
+        /// Default constructor
         /// </summary>
-        protected ILoginConfiguration()
-        {
-        }
+        protected ILoginConfiguration() { }
 
         /// <summary>
         /// Gets or sets the single instance of the ILoginConfiguration class.
@@ -119,44 +117,44 @@ namespace Nohros.Security.Auth
         {
             get
             {
-                if (_lognConfig == null)
+                if (config_ == null)
                 {
-                    lock (_syncLock)
+                    lock (lock_)
                     {
-                        if (_lognConfig == null)
+                        if (config_ == null)
                         {
                             Type type;
 
-                            string providerName = ConfigurationManager.AppSettings["LoginConfigurationProvider"] as string;
-                            if (providerName != null)
+                            string provider_name_ = ConfigurationManager.AppSettings["LoginConfigurationProvider"] as string;
+                            if (provider_name_ != null)
                             {
-                                type = Type.GetType(providerName);
+                                type = Type.GetType(provider_name_);
                                 if (type != null)
                                 {
                                     try
                                     {
-                                        _lognConfig = (LoginConfiguration)Activator.CreateInstance(type);
+                                        config_ = (LoginConfiguration)Activator.CreateInstance(type);
                                     }
-                                    catch { _lognConfig = null; }
+                                    catch { config_ = null; }
                                 }
                             }
 
                             // The specified provider could not be loaded or a custom provider
                             // was not specified. We will load the default configuration provider
-                            if (_lognConfig == null)
+                            if (config_ == null)
                             {
-                                _lognConfig = new LoginConfiguration();
+                                config_ = new LoginConfiguration();
                             }
                         }
                     }
                 }
-                return _lognConfig;
+                return config_;
             }
             set
             {
-                lock(_syncLock)
+                lock(lock_)
                 {
-                    _lognConfig = value;
+                    config_ = value;
                 }
             }
         }
