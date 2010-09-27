@@ -6,87 +6,35 @@ namespace Nohros.Security.Auth
 {
     /// <summary>
     /// This class represents a single login module configured for the application specified
-    /// in the <see cref="ILoginConfiguration.GetLoginModuleEntry(String)"/> method in the
-    /// ILoginConfiguration class. Each respective LoginEntryModule contains a login module's name,
+    /// in the configuration file. Each respective LoginEntryModule contains a login module's name,
     /// and Type, a control flag( LoginModuleControlFlag ), and a login module's specific options.
     /// </summary>
     /// <seealso cref="ILoginConfiguration"/>
-    public class LoginModuleEntry
+    public interface ILoginModuleEntry
     {
-        string _loginModuleName;
-        LoginModuleControlFlag _controlFlag;
-        IDictionary<string, object> _options;
-        Type _loginModuleType;
-        ILoginModule _module;
-
-        #region .ctor
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        /// <param name="loginModuleName">A string representing the class name of the login module
-        /// configured for the specified application</param>
-        /// <param name="loginModuleType">the Type of the login module class</param>
-        /// <param name="controlFlag">either REQUIRED, REQUISITE, SUFICCIENT or OPTIONAL</param>
-        /// <param name="options">the options configured for this login module</param>
-        public LoginModuleEntry(string loginModuleName, Type loginModuleType, LoginModuleControlFlag controlFlag, IDictionary<string, object> options)
-        {
-            if (loginModuleName == null)
-                throw new ArgumentNullException("loginModule");
-
-            if (loginModuleName.Length == 0)
-                throw new ArgumentException("loginModule");
-
-            if (controlFlag < LoginModuleControlFlag.OPTIONAL || controlFlag > LoginModuleControlFlag.SUFFICIENT)
-                throw new ArgumentOutOfRangeException("controlFlag");
-
-            _loginModuleName = loginModuleName;
-            _controlFlag = controlFlag;
-            _options = options;
-            _loginModuleType = loginModuleType;
-        }
-        #endregion
-
         /// <summary>
         /// Gets the name of the login module
         /// </summary>
-        public string LoginModuleName
-        {
-            get { return _loginModuleName; }
-        }
+        string Name { get; }
 
-
-        internal ILoginModule Module
-        {
-            get
-            {
-                if (_module == null)
-                    _module = ModuleActivator.GetInstance(_loginModuleType);
-                return _module;
-            }
-        }
+        /// <summary>
+        /// Gets the underlying login module.
+        /// </summary>
+        ILoginModule Module { get; }
 
         /// <summary>
         /// Gets the type of the login module class.
         /// </summary>
-        public Type LoginModuleType
-        {
-            get { return _loginModuleType; }
-        }
+        Type Type { get; }
 
         /// <summary>
         /// Gets the control flag for this login module.
         /// </summary>
-        public LoginModuleControlFlag ControlFlag
-        {
-            get { return _controlFlag; }
-        }
+        LoginModuleControlFlag ControlFlag { get; }
 
         /// <summary>
         /// Gets the options configured for this login module.
         /// </summary>
-        public IDictionary<string, object> Options
-        {
-            get { return _options; }
-        }
+        IDictionary<string, object> Options { get; }
     }
 }

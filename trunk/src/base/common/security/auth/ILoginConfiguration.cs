@@ -1,4 +1,4 @@
-    using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -102,13 +102,13 @@ namespace Nohros.Security.Auth
         /// <param name="name">the name used to index the module</param>
         /// <returns>A LoginModuleEntry for the spcified <paramref name="name"/>,
         /// or null if there are no entry for the specified <paramref name="name"/></returns>
-        LoginModuleEntry this[string key] { get; }
+        ILoginModuleEntry GetLoginModuleEntry(string key);
 
         /// <summary>
         /// Gets all the login modules configured for the application.
         /// </summary>
-        /// <returns>An array of LoginModuleEntry containg all the login
-        /// modules configured for the application</returns>
-        LoginModuleEntry[] LoginModules { get; }
+        /// <returns>An array of LoginModuleEntry containg all the login modules configured
+        /// for the application.</returns>
+        ILoginModuleEntry[] LoginModules { get; }
     }
 }

@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Threading;
 
 using Nohros.Security.Auth;
 using Nohros.Resources;
 
 namespace Nohros.Configuration
 {
-    public class LoginModuleNode : ConfigurationNode
+    public class LoginModuleNode : ConfigurationNode, ILoginModuleEntry
     {
         internal const string kNodeTree = CommonNode.kNodeTree + CommonNode.kLoginModulesNodeName + ".";
 
@@ -18,6 +19,7 @@ namespace Nohros.Configuration
         Dictionary<string, object> options_;
         LoginModuleControlFlag control_flag_;
         Type type_;
+        ILoginModule module_;
 
         #region .ctor
         /// <summary>
@@ -62,6 +64,7 @@ namespace Nohros.Configuration
             options_ = GetOptions(node);
         }
 
+        #region ILoginModuleEntry
         static Dictionary<string, object> GetOptions(XmlNode node)
         {
             Dictionary<string, object> options = new Dictionary<string, object>();
@@ -78,5 +81,44 @@ namespace Nohros.Configuration
             }
             return options;
         }
+
+        /// <summary>
+        /// Gets the related login module.
+        /// </summary>
+        public ILoginModule Module {
+            get {
+                if (module_ == null) {
+                    try {
+                        Interlocked.CompareExchange<ILoginModule>(ref module_, Activator.CreateInstance(type_) as ILoginModule, null);
+                    } catch {
+                        // TODO: log the exception.
+                        module_ = null;
+                    }
+                }
+                return module_;
+            }
+        }
+
+        /// <summary>
+        /// Gets the type of the login module class.
+        /// </summary>
+        public Type Type {
+            get { return type_; }
+        }
+
+        /// <summary>
+        /// Gets the control flag for this login module.
+        /// </summary>
+        public LoginModuleControlFlag ControlFlag {
+            get { return control_flag_; }
+        }
+
+        /// <summary>
+        /// Gets the options configured for this login module.
+        /// </summary>
+        public IDictionary<string, object> Options {
+            get { return options_; }
+        }
+        #endregion
     }
 }

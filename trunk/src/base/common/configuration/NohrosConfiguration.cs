@@ -11,12 +11,14 @@ using Nohros.Resources;
 namespace Nohros.Configuration
 {
     /// <summary>
-    /// A abstract implementation of the <see cref="IConfiguration"/> used to parse the nohros configuration file.
+    /// A basic implementation of the <see cref="IConfiguration"/> used to parse the nohros configuration file.
     /// </summary>
-    public abstract class NohrosConfiguration : IConfiguration
+    public class NohrosConfiguration : IConfiguration
     {
         const string kNohrosNodeName = "nohros";
         const string kConfigurationFileKey = "NohrosConfigurationFile";
+
+        protected static NohrosConfiguration current_process_config_;
 
         DictionaryValue properties_;
 
@@ -117,6 +119,19 @@ namespace Nohros.Configuration
                 node = IConfiguration.SelectNode(root_node, WebNode.kWebNodeName);
                 if (node != null)
                     web_node_ = WebNode.FromXmlNode(node, common_node_);
+            }
+        }
+
+        /// <summary>
+        /// Gets the current process configuration object.
+        /// </summary>
+        static NohrosConfiguration ForCurrentProcess {
+            get {
+                if (current_process_config_ == null) {
+                    current_process_config_ = new NohrosConfiguration();
+                    current_process_config_.Load(); // load using the default application configuration file.
+                }
+                return current_process_config_;
             }
         }
 

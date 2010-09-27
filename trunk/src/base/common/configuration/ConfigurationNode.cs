@@ -84,9 +84,9 @@ namespace Nohros.Configuration
         /// </summary>
         internal List<ConfigurationNode> ChildNodes {
             get {
-                List<ConfigurationNode> nodes;
+                List<ConfigurationNode> nodes = new List<ConfigurationNode>(child_nodes_.Count);
                 foreach(KeyValuePair<string, ConfigurationNode> node in child_nodes_) {
-                    nodes.Add(node);
+                    nodes.Add(node.Value);
                 }
                 return nodes;
             }

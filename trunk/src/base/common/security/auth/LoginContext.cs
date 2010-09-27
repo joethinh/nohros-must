@@ -21,18 +21,21 @@ namespace Nohros.Security.Auth
     /// </summary>
     public sealed class LoginContext
     {
-        IAuthCallbackHandler _callback;
-        Subject _subject;
-        ILoginConfiguration _config;
-        bool _subjectProvided;
-        Dictionary<string, object> _state;
+        IAuthCallbackHandler callback_;
+        Subject subject_;
+        ILoginConfiguration config_;
+        bool provided_subject_;
+        Dictionary<string, object> state_;
 
         #region .ctor
         /// <summary>
         /// Initialize a new instance of the LoginContext.
         /// </summary>
-        public LoginContext():this(null, null, null)
+        public LoginContext()
         {
+            provided_subject_ = false;
+            subject_ = new Subject();
+            state_ = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -44,8 +47,13 @@ namespace Nohros.Security.Auth
         /// <remarks>If the caller specifies a null <see cref="Subject"/>, the LoginContext
         /// instantiates a new <see cref="Subject"/>; otherwise the caller-specified <see cref="Subject"/>
         /// object will be used</remarks>
-        public LoginContext(Subject subject):this(subject, null, null)
+        public LoginContext(Subject subject)
         {
+            if (subject == null)
+                throw new ArgumentNullException("subject");
+            subject_ = subject;
+            provided_subject_ = true;
+            state_ = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -58,8 +66,22 @@ namespace Nohros.Security.Auth
         /// <remarks>If the caller specifies a null <see cref="Subject"/>, the LoginContext
         /// instantiates a new <see cref="Subject"/>; otherwise the caller-specified <see cref="Subject"/>
         /// object will be used</remarks>
-        public LoginContext(IAuthCallbackHandler callback):this(null, callback, null)
+        public LoginContext(IAuthCallbackHandler callback):this()
         {
+            if (callback == null)
+                throw new ArgumentNullException("callback");
+            callback_ = callback;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the LoginContext by using the specified configuration object.
+        /// </summary>
+        /// <param name="config">The <see cref="ILoginConfiguration"/> object that lists the login modules
+        /// to perform the authentication.</param>
+        public LoginContext(ILoginConfiguration config):this() {
+            if (config == null)
+                throw new ArgumentNullException("config");
+            config_ = config;
         }
 
         /// <summary>
@@ -72,8 +94,13 @@ namespace Nohros.Security.Auth
         /// <remarks>If the caller specifies a null <see cref="Subject"/>, the LoginContext
         /// instantiates a new <see cref="Subject"/>; otherwise the caller-specified <see cref="Subject"/>
         /// object will be used</remarks>
-        public LoginContext(Subject subject, IAuthCallbackHandler callback): this(subject, callback, null)
+        public LoginContext(Subject subject, IAuthCallbackHandler callback)
         {
+            if (subject == null || callback == null)
+                throw new ArgumentNullException((subject == null) ? "subject" : "callback");
+            subject_ = subject;
+            state_ = new Dictionary<string, object>();
+            provided_subject_ = true;
         }
 
         /// <summary>
@@ -86,28 +113,23 @@ namespace Nohros.Security.Auth
         /// <see cref="LoginModule"/>(s) to communicate with the user, or null.</param>
         /// <param name="config">The <see cref="ILoginConfiguration"/> object that lists the login modules
         /// to perform the authentication, or null.</param>
-        /// <remarks>If the caller specifies a null <see cref="ILoginConfiguration"/> object, the
-        /// constructor uses the following call to get a valid<see cref="ILoginConfiguration"/> object:
-        ///     <code>
-        ///         config = ILoginConfiguration.LoginConfiguration;
-        ///     </code>
-        /// </remarks>
         public LoginContext(Subject subject, IAuthCallbackHandler callback, ILoginConfiguration config)
         {
-            _config = (config == null) ? ILoginConfiguration.LoginConfiguration : config;
-            _callback = callback;
-            _subjectProvided = (_subject == null);
-            _state = new Dictionary<string, object>();
-            _subject = (subject == null) ? new Subject() : subject;
+            config_ = config;
+            callback_ = callback;
+            provided_subject_ = true;
+            subject_ = subject;
+            state_ = new Dictionary<string, object>();
 
             // initialize the modules
-            LoginModuleEntry[] entries = _config.LoginModules;
-            for (int i = 0, j = entries.Length; i < j; i++)
-            {
-                LoginModuleEntry entry = entries[i];
-                if (entry.Module == null)
-                    throw new LoginException(StringResources.GetString(StringResources.Auth_LoginMudule_Type, entry.LoginModuleType.Name));
-                entry.Module.Init(_subject, callback, _state, entry.Options);
+            ILoginModuleEntry[] entries = config_.LoginModules;
+            if (entries != null) {
+                for (int i = 0, j = entries.Length; i < j; i++) {
+                    ILoginModuleEntry entry = entries[i];
+                    if (entry.Module == null)
+                        throw new LoginException(StringResources.GetString(StringResources.Auth_LoginMudule_Type, entry.Type.Name));
+                    entry.Module.Init(subject_, callback, state_, entry.Options);
+                }
             }
         }
         #endregion
@@ -145,17 +167,17 @@ namespace Nohros.Security.Auth
             int i = 0, j;
             bool failure = false;
 
-            LoginModuleEntry[] entries = _config.LoginModules;
+            ILoginModuleEntry[] entries = config_.LoginModules;
 
             // If there is no module nothing we can do.
-            if ((j = entries.Length) == 0)
+            if (entries == null || (j = entries.Length) == 0)
                 return false;
 
             try
             {
                 for (i = 0, j = entries.Length; i < j; i++)
                 {
-                    LoginModuleEntry entry = entries[i];
+                    ILoginModuleEntry entry = entries[i];
 
                     bool result = entry.Module.Login();
                     if (!result)
@@ -199,8 +221,8 @@ LBL_ABORT:
                     catch { }
                 }
 
-                if(!_subjectProvided)
-                    _subject = null;
+                if(!provided_subject_)
+                    subject_ = null;
                 return false;
             }
 
@@ -248,9 +270,8 @@ LBL_ABORT:
         /// </remarks>
         public void Logout()
         {
-            LoginModuleEntry[] entries = _config.LoginModules;
-            for (int i = 0, j = entries.Length; i < j; i++)
-            {
+            ILoginModuleEntry[] entries = config_.LoginModules;
+            for (int i = 0, j = entries.Length; i < j; i++) {
                 // we cannot avoid a try catch inside this loop.
                 // we need to call the logout for each module.
                 try { entries[i].Module.Logout(); }
@@ -270,7 +291,7 @@ LBL_ABORT:
         /// </remarks>
         public Subject Subject
         {
-            get { return _subject; }
+            get { return subject_; }
         }
     }
 }
