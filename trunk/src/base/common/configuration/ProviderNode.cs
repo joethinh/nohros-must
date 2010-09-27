@@ -30,7 +30,7 @@ namespace Nohros.Configuration
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the ProviderNode.
+        /// Initializes a new instance_ of the ProviderNode.
         /// </summary>
         /// <param name="common_node">A CommonNode object which this provider belongs.</param>
         /// <remarks>
@@ -86,7 +86,7 @@ namespace Nohros.Configuration
                         // using the configuration file location.
                         string location = attribute.Value;
                         if (location != null && !Path.IsPathRooted(location)) {
-                            location = Path.Combine((ParentNode as CommonNode).Configuration.Location, location);
+                            location = Path.Combine(NohrosConfiguration.ForCurrentProcess.Location, location);
                         }
                         assembly_location_ = location;
                         break;

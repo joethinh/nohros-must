@@ -31,7 +31,7 @@ namespace Nohros.Data
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the Pointer class by using the specified message and position.
+        /// Initializes a new instance_ of the Pointer class by using the specified message and position.
         /// </summary>
         /// <param name="message">An sequence of bytes that represents/contains the pointer.</param>
         /// <param name="position">An index within the <paramref name="message"/> the is the begging of the pointer.</param>

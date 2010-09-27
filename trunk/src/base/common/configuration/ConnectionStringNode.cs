@@ -17,7 +17,7 @@ namespace Nohros.Configuration
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the ConnectionStringNode.
+        /// Initializes a new instance_ of the ConnectionStringNode.
         /// </summary>
         public ConnectionStringNode(string name, ConfigurationNode parent_node) : base(name, parent_node) { }
         #endregion

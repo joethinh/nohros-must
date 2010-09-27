@@ -29,7 +29,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the AndersonTreeNode by using the
+        /// Initializes a new instance_ of the AndersonTreeNode by using the
         /// specified key, value and sentinel node.
         /// </summary>
         /// <param name="key">The key of the node</param>

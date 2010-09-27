@@ -15,7 +15,7 @@ namespace Nohros.Toolkit.MailChecker
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the SmtpReply by using the specified message.
+        /// Initializes a new instance_ of the SmtpReply by using the specified message.
         /// </summary>
         /// <param name="reply_message">An array of bytes that represents the reply message</param>
         /// <param name="offset">The byte offset into <paramref name="reply_message"/></param>
@@ -33,7 +33,7 @@ namespace Nohros.Toolkit.MailChecker
         }
 
         /// <summary>
-        /// Initializes a new instance of the SmtpReply class by using the specified message code and message.
+        /// Initializes a new instance_ of the SmtpReply class by using the specified message code and message.
         /// </summary>
         /// <param name="message_code">The code of the message</param>
         /// <param name="message">The reply message</param>

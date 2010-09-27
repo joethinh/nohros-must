@@ -83,7 +83,7 @@ namespace Nohros.Data
             public int length;
 
             /// <summary>
-            /// Initializes a new instance of the Token class by using the specified token
+            /// Initializes a new instance_ of the Token class by using the specified token
             /// type and length.
             /// </summary>
             /// <param name="t">The type of the token</param>

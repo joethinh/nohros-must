@@ -16,7 +16,7 @@ namespace Nohros.Configuration
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the CommonNode class by using the specified XML node and name.
+        /// Initializes a new instance_ of the CommonNode class by using the specified XML node and name.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <param name="node">A XML node that contains the configuration data.</param>

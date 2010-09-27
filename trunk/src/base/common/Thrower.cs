@@ -19,7 +19,7 @@ namespace Nohros
     ///     IL code:
     ///         IL_0000:     ldstr   "key"
     ///         IL_0005:     call   Nohros.Resources::get_ArgumentNull_Key()
-    ///         IL_000a:     newobj instance void System.ArgumentNullException::.ctor(string, string)
+    ///         IL_000a:     newobj instance_ void System.ArgumentNullException::.ctor(string, string)
     ///         IL_000f:     throw
     ///     which is 16 bytes in IL
     /// 

@@ -15,7 +15,7 @@ namespace Nohros.Data
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the TableTransferObjectEnumerator object by using the specified
+        /// Initializes a new instance_ of the TableTransferObjectEnumerator object by using the specified
         /// <see cref="TableTransferObject"/>
         /// </summary>
         /// <param name="table">The <see cref="TableTransferObject"/> through which to iterate</param>

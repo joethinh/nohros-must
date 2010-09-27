@@ -220,12 +220,12 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Ensures that the capacity of this instance of <see cref="StringTransferObject"/> is
+        /// Ensures that the capacity of this instance_ of <see cref="StringTransferObject"/> is
         /// at least the specified value.
         /// </summary>
         /// <param name="min">the minimun capacity to ensure</param>
         /// <remarks>If the current capacity is less than the capacity, memory for
-        /// this instance is reallocated to hold at least capacity number of items;
+        /// this instance_ is reallocated to hold at least capacity number of items;
         /// otherwise no memory is changed</remarks>
         private void EnsureCapacity(int min)
         {
@@ -244,7 +244,7 @@ namespace Nohros.Data
         /// <summary>
         /// Reallocate the internal array to accommodate the specified length.
         /// </summary>
-        /// <param name="newLength">the new number of columns that this instance
+        /// <param name="newLength">the new number of columns that this instance_
         /// can contain</param>
         private void Resize(int newLength)
         {

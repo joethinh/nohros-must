@@ -29,7 +29,7 @@ namespace Nohros.Security.Auth
 
         #region .ctor
         /// <summary>
-        /// Initialize a new instance of the LoginContext.
+        /// Initialize a new instance_ of the LoginContext.
         /// </summary>
         public LoginContext()
         {
@@ -39,7 +39,7 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoginContext"/> class by
+        /// Initializes a new instance_ of the <see cref="LoginContext"/> class by
         /// using the specified subject object.
         /// </summary>
         /// <param name="subject">The <see cref="Subject"/> to authenticate. The
@@ -57,7 +57,7 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoginContext"/> class by
+        /// Initializes a new instance_ of the <see cref="LoginContext"/> class by
         /// using the specified <see cref="IAuthCallbackHandler"/> object.
         /// </summary>
         /// <param name="callback">The <see cref="IAuthCallbackHandler"/> object used by
@@ -74,7 +74,7 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Initializes a new instance of the LoginContext by using the specified configuration object.
+        /// Initializes a new instance_ of the LoginContext by using the specified configuration object.
         /// </summary>
         /// <param name="config">The <see cref="ILoginConfiguration"/> object that lists the login modules
         /// to perform the authentication.</param>
@@ -85,7 +85,7 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Initializes a new instance of the LoginContext class by using the
+        /// Initializes a new instance_ of the LoginContext class by using the
         /// specified <see cref="Subject"/> object and <see cref="IAuthCallbackHandler"/> delegate.
         /// </summary>
         /// <param name="subject">The subject to authenticate</param>
@@ -104,7 +104,7 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoginContext"/> class with
+        /// Initializes a new instance_ of the <see cref="LoginContext"/> class with
         /// a <see cref="Subject"/> object, a <see cref="IAuthCallbackHandler"/> object, and a
         /// <see cref="ILoginConfiguration"/> object.
         /// </summary>
@@ -139,7 +139,7 @@ namespace Nohros.Security.Auth
         /// </summary>
         /// <remarks>
         /// This method invokes the login method for each configured <see cref="LoginModule"/>, as
-        /// determined by the current <see cref="ILoginConfiguration"/> instance. Each <see cref="LoginModule"/>
+        /// determined by the current <see cref="ILoginConfiguration"/> instance_. Each <see cref="LoginModule"/>
         /// then performs its respective type of authentication(username/password, smart card pin verification, etc.)
         /// <para>
         /// The method completes a 2-phase authentication process by calling each configured <see cref="LoginModule.Commit()"/>

@@ -29,7 +29,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance onf the CacheEntry class by using the specified item key and value and
+        /// Initializes a new instance_ onf the CacheEntry class by using the specified item key and value and
         /// expiration police.
         /// </summary>
         /// <param name="key">The cache key used to reference the item.</param>
@@ -98,7 +98,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Gets the object related which this instance.
+        /// Gets the object related which this instance_.
         /// </summary>
         internal object Value
         {

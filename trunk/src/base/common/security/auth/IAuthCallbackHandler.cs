@@ -26,7 +26,7 @@ namespace Nohros.Security.Auth
         /// Retrieve or display information requested in the provided <see cref="ICallback"/>
         /// </summary>
         /// <remarks>
-        /// The handle method implementation checks the instance(s) of the <see cref="IAuthCallback"/> objects(s)
+        /// The handle method implementation checks the instance_(s) of the <see cref="IAuthCallback"/> objects(s)
         /// passed in to retrieve or display the requested information.
         /// </remarks>
         /// <param name="callback">An array of <see cref="IAuthCallback"/> objects provided underlying

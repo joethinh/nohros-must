@@ -17,7 +17,7 @@ namespace Nohros.Toolkit.DnsLookup
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the ResourceRecord class by using the specified pointer.
+        /// Initializes a new instance_ of the ResourceRecord class by using the specified pointer.
         /// </summary>
         /// <param name="pointer">The position in the byte array of the record</param>
         internal ResourceRecord(RecordPointer pointer) {

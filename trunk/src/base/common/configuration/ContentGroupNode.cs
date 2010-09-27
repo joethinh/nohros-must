@@ -29,7 +29,7 @@ namespace Nohros.Configuration
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the ContentGroupNode by using the specified name and parent
+        /// Initializes a new instance_ of the ContentGroupNode by using the specified name and parent
         /// node.
         /// </summary>
         /// <param name="common_node">A WebNode object which this provider belongs.</param>

@@ -14,7 +14,7 @@ namespace Nohros.Security.Auth
         string value_;
 
         /// <summary>
-        /// Initializes a new instance of the FieldCallback class by using the specified field name.
+        /// Initializes a new instance_ of the FieldCallback class by using the specified field name.
         /// </summary>
         /// <param name="name">The name of the field to retrieve from the current <see cref="System.Web.HttpRequest"/></param>
         public FieldCallback(string name)

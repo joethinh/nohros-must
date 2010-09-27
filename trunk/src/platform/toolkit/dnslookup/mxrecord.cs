@@ -14,7 +14,7 @@ namespace Nohros.Toolkit.DnsLookup
 
         #region .ctor
         /// <summary>
-        /// Initializes a nes instance of the MXRecord class by using the specified pointer.
+        /// Initializes a nes instance_ of the MXRecord class by using the specified pointer.
         /// </summary>
         /// <param name="pointer">A logical pointer to the bytes holding the record</param>
         internal MXRecord(RecordPointer pointer) {

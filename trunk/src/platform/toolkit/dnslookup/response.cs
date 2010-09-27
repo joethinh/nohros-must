@@ -22,7 +22,7 @@ namespace Nohros.Toolkit.DnsLookup
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the Response class by parsing the message reponse.
+        /// Initializes a new instance_ of the Response class by parsing the message reponse.
         /// </summary>
         /// <param name="message">A byte array that contains the response message.</param>
         internal Response(byte[] message) {

@@ -12,10 +12,31 @@ namespace Nohros.Test.Security.Auth
     public class LoginContext_
     {
         [Test]
-        public void ctor()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void NullSubject()
         {
-            LoginContext lc = new LoginContext();
-            lc.Login();
+            LoginContext lc = new LoginContext((Subject)null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void NullCallbackHandler() {
+            LoginContext lc = new LoginContext((IAuthCallbackHandler)null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void NullLoginConfiguration() {
+            LoginContext lc = new LoginContext((ILoginConfiguration) null);
+        }
+
+        [Test]
+        public void LoginWithNoModule() {
+            LoginConfiguration config = new LoginConfiguration();
+            config.Load("with-namespace");
+
+            LoginContext context = new LoginContext(config);
+            Assert.AreEqual(false, context.Login());
         }
     }
 }

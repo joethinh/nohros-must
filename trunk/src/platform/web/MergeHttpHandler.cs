@@ -46,7 +46,7 @@ namespace Nohros.Net
 #endif
 
         HttpContext context_;
-        NetSettings settings_;
+        NohrosConfiguration settings_;
 
         private FileCacheItem UpdateFileCache(ContentGroupNode content_group, string cache_key)
         {
@@ -166,7 +166,7 @@ namespace Nohros.Net
             content_type = "text/html";
 
             try {
-                settings_ = NetSettings.ForCurrentProcess;
+                settings_ = NohrosConfiguration.ForCurrentProcess;
             } catch (System.Configuration.ConfigurationErrorsException) {
                 // TODO: Log the exception
                 // the configuration file was not defined. we cant do nothing.
@@ -211,7 +211,7 @@ namespace Nohros.Net
         }
         
         /// <summary>
-        /// Gets a value indicating whether another request can use the <see cref="IHttpHandler"/> instance.
+        /// Gets a value indicating whether another request can use the <see cref="IHttpHandler"/> instance_.
         /// <remarks>
         /// Our <see cref="IHttpHandler"/> implementation doesn't do expensive initializations. So, the
         /// value returned by this property doesn't really matter(since simple object allocation is fairly inexpensive).

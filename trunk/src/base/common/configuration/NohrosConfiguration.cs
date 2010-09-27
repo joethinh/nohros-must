@@ -32,7 +32,7 @@ namespace Nohros.Configuration
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the Configuration class.
+        /// Initializes a new instance_ of the Configuration class.
         /// </summary>
         public NohrosConfiguration(): base()
         {
@@ -113,7 +113,7 @@ namespace Nohros.Configuration
             // parse the common node
             XmlNode node = IConfiguration.SelectNode(root_node, CommonNode.kCommonNodeName);
             if (node != null) {
-                common_node_ = CommonNode.FromXmlNode(node, this);
+                common_node_ = CommonNode.FromXmlNode(node);
 
                 // parse the web node
                 node = IConfiguration.SelectNode(root_node, WebNode.kWebNodeName);
@@ -125,7 +125,7 @@ namespace Nohros.Configuration
         /// <summary>
         /// Gets the current process configuration object.
         /// </summary>
-        static NohrosConfiguration ForCurrentProcess {
+        public static NohrosConfiguration ForCurrentProcess {
             get {
                 if (current_process_config_ == null) {
                     current_process_config_ = new NohrosConfiguration();

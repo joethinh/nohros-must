@@ -30,7 +30,7 @@ namespace Nohros.Configuration
 
         #region .ctor
         /// <summary>
-        /// Initializezs a new instance of the IConfiguration class.
+        /// Initializezs a new instance_ of the IConfiguration class.
         /// </summary>
         protected IConfiguration()
         {

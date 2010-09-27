@@ -14,13 +14,13 @@ namespace Nohros.Security.Auth
     /// </summary>
     public class LoginConfiguration : NohrosConfiguration, ILoginConfiguration
     {
-        static LoginConfiguration instance;
+        static LoginConfiguration instance_;
 
         LoginModuleNode[] modules_;
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the LoginConfiguration class.
+        /// Initializes a new instance_ of the LoginConfiguration class.
         /// </summary>
         public LoginConfiguration()
         {
@@ -32,28 +32,28 @@ namespace Nohros.Security.Auth
         /// </summary>
         static LoginConfiguration()
         {
-            instance = new LoginConfiguration();
-            instance.Load();
+            instance_ = new LoginConfiguration();
+            instance_.Load();
 
             // we need to store a reference to all nodes configured for a specific application.
             // this will be stored into a array for faster retrieval.
-            if (instance.CommonNode != null) {
-                List<ConfigurationNode> nodes = instance.CommonNode.ChildNodes;
+            if (instance_.CommonNode != null) {
+                List<ConfigurationNode> nodes = instance_.CommonNode.ChildNodes;
                 if (nodes != null && nodes.Count > 0) {
                     List<LoginModuleNode> modules = new List<LoginModuleNode>(nodes.Count);
                     foreach (LoginModuleNode module in modules) {
                         modules.Add(module);
                     }
-                    instance.modules_ = modules.ToArray();
+                    instance_.modules_ = modules.ToArray();
                 }
             }
         }
         #endregion
 
         /// <summary>
-        /// Gets or sets the single instance of the ILoginConfiguration class.
+        /// Gets or sets the single instance_ of the ILoginConfiguration class.
         /// </summary>
-        /// <returns>A instance of the ILoginConfiguration class</returns>
+        /// <returns>A instance_ of the ILoginConfiguration class</returns>
         /// <remarks>
         /// The default LoginConfiguration implementation can be changed by setting the value of the
         /// LoginConfigurationProvider key of the AppSettings node of the application configuration file
@@ -61,7 +61,7 @@ namespace Nohros.Security.Auth
         /// </remarks>
         public static ILoginConfiguration Instance
         {
-            get { return instance; }
+            get { return instance_; }
         }
 
         /// <summary>

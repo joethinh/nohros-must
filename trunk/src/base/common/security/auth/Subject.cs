@@ -21,7 +21,7 @@ namespace Nohros.Security.Auth
         #region .ctor
 
         /// <summary>
-        /// Initializes a new instance of the Subject class.
+        /// Initializes a new instance_ of the Subject class.
         /// </summary>
         public Subject()
         {
@@ -29,7 +29,7 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Create an instance of a Subject with Permissions and SubjectLoader delegate.
+        /// Create an instance_ of a Subject with Permissions and SubjectLoader delegate.
         /// </summary>
         /// <param name="permissions">The Subject's permission set</param>
         /// <exception cref="ArgumentNullException">permissions is null</exception>

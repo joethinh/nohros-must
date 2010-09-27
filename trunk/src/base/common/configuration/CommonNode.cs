@@ -20,21 +20,19 @@ namespace Nohros.Configuration
         internal const string kLoginModulesNodeName = "login-modules";
 
         StringMap paths_;
-        NohrosConfiguration configuration_;
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the CommonNode class by using the specified XML node and name.
+        /// Initializes a new instance_ of the CommonNode class by using the specified XML node and name.
         /// </summary>
         /// <param name="name">The name of the node.</param>
-        public CommonNode(NohrosConfiguration configuration):base(kCommonNodeName) {
-            configuration_ = configuration;
+        public CommonNode():base(kCommonNodeName) {
             paths_ = new StringMap();
         }
         #endregion
 
-        public static CommonNode FromXmlNode(XmlNode node, NohrosConfiguration configuration) {
-            CommonNode common_node = new CommonNode(configuration);
+        public static CommonNode FromXmlNode(XmlNode node) {
+            CommonNode common_node = new CommonNode();
             common_node.Parse(node);
             return common_node;
         }
@@ -217,13 +215,6 @@ namespace Nohros.Configuration
         public bool GetLoginModule(string name, out LoginModuleNode login_module) {
             login_module = GetLoginModule(name);
             return (login_module != null);
-        }
-
-        /// <summary>
-        /// Gets the underlying NohrosConfiguration object.
-        /// </summary>
-        public NohrosConfiguration Configuration {
-            get { return configuration_; }
         }
     }
 }

@@ -84,7 +84,7 @@ namespace Nohros.Data
             Parameterize();
         }
         /// <summary>
-        /// Initializes a new instance of the ParameterizedString class by using
+        /// Initializes a new instance_ of the ParameterizedString class by using
         /// the specified base string.
         /// </summary>
         /// <param name="str">The base string</param>
@@ -92,7 +92,7 @@ namespace Nohros.Data
         {
         }
         /// <summary>
-        /// Initializes a new instance of the ParameterizedString class by using
+        /// Initializes a new instance_ of the ParameterizedString class by using
         /// the specified base string, parameter delimiter, break characters and initial parameters
         /// </summary>
         /// <param name="str">The base string</param>
@@ -122,7 +122,7 @@ namespace Nohros.Data
             }
         }
         /// <summary>
-        /// Initializes a new instance of the ParameterizedString class by using the
+        /// Initializes a new instance_ of the ParameterizedString class by using the
         /// supplied base string and initial parameters.
         /// </summary>
         /// <param name="str">The base string</param>
@@ -239,9 +239,9 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Serializes this instance into a string object
+        /// Serializes this instance_ into a string object
         /// </summary>
-        /// <returns>A string representation of this instance</returns>
+        /// <returns>A string representation of this instance_</returns>
         public override string ToString()
         {
             StringBuilder str = new StringBuilder(_base);

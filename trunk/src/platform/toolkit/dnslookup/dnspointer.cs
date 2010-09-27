@@ -10,7 +10,7 @@ namespace Nohros.Toolkit.DnsLookup
     {
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the RecordPointer class by using the specified message, position and length.
+        /// Initializes a new instance_ of the RecordPointer class by using the specified message, position and length.
         /// </summary>
         /// <param name="message">The pointer message.</param>
         /// <param name="position">The position within the message that is the begging of the position.</param>

@@ -43,7 +43,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the TransferQueue class that is empty and has the specified size.
+        /// Initializes a new instance_ of the TransferQueue class that is empty and has the specified size.
         /// </summary>
         /// <param name="capacity">The maximun number of elements that the TransferQueue can contain.</param>
         public TransferQueue(int capacity)
@@ -54,7 +54,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the TransferQueue class that contains elements copied from the specified
+        /// Initializes a new instance_ of the TransferQueue class that contains elements copied from the specified
         /// collection and has specified size.
         /// </summary>
         /// <param name="collection">The collection whose elements are copied to the new TransferQueue</param>

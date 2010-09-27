@@ -20,7 +20,7 @@ namespace Nohros.Toolkit.DnsLookup
         readonly DnsClass dns_class_;
 
         /// <summary>
-        /// Initializes a new instance of the Question class by using the specified domain and dns type and class.
+        /// Initializes a new instance_ of the Question class by using the specified domain and dns type and class.
         /// </summary>
         /// <param name="domain">The DNS domain of the question.</param>
         /// <param name="dns_type">The DNS type of the question.</param>

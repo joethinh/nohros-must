@@ -17,7 +17,7 @@ namespace Nohros.Toolkit.DnsLookup
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the Resolver class.
+        /// Initializes a new instance_ of the Resolver class.
         /// </summary>
         Resolver() { }
         #endregion
