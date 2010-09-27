@@ -20,7 +20,7 @@ namespace Nohros.Toolkit.DnsLookup
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the Request class with the default values and
+        /// Initializes a new instance_ of the Request class with the default values and
         /// a empty list to hold the questions as they are added.
         /// </summary>
         public Request() {

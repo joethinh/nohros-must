@@ -29,7 +29,7 @@ namespace Nohros.Data
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the DictionaryValue class.
+        /// Initializes a new instance_ of the DictionaryValue class.
         /// </summary>
         public DictionaryValue()
             : base(ValueType.TYPE_DICTIONARY)

@@ -12,7 +12,7 @@ namespace Nohros.Data
         string value_;
 
         /// <summary>
-        /// Initializes a new instance of the StringValue class.
+        /// Initializes a new instance_ of the StringValue class.
         /// </summary>
         public StringValue(string in_value)
             : base(ValueType.TYPE_STRING)

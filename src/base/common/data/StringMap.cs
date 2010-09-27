@@ -15,20 +15,20 @@ namespace Nohros.Data
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the StringMap class that is empty, has the default initial capacity, and uses
+        /// Initializes a new instance_ of the StringMap class that is empty, has the default initial capacity, and uses
         /// the default string equality comparer.
         /// </summary>
         public StringMap():this(0, null) { }
 
         /// <summary>
-        /// Initializes a new instance of the StringMap class that contains elements copied from the specified <see cref="IDictionary&gt;,&lt;"/>
+        /// Initializes a new instance_ of the StringMap class that contains elements copied from the specified <see cref="IDictionary&gt;,&lt;"/>
         /// and uses the default string equality comparer.
         /// </summary>
         /// <param name="dictionary">The <see cref="IDictionary&lt;,&gt;"/> whose elements are copied to the new StringMap object<./param>
         public StringMap(IDictionary<string, string> dictionary) : this(dictionary, null) { }
 
         /// <summary>
-        /// Initializes a new instance of the StringMap class that is empty, has the default initial capacity, and use the
+        /// Initializes a new instance_ of the StringMap class that is empty, has the default initial capacity, and use the
         /// specified <see cref="IEqualityComparer&lt;string&gt;"/>.
         /// </summary>
         /// <param name="comparer">The <see cref="IEqualityComparer&lt;string&gt;"/>. implementation to use when comparing
@@ -36,14 +36,14 @@ namespace Nohros.Data
         public StringMap(IEqualityComparer<string> comparer):this(0, comparer) { }
 
         /// <summary>
-        /// Initializes a new instance of the StringMap class that is empty, has the specified
+        /// Initializes a new instance_ of the StringMap class that is empty, has the specified
         /// initial capacity, and uses the default string comparer.
         /// </summary>
         /// <param name="capacity">The initial number of strings that the <see cref="IDictionary&lt;string,string&gt;"/> can contain.</param>
         public StringMap(int capacity):this(capacity, null) { }
 
         /// <summary>
-        /// Initializes a new instance of the StringMap class that contains elements copied from the specified <see cref="IDictionary&gt;,&lt;"/>
+        /// Initializes a new instance_ of the StringMap class that contains elements copied from the specified <see cref="IDictionary&gt;,&lt;"/>
         /// and uses the specified <see cref="IEqualityComparer&gt;string&lt;"/>
         /// </summary>
         /// <param name="dictionary">The <see cref="IDictionary&gt;string,string&lt;"/> whose elements are copied to the new StringMap class.</param>
@@ -54,7 +54,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IDictionary&lt;string,string&gt;"/> class that is empty, has specified
+        /// Initializes a new instance_ of the <see cref="IDictionary&lt;string,string&gt;"/> class that is empty, has specified
         /// initial capacity, and uses the specified <see cref="IEqualityComparer&lt;string&gt;"/>.
         /// </summary>
         /// <param name="capacity">The initial number of strings that the StringMap can contain.</param>

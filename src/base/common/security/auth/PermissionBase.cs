@@ -25,14 +25,14 @@ namespace Nohros.Security.Auth
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the PermissionBase class with the default initial capacity.
+        /// Initializes a new instance_ of the PermissionBase class with the default initial capacity.
         /// </summary>
         protected PermissionBase()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the PermissionBase class with serialized data.
+        /// Initializes a new instance_ of the PermissionBase class with serialized data.
         /// </summary>
         /// <param name="info">The object taht holds the serialized object data.</param>
         /// <param name="context">An object that describes the source or destination of the serialized data.</param>

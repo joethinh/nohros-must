@@ -24,7 +24,7 @@ namespace Nohros.Data
         #region .ctor
 
         /// <summary>
-        /// Initializes a new instance of the Value class.
+        /// Initializes a new instance_ of the Value class.
         /// </summary>
         private Value() { }
 
@@ -221,7 +221,7 @@ namespace Nohros.Data
         /// <summary>
         /// Compares if two Value objects have equal contents.
         /// </summary>
-        /// <returns>true if this instance have equals contents of other.</returns>
+        /// <returns>true if this instance_ have equals contents of other.</returns>
         /// <remarks>This method should only be getting called for null values-- all
         /// subclasses need to provide their own implementation.</remarks>
         public virtual bool Equals(Value other) {

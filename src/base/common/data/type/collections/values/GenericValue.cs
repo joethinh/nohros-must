@@ -13,7 +13,7 @@ namespace Nohros.Data
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the Generic&lt;T&gt; class by using the specified value.
+        /// Initializes a new instance_ of the Generic&lt;T&gt; class by using the specified value.
         /// </summary>
         /// <param name="in_value">The underlying generic value. </param>
         public GenericValue(T in_value):base(ValueType.TYPE_GENERIC) {

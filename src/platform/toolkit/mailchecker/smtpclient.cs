@@ -21,7 +21,7 @@ namespace Nohros.Toolkit.MailChecker
 
         #region .ctor
         /// <summary>
-        /// Initialize a new instance of the SmtoClient by using the specified host address.
+        /// Initialize a new instance_ of the SmtoClient by using the specified host address.
         /// </summary>
         public SmtpClient(string mail_server_address) {
             mail_server_address_ = mail_server_address;

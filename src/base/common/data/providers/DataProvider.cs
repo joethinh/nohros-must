@@ -34,7 +34,7 @@ namespace Nohros.Data
         protected DataSourceType data_source_type_;
 
         /// <summary>
-        /// Initializes a new instance of the GenericDataProvider by using the specified
+        /// Initializes a new instance_ of the GenericDataProvider by using the specified
         /// connection string and database owner.
         /// </summary>
         /// <param name="databaseOwner">The name of the database owner.</param>
@@ -49,7 +49,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Creates an instance of the type designated by the specified generic type parameter using the
+        /// Creates an instance_ of the type designated by the specified generic type parameter using the
         /// constructor implied by the <see cref="IDataProvider"/> interface.
         /// </summary>
         /// <param name="provider">A <see cref="Provider"/> object containing the informations like
@@ -116,7 +116,7 @@ namespace Nohros.Data
                 newObject = (T)Activator.CreateInstance(type, provider.DatabaseOwner, provider.ConnectionString);
             }
 
-            // If a instance could not be created a exception will be thrown.
+            // If a instance_ could not be created a exception will be thrown.
             if (newObject == null)
                 Thrower.ThrowProviderException(ExceptionResource.DataProvider_CreateInstance, null);
 
@@ -126,13 +126,11 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Creates an instance of the type designated by the specified generic type parameter using the
+        /// Creates an instance_ of the type designated by the specified generic type parameter using the
         /// constructor implied by the <see cref="IDataProvider"/> interface.
         /// </summary>
         /// <typeparam name="T">A type of a class that implements the IDataProvider interface.</typeparam>
         /// <param name="provider_name">The name of the data provider.</param>
-        /// <param name="configuration">A class that implements the IConfiguration class containing the information
-        /// about the application data provides.</param>
         /// <remarks>
         /// This method will try to get the data provider information from the <see cref="IConfiguration.GetProvider(string)"/>
         /// method using the specified provider name.
@@ -142,23 +140,23 @@ namespace Nohros.Data
         /// provider connection string.
         /// </para>
         /// </remarks>
-        /// <returns>An instance of the type <typeparam name="T"/> if the provider information could be found and
+        /// <returns>An instance_ of the type <typeparam name="T"/> if the provider information could be found and
         /// the class could be instantiated.</returns>
         /// <exception cref="ArgumentNullException">The <paramref name="provider_name"/> provider was not
         /// found in the <paramref name="configuration"/></exception>
         /// <exception cref="Nohros.Data.ProviderException">The provider type is invalid or could not be instantiated.</exception>
-        protected static T CreateInstance(string provider_name, NohrosConfiguration configuration)
+        protected static T CreateInstance(string provider_name)
         {
-            ProviderNode provider = configuration.GetProvider(provider_name);
+            ProviderNode provider = NohrosConfiguration.ForCurrentProcess.GetProvider(provider_name);
             if (provider == null)
                 throw new ArgumentNullException(StringResources.DataProvider_InvalidProvider);
             return CreateInstance(provider);
         }
 
         /// <summary>
-        /// Gets an IDbConnection instance that can be used to query a data source.
+        /// Gets an IDbConnection instance_ that can be used to query a data source.
         /// </summary>
-        /// <returns>An IDbConnection instance that can be used to query a data source.</returns>
+        /// <returns>An IDbConnection instance_ that can be used to query a data source.</returns>
         /// <remarks>
         /// The returned type depends on the value of the <see cref="DataSourceType"/> property.
         /// </remarks>

@@ -25,7 +25,7 @@ namespace Nohros.Data
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the FundamentalCalss by using the specified boolean value.
+        /// Initializes a new instance_ of the FundamentalCalss by using the specified boolean value.
         /// </summary>
         /// <param name="in_value">The underlying value</param>
         public FundamentalValue(bool in_value)
@@ -36,7 +36,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the FundamentalCalss by using the specified boolean value.
+        /// Initializes a new instance_ of the FundamentalCalss by using the specified boolean value.
         /// </summary>
         /// <param name="in_value">The underlying value</param>
         public FundamentalValue(int in_value)
@@ -47,7 +47,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the FundamentalCalss by using the specified boolean value.
+        /// Initializes a new instance_ of the FundamentalCalss by using the specified boolean value.
         /// </summary>
         /// <param name="in_value">The underlying value</param>
         public FundamentalValue(double in_value)

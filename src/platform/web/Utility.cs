@@ -12,8 +12,6 @@ namespace Nohros.Net
 {
     public sealed class Utility
     {
-        private static NetSettings settings_ = null;
-
 		internal static string MapPath(string path)
 		{
 			string ppath;

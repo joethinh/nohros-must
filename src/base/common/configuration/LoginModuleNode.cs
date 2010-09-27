@@ -23,7 +23,7 @@ namespace Nohros.Configuration
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the LoginModuleNode
+        /// Initializes a new instance_ of the LoginModuleNode
         /// </summary>
         public LoginModuleNode(string name, ConfigurationNode parent_node): base(name, parent_node) { }
         #endregion

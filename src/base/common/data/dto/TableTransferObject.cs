@@ -33,13 +33,13 @@ namespace Nohros.Data
             public TableNode next;
 
             /// <summary>
-            /// Initializes a new instance of the TableNode class with is empty and positioned
+            /// Initializes a new instance_ of the TableNode class with is empty and positioned
             /// at the index zero.
             /// </summary>
             public TableNode() { }
 
             /// <summary>
-            /// Initialzes a new instance of the TableNode class by using the specified node index.
+            /// Initialzes a new instance_ of the TableNode class by using the specified node index.
             /// </summary>
             /// <param name="r">The index of the node within the <see cref="TableTransferObject"/>.</param>
             public TableNode(int r) {
@@ -47,7 +47,7 @@ namespace Nohros.Data
             }
 
             /// <summary>
-            /// Initializes a new instance od the TableNode class by using the specified row number and values.
+            /// Initializes a new instance_ od the TableNode class by using the specified row number and values.
             /// </summary>
             /// <param name="r">The number of the row that this node represents</param>
             /// <param name="str">An string array containing the values of the columns</param>
@@ -74,7 +74,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the TableTransferObject class by using the specified column names.
+        /// Initializes a new instance_ of the TableTransferObject class by using the specified column names.
         /// </summary>
         /// <param name="columns">An string array containing the names of the columns</param>
         public TableTransferObject(params string[] columns)

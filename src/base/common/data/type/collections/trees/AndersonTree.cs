@@ -29,7 +29,7 @@ namespace Nohros.Data
         #region .ctor
 
         /// <summary>
-        /// Initializes a new instance of the AndersonTree.
+        /// Initializes a new instance_ of the AndersonTree.
         /// </summary>
         /// <remarks>The default comparer will be used when comparing items</remarks>
         public AndersonTree():this(Comparer<TKey>.Default)
@@ -57,7 +57,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AndersonTree&alt;TKey, TValue&gt;"/> class by using
+        /// Initializes a new instance_ of the <see cref="AndersonTree&alt;TKey, TValue&gt;"/> class by using
         /// the specified <see cref="System.Comparison&alt;TKeyt&gt;"/> delegate.
         /// </summary>
         /// <param name="comparison">The <see cref="Comparison&alt;T&gt;"/> to use when comparing keys</param>

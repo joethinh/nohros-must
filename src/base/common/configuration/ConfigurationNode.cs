@@ -20,7 +20,7 @@ namespace Nohros.Configuration
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the ConfigurationNode class by using the specified XML node.
+        /// Initializes a new instance_ of the ConfigurationNode class by using the specified XML node.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         public ConfigurationNode(string name) {
@@ -30,7 +30,7 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Initializes a nes instance of the ConfigurationNode class by using the specified XML node.
+        /// Initializes a nes instance_ of the ConfigurationNode class by using the specified XML node.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <param name="parent_node">The parent node.</param>
