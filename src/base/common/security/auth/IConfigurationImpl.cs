@@ -15,7 +15,6 @@ namespace Nohros.Security.Auth
     internal class IConfigurationImpl : IConfiguration
     {
         ListDictionary modules_;
-
         FileInfo config_file_;
 
         /// <summary>
@@ -44,68 +43,6 @@ namespace Nohros.Security.Auth
         /// <remarks></remarks>
         public override void Load()
         {
-            base.LoadAndWatch(config_file_, "//LoginModules");
-
-            // load the login modules
-            List<string> modules = new List<string>();
-            foreach(XmlNode node in element_.ChildNodes)
-            {
-                string name = node.Name;
-                XmlAttributeCollection atts = node.Attributes;
-
-                XmlAttribute type = atts["type"] as XmlAttribute;
-                if (type == null)
-                    throw new LoginException(StringResources.Auth_Config_Missing_LoginModuleType);
-
-                Type t = Type.GetType(type.Value);
-                if (t == null)
-                    throw new LoginException(StringResources.Auth_Config_InvalidModuleType);
-
-                XmlAttribute flag = atts["flag"] as XmlAttribute;
-                if (flag == null)
-                    throw new LoginException(StringResources.Auth_Config_Missing_ControlFlag);
-
-                // parse the control flag
-                LoginModuleEntry.LoginModuleControlFlag controlFlag;
-                try { controlFlag =
-                        (LoginModuleEntry.LoginModuleControlFlag)
-                            Enum.Parse(typeof(LoginModuleEntry.LoginModuleControlFlag), flag.Value.ToUpper()); }
-                            catch { throw new LoginException(StringResources.Auth_Config_InvalidControlFlag); }
-
-                // Gets the login module specific options
-                Dictionary<string, object> options = GetOptions(node);
-
-                LoginModuleEntry entry = new LoginModuleEntry(name, t, controlFlag, options);
-
-                modules_[name] = entry;
-            }
-        }
-
-        private Dictionary<string, object> GetOptions(XmlNode parent)
-        {
-            if (!parent.HasChildNodes)
-                return null;
-
-            Dictionary<string, object> options = new Dictionary<string, object>();
-
-            foreach (XmlNode node in parent)
-            {
-                string name = node.Name;
-                string value = node.InnerText;
-                string val = null;
-
-                if (value.StartsWith("${"))
-                {
-                    try
-                    {
-                        val = value;
-                        value = System.Environment.ExpandEnvironmentVariables(value.Substring(3, value.Length - 3));
-                    }
-                    catch { value = val; }
-                }
-                options.Add(name, value);
-            }
-            return options;
         }
 
         /// <summary>

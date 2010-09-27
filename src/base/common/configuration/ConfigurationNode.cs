@@ -80,6 +80,19 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
+        /// Gets a list of all child nodes of the node.
+        /// </summary>
+        internal List<ConfigurationNode> ChildNodes {
+            get {
+                List<ConfigurationNode> nodes;
+                foreach(KeyValuePair<string, ConfigurationNode> node in child_nodes_) {
+                    nodes.Add(node);
+                }
+                return nodes;
+            }
+        }
+
+        /// <summary>
         /// Gets the name of the node.
         /// </summary>
         public string Name {

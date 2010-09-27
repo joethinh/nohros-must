@@ -94,84 +94,21 @@ namespace Nohros.Security.Auth
     /// or <c>Web.config</c> for an ASP.NET application.
     /// </para>
     /// </remarks>
-    public abstract class ILoginConfiguration
+    public interface ILoginConfiguration
     {
-        static ILoginConfiguration config_ = null;
-        static object lock_ = new object();
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        protected ILoginConfiguration() { }
-
-        /// <summary>
-        /// Gets or sets the single instance of the ILoginConfiguration class.
-        /// </summary>
-        /// <returns>A instance of the ILoginConfiguration class</returns>
-        /// <remarks>
-        /// The default LoginConfiguration implementation can be changed by setting the value of the
-        /// LoginConfigurationProvider key of the AppSettings node of the application configuration file
-        /// to the fully qualified name of the desired ILoginConfiguration subclass implementation
-        /// </remarks>
-        public static ILoginConfiguration LoginConfiguration
-        {
-            get
-            {
-                if (config_ == null)
-                {
-                    lock (lock_)
-                    {
-                        if (config_ == null)
-                        {
-                            Type type;
-
-                            string provider_name_ = ConfigurationManager.AppSettings["LoginConfigurationProvider"] as string;
-                            if (provider_name_ != null)
-                            {
-                                type = Type.GetType(provider_name_);
-                                if (type != null)
-                                {
-                                    try
-                                    {
-                                        config_ = (LoginConfiguration)Activator.CreateInstance(type);
-                                    }
-                                    catch { config_ = null; }
-                                }
-                            }
-
-                            // The specified provider could not be loaded or a custom provider
-                            // was not specified. We will load the default configuration provider
-                            if (config_ == null)
-                            {
-                                config_ = new LoginConfiguration();
-                            }
-                        }
-                    }
-                }
-                return config_;
-            }
-            set
-            {
-                lock(lock_)
-                {
-                    config_ = value;
-                }
-            }
-        }
-
         /// <summary>
         /// Retrieve the LoginModuleEntry for the specified name
         /// </summary>
         /// <param name="name">the name used to index the module</param>
         /// <returns>A LoginModuleEntry for the spcified <paramref name="name"/>,
         /// or null if there are no entry for the specified <paramref name="name"/></returns>
-        public abstract LoginModuleEntry this[string key] { get; }
+        LoginModuleEntry this[string key] { get; }
 
         /// <summary>
         /// Gets all the login modules configured for the application.
         /// </summary>
         /// <returns>An array of LoginModuleEntry containg all the login
         /// modules configured for the application</returns>
-        public abstract LoginModuleEntry[] LoginModules { get; }
+        LoginModuleEntry[] LoginModules { get; }
     }
 }

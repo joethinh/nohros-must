@@ -48,6 +48,12 @@ namespace Nohros.Configuration
         }
         #endregion
 
+        /// <summary>
+        /// Parses a XML node that contains information about a data provider.
+        /// </summary>
+        /// <param name="node">The XML node to parse.</param>
+        /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
+        /// valid representation of a data provider.</exception>
         public override void Parse(XmlNode node) {
             bool connstring_is_encrypted = false;
 
