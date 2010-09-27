@@ -42,6 +42,12 @@ namespace Nohros.Configuration
         }
         #endregion
 
+        /// <summary>
+        /// Parses a XML node that contains information about a content group.
+        /// </summary>
+        /// <param name="node">The XML node to parse.</param>
+        /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
+        /// valid representation of a content group.</exception>
         public override void Parse(XmlNode node) {
             string name = null, build = null, mime_type = null, path_ref = null;
             if (!(GetAttributeValue(node, kNameAttributeName, out name) &&

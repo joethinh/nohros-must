@@ -13,35 +13,6 @@ namespace Nohros.Security.Auth
     /// <seealso cref="ILoginConfiguration"/>
     public class LoginModuleEntry
     {
-        #region LoginModuleControlFlag
-        /// <summary>
-        /// Represents whether or not a ILoginModule implementation class is REQUIRED, REQUISITE,
-        /// SUFFICIENT or OPTIONAL.
-        /// </summary>
-        public enum LoginModuleControlFlag: byte
-        {
-            /// <summary>
-            /// Optional login module
-            /// </summary>
-            OPTIONAL = 0,
-
-            /// <summary>
-            /// Required login module
-            /// </summary>
-            REQUIRED = 1,
-
-            /// <summary>
-            /// Requisite login module
-            /// </summary>
-            REQUISITE = 2,
-
-            /// <summary>
-            /// Suficient login module
-            /// </summary>
-            SUFFICIENT = 3
-        }
-        #endregion
-
         string _loginModuleName;
         LoginModuleControlFlag _controlFlag;
         IDictionary<string, object> _options;

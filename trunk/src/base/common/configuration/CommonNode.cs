@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -16,6 +17,7 @@ namespace Nohros.Configuration
         internal const string kRepositoryNodeName = "repository";
         internal const string kProvidersNodeName = "providers";
         internal const string kConnectionStringsNodeName = "connection-strings";
+        internal const string kLoginModulesNodeName = "login-modules";
 
         StringMap paths_;
         NohrosConfiguration configuration_;
@@ -38,8 +40,11 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Parses the XML node.
+        /// Parses a XML node that contains information about a nohros common module.
         /// </summary>
+        /// <param name="node">The XML node to parse.</param>
+        /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
+        /// valid representation of a nohros common node.</exception>
         public override void Parse(XmlNode node) {
             // parse the repository node.
             XmlNode data_node = IConfiguration.SelectNode(node, kRepositoryNodeName);
@@ -95,18 +100,40 @@ namespace Nohros.Configuration
             data_node = IConfiguration.SelectNode(node, kLoginModulesNodeName);
             if (data_node != null) {
                 foreach (XmlNode n in data_node.ChildNodes) {
-                    if()
+                    LoginModuleNode login_module = new LoginModuleNode(n.Name, this);
+                    this[LoginModuleKey(login_module.Name)] = login_module;
                 }
             }
         }
 
+        #region Dictionary Keys
+        /// <summary>
+        /// Gets a string that uniquely identifies a connection string within the common node.
+        /// </summary>
+        /// <param name="name">The name of the connection string.</param>
+        /// <returns>A string that uniquely identifies a connection string within a common node.</returns>
         string ConnectionStringKey(string name) {
             return string.Concat(kConnectionStringsNodeName, ".", name);
         }
 
+        /// <summary>
+        /// Gets a string that uniquely identifies a provider within the common node.
+        /// </summary>
+        /// <param name="name">The name of the provider.</param>
+        /// <returns>A string that uniquely identifies a provider within a common node.</returns>
         string ProviderNodeKey(string name) {
             return string.Concat(kProvidersNodeName, ".", name);
         }
+
+        /// <summary>
+        /// Gets a string that uniquely identifies a login module within the common node.
+        /// </summary>
+        /// <param name="name">The name of the login module.</param>
+        /// <returns>A string that uniquely identifies a login module within a common node.</returns>
+        string LoginModuleKey(string name) {
+            return string.Concat(kLoginModulesNodeName, ".", name);
+        }
+        #endregion
 
         /// <summary>
         /// Gets a ConnectionStringNode with the specified name.
@@ -169,6 +196,27 @@ namespace Nohros.Configuration
         public bool GetProvider(string name, out ProviderNode provider) {
             provider = GetProvider(name);
             return (provider != null);
+        }
+
+        /// <summary>
+        /// Gets a login module configured for the application by using the specified login module name.
+        /// </summary>
+        /// <param name="name">The name of the login module.</param>
+        /// <returns>A login module with the specified name, or null if the name was not found.</returns>
+        public LoginModuleNode GetLoginModule(string name) {
+            return this[LoginModuleKey(name)] as LoginModuleNode;
+        }
+
+        /// <summary>
+        /// Gets a login module configured for the application by using the specified login module name.
+        /// </summary>
+        /// <param name="name">The name of the login module.</param>
+        /// <param name="login_module">When this method return contains a login module with the specified name
+        /// or null if the name was not found.</param>
+        /// <returns>true if a login module with the specified name was found; otherwise false.</returns>
+        public bool GetLoginModule(string name, out LoginModuleNode login_module) {
+            login_module = GetLoginModule(name);
+            return (login_module != null);
         }
 
         /// <summary>

@@ -52,6 +52,7 @@
     <Compile Include="configuration\ConfigurationNode.cs" />
     <Compile Include="configuration\ConnectionStringNode.cs" />
     <Compile Include="configuration\ContentGroupNode.cs" />
+    <Compile Include="configuration\LoginModuleNode.cs" />
     <Compile Include="data\providers\DataSourceType.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\IConfigurationNode.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="security\auth\IPermission.cs" />
     <Compile Include="security\auth\LoginConfiguration.cs" />
     <Compile Include="security\auth\LoginException.cs" />
+    <Compile Include="security\auth\LoginModuleControlFlag.cs" />
     <Compile Include="security\auth\LoginModuleEntry.cs" />
     <Compile Include="security\auth\PermissionBase.cs" />
     <Compile Include="security\auth\NasUser.cs" />

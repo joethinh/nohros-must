@@ -160,8 +160,8 @@ namespace Nohros.Security.Auth
                     bool result = entry.Module.Login();
                     if (!result)
                     {
-                        if (entry.ControlFlag == LoginModuleEntry.LoginModuleControlFlag.REQUISITE ||
-                            entry.ControlFlag == LoginModuleEntry.LoginModuleControlFlag.REQUIRED)
+                        if (entry.ControlFlag == LoginModuleControlFlag.REQUISITE ||
+                            entry.ControlFlag == LoginModuleControlFlag.REQUIRED)
                         {
                             failure = true;
                             break;
@@ -169,7 +169,7 @@ namespace Nohros.Security.Auth
                     }
                     else
                     {
-                        if (entry.ControlFlag == LoginModuleEntry.LoginModuleControlFlag.SUFFICIENT)
+                        if (entry.ControlFlag == LoginModuleControlFlag.SUFFICIENT)
                             break;
                     }
                 }
