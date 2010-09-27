@@ -54,6 +54,8 @@
     <Compile Include="dnslookup\resolver.cs" />
     <Compile Include="mailchecker\smtpreply.cs" />
     <Compile Include="mailchecker\smtpclient.cs" />
+    <Compile Include="messenger\IMessage.cs" />
+    <Compile Include="messenger\Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
