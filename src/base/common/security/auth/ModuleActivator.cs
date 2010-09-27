@@ -8,25 +8,24 @@ namespace Nohros.Security.Auth
 {
     public sealed class ModuleActivator
     {
-        static ListDictionary _modules = new ListDictionary();
-        static object _lock = new object();
+        static ListDictionary modules_ = new ListDictionary();
+        static object lock_ = new object();
 
         public static ILoginModule GetInstance(Type type)
         {
-            ILoginModule newObject = null;
+            ILoginModule login_module = null;
 
-            lock (_lock)
+            lock (lock_)
             {
-                newObject = _modules[type] as ILoginModule;
+                login_module = modules_[type] as ILoginModule;
 
-                if (newObject == null)
-                {
-                    newObject = Activator.CreateInstance(type) as ILoginModule;
-                    if (newObject != null)
-                        _modules[type] = newObject;
+                if (login_module == null) {
+                    login_module = Activator.CreateInstance(type) as ILoginModule;
+                    if (login_module != null)
+                        modules_[type] = login_module;
                 }
             }
-            return newObject;
+            return login_module;
         }
     }
 }

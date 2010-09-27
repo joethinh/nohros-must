@@ -92,7 +92,6 @@
     <Compile Include="security\auth\FieldCallback.cs" />
     <Compile Include="security\auth\IAuthCallback.cs" />
     <Compile Include="security\auth\IAuthCallbackHandler.cs" />
-    <Compile Include="security\auth\IConfigurationImpl.cs" />
     <Compile Include="security\auth\ILoginConfiguration.cs" />
     <Compile Include="security\auth\IPermission.cs" />
     <Compile Include="security\auth\LoginConfiguration.cs" />

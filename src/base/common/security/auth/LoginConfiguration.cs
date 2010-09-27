@@ -27,6 +27,9 @@ namespace Nohros.Security.Auth
             modules_ = null;
         }
 
+        /// <summary>
+        /// Singleton initializer.
+        /// </summary>
         static LoginConfiguration()
         {
             instance = new LoginConfiguration();
@@ -34,13 +37,15 @@ namespace Nohros.Security.Auth
 
             // we need to store a reference to all nodes configured for a specific application.
             // this will be stored into a array for faster retrieval.
-            List<ConfigurationNode> nodes = this.CommonNode.ChildNodes;
-            if (nodes != null && nodes.Count > 0) {
-                List<LoginModuleNode> modules = new List<LoginModuleNode>(nodes.Count);
-                foreach (LoginModuleNode module in modules) {
-                    modules.Add(module);
+            if (instance.CommonNode != null) {
+                List<ConfigurationNode> nodes = instance.CommonNode.ChildNodes;
+                if (nodes != null && nodes.Count > 0) {
+                    List<LoginModuleNode> modules = new List<LoginModuleNode>(nodes.Count);
+                    foreach (LoginModuleNode module in modules) {
+                        modules.Add(module);
+                    }
+                    instance.modules_ = modules.ToArray();
                 }
-                modules_ = modules.ToArray();
             }
         }
         #endregion
@@ -63,11 +68,11 @@ namespace Nohros.Security.Auth
         /// Retrieve the LoginModuleEntry for the specified name
         /// </summary>
         /// <param name="name">the name used to index the module</param>
-        /// <returns>A LoginModuleEntry for the spcified <paramref name="name"/>,
-        /// or null if there are no entry for the specified <paramref name="name"/></returns>
-        public LoginModuleNode this[string name]
+        /// <returns>A LoginModuleEntry for the spcified <paramref name="name"/>, or null if there are no
+        /// entry for the specified <paramref name="name"/></returns>
+        public ILoginModuleEntry GetLoginModuleEntry(string name)
         {
-            get { return CommonNode.GetLoginModule(name); }
+            return CommonNode.GetLoginModule(name);
         }
 
         /// <summary>
@@ -75,7 +80,7 @@ namespace Nohros.Security.Auth
         /// </summary>
         /// <returns>An array of LoginModuleEntry containg all the login
         /// modules configured for the application</returns>
-        public LoginModuleNode[] LoginModules
+        public ILoginModuleEntry[] LoginModules
         {
             get { return modules_; }
         }
