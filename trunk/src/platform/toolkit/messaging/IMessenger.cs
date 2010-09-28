@@ -17,5 +17,14 @@ namespace Nohros.Toolkit.Messaging
         /// </summary>
         /// <returns>A <see cref="IMessage"/> containing the response from the messaging system.</returns>
         IMessage Send(IMessage message);
+
+        /// <summary>
+        /// Process the message response sent from the messaging system.
+        /// </summary>
+        /// <param name="message">The response message to process</param>
+        /// <remarks>This method is used to process response message that could be sent
+        /// from messaging system after a message is sent, when a applications needs to
+        /// performs some post processing operation(ex. store the response into a database).</remarks>
+        void ProcessResponse(IMessage message);
     }
 }

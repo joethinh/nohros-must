@@ -54,6 +54,7 @@
     <Compile Include="dnslookup\resolver.cs" />
     <Compile Include="mailchecker\smtpreply.cs" />
     <Compile Include="mailchecker\smtpclient.cs" />
+    <Compile Include="messaging\ErrorMessage.cs" />
     <Compile Include="messaging\IMessage.cs" />
     <Compile Include="messaging\IMessenger.cs" />
     <Compile Include="messaging\MailMessage.cs" />

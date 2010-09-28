@@ -53,6 +53,7 @@
     <Compile Include="configuration\ConnectionStringNode.cs" />
     <Compile Include="configuration\ContentGroupNode.cs" />
     <Compile Include="configuration\LoginModuleNode.cs" />
+    <Compile Include="configuration\MessengerNode.cs" />
     <Compile Include="data\providers\DataSourceType.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\IConfigurationNode.cs" />
@@ -137,7 +138,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

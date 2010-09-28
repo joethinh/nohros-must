@@ -80,6 +80,8 @@ namespace Nohros.Toolkit.Messaging
         /// </summary>
         public IRecipient[] Recipients {
             get {
+                if (recipients_ == null)
+                    return null;
                 IRecipient[] recipients = new IRecipient[recipients_.Count];
                 recipients_.Values.CopyTo(recipients, 0);
                 return recipients;

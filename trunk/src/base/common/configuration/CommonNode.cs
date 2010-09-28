@@ -102,6 +102,15 @@ namespace Nohros.Configuration
                     this[LoginModuleKey(login_module.Name)] = login_module;
                 }
             }
+
+            // parse the messengers
+            data_node = IConfiguration.SelectNode(node, kMessengerNodeName);
+            if(data_node != null) {
+                
+                foreach (XmlNode n in data_node.ChildNodes) {
+
+                }
+            }
         }
 
         #region Dictionary Keys
@@ -203,6 +212,9 @@ namespace Nohros.Configuration
         /// <returns>A login module with the specified name, or null if the name was not found.</returns>
         public LoginModuleNode GetLoginModule(string name) {
             return this[LoginModuleKey(name)] as LoginModuleNode;
+        }
+
+        public MessengerNode GetMessengers() {
         }
 
         /// <summary>
