@@ -22,6 +22,11 @@ namespace Nohros.Toolkit.Messaging
         /// <summary>
         /// A Short Message Service(SMS) message.
         /// </summary>
-        SmsMessage = 2
+        SmsMessage = 2,
+
+        /// <summary>
+        /// A error message. Used internally.
+        /// </summary>
+        ErrorMessage
     }
 }
