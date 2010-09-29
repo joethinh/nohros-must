@@ -18,21 +18,27 @@ namespace Nohros.Configuration
         internal const string kProvidersNodeName = "providers";
         internal const string kConnectionStringsNodeName = "connection-strings";
         internal const string kLoginModulesNodeName = "login-modules";
+        internal const string kModuleNodeName = "module";
+        internal const string kChainsNodeName = "chains";
+        internal const string kChainNodeName = "chain";
 
         StringMap paths_;
+        NohrosConfiguration config_;
 
         #region .ctor
         /// <summary>
         /// Initializes a new instance_ of the CommonNode class by using the specified XML node and name.
         /// </summary>
         /// <param name="name">The name of the node.</param>
-        public CommonNode():base(kCommonNodeName) {
+        /// <param name="config">The related <see cref="NohrosConfiguration"/> object.</param>
+        public CommonNode(NohrosConfiguration config):base(kCommonNodeName) {
             paths_ = new StringMap();
+            config_ = config;
         }
         #endregion
 
-        public static CommonNode FromXmlNode(XmlNode node) {
-            CommonNode common_node = new CommonNode();
+        public static CommonNode FromXmlNode(XmlNode node, NohrosConfiguration config) {
+            CommonNode common_node = new CommonNode(config);
             common_node.Parse(node);
             return common_node;
         }
@@ -83,11 +89,11 @@ namespace Nohros.Configuration
             if (data_node != null) {
                 foreach (XmlNode n in data_node.ChildNodes) {
                     if (string.Compare(n.Name, "add", StringComparison.OrdinalIgnoreCase) == 0) {
-                        string name = null;
-                        if (!(GetAttributeValue(n, "name", out name)))
-                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", kNodeTree + kProvidersNodeName));
+                        string name = null, type = null;
+                        if (!(GetAttributeValue(n, "name", out name) && GetAttributeValue(n, "type", out type)))
+                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name or type", kNodeTree + kProvidersNodeName));
 
-                        ProviderNode provider = new ProviderNode(name, this);
+                        DataProviderNode provider = new DataProviderNode(name, type, this);
                         provider.Parse(n);
                         this[ProviderNodeKey(provider.Name)] = provider;
                     }
@@ -98,17 +104,31 @@ namespace Nohros.Configuration
             data_node = IConfiguration.SelectNode(node, kLoginModulesNodeName);
             if (data_node != null) {
                 foreach (XmlNode n in data_node.ChildNodes) {
-                    LoginModuleNode login_module = new LoginModuleNode(n.Name, this);
-                    this[LoginModuleKey(login_module.Name)] = login_module;
+                    if (string.Compare(n.Name, kModuleNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
+                        string name = null;
+                        if (!GetAttributeValue(n, "name", out name))
+                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", kNodeTree + kLoginModulesNodeName));
+
+                        LoginModuleNode login_module = new LoginModuleNode(name, this);
+                        login_module.Parse(n);
+                        this[LoginModuleKey(name)] = login_module;
+                    }
                 }
             }
 
-            // parse the messengers
-            data_node = IConfiguration.SelectNode(node, kMessengerNodeName);
-            if(data_node != null) {
-                
+            // parse the chains
+            data_node = IConfiguration.SelectNode(node, kChainsNodeName);
+            if(data_node != null) {   
                 foreach (XmlNode n in data_node.ChildNodes) {
+                    if (string.Compare(n.Name, kChainNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
+                        string name = null;
+                        if (!GetAttributeValue(n, "name", out name))
+                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", kNodeTree + kChainsNodeName + "." + kChainNodeName));
 
+                        ChainNode chain = new ChainNode(name);
+                        chain.Parse(n);
+                        this[ChainNodeKey(name)] = chain;
+                    }
                 }
             }
         }
@@ -139,6 +159,15 @@ namespace Nohros.Configuration
         /// <returns>A string that uniquely identifies a login module within a common node.</returns>
         string LoginModuleKey(string name) {
             return string.Concat(kLoginModulesNodeName, ".", name);
+        }
+
+        /// <summary>
+        /// Gets a string that uniquely identifies a chain within the common node.
+        /// </summary>
+        /// <param name="name">The anme of the chain.</param>
+        /// <returns>A string that uniquely identifies a chain within a common node.</returns>
+        string ChainNodeKey(string name) {
+            return string.Concat(kChainsNodeName, ".", name);
         }
         #endregion
 
@@ -191,8 +220,8 @@ namespace Nohros.Configuration
         /// associated with the specified <paramref name="provider_name"/> or null if the <paramref name="provider_name"/>
         /// could not be found.
         /// </returns>
-        public ProviderNode GetProvider(string name) {
-            return this[ProviderNodeKey(name)] as ProviderNode;
+        public DataProviderNode GetProvider(string name) {
+            return this[ProviderNodeKey(name)] as DataProviderNode;
         }
 
         /// <summary>
@@ -200,7 +229,7 @@ namespace Nohros.Configuration
         /// </summary>
         /// <param name="provider_name">The name of the data provider to get informations from</param>
         /// <returns>true if the specified <paramref name="provider_name"/> is found;otherwise false.</returns>
-        public bool GetProvider(string name, out ProviderNode provider) {
+        public bool GetProvider(string name, out DataProviderNode provider) {
             provider = GetProvider(name);
             return (provider != null);
         }
@@ -214,9 +243,6 @@ namespace Nohros.Configuration
             return this[LoginModuleKey(name)] as LoginModuleNode;
         }
 
-        public MessengerNode GetMessengers() {
-        }
-
         /// <summary>
         /// Gets a login module configured for the application by using the specified login module name.
         /// </summary>
@@ -224,9 +250,37 @@ namespace Nohros.Configuration
         /// <param name="login_module">When this method return contains a login module with the specified name
         /// or null if the name was not found.</param>
         /// <returns>true if a login module with the specified name was found; otherwise false.</returns>
-        public bool GetLoginModule(string name, out LoginModuleNode login_module) {
-            login_module = GetLoginModule(name);
-            return (login_module != null);
+        public bool GetLoginModule(string name, out LoginModuleNode module) {
+            module = GetLoginModule(name);
+            return (module != null);
+        }
+
+        /// <summary>
+        /// Gets a chain configured for the application, using the specified chain name.
+        /// </summary>
+        /// <param name="name">The name of the chain.</param>
+        /// <returns>A <see cref="ChainNode"/> with specified name, or null if the name was not found.</returns>
+        public ChainNode GetChain(string name) {
+            return this[ChainNodeKey(name)] as ChainNode;
+        }
+
+        /// <summary>
+        /// Gets a chain configured for the application, using the specified chain name.
+        /// </summary>
+        /// <param name="name">The name of the chain.</param>
+        /// <param name="chain">When this method returns contains a <see cref="ChainNode"/> with the specified name
+        /// or null if the name was not found.</param>
+        /// <returns>A <see cref="ChainNode"/> with specified name, or null if the name was not found.</returns>
+        public bool GetChain(string name, out ChainNode chain) {
+            chain = GetChain(name);
+            return (chain != null);
+        }
+
+        /// <summary>
+        /// Gets a <see cref="NohrosConfiguration"/> object that is the parent of the common node.
+        /// </summary>
+        public NohrosConfiguration Configuration {
+            get { return config_; }
         }
     }
 }

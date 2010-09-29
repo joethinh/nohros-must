@@ -113,7 +113,7 @@ namespace Nohros.Configuration
             // parse the common node
             XmlNode node = IConfiguration.SelectNode(root_node, CommonNode.kCommonNodeName);
             if (node != null) {
-                common_node_ = CommonNode.FromXmlNode(node);
+                common_node_ = CommonNode.FromXmlNode(node, this);
 
                 // parse the web node
                 node = IConfiguration.SelectNode(root_node, WebNode.kWebNodeName);
@@ -125,6 +125,12 @@ namespace Nohros.Configuration
         /// <summary>
         /// Gets the current process configuration object.
         /// </summary>
+        /// <remarks>
+        /// There is a per process instance of the NohrosConfiguration that is loaded by using a key
+        /// with name "NohrosConfigurationFile" defined on the main application configuration file. If
+        /// this instance is not loaded yet, this method will instantiate a new one and load it, using
+        /// the <see cref="NohrosConfiguration.Load()"/> method.
+        /// </remarks>
         public static NohrosConfiguration ForCurrentProcess {
             get {
                 if (current_process_config_ == null) {
@@ -133,6 +139,7 @@ namespace Nohros.Configuration
                 }
                 return current_process_config_;
             }
+            protected set { current_process_config_ = value; }
         }
 
         /// <summary>
@@ -238,7 +245,7 @@ namespace Nohros.Configuration
         /// associated with the specified <paramref name="provider_name"/> or null if the <paramref name="provider_name"/>
         /// could not be found.
         /// </returns>
-        public ProviderNode GetProvider(string provider_name) {
+        public DataProviderNode GetProvider(string provider_name) {
             return (common_node_ != null) ? common_node_.GetProvider(provider_name) : null;
         }
 

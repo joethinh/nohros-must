@@ -73,7 +73,7 @@ namespace Nohros.Data
         /// <exception cref="ArgumentNullException">dataProvider is null</exception>
         /// <exception cref="ProviderException">The type could not be created.</exception>
         /// <exception cref="ProviderException"><paramref name="dataProvider"/> is invalid.</exception>
-        protected static T CreateInstance(ProviderNode provider)
+        protected static T CreateInstance(DataProviderNode provider)
         {
             if (provider == null)
                 throw new ArgumentNullException("provider");
@@ -147,7 +147,7 @@ namespace Nohros.Data
         /// <exception cref="Nohros.Data.ProviderException">The provider type is invalid or could not be instantiated.</exception>
         protected static T CreateInstance(string provider_name)
         {
-            ProviderNode provider = NohrosConfiguration.ForCurrentProcess.GetProvider(provider_name);
+            DataProviderNode provider = NohrosConfiguration.ForCurrentProcess.GetProvider(provider_name);
             if (provider == null)
                 throw new ArgumentNullException(StringResources.DataProvider_InvalidProvider);
             return CreateInstance(provider);

@@ -11,7 +11,7 @@ namespace Nohros.Configuration
 {
     public class LoginModuleNode : ConfigurationNode, ILoginModuleEntry
     {
-        internal const string kNodeTree = CommonNode.kNodeTree + CommonNode.kLoginModulesNodeName + ".";
+        internal const string kNodeTree = CommonNode.kNodeTree + CommonNode.kLoginModulesNodeName + "." + CommonNode.kModuleNodeName;
 
         const string kTypeAttributeName = "type";
         const string kFlagAttributeName = "flag";
@@ -53,11 +53,11 @@ namespace Nohros.Configuration
             if(flag == "required")
                 control_flag_ = LoginModuleControlFlag.REQUIRED;
             else if(flag == "requisite")
-                control_flag_ = LoginModuleControlFlag.REQUIRED;
+                control_flag_ = LoginModuleControlFlag.REQUISITE;
             else if(flag =="sufficient")
-                control_flag_ = LoginModuleControlFlag.REQUIRED;
+                control_flag_ = LoginModuleControlFlag.SUFFICIENT;
             else if(flag == "optional")
-                control_flag_ = LoginModuleControlFlag.REQUIRED;
+                control_flag_ = LoginModuleControlFlag.OPTIONAL;
             else
                 Thrower.ThrowConfigurationException(StringResources.Auth_Config_InvalidControlFlag);
 

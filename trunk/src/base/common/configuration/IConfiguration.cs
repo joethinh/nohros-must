@@ -344,7 +344,7 @@ namespace Nohros.Configuration
         private void Watcher_OnRenamed(object source, RenamedEventArgs e)
         {
             // sanity check the root XML element for null
-            if (element_ != null != null) {
+            if (element_ != null) {
                 config_file_ = new FileInfo(e.FullPath);
                 Load(config_file_, element_.Name);
             }
