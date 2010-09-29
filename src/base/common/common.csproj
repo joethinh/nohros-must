@@ -47,20 +47,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="configuration\BuildType.cs" />
-    <Compile Include="configuration\CommonNode.cs" />
+    <Compile Include="configuration\common\provider\ProviderNode.cs" />
+    <Compile Include="configuration\web\BuildType.cs" />
+    <Compile Include="configuration\common\ChainNode.cs" />
+    <Compile Include="configuration\common\CommonNode.cs" />
     <Compile Include="configuration\ConfigurationNode.cs" />
-    <Compile Include="configuration\ConnectionStringNode.cs" />
-    <Compile Include="configuration\ContentGroupNode.cs" />
-    <Compile Include="configuration\LoginModuleNode.cs" />
-    <Compile Include="configuration\MessengerNode.cs" />
+    <Compile Include="configuration\common\provider\ConnectionStringNode.cs" />
+    <Compile Include="configuration\web\ContentGroupNode.cs" />
+    <Compile Include="configuration\common\provider\IProviderNode.cs" />
+    <Compile Include="configuration\common\LoginModuleNode.cs" />
     <Compile Include="data\providers\DataSourceType.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\IConfigurationNode.cs" />
     <Compile Include="configuration\NohrosConfiguration.cs" />
-    <Compile Include="configuration\ProviderNode.cs" />
+    <Compile Include="configuration\common\provider\DataProviderNode.cs" />
     <Compile Include="data\StringMap.cs" />
-    <Compile Include="configuration\WebNode.cs" />
+    <Compile Include="configuration\web\WebNode.cs" />
     <Compile Include="data\CacheEntry.cs" />
     <Compile Include="data\type\collections\trees\AndersonTree.cs" />
     <Compile Include="data\type\collections\trees\AndersonTreeNode.cs" />
@@ -138,7 +140,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

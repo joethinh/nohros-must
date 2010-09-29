@@ -6,6 +6,7 @@ using System.Configuration;
 
 using NUnit.Framework;
 
+using Nohros.Security.Auth;
 using Nohros.Data;
 using Nohros.Configuration;
 
@@ -123,13 +124,48 @@ namespace Nohros.Test.Configuration
             TestingConfiguration config = new TestingConfiguration();
             config.Load("desktop");
 
-            ProviderNode node = config.CommonNode.GetProvider("NohrosDataProvider");
+            DataProviderNode node = config.CommonNode.GetProvider("NohrosDataProvider");
             Assert.AreEqual("NohrosDataProvider", node.Name);
             Assert.AreEqual("Nohros.Data.SqlNohrosDataProvider, nohros.data", node.Type);
             Assert.AreEqual(config.Location, node.AssemblyLocation);
             Assert.AreEqual("SQLSERVER", node.ConnectionString);
             Assert.AreEqual("dbo", node.DatabaseOwner);
             Assert.AreEqual(DataSourceType.MsSql, node.DataSourceType);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ConfigurationNodeWithNoParent() {
+            DataProviderNode node = new DataProviderNode("provider", null);
+        }
+
+        [Test]
+        public void ForCurrentProcess() {
+            NohrosConfiguration config = NohrosConfiguration.ForCurrentProcess;
+            Assert.IsNotNull(config.CommonNode);
+            Assert.IsNotNull(config.WebNode);
+        }
+
+        [Test]
+        public void LoginModuleNode() {
+            NohrosConfiguration config = NohrosConfiguration.ForCurrentProcess;
+            CommonNode common = config.CommonNode;
+            LoginModuleNode module = common.GetLoginModule("invalid-login-module");
+            Assert.IsNotNull(module);
+            Assert.AreEqual("invalid-login-module", module.Name);
+            Assert.AreEqual(1, module.Options.Count);
+            Assert.AreEqual(typeof(Nohros.Test.Security.Auth.ILoginModule_), module.Type);
+            Assert.AreEqual(LoginModuleControlFlag.SUFFICIENT, module.ControlFlag);
+        }
+
+        [Test]
+        public void ChainNode() {
+            NohrosConfiguration config = NohrosConfiguration.ForCurrentProcess;
+            CommonNode common = config.CommonNode;
+            ChainNode pseudo_chain = common.GetChain("pseudo-chain");
+            Assert.IsNotNull(pseudo_chain);
+            Assert.AreEqual("SmsMessenger", pseudo_chain.Nodes[0]);
+            Assert.AreEqual("EmailMessenger", pseudo_chain.Nodes[1]);
         }
     }
 }

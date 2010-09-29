@@ -5,11 +5,12 @@ using System.Text;
 using System.Xml;
 using System.IO;
 
+using Nohros.Resources;
 using Nohros.Data;
 
 namespace Nohros.Configuration
 {
-    public class ProviderNode : ConfigurationNode
+    public class DataProviderNode : ProviderNode
     {
         internal const string kNodeTree = CommonNode.kNodeTree + CommonNode.kProvidersNodeName + ".";
 
@@ -30,7 +31,7 @@ namespace Nohros.Configuration
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance_ of the ProviderNode.
+        /// Initializes a new instance_ of the DataProviderNode.
         /// </summary>
         /// <param name="common_node">A CommonNode object which this provider belongs.</param>
         /// <remarks>
@@ -39,9 +40,8 @@ namespace Nohros.Configuration
         /// through the specified common_node. If a reference could not be resolved we assume the reference as
         /// the final data.
         /// </remarks>
-        public ProviderNode(string name, CommonNode parent_node): base(name, parent_node) {
+        public DataProviderNode(string name, string type, CommonNode parent_node): base(name, type, parent_node) {
             attributes_ = new NameValueCollection();
-            type_ = null;
             database_owner_ = "dbo";
             connection_string_ = null;
             assembly_location_ = null;
@@ -86,7 +86,13 @@ namespace Nohros.Configuration
                         // using the configuration file location.
                         string location = attribute.Value;
                         if (location != null && !Path.IsPathRooted(location)) {
-                            location = Path.Combine(NohrosConfiguration.ForCurrentProcess.Location, location);
+
+                            // sanity check the configuration parent node
+                            NohrosConfiguration config = ((CommonNode)ParentNode).Configuration;
+                            if (config == null)
+                                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "configuration object", "common node"));
+
+                            location = Path.Combine(config.Location, location);
                         }
                         assembly_location_ = location;
                         break;
