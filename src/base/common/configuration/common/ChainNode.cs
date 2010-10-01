@@ -9,7 +9,9 @@ namespace Nohros.Configuration
 {
     public class ChainNode : ConfigurationNode
     {
-        internal const string kNodeTree = CommonNode.kNodeTree + CommonNode.kChainsNodeName + ".";
+        internal const string kChainsNodeName = "chains";
+        internal const string kChainNodeName = "chain";
+        internal const string kNodeTree = CommonNode.kNodeTree + "." + kChainsNodeName + ".";
 
         string[] nodes_;
 
@@ -24,16 +26,17 @@ namespace Nohros.Configuration
         /// <summary>
         /// Parses a XML node that contains information about a chain.
         /// </summary>
-        /// <param name="node">The XML node to parse.</param>
+        /// <param name="node">A XML node containing the data to parse.</param>
+        /// <param name="config">The configuration object which this node belongs to.</param>
         /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
         /// valid representation of a chain.</exception>
-        public override void Parse(XmlNode node) {
+        public override void Parse(XmlNode node, NohrosConfiguration config) {
             List<string> nodes = new List<string>();
             foreach (XmlNode n in node.ChildNodes) {
                 if (string.Compare(n.Name, "node", StringComparison.OrdinalIgnoreCase) == 0) {
                     string name = null;
                     if (!GetAttributeValue(n, "name", out name))
-                        Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", kNodeTree + name_));
+                        Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", kNodeTree + "." + name_));
                     nodes.Add(name);
                 }
             }

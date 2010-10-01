@@ -60,7 +60,7 @@ namespace Nohros.Data
 
         public override bool GetAsBoolean(out bool out_value)
         {
-            if (IsType(Value.ValueType.TYPE_BOOLEAN))
+            if (IsType(ValueType.TYPE_BOOLEAN))
                 out_value = in_value_.boolean_value_;
             else
                 out_value = default(bool);
@@ -70,7 +70,7 @@ namespace Nohros.Data
 
         public override bool GetAsInteger(out int out_value)
         {
-            if (IsType(Value.ValueType.TYPE_INTEGER))
+            if (IsType(ValueType.TYPE_INTEGER))
                 out_value = in_value_.integer_value_;
             else
                 out_value = default(int);
@@ -80,7 +80,7 @@ namespace Nohros.Data
 
         public override bool GetAsReal(out double out_value)
         {
-            if (IsType(Value.ValueType.TYPE_REAL))
+            if (IsType(ValueType.TYPE_REAL))
                 out_value = in_value_.real_value_;
             else
                 out_value = default(double);
@@ -88,7 +88,7 @@ namespace Nohros.Data
             return IsType(ValueType.TYPE_REAL);
         }
 
-        public override Value DeepCopy()
+        public override IValue DeepCopy()
         {
             switch(Type) {
                 case ValueType.TYPE_BOOLEAN:
@@ -105,7 +105,7 @@ namespace Nohros.Data
             }
         }
 
-        public override bool Equals(Value other)
+        public override bool Equals(IValue other)
         {
             if (other.Type != Type)
                 return false;

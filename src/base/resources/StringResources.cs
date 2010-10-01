@@ -361,6 +361,13 @@ namespace Nohros.Resources
         }
 
         /// <summary>
+        /// Looks up a localized string similar to [The specified configuration object is not valid.]
+        /// </summary>
+        public static string Config_InvalidObject {
+            get { return GetString("Config_InvalidObject"); }
+        }
+
+        /// <summary>
         /// Looks up a localized string similar to [Configuration file is invalid.].
         /// </summary>
         public static string Config_FileInvalid {

@@ -104,7 +104,7 @@ namespace Nohros.Net
                 kBuildVersion);
 
             // check if this group is defined
-            ContentGroupNode content_group = settings_.GetContentGroup(content_group_name, kBuildVersion, mime_type);
+            ContentGroupNode content_group = settings_.WebNode.GetContentGroup(content_group_name, kBuildVersion, mime_type);
             if (content_group == null) {
                 context_.Response.StatusCode = kResourceNotFoundCode;
                 context_.Response.End();
@@ -166,7 +166,7 @@ namespace Nohros.Net
             content_type = "text/html";
 
             try {
-                settings_ = NohrosConfiguration.ForCurrentProcess;
+                settings_ = NohrosConfiguration.DefaultConfiguration;
             } catch (System.Configuration.ConfigurationErrorsException) {
                 // TODO: Log the exception
                 // the configuration file was not defined. we cant do nothing.

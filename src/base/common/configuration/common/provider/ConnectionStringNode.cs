@@ -7,31 +7,34 @@ namespace Nohros.Configuration
 {
     public class ConnectionStringNode : ConfigurationNode
     {
-        string database_owner_;
-        string connection_string_;
+        internal const string kNodeTree = CommonNode.kNodeTree + "." + "connection-strings.";
+        internal const string kConnectionStringsNodeName = "connection-strings";
 
         const string kDataBaseOwnerAttributeName = "dbowner";
         const string kConnectionStringAttributeName = "dbstring";
 
-        internal const string kNodeTree = CommonNode.kNodeTree + "connection-strings.";
+        string database_owner_;
+        string connection_string_;
+
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance_ of the ConnectionStringNode.
+        /// Initializes a new instance of the ConnectionStringNode by using the connection string node name.
         /// </summary>
-        public ConnectionStringNode(string name, ConfigurationNode parent_node) : base(name, parent_node) { }
+        public ConnectionStringNode(string name) : base(name) { }
         #endregion
 
         /// <summary>
-        /// Parse the XML node.
+        /// Parses a XML node that contains information about a connection string node.
         /// </summary>
-        /// <param name="node">The XML node to parse.</param>
+        /// <param name="node">A XML node containing the data to parse.</param>
+        /// <param name="config">The configuration object which this node belongs to.</param>
         /// <remarks>
         /// This method will try to extract the database owner and connection string from the specified XML node.
         /// If the data could not be retrieved attempt to get the database owner or connection string returns a null
         /// reference.
         /// </remarks>
-        public override void Parse(XmlNode node) {
+        public override void Parse(XmlNode node, NohrosConfiguration config) {
             GetAttributeValue(node, kDataBaseOwnerAttributeName, out database_owner_);
             GetAttributeValue(node, kConnectionStringAttributeName, out connection_string_);
         }

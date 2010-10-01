@@ -160,6 +160,9 @@ namespace Nohros
                 case ExceptionResource.InvalidOperation_FullQueue:
                     return StringResources.InvalidOperation_FullQueue;
 
+                case ExceptionResource.Config_InvalidObject:
+                    return StringResources.Config_InvalidObject;
+
                 default:
                     Debug.Assert(false, "The enum value is not defined, please checked ExceptionArgumentName Enum");
                     return string.Empty;
@@ -253,6 +256,7 @@ namespace Nohros
         ArgumentOutOfRange_Index = 8,
         Argument_InvalidOfLen = 9,
         InvalidOperation_EmptyQueue = 10,
-        InvalidOperation_FullQueue = 11
+        InvalidOperation_FullQueue = 11,
+        Config_InvalidObject = 12
     }
 }

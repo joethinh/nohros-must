@@ -18,12 +18,10 @@ namespace Nohros.Configuration
         const string kNohrosNodeName = "nohros";
         const string kConfigurationFileKey = "NohrosConfigurationFile";
 
-        protected static NohrosConfiguration current_process_config_;
+        protected static NohrosConfiguration default_process_config_;
 
         DictionaryValue properties_;
-
-        CommonNode common_node_;
-        WebNode web_node_;
+        DictionaryValue config_nodes_;
 
         /// <summary>
         /// A collection of the parsed data providers.
@@ -32,14 +30,27 @@ namespace Nohros.Configuration
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance_ of the Configuration class.
+        /// Initializes a new instance of the Configuration class.
         /// </summary>
         public NohrosConfiguration(): base()
         {
             providers_ = new Dictionary<string, Provider>();
             properties_ = new DictionaryValue();
-            common_node_ = null;
-            web_node_ = null;
+            config_nodes_ = new DictionaryValue();
+        }
+
+        /// <summary>
+        /// Singleton initializer. Used to load the default configuration file.
+        /// </summary>
+        static NohrosConfiguration() {
+            default_process_config_ = null;
+
+            string config_file_path = ConfigurationManager.AppSettings[kConfigurationFileKey];
+            if (config_file_path == null || Path.IsPathRooted(config_file_path))
+                return;
+
+            default_process_config_ = new NohrosConfiguration();
+            default_process_config_.Load();
         }
         #endregion
 
@@ -113,47 +124,96 @@ namespace Nohros.Configuration
             // parse the common node
             XmlNode node = IConfiguration.SelectNode(root_node, CommonNode.kCommonNodeName);
             if (node != null) {
-                common_node_ = CommonNode.FromXmlNode(node, this);
+                CommonNode common = CommonNode.FromXmlNode(node, this);
 
                 // parse the web node
                 node = IConfiguration.SelectNode(root_node, WebNode.kWebNodeName);
-                if (node != null)
-                    web_node_ = WebNode.FromXmlNode(node, common_node_);
+                if (node != null) {
+                    WebNode web = WebNode.FromXmlNode(node, this);
+                    config_nodes_[WebNode.kNodeTree] = web;
+                }
+
+                config_nodes_[CommonNode.kNodeTree] = common;
             }
         }
 
         /// <summary>
-        /// Gets the current process configuration object.
+        /// Gets the default application configuration file.
         /// </summary>
-        /// <remarks>
-        /// There is a per process instance of the NohrosConfiguration that is loaded by using a key
-        /// with name "NohrosConfigurationFile" defined on the main application configuration file. If
-        /// this instance is not loaded yet, this method will instantiate a new one and load it, using
-        /// the <see cref="NohrosConfiguration.Load()"/> method.
-        /// </remarks>
-        public static NohrosConfiguration ForCurrentProcess {
-            get {
-                if (current_process_config_ == null) {
-                    current_process_config_ = new NohrosConfiguration();
-                    current_process_config_.Load(); // load using the default application configuration file.
-                }
-                return current_process_config_;
-            }
-            protected set { current_process_config_ = value; }
+        public static NohrosConfiguration DefaultConfiguration {
+            get { return default_process_config_; }
+            protected set { default_process_config_ = value; }
         }
 
         /// <summary>
         /// Gets the configuration common node.
         /// </summary>
         public CommonNode CommonNode {
-            get { return common_node_; }
+            get {
+                return config_nodes_[CommonNode.kNodeTree] as CommonNode;
+            }
         }
 
         /// <summary>
         /// Gets the configuration web node.
         /// </summary>
         public WebNode WebNode {
-            get { return web_node_; }
+            get {
+                return config_nodes_[WebNode.kNodeTree] as WebNode;
+            }
+        }
+
+        /// <summary>
+        /// Gets all the data providers configured for this application.
+        /// </summary>
+        /// <remarks>DataProviders will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// will contain zero elements if configuration contains no data providers.</remarks>
+        public DictionaryValue DataProviders {
+            get { return this[DataProviderNode.kNodeTree] as DictionaryValue; }
+        }
+
+        /// <summary>
+        /// Gets a collection of all the login modules in the configuration.
+        /// </summary>
+        /// <remarks>LoginModules will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// will contain zero elements if configuration contains no login modules.</remarks>
+        public DictionaryValue LoginModules {
+            get { return GetNode(LoginModuleNode.kNodeTree) as DictionaryValue; }
+        }
+
+        public DictionaryValue Repositories {
+            get { return GetNode(RepositoryNode.kNodeTree) as DictionaryValue; }
+        }
+
+        public DictionaryValue Chains {
+            get { return GetNode(ChainNode.kNodeTree) as DictionaryValue; }
+        }
+
+        public DictionaryValue ContentGroups {
+            get { return GetNode(ContentGroupNode.kNodeTree) as DictionaryValue; }
+        }
+
+        /// <summary>
+        /// Gets a node in the configuration.
+        /// </summary>
+        /// <remarks>GetNode method will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// will contain zero elements if configuration contains no node with the specified <paramref name="path"/>.</remarks>
+        internal DictionaryValue this[string path] {
+            get {
+                DictionaryValue node = config_nodes_[path] as DictionaryValue;
+                if (node == null)
+                    node = new DictionaryValue();
+                return node;
+            }
+        }
+
+        /// <summary>
+        /// Gets a collection of all the child nodes in the configuration.
+        /// </summary>
+        /// <remarks>Nodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// will contain zero elements if configuration contains no child nodes.</remarks>
+        internal DictionaryValue Nodes {
+            get { return config_nodes_; }
         }
 
         #region Dynamic Properties
@@ -193,7 +253,7 @@ namespace Nohros.Configuration
                             foreach (XmlAttribute property in properties) {
                                 keys.SetString(property.Name, property.Value);
                             }
-                            properties_.Set(path, keys);
+                            properties_[path] = keys;
                         }
                     }
                 }
@@ -206,8 +266,8 @@ namespace Nohros.Configuration
         /// <param name="key">The key whose value to get</param>
         /// <returns>An string associated with the specified key.</returns>
         /// <seealso cref="this[string]"/>
-        public Value Get(string key) {
-            return properties_.Get(key);
+        public IValue GetProperty(string key) {
+            return properties_[key];
         }
 
         /// <summary>
@@ -215,63 +275,8 @@ namespace Nohros.Configuration
         /// </summary>
         /// <param name="key">The key whose value to set</param>
         /// <param name="value">An string associated with the specified key within the given namespace</param>
-        public void Set(string key, Value value) {
-            properties_.Set(key, value);
-        }
-
-        /// <summary>
-        /// A convenient form of <code>Get(string, string) and Set(string, string, Value)</code>.
-        /// </summary>
-        /// <param name="key">The key whose value to get or set.</param>
-        public string this[string key] {
-            get {
-                Value value;
-                if (properties_.Get(key, out value))
-                    return value.GetAsString();
-                return null;
-            }
-            set {
-                Set(key, Value.CreateStringValue(value));
-            }
-        }
-        #endregion
-
-        #region Common
-        /// <summary>
-        /// Gets informations about a data provider by using the specified provider name.
-        /// </summary>
-        /// <param name="provider_name">The name of the data provider to get informations from</param>
-        /// <returns>A <see cref="Provider"/> object that contains information about the provider
-        /// associated with the specified <paramref name="provider_name"/> or null if the <paramref name="provider_name"/>
-        /// could not be found.
-        /// </returns>
-        public DataProviderNode GetProvider(string provider_name) {
-            return (common_node_ != null) ? common_node_.GetProvider(provider_name) : null;
-        }
-
-        /// <summary>
-        /// Gets a <see cref="ConnectionStringNode"/> object containing information that can be used
-        /// to connects and queries a database.
-        /// </summary>
-        /// <param name="name">A string that identifies the connection node</param>
-        /// <returns>a <see cref="ConnectionStringNode"/> object containing information that can be used
-        /// to connects and queries a database.- or null if the <paramref name="name"/>
-        /// could not be found.</returns>
-        public ConnectionStringNode GetConnectionString(string name) {
-            return (common_node_ != null) ? common_node_.GetConnectionString(name) : null;
-        }
-        #endregion
-
-        #region Web
-        /// <summary>
-        /// Gets a list of files related with the specified content group, build version and mime type.
-        /// </summary>
-        /// <param name="name">The name of the group to get.</param>
-        /// <param name="build">The build version</param>
-        /// <param name="mime_type">The mime type of the group.</param>
-        /// <returns></returns>
-        public ContentGroupNode GetContentGroup(string name, string build, string mime_type) {
-            return (web_node_ != null) ? web_node_.GetContentGroup(name, build, mime_type) : null;
+        public void SetProperty(string key, IValue value) {
+            properties_[key] = value;
         }
         #endregion
     }

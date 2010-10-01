@@ -12,7 +12,7 @@ namespace Nohros.Configuration
     /// </summary>
     public abstract class ProviderNode : ConfigurationNode, IProviderNode
     {
-        internal const string kNodeTree = CommonNode.kNodeTree + CommonNode.kProvidersNodeName + ".";
+        internal const string kProvidersNodeName = "providers";
 
         /// <summary>
         /// The assembly-qualified name of the provider type.
@@ -31,20 +31,6 @@ namespace Nohros.Configuration
                 throw new ArgumentNullException("type");
             type_ = type;
         }
-
-        /// <summary>
-        /// Initializes a new instance of the ProviderNode class, using the specified provider name,
-        /// type and parent node.
-        /// </summary>
-        /// <param name="name">The name of the provider</param>
-        /// <param name="type">The assembly-qualified name of the provider type.</param>
-        /// <param name="parent_node">The parent node.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="type"/>is null.</exception>
-        public ProviderNode(string name, string type, ConfigurationNode parent_node): base(name, parent_node) {
-            if (type == null)
-                throw new ArgumentNullException("type");
-            type_ = type;
-        }
         #endregion
 
         /// <summary>
@@ -53,7 +39,7 @@ namespace Nohros.Configuration
         /// <param name="node">The XML node to parse.</param>
         /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
         /// valid representation of a provider.</exception>
-        public override abstract void Parse(XmlNode node);
+        public override abstract void Parse(XmlNode node, NohrosConfiguration config);
 
         /// <summary>
         /// Gets the assembly-qualified name of the provider type.

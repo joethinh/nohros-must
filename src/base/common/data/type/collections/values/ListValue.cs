@@ -6,12 +6,12 @@ namespace Nohros.Data
 {
     public class ListValue : Value
     {
-        List<Value> list_;
+        List<IValue> list_;
 
         #region .ctor
         public ListValue():base(ValueType.TYPE_LIST)
         {
-            list_ = new List<Value>();
+            list_ = new List<IValue>();
         }
 
         ~ListValue()
@@ -59,7 +59,7 @@ namespace Nohros.Data
         /// <param name="index">The zero-based index of the element to get.</param>
         /// <param name="out_value"></param>
         /// <returns>true if the index falls within the current list range; otherwise false.</returns>
-        public bool Get(int index, out Value out_value)
+        public bool Get(int index, out IValue out_value)
         {
             out_value = this[index];
             return (out_value != null);
@@ -74,7 +74,7 @@ namespace Nohros.Data
         /// <returns>true if the index falls within the current list range; otherwise false.</returns>
         public bool GetBoolean(int index, out bool out_value)
         {
-            Value value;
+            IValue value;
 
             out_value = default(bool);
             if (!Get(index, out value))
@@ -92,7 +92,7 @@ namespace Nohros.Data
         /// <returns>true if the index falls within the current list range; otherwise false.</returns>
         public bool GetInteger(int index, out int out_value)
         {
-            Value value;
+            IValue value;
 
             out_value = default(int);
             if (!Get(index, out value))
@@ -110,7 +110,7 @@ namespace Nohros.Data
         /// <returns>true if the index falls within the current list range; otherwise false.</returns>
         public bool GetReal(int index, out double out_value)
         {
-            Value value;
+            IValue value;
 
             out_value = default(double);
             if (!Get(index, out value))
@@ -128,7 +128,7 @@ namespace Nohros.Data
         /// <returns>true if the index falls within the current list range; otherwise false.</returns>
         public bool GetString(int index, out string out_value)
         {
-            Value value;
+            IValue value;
 
             out_value = null;
             if (!Get(index, out value))
@@ -146,7 +146,7 @@ namespace Nohros.Data
         /// <returns>true if the index falls within the current list range; otherwise false.</returns>
         public bool GetDictionary(int index, out DictionaryValue out_value)
         {
-            Value value;
+            IValue value;
 
             out_value = null;
             if (!Get(index, out value) || value.IsType(ValueType.TYPE_DICTIONARY))
@@ -165,7 +165,7 @@ namespace Nohros.Data
         /// <returns>true if the index falls within the current list range; otherwise false.</returns>
         public bool GetList(int index, out ListValue out_value)
         {
-            Value value;
+            IValue value;
 
             out_value = null;
             if (!Get(index, out value) || value.IsType(ValueType.TYPE_LIST))
@@ -182,7 +182,7 @@ namespace Nohros.Data
         /// <param name="value">When this method returns, contains the removed value if the <paramref name="index"/>
         /// is valid; otherwise, null.</param>
         /// <returns>true if <paramref name="index"/> is valid; otherwise false.</returns>
-        public bool Remove(int index, out Value out_value)
+        public bool Remove(int index, out IValue out_value)
         {
             out_value = null;
             if (index < 0 || index >= list_.Count)
@@ -200,7 +200,7 @@ namespace Nohros.Data
         /// <param name="value">The value</param>
         /// <returns>The zero-based index of the first occurrence of <paramref name="value"/> within the entire list,
         /// if found; otherwise -1.</returns>
-        public int Remove(Value value)
+        public int Remove(IValue value)
         {
             int index = list_.IndexOf(value);
             if (index >= 0)
@@ -211,7 +211,7 @@ namespace Nohros.Data
         /// <summary>
         /// Appends a <see cref="Value"/> to the end of the list.
         /// </summary>
-        public void Append(Value in_value)
+        public void Append(IValue in_value)
         {
             list_.Add(in_value);
         }
@@ -222,7 +222,7 @@ namespace Nohros.Data
         /// <param name="index">The zero-based index at which item should be inserted.</param>
         /// <param name="in_value">The <see cref="Value"/> to insert.</param>
         /// <returns>true if successful, or false if the index was out of range.</returns>
-        public bool Insert(int index, Value in_value)
+        public bool Insert(int index, IValue in_value)
         {
             if (index < 0 || index > list_.Count)
                 return false;
@@ -232,16 +232,16 @@ namespace Nohros.Data
             return true;
         }
 
-        public override Value DeepCopy()
+        public override IValue DeepCopy()
         {
             ListValue result = new ListValue();
-            foreach(Value value in list_) {
+            foreach(IValue value in list_) {
                 result.Append(value.DeepCopy());
             }
             return result;
         }
 
-        public override bool Equals(Value other)
+        public override bool Equals(IValue other)
         {
             if (other.Type != Type)
                 return false;
@@ -260,7 +260,7 @@ namespace Nohros.Data
             return true;
         }
 
-        public Value this[int index] {
+        public IValue this[int index] {
             get
             {
                 if (index >= list_.Count || index < 0)

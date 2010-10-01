@@ -11,7 +11,9 @@ namespace Nohros.Configuration
 {
     public class LoginModuleNode : ConfigurationNode, ILoginModuleEntry
     {
-        internal const string kNodeTree = CommonNode.kNodeTree + CommonNode.kLoginModulesNodeName + "." + CommonNode.kModuleNodeName;
+        internal const string kLoginModulesNodeName = "login-modules";
+        internal const string kModuleNodeName = "module";
+        internal const string kNodeTree = CommonNode.kNodeTree + "." + kLoginModulesNodeName + "." + kModuleNodeName;
 
         const string kTypeAttributeName = "type";
         const string kFlagAttributeName = "flag";
@@ -25,16 +27,17 @@ namespace Nohros.Configuration
         /// <summary>
         /// Initializes a new instance_ of the LoginModuleNode
         /// </summary>
-        public LoginModuleNode(string name, ConfigurationNode parent_node): base(name, parent_node) { }
+        public LoginModuleNode(string name): base(name) { }
         #endregion
 
         /// <summary>
         /// Parses a XML node that contains information about a login module.
         /// </summary>
-        /// <param name="node">The XML node to parse.</param>
+        /// <param name="node">A XML node containing the data to parse.</param>
+        /// <param name="config">The configuration object which this node belongs to.</param>
         /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
         /// valid representation of a login module.</exception>
-        public override void Parse(XmlNode node) {
+        public override void Parse(XmlNode node, NohrosConfiguration config) {
             string type, flag;
             if (!GetAttributeValue(node, kTypeAttributeName, out type))
                 Thrower.ThrowConfigurationException(StringResources.Auth_Config_Missing_LoginModuleType);
