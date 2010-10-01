@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using System.IO;
 
+using Nohros.Data;
 using Nohros.Configuration;
 
 namespace Nohros.Security.Auth
@@ -72,7 +73,7 @@ namespace Nohros.Security.Auth
         /// entry for the specified <paramref name="name"/></returns>
         public ILoginModuleEntry GetLoginModuleEntry(string name)
         {
-            return CommonNode.GetLoginModule(name);
+            return base.LoginModules[name] as ILoginModuleEntry;
         }
 
         /// <summary>
@@ -80,9 +81,12 @@ namespace Nohros.Security.Auth
         /// </summary>
         /// <returns>An array of LoginModuleEntry containg all the login
         /// modules configured for the application</returns>
-        public ILoginModuleEntry[] LoginModules
+        public new ILoginModuleEntry[] LoginModules
         {
-            get { return modules_; }
+            get {
+                DictionaryValue modules = base.LoginModules;
+                return modules.ToArray<ILoginModuleEntry>();
+            }
         }
     }
 }

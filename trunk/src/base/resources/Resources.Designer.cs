@@ -242,6 +242,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified configuration object is not valid..
+        /// </summary>
+        internal static string Config_InvalidObject {
+            get {
+                return ResourceManager.GetString("Config_InvalidObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The configuration key &quot;{0}&quot; was not found..
         /// </summary>
         internal static string Config_KeyNotFound {

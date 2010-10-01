@@ -285,7 +285,7 @@ namespace Nohros.Data
                             if (dict_value == null)
                                 return null;
 
-                            (node as DictionaryValue).Set(dict_key, dict_value);
+                            (node as DictionaryValue)[dict_key] = dict_value;
 
                             // After a key value pair, we expect a comma or the end of the object
                             token = ParseToken();

@@ -392,7 +392,7 @@ namespace Nohros.Configuration
                     }
                     else if(propertyType.IsValueType) {
                         // try to convert the attribute value to the type of the property
-                        ValueType value;
+                        System.ValueType value;
                         if (DataHelper.TryParse(propertyType, propertyValue, out value)) {
                             property.SetValue(this, value, null);
                         }

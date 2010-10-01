@@ -13,7 +13,9 @@ namespace Nohros.Configuration
         /// <summary>
         /// Parses the content of the XML node.
         /// </summary>
-        void Parse(XmlNode node);
+        /// <param name="node">A XML node containing hte data to parse.</param>
+        /// <param name="config">The configuration object which this node belongs to.</param>
+        void Parse(XmlNode node, NohrosConfiguration config);
 
         /// <summary>
         /// Gets the name of the node.

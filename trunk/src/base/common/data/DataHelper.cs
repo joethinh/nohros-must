@@ -210,9 +210,9 @@ namespace Nohros.Data
         /// an whose value is equivalent to <paramref name="s"/> or default(ValueType) if the conversion is not supported.
         /// </param>
         /// <returns></returns>
-        public static bool TryParse(Type type, string s, out ValueType result)
+        public static bool TryParse(Type type, string s, out System.ValueType result)
         {
-            result = default(ValueType);
+            result = default(System.ValueType);
 
             if (!type.IsValueType)
                 return false;

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
+using Nohros.Data;
+
 namespace Nohros.Configuration
 {
     /// <summary>
     /// A basic implementation of the <see cref="IConfigurationNode"/> interface.
     /// </summary>
-    public abstract class ConfigurationNode: IConfigurationNode
+    public abstract class ConfigurationNode : Value, IConfigurationNode
     {
         /// <summary>
         /// The name of the node.
@@ -23,23 +25,10 @@ namespace Nohros.Configuration
         /// Initializes a new instance_ of the ConfigurationNode class by using the specified XML node.
         /// </summary>
         /// <param name="name">The name of the node.</param>
-        public ConfigurationNode(string name) {
+        public ConfigurationNode(string name): base(Nohros.Data.ValueType.TYPE_CLASS) {
             name_ = name;
             parent_node_ = null;
             child_nodes_ = new Dictionary<string, ConfigurationNode>(StringComparer.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
-        /// Initializes a nes instance_ of the ConfigurationNode class by using the specified XML node.
-        /// </summary>
-        /// <param name="name">The name of the node.</param>
-        /// <param name="parent_node">The parent node.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="parent_node"/>is null.</exception>
-        public ConfigurationNode(string name, ConfigurationNode parent_node): this(name) {
-            if (parent_node == null)
-                throw new ArgumentNullException("parent_node");
-
-            parent_node_ = parent_node;
         }
         #endregion
 
@@ -63,9 +52,13 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Parses the related XML node.
+        /// Parses a XML node that contains information about a configuration node.
         /// </summary>
-        public abstract void Parse(XmlNode node);
+        /// <param name="node">A XML node containing the data to parse.</param>
+        /// <param name="config">The configuration object which this node belongs to.</param>
+        /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
+        /// valid representation of a configuration node.</exception>
+        public abstract void Parse(XmlNode node, NohrosConfiguration config);
 
         /// <summary>
         /// Gets a node with the specified name that is a child of the current node.

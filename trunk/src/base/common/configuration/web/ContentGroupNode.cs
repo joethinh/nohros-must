@@ -10,7 +10,7 @@ namespace Nohros.Configuration
 {
     public class ContentGroupNode : ConfigurationNode
     {
-        const string kNodeTree = WebNode.kNodeTree + "content-groups.";
+        internal const string kNodeTree = WebNode.kNodeTree + "." + WebNode.kContentGroupsNodeName;
 
         const string kFileNameAttributeName = "file-name";
         const string kNameAttributeName = "name";
@@ -25,16 +25,13 @@ namespace Nohros.Configuration
         string mime_type_;
         List<string> files_;
 
-        WebNode web_node_;
-
         #region .ctor
         /// <summary>
         /// Initializes a new instance_ of the ContentGroupNode by using the specified name and parent
         /// node.
         /// </summary>
         /// <param name="common_node">A WebNode object which this provider belongs.</param>
-        public ContentGroupNode(string name, WebNode web_node): base(name, web_node) {
-            web_node_ = web_node;
+        public ContentGroupNode(string name): base(name) {
             files_ = new List<string>();
             base_path_ = AppDomain.CurrentDomain.BaseDirectory;
             mime_type_ = null;
@@ -48,7 +45,7 @@ namespace Nohros.Configuration
         /// <param name="node">The XML node to parse.</param>
         /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
         /// valid representation of a content group.</exception>
-        public override void Parse(XmlNode node) {
+        public override void Parse(XmlNode node, NohrosConfiguration config) {
             string name = null, build = null, mime_type = null, path_ref = null;
             if (!(GetAttributeValue(node, kNameAttributeName, out name) &&
                     GetAttributeValue(node, kBuildAttributeName, out build) &&
@@ -62,17 +59,18 @@ namespace Nohros.Configuration
             // sanity check the build type
             if (build != "release" && build != "debug")
                 // TODO: log the exception.
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, build, kNodeTree + name + ".build"));
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, build, kNodeTree + "." + name + ".build"));
 
             // resolve the base path
-            string str = path_ref;
-            CommonNode common_node = web_node_.ParentNode as CommonNode;
-            if (!common_node.GetRepository(str, out path_ref))
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, path_ref, kNodeTree + name + ".path-ref"));
+            RepositoryNode str;
+            str = config.Repositories[path_ref] as RepositoryNode;
+
+            if (str == null)
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, str.Path, kNodeTree + "." + name + ".path-ref"));
 
             build_type_ = (build == "release") ? BuildType.Release : BuildType.Debug;
             mime_type_ = mime_type;
-            base_path_ = path_ref;
+            base_path_ = str.Path;
 
             string file_name = null;
             foreach (XmlNode file_node in node.ChildNodes) {

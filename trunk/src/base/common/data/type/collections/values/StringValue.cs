@@ -30,12 +30,12 @@ namespace Nohros.Data
             return (out_value != null);
         }
 
-        public override Value DeepCopy()
+        public override IValue DeepCopy()
         {
             return CreateStringValue(value_);
         }
 
-        public override bool Equals(Value other)
+        public override bool Equals(IValue other)
         {
             string lhs, rhs;
 

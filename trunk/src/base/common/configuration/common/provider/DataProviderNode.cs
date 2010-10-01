@@ -12,7 +12,8 @@ namespace Nohros.Configuration
 {
     public class DataProviderNode : ProviderNode
     {
-        internal const string kNodeTree = CommonNode.kNodeTree + CommonNode.kProvidersNodeName + ".";
+        internal const string kDataProviderNodeName = "data";
+        internal const string kNodeTree = CommonNode.kNodeTree + "." + kProvidersNodeName + ".";
 
         const string kDataBaseOwnerKey = "database-owner";
         const string kConnectionStringKey = "connection-string";
@@ -40,7 +41,7 @@ namespace Nohros.Configuration
         /// through the specified common_node. If a reference could not be resolved we assume the reference as
         /// the final data.
         /// </remarks>
-        public DataProviderNode(string name, string type, CommonNode parent_node): base(name, type, parent_node) {
+        public DataProviderNode(string name, string type): base(name, type) {
             attributes_ = new NameValueCollection();
             database_owner_ = "dbo";
             connection_string_ = null;
@@ -54,7 +55,7 @@ namespace Nohros.Configuration
         /// <param name="node">The XML node to parse.</param>
         /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
         /// valid representation of a data provider.</exception>
-        public override void Parse(XmlNode node) {
+        public override void Parse(XmlNode node, NohrosConfiguration config) {
             bool connstring_is_encrypted = false;
 
             XmlAttributeCollection attributes = node.Attributes;
@@ -86,12 +87,6 @@ namespace Nohros.Configuration
                         // using the configuration file location.
                         string location = attribute.Value;
                         if (location != null && !Path.IsPathRooted(location)) {
-
-                            // sanity check the configuration parent node
-                            NohrosConfiguration config = ((CommonNode)ParentNode).Configuration;
-                            if (config == null)
-                                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "configuration object", "common node"));
-
                             location = Path.Combine(config.Location, location);
                         }
                         assembly_location_ = location;

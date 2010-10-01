@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="configuration\common\provider\ProviderNode.cs" />
+    <Compile Include="configuration\common\RepositoryNode.cs" />
     <Compile Include="configuration\web\BuildType.cs" />
     <Compile Include="configuration\common\ChainNode.cs" />
     <Compile Include="configuration\common\CommonNode.cs" />
@@ -84,9 +85,11 @@
     <Compile Include="data\type\collections\values\DictionaryValue.cs" />
     <Compile Include="data\type\collections\values\FundamentalValue.cs" />
     <Compile Include="data\type\collections\values\GenericValue.cs" />
+    <Compile Include="data\type\collections\values\IValue.cs" />
     <Compile Include="data\type\collections\values\ListValue.cs" />
     <Compile Include="data\type\collections\values\StringValue.cs" />
     <Compile Include="data\type\collections\values\Value.cs" />
+    <Compile Include="data\type\collections\values\ValueType.cs" />
     <Compile Include="data\type\IPointer.cs" />
     <Compile Include="data\type\Pointer.cs" />
     <Compile Include="ProviderException.cs" />
