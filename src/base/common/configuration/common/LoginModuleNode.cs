@@ -11,10 +11,6 @@ namespace Nohros.Configuration
 {
     public class LoginModuleNode : ConfigurationNode, ILoginModuleEntry
     {
-        internal const string kLoginModulesNodeName = "login-modules";
-        internal const string kModuleNodeName = "module";
-        internal const string kNodeTree = CommonNode.kNodeTree + "." + kLoginModulesNodeName + "." + kModuleNodeName;
-
         const string kTypeAttributeName = "type";
         const string kFlagAttributeName = "flag";
 
@@ -45,7 +41,7 @@ namespace Nohros.Configuration
             // attempt to get the .NET type from the type string.
             type_ = Type.GetType(type);
             if (type_ == null)
-                Thrower.ThrowConfigurationException(StringResources.Auth_Config_InvalidModuleType);
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Auth_Config_InvalidModuleType, type));
 
             if (!GetAttributeValue(node, kFlagAttributeName, out flag))
                 Thrower.ThrowConfigurationException(StringResources.Auth_Config_Missing_ControlFlag);

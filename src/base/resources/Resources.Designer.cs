@@ -143,7 +143,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid control flag.
+        ///   Looks up a localized string similar to Invalid control flag..
         /// </summary>
         internal static string Auth_Config_InvalidControlFlag {
             get {
@@ -152,7 +152,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid system type.
+        ///   Looks up a localized string similar to The type &quot;{0}&quot; is not valid or it was not correctly specified..
         /// </summary>
         internal static string Auth_Config_InvalidModuleType {
             get {

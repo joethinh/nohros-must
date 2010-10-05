@@ -146,10 +146,10 @@
 </value>
   </data>
   <data name="Auth_Config_InvalidControlFlag" xml:space="preserve">
-    <value>Invalid control flag</value>
+    <value>Invalid control flag.</value>
   </data>
   <data name="Auth_Config_InvalidModuleType" xml:space="preserve">
-    <value>Invalid system type</value>
+    <value>The type "{0}" is not valid or it was not correctly specified.</value>
   </data>
   <data name="Auth_Config_Missing_ControlFlag" xml:space="preserve">
     <value>Control flag was not defined</value>

@@ -12,8 +12,6 @@ namespace Nohros.Configuration
     /// </summary>
     public abstract class ProviderNode : ConfigurationNode, IProviderNode
     {
-        internal const string kProvidersNodeName = "providers";
-
         /// <summary>
         /// The assembly-qualified name of the provider type.
         /// </summary>

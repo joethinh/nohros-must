@@ -14,8 +14,7 @@ namespace Nohros.Data
         /// <summary>
         /// Initializes a new instance_ of the StringValue class.
         /// </summary>
-        public StringValue(string in_value)
-            : base(ValueType.TYPE_STRING)
+        public StringValue(string in_value): base(ValueType.TYPE_STRING)
         {
             value_ = in_value;
         }
@@ -43,6 +42,16 @@ namespace Nohros.Data
                 return false;
 
             return GetAsString(out lhs) && other.GetAsString(out rhs) && lhs == rhs;
+        }
+
+        public override bool Equals(object obj) {
+            if (obj is IValue)
+                return Equals((IValue)obj);
+
+            if (!(obj is string))
+                return false;
+
+            return value_ == (string)obj;
         }
     }
 }

@@ -9,10 +9,6 @@ namespace Nohros.Configuration
 {
     public class ChainNode : ConfigurationNode
     {
-        internal const string kChainsNodeName = "chains";
-        internal const string kChainNodeName = "chain";
-        internal const string kNodeTree = CommonNode.kNodeTree + "." + kChainsNodeName + ".";
-
         string[] nodes_;
 
         #region .ctor
@@ -36,7 +32,7 @@ namespace Nohros.Configuration
                 if (string.Compare(n.Name, "node", StringComparison.OrdinalIgnoreCase) == 0) {
                     string name = null;
                     if (!GetAttributeValue(n, "name", out name))
-                        Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", kNodeTree + "." + name_));
+                        Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kChainNodeTree + "." + name_));
                     nodes.Add(name);
                 }
             }

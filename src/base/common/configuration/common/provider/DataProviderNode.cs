@@ -12,9 +12,6 @@ namespace Nohros.Configuration
 {
     public class DataProviderNode : ProviderNode
     {
-        internal const string kDataProviderNodeName = "data";
-        internal const string kNodeTree = CommonNode.kNodeTree + "." + kProvidersNodeName + ".";
-
         const string kDataBaseOwnerKey = "database-owner";
         const string kConnectionStringKey = "connection-string";
         const string kIsEncryptedKey = "encrypted";
@@ -103,7 +100,7 @@ namespace Nohros.Configuration
                 Thrower.ThrowProviderException((connection_string_ == null) ? ExceptionResource.DataProvider_ConnectionString : ExceptionResource.DataProvider_Provider_Attributes);
 
             // if the connection string node is a reference to a global value, we need to resolve it.
-            ConnectionStringNode dbstring_node = (ParentNode as CommonNode).GetConnectionString(connection_string_);
+            ConnectionStringNode dbstring_node = config.ConnectionStrings[connection_string_];
             if (dbstring_node != null) {
                 database_owner_ = dbstring_node.DatabaseOwner;
                 connection_string_ = (connstring_is_encrypted) ? NSecurity.BasicDeCryptoString(dbstring_node.ConnectionString) : dbstring_node.ConnectionString;

@@ -7,9 +7,6 @@ namespace Nohros.Configuration
 {
     public class ConnectionStringNode : ConfigurationNode
     {
-        internal const string kNodeTree = CommonNode.kNodeTree + "." + "connection-strings.";
-        internal const string kConnectionStringsNodeName = "connection-strings";
-
         const string kDataBaseOwnerAttributeName = "dbowner";
         const string kConnectionStringAttributeName = "dbstring";
 

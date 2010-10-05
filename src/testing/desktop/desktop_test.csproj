@@ -41,15 +41,16 @@
   <ItemGroup>
     <Compile Include="CommandLine_.cs" />
     <Compile Include="configuration\NohrosConfiguration_.cs" />
+    <Compile Include="configuration\StringLoginModule.cs" />
     <Compile Include="data\type\collections\trees\AndersonTree_.cs" />
     <Compile Include="configuration\IConfiguration_.cs" />
+    <Compile Include="data\type\collections\values\DictionaryValueT_.cs" />
     <Compile Include="data\type\collections\values\DictionaryValue_.cs" />
     <Compile Include="data\type\collections\values\Value_.cs" />
     <Compile Include="data\type\Pointer_.cs" />
     <Compile Include="security\auth\LoginContext_.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="security\auth\ILoginModule_.cs" />
     <Compile Include="Thrower_.cs" />
     <Compile Include="data\dto\TransferQueue_.cs" />
     <Compile Include="data\json\JSONReader_.cs" />

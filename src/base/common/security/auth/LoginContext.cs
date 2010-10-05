@@ -253,13 +253,13 @@ LBL_ABORT:
         }
 
         /// <summary>
-        /// Logs the <see cref="Principal"/> out, cleaning up any state that may be in memory.
+        /// Logs the <see cref="Subject"/> out, cleaning up any state that may be in memory.
         /// </summary>
         /// <returns></returns>
         /// <remarks>
         /// This method invokes the logout method for each <see cref="LoginModule"/> configured for
         /// this <see cref="LoginContext"/>. Each <see cref="LoginModule"/> performs its respective
-        /// logout procedure whicj may include removing/destroying <see cref="Principal"/> informations and
+        /// logout procedure which may include removing/destroying <see cref="Subject"/> informations and
         /// state cleanup.
         /// <para>
         /// Note that this method invokes all <see cref="LoginModule"/> configured for the application

@@ -93,13 +93,6 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Gets the parent of this node(for nodes that can have parents).
-        /// </summary>
-        public ConfigurationNode ParentNode {
-            get { return parent_node_; }
-        }
-
-        /// <summary>
         /// Gets a node with the specified name that is a child of the current node.
         /// </summary>
         /// <param name="name">A string specifying the name  of the node. The name is case-insensitive.</param>

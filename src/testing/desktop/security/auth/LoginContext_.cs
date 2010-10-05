@@ -38,5 +38,25 @@ namespace Nohros.Test.Security.Auth
             LoginContext context = new LoginContext(config);
             Assert.AreEqual(false, context.Login());
         }
+
+        [Test]
+        public void Login() {
+            LoginConfiguration config = new LoginConfiguration();
+            config.Load("login-module-node");
+
+            LoginContext context = new LoginContext(config);
+            Assert.AreEqual(true, context.Login());
+        }
+
+        [Test]
+        public void Logout() {
+            LoginConfiguration config = new LoginConfiguration();
+            config.Load("login-module-node");
+
+            LoginContext context = new LoginContext(config);
+            Assert.IsNotNull(context.Subject);
+
+            context.Logout();
+        }
     }
 }

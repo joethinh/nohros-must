@@ -53,7 +53,7 @@
             <xs:element name="data" minOccurs="0" maxOccurs="1">
               <xs:complexType id="DataProvider">
                 <xs:sequence>
-                  <xs:element name="add" minOccurs="0" maxOccurs="1">
+                  <xs:element name="provider" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
                       <xs:attribute name="name" use="required"/>
                       <xs:attribute name="type" use="required"/>
