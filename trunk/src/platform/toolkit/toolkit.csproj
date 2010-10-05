@@ -28,6 +28,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\third_party\log4net\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -45,6 +49,7 @@
     <Compile Include="dnslookup\resourcerecord.cs" />
     <Compile Include="dnslookup\response.cs" />
     <Compile Include="dnslookup\returncode.cs" />
+    <Compile Include="logging\FileLogger.cs" />
     <Compile Include="mailchecker\invalidreplyexception.cs" />
     <Compile Include="mailchecker\mailchecker.cs" />
     <Compile Include="dnslookup\mxrecord.cs" />
