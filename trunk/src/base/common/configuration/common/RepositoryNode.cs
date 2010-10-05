@@ -10,9 +10,6 @@ namespace Nohros.Configuration
 {
     public class RepositoryNode : ConfigurationNode
     {
-        internal const string kRepositoryNodeName = "repository";
-        internal const string kNodeTree = CommonNode.kNodeTree + "." + kRepositoryNodeName;
-
         string path_;
 
         #region .ctor
@@ -44,7 +41,7 @@ namespace Nohros.Configuration
         public override void Parse(XmlNode node, NohrosConfiguration config) {
             string relative_path = null;
             if (!GetAttributeValue(node, "relative-path", out relative_path))
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ErrorAt, "attribute name", kNodeTree + "." + name_));
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ErrorAt, "attribute name", NohrosConfiguration.kRepositoryNodeTree + "." + name_));
 
             Path = relative_path;
         }

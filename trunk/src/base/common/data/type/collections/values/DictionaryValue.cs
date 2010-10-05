@@ -23,7 +23,7 @@ namespace Nohros.Data
     /// the SetString() method would create the missing elements and attach them
     /// to root before attaching the homepage value.
     /// </summary>
-    public class DictionaryValue : Value
+    public class DictionaryValue : Value, IDictionaryValue
     {
         Dictionary<string, IValue> dictionary_;
 

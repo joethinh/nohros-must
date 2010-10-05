@@ -101,9 +101,11 @@ namespace Nohros.Test.Configuration
         [Test]
         public void RepositoryNode() {
             TestingConfiguration config = new TestingConfiguration();
-            config.Load("desktop");
+            config.Load("repository-node");
 
-            Assert.AreEqual(Path.Combine(config.Location, "css"), config.Repositories["css-path"]);
+            RepositoryNode node = config.Repositories["css-path"];
+            Assert.IsNotNull(node);
+            Assert.AreEqual(Path.Combine(config.Location, "css"), node.Path);
         }
 
         [Test]
@@ -111,11 +113,10 @@ namespace Nohros.Test.Configuration
             TestingConfiguration config = new TestingConfiguration();
             config.Load("desktop");
 
-            ConnectionStringNode node = config.CommonNode.GetConnectionString("nohros");
+            ConnectionStringNode node = config.ConnectionStrings["nohros"];
             Assert.AreEqual("nohros", node.Name);
             Assert.AreEqual("dbo", node.DatabaseOwner);
             Assert.AreEqual("SQLSERVER", node.ConnectionString);
-            Assert.AreEqual(config.CommonNode, node.ParentNode);
         }
 
         [Test]
@@ -133,28 +134,10 @@ namespace Nohros.Test.Configuration
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ConfigurationNodeWithNoParent() {
-            DataProviderNode node = new DataProviderNode("provider", "System.String");
-        }
-
-        [Test]
         public void DefaultConfiguration() {
             NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
             Assert.IsNotNull(config.CommonNode);
             Assert.IsNotNull(config.WebNode);
-        }
-
-        [Test]
-        public void LoginModuleNode() {
-            NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
-            ILoginModuleEntry entry = config.LoginModules["invalid-login-module"] as ILoginModuleEntry;
-            Assert.IsNotNull(entry);
-
-            Assert.AreEqual("invalid-login-module", entry.Name);
-            Assert.AreEqual(1, entry.Options.Count);
-            Assert.AreEqual(typeof(Nohros.Test.Security.Auth.ILoginModule_), entry.Type);
-            Assert.AreEqual(LoginModuleControlFlag.SUFFICIENT, entry.ControlFlag);
         }
 
         [Test]
@@ -164,6 +147,26 @@ namespace Nohros.Test.Configuration
             Assert.IsNotNull(pseudo_chain);
             Assert.AreEqual("SmsMessenger", pseudo_chain.Nodes[0]);
             Assert.AreEqual("EmailMessenger", pseudo_chain.Nodes[1]);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ConfigurationErrorsException))]
+        public void LoginModuleWithInvalidFlag() {
+            NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
+            config.Load("login-module-flag");
+        }
+
+        [Test]
+        public void LoginModuleNode() {
+            NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
+            config.Load("login-module-node");
+
+            LoginModuleNode node = config.LoginModules["auth-login-module"];
+            Assert.IsNotNull(node);
+            Assert.AreEqual(LoginModuleControlFlag.SUFFICIENT, node.ControlFlag);
+            Assert.AreEqual("auth-login-module", node.Name);
+            Assert.AreEqual(node.Options.Count, 0);
+            Assert.AreEqual(node.Type, typeof(Nohros.Test.Configuration.StringLoginModule));
         }
     }
 }

@@ -15,18 +15,36 @@ namespace Nohros.Configuration
     /// </summary>
     public class NohrosConfiguration : IConfiguration
     {
-        const string kNohrosNodeName = "nohros";
         const string kConfigurationFileKey = "NohrosConfigurationFile";
+
+        internal const string kNohrosNodeName = "nohros";
+        internal const string kCommonNodeName = "common";
+        internal const string kRepositoryNodeName = "repository";
+        internal const string kConnectionStringsNodeName = "connection-strings";
+        internal const string kProvidersNodeName = "providers";
+        internal const string kDataProviderNodeName = "data";
+        internal const string kProviderNodeName = "provider";
+        internal const string kLoginModulesNodeName = "login-modules";
+        internal const string kModuleNodeName = "module";
+        internal const string kChainsNodeName = "chains";
+        internal const string kChainNodeName = "chain";
+        internal const string kWebNodeName = "web";
+        internal const string kContentGroupsNodeName = "content-groups";
+
+        internal const string kCommonNodeTree = kCommonNodeName;
+        internal const string kRepositoryNodeTree = kCommonNodeTree + "." + kRepositoryNodeName;
+        internal const string kConnectionStringNodeTree = kCommonNodeTree + "." + kConnectionStringsNodeName;
+        internal const string kProvidersNodeTree = kCommonNodeTree + "." + kProvidersNodeName;
+        internal const string kDataProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kDataProviderNodeName;
+        internal const string kLoginModuleNodeTree = kCommonNodeTree + "." + kLoginModulesNodeName;
+        internal const string kChainNodeTree = kCommonNodeTree + "." + kChainsNodeName;
+        internal const string kWebNodeTree = kWebNodeName;
+        internal const string kContentGroupNodeTree = kWebNodeTree + "." + kContentGroupsNodeName;
 
         protected static NohrosConfiguration default_process_config_;
 
         DictionaryValue properties_;
         DictionaryValue config_nodes_;
-
-        /// <summary>
-        /// A collection of the parsed data providers.
-        /// </summary>
-        protected Dictionary<string, Provider> providers_;
 
         #region .ctor
         /// <summary>
@@ -34,7 +52,6 @@ namespace Nohros.Configuration
         /// </summary>
         public NohrosConfiguration(): base()
         {
-            providers_ = new Dictionary<string, Provider>();
             properties_ = new DictionaryValue();
             config_nodes_ = new DictionaryValue();
         }
@@ -122,18 +139,18 @@ namespace Nohros.Configuration
                 Thrower.ThrowConfigurationException(string.Format(StringResources.Config_KeyNotFound, kNohrosNodeName));
 
             // parse the common node
-            XmlNode node = IConfiguration.SelectNode(root_node, CommonNode.kCommonNodeName);
+            XmlNode node = IConfiguration.SelectNode(root_node, NohrosConfiguration.kCommonNodeName);
             if (node != null) {
                 CommonNode common = CommonNode.FromXmlNode(node, this);
 
                 // parse the web node
-                node = IConfiguration.SelectNode(root_node, WebNode.kWebNodeName);
+                node = IConfiguration.SelectNode(root_node, NohrosConfiguration.kWebNodeName);
                 if (node != null) {
                     WebNode web = WebNode.FromXmlNode(node, this);
-                    config_nodes_[WebNode.kNodeTree] = web;
+                    config_nodes_[NohrosConfiguration.kWebNodeTree + "." + NohrosConfiguration.kWebNodeName] = web;
                 }
 
-                config_nodes_[CommonNode.kNodeTree] = common;
+                config_nodes_[NohrosConfiguration.kCommonNodeTree + "." + NohrosConfiguration.kCommonNodeName] = common;
             }
         }
 
@@ -150,7 +167,7 @@ namespace Nohros.Configuration
         /// </summary>
         public CommonNode CommonNode {
             get {
-                return config_nodes_[CommonNode.kNodeTree] as CommonNode;
+                return config_nodes_[NohrosConfiguration.kCommonNodeTree + "." + NohrosConfiguration.kCommonNodeName] as CommonNode;
             }
         }
 
@@ -159,52 +176,65 @@ namespace Nohros.Configuration
         /// </summary>
         public WebNode WebNode {
             get {
-                return config_nodes_[WebNode.kNodeTree] as WebNode;
+                return config_nodes_[NohrosConfiguration.kWebNodeTree + "." + NohrosConfiguration.kWebNodeName] as WebNode;
             }
         }
 
+        #region Nodes dictionaries
         /// <summary>
         /// Gets all the data providers configured for this application.
         /// </summary>
         /// <remarks>DataProviders will never return a null reference; however, the returned <see cref="DictionaryValue"/>
         /// will contain zero elements if configuration contains no data providers.</remarks>
-        public DictionaryValue DataProviders {
-            get { return this[DataProviderNode.kNodeTree] as DictionaryValue; }
+        public DictionaryValue<DataProviderNode> DataProviders {
+            get { return GetDictionary<DataProviderNode>(NohrosConfiguration.kDataProviderNodeTree); }
         }
 
         /// <summary>
-        /// Gets a collection of all the login modules in the configuration.
+        /// Gets all the connection strings nodes in configuration.
+        /// </summary>
+        /// <remarks>ConnectionStrings will never return a null reference; however, the returned
+        /// <see cref="DictionaryValue&lt;ConnectionStringNode&gt;"/> will contain zero elements if configuration
+        /// contains no connections string nodes.</remarks>
+        public DictionaryValue<ConnectionStringNode> ConnectionStrings {
+            get { return GetDictionary<ConnectionStringNode>(NohrosConfiguration.kConnectionStringNodeTree); }
+        }
+
+        /// <summary>
+        /// Gets a collection of all the login modules in configuration.
         /// </summary>
         /// <remarks>LoginModules will never return a null reference; however, the returned <see cref="DictionaryValue"/>
         /// will contain zero elements if configuration contains no login modules.</remarks>
-        public DictionaryValue LoginModules {
-            get { return GetNode(LoginModuleNode.kNodeTree) as DictionaryValue; }
-        }
-
-        public DictionaryValue Repositories {
-            get { return GetNode(RepositoryNode.kNodeTree) as DictionaryValue; }
-        }
-
-        public DictionaryValue Chains {
-            get { return GetNode(ChainNode.kNodeTree) as DictionaryValue; }
-        }
-
-        public DictionaryValue ContentGroups {
-            get { return GetNode(ContentGroupNode.kNodeTree) as DictionaryValue; }
+        public DictionaryValue<LoginModuleNode> LoginModules {
+            get { return GetDictionary<LoginModuleNode>(NohrosConfiguration.kLoginModuleNodeTree); }
         }
 
         /// <summary>
-        /// Gets a node in the configuration.
+        /// Gets a collection of all the repositories in configuration.
         /// </summary>
-        /// <remarks>GetNode method will never return a null reference; however, the returned <see cref="DictionaryValue"/>
-        /// will contain zero elements if configuration contains no node with the specified <paramref name="path"/>.</remarks>
-        internal DictionaryValue this[string path] {
-            get {
-                DictionaryValue node = config_nodes_[path] as DictionaryValue;
-                if (node == null)
-                    node = new DictionaryValue();
-                return node;
-            }
+        /// <remarks>
+        /// Repositories will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// will contain zero elements if configuration contains no repositories.</remarks>
+        public DictionaryValue<RepositoryNode> Repositories {
+            get { return GetDictionary<RepositoryNode>(NohrosConfiguration.kRepositoryNodeTree); }
+        }
+
+        /// <summary>
+        /// Gets a collection of all the chains in configuration.
+        /// </summary>
+        /// Chains will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// will contain zero elements if configuration contains no chains.</remarks>
+        public DictionaryValue<ChainNode> Chains {
+            get { return GetDictionary<ChainNode>(NohrosConfiguration.kChainNodeTree); }
+        }
+
+        /// <summary>
+        /// Gets a collection of all the chains in configuration.
+        /// </summary>
+        /// ContentGroups will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// will contain zero elements if configuration contains no content groups.</remarks>
+        public DictionaryValue<ContentGroupNode> ContentGroups {
+            get { return GetDictionary<ContentGroupNode>(NohrosConfiguration.kContentGroupNodeTree); }
         }
 
         /// <summary>
@@ -215,6 +245,19 @@ namespace Nohros.Configuration
         internal DictionaryValue Nodes {
             get { return config_nodes_; }
         }
+
+        /// <summary>
+        /// Gets a node in the configuration.
+        /// </summary>
+        /// <remarks>This method will never return a null reference; however, the returned <see cref="DictionaryValue&lt;T&gt;"/>
+        /// will contain zero elements if configuration contains no node with the specified <paramref name="path"/>.</remarks>
+        DictionaryValue<T> GetDictionary<T>(string path) where T : class, IValue {
+            DictionaryValue<T> node = config_nodes_[path] as DictionaryValue<T>;
+            if (node == null)
+                node = new DictionaryValue<T>();
+            return node;
+        }
+        #endregion
 
         #region Dynamic Properties
         /// <summary>

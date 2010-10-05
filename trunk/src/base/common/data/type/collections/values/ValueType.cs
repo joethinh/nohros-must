@@ -52,6 +52,11 @@ namespace Nohros.Data
         /// <summary>
         /// A custom type that implements the <see cref="IValue"/> interface.
         /// </summary>
-        TYPE_CLASS = 8
+        TYPE_CLASS = 8,
+
+        /// <summary>
+        /// A <see cref="DictionaryValue&lt;&gt;"/> type.
+        /// </summary>
+        TYPE_GENERIC_DICTIONARY = 9
     }
 }

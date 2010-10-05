@@ -52,9 +52,9 @@ namespace Nohros.Security.Auth
         #endregion
 
         /// <summary>
-        /// Gets or sets the single instance_ of the ILoginConfiguration class.
+        /// Gets or sets the single instance of the ILoginConfiguration class.
         /// </summary>
-        /// <returns>A instance_ of the ILoginConfiguration class</returns>
+        /// <returns>A instance of the ILoginConfiguration class</returns>
         /// <remarks>
         /// The default LoginConfiguration implementation can be changed by setting the value of the
         /// LoginConfigurationProvider key of the AppSettings node of the application configuration file
@@ -84,8 +84,8 @@ namespace Nohros.Security.Auth
         public new ILoginModuleEntry[] LoginModules
         {
             get {
-                DictionaryValue modules = base.LoginModules;
-                return modules.ToArray<ILoginModuleEntry>();
+                DictionaryValue<LoginModuleNode> modules = base.LoginModules;
+                return modules.ToArray();
             }
         }
     }

@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="configuration\common\provider\ProviderNode.cs" />
+    <Compile Include="configuration\common\provider\ProviderType.cs" />
     <Compile Include="configuration\common\RepositoryNode.cs" />
     <Compile Include="configuration\web\BuildType.cs" />
     <Compile Include="configuration\common\ChainNode.cs" />
@@ -83,8 +84,10 @@
     <Compile Include="data\ParameterizedString.cs" />
     <Compile Include="data\providers\Provider.cs" />
     <Compile Include="data\type\collections\values\DictionaryValue.cs" />
+    <Compile Include="data\type\collections\values\DictionaryValueT.cs" />
     <Compile Include="data\type\collections\values\FundamentalValue.cs" />
     <Compile Include="data\type\collections\values\GenericValue.cs" />
+    <Compile Include="data\type\collections\values\IDictionaryValue.cs" />
     <Compile Include="data\type\collections\values\IValue.cs" />
     <Compile Include="data\type\collections\values\ListValue.cs" />
     <Compile Include="data\type\collections\values\StringValue.cs" />
@@ -103,7 +106,7 @@
     <Compile Include="security\auth\LoginConfiguration.cs" />
     <Compile Include="security\auth\LoginException.cs" />
     <Compile Include="security\auth\LoginModuleControlFlag.cs" />
-    <Compile Include="security\auth\LoginModuleEntry.cs" />
+    <Compile Include="security\auth\ILoginModuleEntry.cs" />
     <Compile Include="security\auth\PermissionBase.cs" />
     <Compile Include="security\auth\NasUser.cs" />
     <Compile Include="security\auth\SecurityContextBase.cs" />
@@ -143,7 +146,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

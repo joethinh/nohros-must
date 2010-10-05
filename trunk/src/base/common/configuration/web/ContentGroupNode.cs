@@ -10,8 +10,6 @@ namespace Nohros.Configuration
 {
     public class ContentGroupNode : ConfigurationNode
     {
-        internal const string kNodeTree = WebNode.kNodeTree + "." + WebNode.kContentGroupsNodeName;
-
         const string kFileNameAttributeName = "file-name";
         const string kNameAttributeName = "name";
         const string kBuildAttributeName = "build";
@@ -53,20 +51,20 @@ namespace Nohros.Configuration
                     GetAttributeValue(node, kPathRefAttributeName, out path_ref)
                 )) {
                 // TODO: log the exception.
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "a required attribute", kNodeTree + ".any"));
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "a required attribute", NohrosConfiguration.kContentGroupNodeTree + ".any"));
             }
 
             // sanity check the build type
             if (build != "release" && build != "debug")
                 // TODO: log the exception.
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, build, kNodeTree + "." + name + ".build"));
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, build, NohrosConfiguration.kContentGroupNodeTree + "." + name + "." + kBuildAttributeName));
 
             // resolve the base path
             RepositoryNode str;
             str = config.Repositories[path_ref] as RepositoryNode;
 
             if (str == null)
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, str.Path, kNodeTree + "." + name + ".path-ref"));
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, path_ref, NohrosConfiguration.kContentGroupNodeTree + "." + name + "." + kPathRefAttributeName));
 
             build_type_ = (build == "release") ? BuildType.Release : BuildType.Debug;
             mime_type_ = mime_type;

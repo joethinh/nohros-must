@@ -12,17 +12,13 @@ namespace Nohros.Configuration
 {
     public class CommonNode : ConfigurationNode
     {
-        internal const string kCommonNodeName = "common";
-
-        internal const string kNodeTree = kCommonNodeName;
-
         #region .ctor
         /// <summary>
         /// Initializes a new instance_ of the CommonNode class by using the specified XML node and name.
         /// </summary>
         /// <param name="name">The name of the node.</param>
         /// <param name="config">The related <see cref="NohrosConfiguration"/> object.</param>
-        public CommonNode() : base(kCommonNodeName) { }
+        public CommonNode() : base(NohrosConfiguration.kCommonNodeName) { }
         #endregion
 
         public static CommonNode FromXmlNode(XmlNode node, NohrosConfiguration config) {
@@ -40,149 +36,115 @@ namespace Nohros.Configuration
         /// valid representation of a common node.</exception>
         public override void Parse(XmlNode node, NohrosConfiguration config) {
             // parse the repository node.
-            XmlNode data_node = IConfiguration.SelectNode(node, RepositoryNode.kRepositoryNodeName);
+            XmlNode data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kRepositoryNodeName);
             if (data_node != null) {
+                DictionaryValue<RepositoryNode> repositories = new DictionaryValue<RepositoryNode>();
+                config.Nodes[NohrosConfiguration.kRepositoryNodeTree] = repositories;
+
                 foreach (XmlNode n in data_node.ChildNodes) {
                     if (string.Compare(n.Name, "add") == 0) {
                         string name = null;
                         if (!GetAttributeValue(n, "name", out name))
-                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ErrorAt, "attribute name", kNodeTree + "." + RepositoryNode.kRepositoryNodeName));
+                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ErrorAt, "attribute name", NohrosConfiguration.kCommonNodeTree + "." + NohrosConfiguration.kRepositoryNodeName));
 
                         RepositoryNode repository = new RepositoryNode(name);
                         repository.Parse(n, config);
-                        config.Repositories[RepositoryKey(repository.Name)] = repository;
+                        repositories[repository.Name] = repository;
                     }
                 }
             }
 
             // parse the connection strings
-            data_node = IConfiguration.SelectNode(node, kConnectionStringsNodeName);
+            data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kConnectionStringsNodeName);
             if (data_node != null) {
+                DictionaryValue<ConnectionStringNode> connection_strings = new DictionaryValue<ConnectionStringNode>();
+                config.Nodes[NohrosConfiguration.kConnectionStringNodeTree] = connection_strings;
+
                 foreach (XmlNode n in data_node.ChildNodes) {
                     if (string.Compare(n.Name, "add") == 0) {
                         string name = null;
                         if (!(GetAttributeValue(n, "name", out name)))
-                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", kNodeTree + "." + kConnectionStringsNodeName));
+                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kCommonNodeTree + "." + NohrosConfiguration.kConnectionStringsNodeName));
 
                         ConnectionStringNode conn_string_node = new ConnectionStringNode(name);
                         conn_string_node.Parse(n, config);
-                        this[ConnectionStringKey(conn_string_node.Name)] = conn_string_node;
+                        connection_strings[conn_string_node.Name] = conn_string_node;
                     }
                 }
             }
 
             // parse the providers
-            data_node = IConfiguration.SelectNode(node, kProvidersNodeName);
+            data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kProvidersNodeName);
             if (data_node != null) {
+
+                ProviderType provider_type = default(ProviderType);
+                DictionaryValue<DataProviderNode> data_providers = null;
+
                 foreach (XmlNode provider_node in data_node.ChildNodes) {
+                    if (string.Compare(provider_node.Name, NohrosConfiguration.kDataProviderNodeName, StringComparison.OrdinalIgnoreCase) ==0) {
+                        // parse the data providers
+                        data_providers = new DictionaryValue<DataProviderNode>();
+                        config.Nodes[NohrosConfiguration.kDataProviderNodeTree] = data_providers;
+                        provider_type = ProviderType.Data;
+                    }
+
                     foreach (XmlNode n in provider_node.ChildNodes) {
-                        if (string.Compare(n.Name, "add", StringComparison.OrdinalIgnoreCase) == 0) {
+                        if (string.Compare(n.Name, NohrosConfiguration.kProviderNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
+
+                            // the name and type property are mandatory for all providers.
                             string name = null, type = null;
                             if (!(GetAttributeValue(n, "name", out name) && GetAttributeValue(n, "type", out type)))
-                                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name or type", kNodeTree + "." + kProvidersNodeName));
+                                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name or type", NohrosConfiguration.kProvidersNodeTree));
 
-                            DataProviderNode provider = new DataProviderNode(name, type);
-                            provider.Parse(n, config);
-                            config.Nodes[DataProviderKey(provider.Name)] = provider;
+                            switch (provider_type) {
+                                case ProviderType.Data:
+                                    DataProviderNode provider = new DataProviderNode(name, type);
+                                    provider.Parse(n, config);
+                                    data_providers[provider.Name] = provider;
+                                    break;
+                            }
                         }
                     }
                 }
             }
 
             // parse the login modules
-            data_node = IConfiguration.SelectNode(node, kLoginModulesNodeName);
+            data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kLoginModulesNodeName);
             if (data_node != null) {
+                DictionaryValue<LoginModuleNode> login_modules = new DictionaryValue<LoginModuleNode>();
+                config.Nodes[NohrosConfiguration.kLoginModuleNodeTree] = login_modules;
+
                 foreach (XmlNode n in data_node.ChildNodes) {
-                    if (string.Compare(n.Name, kModuleNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
+                    if (string.Compare(n.Name, NohrosConfiguration.kModuleNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
                         string name = null;
                         if (!GetAttributeValue(n, "name", out name))
-                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", kNodeTree + "." + kLoginModulesNodeName));
+                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kLoginModuleNodeTree));
 
                         LoginModuleNode login_module = new LoginModuleNode(name);
                         login_module.Parse(n, config);
-                        config.Nodes[LoginModuleKey(login_module.Name)] = login_module;
+                        login_modules[login_module.Name] = login_module;
                     }
                 }
             }
 
             // parse the chains
-            data_node = IConfiguration.SelectNode(node, kChainsNodeName);
-            if(data_node != null) {   
+            data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kChainsNodeName);
+            if(data_node != null) {
+                DictionaryValue<ChainNode> chains = new DictionaryValue<ChainNode>();
+                config.Nodes[NohrosConfiguration.kChainNodeTree] = chains;
+
                 foreach (XmlNode n in data_node.ChildNodes) {
-                    if (string.Compare(n.Name, kChainNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
+                    if (string.Compare(n.Name, NohrosConfiguration.kChainNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
                         string name = null;
                         if (!GetAttributeValue(n, "name", out name))
-                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", kNodeTree + "." + kChainsNodeName + "." + kChainNodeName));
+                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kChainNodeTree + "." + NohrosConfiguration.kChainNodeName));
 
                         ChainNode chain = new ChainNode(name);
                         chain.Parse(n, config);
-                        config.Nodes[ChainNodeKey(chain.Name)] = chain;
+                        chains[chain.Name] = chain;
                     }
                 }
             }
-        }
-
-        #region Dictionary Keys
-        /// <summary>
-        /// Gets a string that uniquely identifies a connection string within the common node.
-        /// </summary>
-        /// <param name="name">The name of the connection string.</param>
-        /// <returns>A string that uniquely identifies a connection string within a common node.</returns>
-        string ConnectionStringKey(string name) {
-            return string.Concat(CommonNode.kNodeTree, kConnectionStringsNodeName, ".", name);
-        }
-
-        /// <summary>
-        /// Gets a string that uniquely identifies a provider within the common node.
-        /// </summary>
-        /// <param name="name">The name of the provider.</param>
-        /// <returns>A string that uniquely identifies a provider within a common node.</returns>
-        string DataProviderKey(string name) {
-            return string.Concat(CommonNode.kNodeTree, kProvidersNodeName, kDataProviderNodeName, ".", name);
-        }
-
-        /// <summary>
-        /// Gets a string that uniquely identifies a login module within the common node.
-        /// </summary>
-        /// <param name="name">The name of the login module.</param>
-        /// <returns>A string that uniquely identifies a login module within a common node.</returns>
-        string LoginModuleKey(string name) {
-            return string.Concat(CommonNode.kNodeTree, kLoginModulesNodeName, ".", name);
-        }
-
-        /// <summary>
-        /// Gets a string that uniquely identifies a chain within the common node.
-        /// </summary>
-        /// <param name="name">The anme of the chain.</param>
-        /// <returns>A string that uniquely identifies a chain within a common node.</returns>
-        string ChainNodeKey(string name) {
-            return string.Concat(CommonNode.kNodeTree, kChainsNodeName, ".", name);
-        }
-
-        string RepositoryKey(string name) {
-            return string.Concat(CommonNode.kNodeTree, kRepositoryNodeName, ".", name);
-        }
-        #endregion
-
-        /// <summary>
-        /// Gets a ConnectionStringNode with the specified name.
-        /// </summary>
-        /// <param name="name">The name of the node to get.</param>
-        /// <returns>A ConnectionStringNode with the specified name or null if the <paramref name="name"/> was not
-        /// found within the connection strings list.</returns>
-        public ConnectionStringNode GetConnectionString(string name) {
-            return this[ConnectionStringKey(name)] as ConnectionStringNode;
-        }
-
-        /// <summary>
-        /// Gets a ConnectionStringNode with the specified name.
-        /// </summary>
-        /// <param name="name">The name of the node to get.</param>
-        /// <returns>A ConnectionStringNode with the specified name or null if the <paramref name="name"/> was not
-        /// found within the connection strings list.</returns>
-        public bool GetConnectionString(string name, ConnectionStringNode node) {
-            node = GetConnectionString(name);
-            return (node != null);
         }
     }
 }
