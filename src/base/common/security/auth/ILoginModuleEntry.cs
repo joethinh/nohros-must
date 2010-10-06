@@ -7,7 +7,7 @@ namespace Nohros.Security.Auth
     /// <summary>
     /// This class represents a single login module configured for the application specified
     /// in the configuration file. Each respective LoginEntryModule contains a login module's name,
-    /// and Type, a control flag( LoginModuleControlFlag ), and a login module's specific options.
+    /// and ValueType, a control flag( LoginModuleControlFlag ), and a login module's specific options.
     /// </summary>
     /// <seealso cref="ILoginConfiguration"/>
     public interface ILoginModuleEntry

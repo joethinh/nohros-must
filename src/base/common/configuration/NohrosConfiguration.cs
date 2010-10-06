@@ -24,6 +24,7 @@ namespace Nohros.Configuration
         internal const string kConnectionStringsNodeName = "connection-strings";
         internal const string kProvidersNodeName = "providers";
         internal const string kDataProviderNodeName = "data";
+        internal const string kMessengerProviderNodeName = "messengers";
         internal const string kProviderNodeName = "provider";
         internal const string kLoginModulesNodeName = "login-modules";
         internal const string kModuleNodeName = "module";
@@ -37,6 +38,7 @@ namespace Nohros.Configuration
         internal const string kConnectionStringNodeTree = kCommonNodeTree + "." + kConnectionStringsNodeName;
         internal const string kProvidersNodeTree = kCommonNodeTree + "." + kProvidersNodeName;
         internal const string kDataProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kDataProviderNodeName;
+        internal const string kMessengerProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kMessengerProviderNodeName;
         internal const string kLoginModuleNodeTree = kCommonNodeTree + "." + kLoginModulesNodeName;
         internal const string kChainNodeTree = kCommonNodeTree + "." + kChainsNodeName;
         internal const string kWebNodeTree = kWebNodeName;
@@ -234,6 +236,15 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
+        /// Gets all the messenger providers configured for this application.
+        /// </summary>
+        /// <remarks>MessengerProviders will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// will contain zero elements if configuration contains no messenger providers.</remarks>
+        public DictionaryValue<MessengerProviderNode> MessengerProviders {
+            get { return GetDictionary<MessengerProviderNode>(NohrosConfiguration.kMessengerProviderNodeTree); }
+        }
+
+        /// <summary>
         /// Gets all the connection strings nodes in configuration.
         /// </summary>
         /// <remarks>ConnectionStrings will never return a null reference; however, the returned
@@ -265,7 +276,7 @@ namespace Nohros.Configuration
         /// <summary>
         /// Gets a collection of all the chains in configuration.
         /// </summary>
-        /// Chains will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// </remarks>Chains will never return a null reference; however, the returned <see cref="DictionaryValue"/>
         /// will contain zero elements if configuration contains no chains.</remarks>
         public DictionaryValue<ChainNode> Chains {
             get { return GetDictionary<ChainNode>(NohrosConfiguration.kChainNodeTree); }
@@ -274,7 +285,7 @@ namespace Nohros.Configuration
         /// <summary>
         /// Gets a collection of all the chains in configuration.
         /// </summary>
-        /// ContentGroups will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// </remarks>ContentGroups will never return a null reference; however, the returned <see cref="DictionaryValue"/>
         /// will contain zero elements if configuration contains no content groups.</remarks>
         public DictionaryValue<ContentGroupNode> ContentGroups {
             get { return GetDictionary<ContentGroupNode>(NohrosConfiguration.kContentGroupNodeTree); }

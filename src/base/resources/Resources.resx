@@ -199,14 +199,8 @@
   <data name="DataProvider_ConnectionString" xml:space="preserve">
     <value>An invalid connection string argument has been supplied, or a required connection string argument has not been supplied.</value>
   </data>
-  <data name="DataProvider_CreateInstance" xml:space="preserve">
-    <value>Instance of the requested data provider could not be created. Check the constructor implied by the IDataProvider interface.</value>
-  </data>
   <data name="DataProvider_InvalidProvider" xml:space="preserve">
     <value>The Provider is invalid.</value>
-  </data>
-  <data name="DataProvider_LoadAssembly" xml:space="preserve">
-    <value>The assembly could not be loaded. {0}.</value>
   </data>
   <data name="DataProvider_Provider_Attributes" xml:space="preserve">
     <value>An invalid attributes collection has been supplied, or a required attribute has not been supplied.</value>
@@ -237,6 +231,12 @@
   </data>
   <data name="JSON_UnquotedDictionaryKey" xml:space="preserve">
     <value>Dictionary keys must be quoted at "{0}".</value>
+  </data>
+  <data name="Provider_CreateInstance" xml:space="preserve">
+    <value>Instance of the requested provider could not be created. Check the constructor implied by the respective provider interface.</value>
+  </data>
+  <data name="Provider_LoadAssembly" xml:space="preserve">
+    <value>The assembly could not be loaded. {0}.</value>
   </data>
   <data name="Type_CreateInstanceOf" xml:space="preserve">
     <value>Instance of the requested type could not be created. Check the constructor implied by the {0}.</value>

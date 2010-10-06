@@ -111,10 +111,10 @@ namespace Nohros.Data
         /// <summary>
         /// Gets the type of the value stored by the current Value object.
         /// Each type will be implemented by only one subclass of Value, so it's
-        /// safe to use the Type to determine whether you can cast from
+        /// safe to use the ValueType to determine whether you can cast from
         /// Value to (Implementating Class)[*]. Also, A Value object never changes
         /// its type after construction.
         /// </summary>
-        Nohros.Data.ValueType Type { get; }
+        Nohros.Data.ValueType ValueType { get; }
     }
 }

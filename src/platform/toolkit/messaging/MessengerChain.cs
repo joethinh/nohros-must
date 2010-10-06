@@ -2,38 +2,60 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Nohros.Logging;
+using Nohros.Configuration;
+
 namespace Nohros.Toolkit.Messaging
 {
     /// <summary>
     /// Represents a chain of messenger to use to send a message using multiples messengers.
     /// </summary>
     /// <remarks></remarks>
-    public sealed class MessengerChain
+    public class MessengerChain
     {
-        static MessengerChain current_process_chain_;
-
         List<IMessenger> messengers_;
+        string name_;
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the MessengerChain.
+        /// Initializes a new instance of the MessengerChain, using the specified chain name.
         /// </summary>
-        public MessengerChain() {
+        public MessengerChain(string name) {
+            name_ name;
             messengers_ = new List<IMessenger>();
-        }
-
-        /// <summary>
-        /// Initializes the sngleton process instance of the MessengerChain class.
-        /// </summary>
-        static MessengerChain() {
-            current_process_chain_ = new MessengerChain();
         }
         #endregion
 
         /// <summary>
+        /// Creates a MessengerChain class instance by using the specified chain name and configuration object.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>An instance of the MessengerChain class with name <paramref name="name"/> configured
+        /// accordingly to the specified configuration object.</returns>
+        /// <remarks>
+        /// This method will try to get a chain with name <paramref name="name"/> from the configuration file
+        /// and loop through the chain trying to get messengers with name equals to the name of each chain node.
+        /// <para>
+        /// If a chain with name <paramref name="name"/> was not found. The returned chain will have no messegers.
+        /// </para>
+        /// </remarks>
+        MessengerChain FromConfiguration(string name, NohrosConfiguration config) {
+            ChainNode chain = config.Chains[name];
+            if (chain != null) {
+                string[] nodes = chain.Nodes;
+                for (int i = 0, j = nodes.Length; i < j; i++) {
+                    MessengerProviderNode node = config.MessengerProviders[nodes[i]];
+                    if (node != null) {
+                        Add(CreateInstance(node));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Adds a new messenger to the chain.
         /// </summary>
-        /// <param name="messenger">The messenger to add</param>
+        /// <param name="messenger">The messenger to add to the chain.</param>
         public void Add(IMessenger messenger) {
             if (messenger == null)
                 throw new ArgumentNullException("messenger");
@@ -60,8 +82,8 @@ namespace Nohros.Toolkit.Messaging
                     IMessage response = messenger.Send(message);
                     if (response != null)
                         messenger.ProcessResponse(response);
-                } catch(Exception ex) {
-                    // TODO: log the exception.
+                } catch(Exception exception) {
+                    FileLogger.ForCurrentProcess.Logger.Error("[Send   Nohros.Toolkit.Messaging.MessengerChain]", exception);
                     errors.Add(new ErrorMessage(ex.Message));
                 }
             }
@@ -69,11 +91,10 @@ namespace Nohros.Toolkit.Messaging
         }
 
         /// <summary>
-        /// Gets the current process's messenger chain.
+        /// Gets the number of <see cref="IMessenger"/> object actually contained in the MessengerChain.
         /// </summary>
-        static MessengerChain ForCurrentProcess
-        {
-            get { return current_process_chain_; }
+        public int Count {
+            get { return messengers_.Count; }
         }
     }
 }

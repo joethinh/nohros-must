@@ -65,6 +65,7 @@
     <Compile Include="messaging\Message.cs" />
     <Compile Include="messaging\MessageType.cs" />
     <Compile Include="messaging\IRecipient.cs" />
+    <Compile Include="messaging\Messenger.cs" />
     <Compile Include="messaging\MessengerChain.cs" />
     <Compile Include="messaging\Recipient.cs" />
     <Compile Include="messaging\RecipientType.cs" />

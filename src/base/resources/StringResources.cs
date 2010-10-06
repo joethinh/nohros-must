@@ -105,14 +105,14 @@ namespace Nohros.Resources
         /// Looks up a localized string similar to [Instance of the requested data provider could not be
         /// created. Check the constructor implied by the IDataProvider interface.]
         /// </summary>
-        internal static string DataProvider_CreateInstance
+        internal static string Provider_CreateInstance
         {
-            get { return GetString("DataProvider_CreateInstance"); }
+            get { return GetString("Provider_CreateInstance"); }
         }
 
-        internal static string DataProvider_LoadAssembly
+        internal static string Provider_LoadAssembly
         {
-            get { return GetString("DataProvider_LoadAssembly"); }
+            get { return GetString("Provider_LoadAssembly"); }
         }
 
         /// <summary>

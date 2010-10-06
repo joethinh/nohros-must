@@ -320,7 +320,7 @@ namespace Nohros.Data
         /// <exception cref="ArgumentException">array is multidimensional.-or-<paramref name="index"/>
         /// is equal to or greater than the length of the array.-or-The number of elements in the
         /// source <see cref="AndersonTree&lt;TKey,TValue&gt;"/>is greater than the available space from
-        /// <paramref name="index"/>to the end of the destination array.-or-Type <see cref=" KeyValuePair&lt;TKey, TValue&gt;"/>
+        /// <paramref name="index"/>to the end of the destination array.-or-ValueType <see cref=" KeyValuePair&lt;TKey, TValue&gt;"/>
         /// cannot be cast automatically to the type of the destination array</exception>
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int index)
         {

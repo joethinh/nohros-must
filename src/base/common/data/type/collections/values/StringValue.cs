@@ -38,7 +38,7 @@ namespace Nohros.Data
         {
             string lhs, rhs;
 
-            if (other.Type != Type)
+            if (other.ValueType != ValueType)
                 return false;
 
             return GetAsString(out lhs) && other.GetAsString(out rhs) && lhs == rhs;

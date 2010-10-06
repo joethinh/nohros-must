@@ -140,8 +140,8 @@ namespace Nohros
                 case ExceptionResource.DataProvider_ConnectionString:
                     return StringResources.DataProvider_ConnectionString;
 
-                case ExceptionResource.DataProvider_CreateInstance:
-                    return StringResources.DataProvider_CreateInstance;
+                case ExceptionResource.Provider_CreateInstance:
+                    return StringResources.Provider_CreateInstance;
 
                 case ExceptionResource.DataProvider_Provider_Attributes:
                     return StringResources.DataProvider_Provider_Attributes;
@@ -255,7 +255,7 @@ namespace Nohros
         Arg_ArrayPlusOffTooSmall = 1,
         Argument_Empty = 2,
         DataProvider_ConnectionString = 3,
-        DataProvider_CreateInstance = 4,
+        Provider_CreateInstance = 4,
         DataProvider_Provider_Attributes = 5,
         Caching_Invalid_expiration_combination = 6,
         DataProvider_InvalidProvider = 7,

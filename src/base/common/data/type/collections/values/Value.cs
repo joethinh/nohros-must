@@ -138,7 +138,7 @@ namespace Nohros.Data
         }
         #endregion
 
-        #region [Type] GetAs[...]() methods
+        #region [ValueType] GetAs[...]() methods
         /// <summary>
         /// This method allow the convenient retrieval of settings. If the current
         /// setting object can be converted into a boolean type, the value is returned
@@ -227,11 +227,11 @@ namespace Nohros.Data
         /// <summary>
         /// Gets the type of the value stored by the current Value object.
         /// Each type will be implemented by only one subclass of Value, so it's
-        /// safe to use the Type to determine whether you can cast from
+        /// safe to use the ValueType to determine whether you can cast from
         /// Value to (Implementating Class)[*]. Also, A Value object never changes
         /// its type after construction.
         /// </summary>
-        public ValueType Type {
+        public ValueType ValueType {
             get { return type_; }
         }
     }

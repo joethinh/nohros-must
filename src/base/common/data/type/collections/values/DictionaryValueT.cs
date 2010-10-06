@@ -82,7 +82,7 @@ namespace Nohros.Data
             if (delimiter_position == -1)
                 return entry;
 
-            if (entry.Type == ValueType.TYPE_GENERIC_DICTIONARY) {
+            if (entry.ValueType == ValueType.TYPE_GENERIC_DICTIONARY) {
                 DictionaryValue<T> dictionary = entry as DictionaryValue<T>;
                 return dictionary.GetValue(path.Substring(delimiter_position + 1));
             }
@@ -136,7 +136,7 @@ namespace Nohros.Data
             // Assume we're are indexing into a dictionary.
             IValue dict;
             DictionaryValue<T> entry = null;
-            if (dictionary_.TryGetValue(key, out dict) && dict.Type == ValueType.TYPE_GENERIC_DICTIONARY) {
+            if (dictionary_.TryGetValue(key, out dict) && dict.ValueType == ValueType.TYPE_GENERIC_DICTIONARY) {
                 entry = dict as DictionaryValue<T>;
             }
             else {
@@ -254,7 +254,7 @@ namespace Nohros.Data
         }
 
         public override bool Equals(IValue other) {
-            if (other.Type != Type)
+            if (other.ValueType != ValueType)
                 return false;
 
             DictionaryValue<T> other_dict = other as DictionaryValue<T>;
@@ -297,7 +297,7 @@ namespace Nohros.Data
             // filtering the elements of the type T.
             foreach (T value in values) {
                 // all the elements must be an instance of T.
-                if(value.Type == ValueType.TYPE_GENERIC_DICTIONARY)
+                if(value.ValueType == ValueType.TYPE_GENERIC_DICTIONARY)
                     return new T[0];
 
                 destination_array[pos++] = value;
