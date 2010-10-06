@@ -49,6 +49,7 @@
     <Compile Include="dnslookup\resourcerecord.cs" />
     <Compile Include="dnslookup\response.cs" />
     <Compile Include="dnslookup\returncode.cs" />
+    <Compile Include="logging\ConsoleLogger.cs" />
     <Compile Include="logging\FileLogger.cs" />
     <Compile Include="mailchecker\invalidreplyexception.cs" />
     <Compile Include="mailchecker\mailchecker.cs" />
