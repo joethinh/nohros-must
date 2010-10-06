@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="configuration\common\provider\MessengerProviderNode.cs" />
     <Compile Include="configuration\common\provider\ProviderNode.cs" />
     <Compile Include="configuration\common\provider\ProviderType.cs" />
     <Compile Include="configuration\common\RepositoryNode.cs" />
@@ -86,7 +87,7 @@
     <Compile Include="data\providers\DataProvider.cs" />
     <Compile Include="data\providers\IDataProvider.cs" />
     <Compile Include="data\ParameterizedString.cs" />
-    <Compile Include="data\providers\Provider.cs" />
+    <Compile Include="data\providers\ProviderHelper.cs" />
     <Compile Include="data\type\collections\values\DictionaryValue.cs" />
     <Compile Include="data\type\collections\values\DictionaryValueT.cs" />
     <Compile Include="data\type\collections\values\FundamentalValue.cs" />

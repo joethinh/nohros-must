@@ -18,7 +18,6 @@ namespace Nohros.Configuration
         protected string name_;
 
         Dictionary<string, ConfigurationNode> child_nodes_;
-        ConfigurationNode parent_node_;
 
         #region .ctor
         /// <summary>
@@ -27,7 +26,6 @@ namespace Nohros.Configuration
         /// <param name="name">The name of the node.</param>
         public ConfigurationNode(string name): base(Nohros.Data.ValueType.TYPE_CLASS) {
             name_ = name;
-            parent_node_ = null;
             child_nodes_ = new Dictionary<string, ConfigurationNode>(StringComparer.OrdinalIgnoreCase);
         }
         #endregion

@@ -155,7 +155,7 @@ namespace Nohros.Data
                 if (delimiter_position == -1)
                     return entry;
 
-                if (entry.Type == ValueType.TYPE_DICTIONARY) {
+                if (entry.ValueType == ValueType.TYPE_DICTIONARY) {
                     DictionaryValue dictionary = entry as DictionaryValue;
                     return dictionary[path.Substring(delimiter_position + 1)];
                 }
@@ -178,7 +178,7 @@ namespace Nohros.Data
                 // Assume we're are indexing into a dictionary.
                 IValue dict;
                 DictionaryValue entry = null;
-                if (dictionary_.TryGetValue(key, out dict) && dict.Type == ValueType.TYPE_DICTIONARY) {
+                if (dictionary_.TryGetValue(key, out dict) && dict.ValueType == ValueType.TYPE_DICTIONARY) {
                     entry = dict as DictionaryValue;
                 }
                 else {
@@ -346,7 +346,7 @@ namespace Nohros.Data
         }
         #endregion
 
-        #region [Type] Get...(string) overloads
+        #region [ValueType] Get...(string) overloads
         /// <summary>
         /// This is a convenience form of <see cref="Nohros.Data.DictionaryValue.Get()"/>
         /// </summary>
@@ -455,7 +455,7 @@ namespace Nohros.Data
 
         public override bool Equals(IValue other)
         {
-            if (other.Type != Type)
+            if (other.ValueType != ValueType)
                 return false;
 
             DictionaryValue other_dict = other as DictionaryValue;

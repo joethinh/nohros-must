@@ -139,7 +139,7 @@ namespace Nohros.Data
             if (type == "system.string")
                 return data;
 
-            // try to get the Type object that represents the specified type.
+            // try to get the ValueType object that represents the specified type.
             Type m_type = Type.GetType(type, false, true);
             if (m_type == null || !m_type.IsValueType)
                 throw new ArgumentOutOfRangeException(type);
@@ -201,12 +201,12 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Returns a ValueType with the specified <paramref name="Type"/> and whose
+        /// Returns a ValueType with the specified <paramref name="ValueType"/> and whose
         /// value is equivalent to the specified <paramref name="s"/>
         /// </summary>
-        /// <param name="type">A <paramref name="Type"/></param>
+        /// <param name="type">A <paramref name="ValueType"/></param>
         /// <param name="s">A string containing a value to parse</param>
-        /// <param name="result">When this method returns, a ValueType whose type is <paramref name="Type"/>
+        /// <param name="result">When this method returns, a ValueType whose type is <paramref name="ValueType"/>
         /// an whose value is equivalent to <paramref name="s"/> or default(ValueType) if the conversion is not supported.
         /// </param>
         /// <returns></returns>

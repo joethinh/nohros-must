@@ -243,7 +243,7 @@ namespace Nohros.Data
 
         public override bool Equals(IValue other)
         {
-            if (other.Type != Type)
+            if (other.ValueType != ValueType)
                 return false;
 
             int count;

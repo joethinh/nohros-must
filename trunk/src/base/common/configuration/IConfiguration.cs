@@ -363,7 +363,7 @@ namespace Nohros.Configuration
         /// XML attribute of the <paramref name="element"/> node and if the property is writtable
         /// and it type is a ValueType or a String, we will try to set the value of this property to
         /// the value of the XML attribute. If the value of the XML attribute could not be converted to
-        /// the Type of the property the property value will not be set.
+        /// the ValueType of the property the property value will not be set.
         /// <para>
         /// We do not want to throw an exception inside a protected method. So, the caller must
         /// ensure that the elelement is a valid XML element. If the specified XML element is a null

@@ -49,7 +49,7 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Creates an instance_ of the type designated by the specified generic type parameter using the
+        /// Creates an instance of the type designated by the specified generic type parameter using the
         /// constructor implied by the <see cref="IDataProvider"/> interface.
         /// </summary>
         /// <param name="provider">A <see cref="Provider"/> object containing the informations like
@@ -67,7 +67,7 @@ namespace Nohros.Data
         /// will be set to the provider database owner and the second parameter will be set to the
         /// provider connection string.
         /// </para>
-        /// <para>If the <see cref="Provider.Location"/> of the specified provider is null this method will try
+        /// <para>If the <see cref="ProviderNode.AssemblyLocation"/> of the specified provider is null this method will try
         /// to load assembly related with the provider type from the application base directory.</para>
         /// </remarks>
         /// <exception cref="ArgumentNullException">dataProvider is null</exception>
@@ -75,50 +75,16 @@ namespace Nohros.Data
         /// <exception cref="ProviderException"><paramref name="dataProvider"/> is invalid.</exception>
         protected static T CreateInstance(DataProviderNode provider)
         {
-            if (provider == null)
-                throw new ArgumentNullException("provider");
-
-            Type type = null;
-            // attempt to load .NET type of the provider. If the location of
-            // the assemlby is specified we need to load the assemlby and try
-            // to get the type from the loaded assembly. The name of the assembly
-            // will be extracted from the provider type.
-            if (provider.AssemblyLocation != null) {
-                string assembly_name = provider.Type;
-                int num = assembly_name.IndexOf(',');
-                if (num == -1)
-                    throw new ProviderException(string.Format(StringResources.DataProvider_LoadAssembly, provider.AssemblyLocation));
-
-                assembly_name = assembly_name.Substring(num + 1).Trim();
-                int num2 = assembly_name.IndexOfAny(new char[] { ' ', ',' });
-                if (num2 != -1)
-                    assembly_name = assembly_name.Substring(0, num2);
-
-                if (!assembly_name.EndsWith(".dll"))
-                    assembly_name = assembly_name + ".dll";
-
-                string assembly_path = Path.Combine(provider.AssemblyLocation, assembly_name);
-                if (!File.Exists(assembly_path))
-                    throw new ProviderException(string.Format(StringResources.DataProvider_LoadAssembly, assembly_path));
-
-                try {
-                    Assembly assembly = Assembly.LoadFrom(assembly_path);
-                    type = assembly.GetType(provider.Type.Substring(0, num));
-                } catch (Exception ex) {
-                    throw new ProviderException(string.Format(StringResources.DataProvider_LoadAssembly, assembly_path), ex);
-                }
-            }
-            else
-                type = Type.GetType(provider.Type);
+            Type type = ProviderHelper.GetTypeFromProviderNode(provider);
 
             T newObject = null;
             if (type != null) {
                 newObject = (T)Activator.CreateInstance(type, provider.DatabaseOwner, provider.ConnectionString);
             }
 
-            // If a instance_ could not be created a exception will be thrown.
+            // if a instance_ could not be created a exception will be thrown.
             if (newObject == null)
-                Thrower.ThrowProviderException(ExceptionResource.DataProvider_CreateInstance, null);
+                Thrower.ThrowProviderException(ExceptionResource.Provider_CreateInstance, null);
 
             newObject.DataSourceType = provider.DataSourceType;
 

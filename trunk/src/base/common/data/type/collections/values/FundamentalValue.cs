@@ -90,7 +90,7 @@ namespace Nohros.Data
 
         public override IValue DeepCopy()
         {
-            switch(Type) {
+            switch(ValueType) {
                 case ValueType.TYPE_BOOLEAN:
                     return CreateBooleanValue(in_value_.boolean_value_);
 
@@ -107,10 +107,10 @@ namespace Nohros.Data
 
         public override bool Equals(IValue other)
         {
-            if (other.Type != Type)
+            if (other.ValueType != ValueType)
                 return false;
 
-            switch(Type) {
+            switch(ValueType) {
                 case ValueType.TYPE_BOOLEAN:
                     {
                         bool lhs, rhs;

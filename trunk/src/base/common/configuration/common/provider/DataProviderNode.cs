@@ -19,10 +19,8 @@ namespace Nohros.Configuration
         const string kDataSourceTypeKey = "data-source-type";
         const string kTypeKey = "type";
 
-        string type_;
         string database_owner_;
         string connection_string_;
-        string assembly_location_;
 
         DataSourceType data_source_;
         NameValueCollection attributes_;
@@ -31,7 +29,8 @@ namespace Nohros.Configuration
         /// <summary>
         /// Initializes a new instance_ of the DataProviderNode.
         /// </summary>
-        /// <param name="common_node">A CommonNode object which this provider belongs.</param>
+        /// <param name="name">The name of the data provider.</param>
+        /// <param name="type">The data type of the provider.</param>
         /// <remarks>
         /// The connection string and database owner of a provider is declared as a reference to a connection string
         /// declared on the connection-strings node of the configuration file. These references will be resolved
@@ -42,7 +41,6 @@ namespace Nohros.Configuration
             attributes_ = new NameValueCollection();
             database_owner_ = "dbo";
             connection_string_ = null;
-            assembly_location_ = null;
         }
         #endregion
 
@@ -50,11 +48,12 @@ namespace Nohros.Configuration
         /// Parses a XML node that contains information about a data provider.
         /// </summary>
         /// <param name="node">The XML node to parse.</param>
-        /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
+        /// <exception cref="System.Configuration.ConfigurationErrorsException">The <paramref name="node"/> is not a
         /// valid representation of a data provider.</exception>
         public override void Parse(XmlNode node, NohrosConfiguration config) {
-            bool connstring_is_encrypted = false;
+            InternalParse(node, config);
 
+            bool connstring_is_encrypted = false;
             XmlAttributeCollection attributes = node.Attributes;
             for (int i = 0, j = attributes.Count; i < j; i++) {
                 XmlAttribute attribute = attributes[i];
@@ -77,16 +76,6 @@ namespace Nohros.Configuration
 
                     case kDataSourceTypeKey:
                         data_source_ = DataHelper.ParseStringEnum<DataSourceType>(attribute.Value, DataSourceType.Unknown);
-                        break;
-
-                    case kAssemblyLocationKey:
-                        // if the provider assembly location property is a relative path we need to resolve it
-                        // using the configuration file location.
-                        string location = attribute.Value;
-                        if (location != null && !Path.IsPathRooted(location)) {
-                            location = Path.Combine(config.Location, location);
-                        }
-                        assembly_location_ = location;
                         break;
 
                     default:
@@ -116,14 +105,6 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Gets the type of the Provider.
-        /// </summary>
-        public string Type {
-            get { return type_; }
-            set { type_ = value; }
-        }
-
-        /// <summary>
         /// Gets the type of the data source that will be used by the provider.
         /// </summary>
         public DataSourceType DataSourceType {
@@ -145,18 +126,6 @@ namespace Nohros.Configuration
         public string ConnectionString {
             get { return connection_string_; }
             set { connection_string_ = value; }
-        }
-
-        /// <summary>
-        /// Gets a string representing the fully qualified path to the directory where
-        /// the assembly related with the provider is located.
-        /// </summary>
-        /// <remarks>
-        /// This must be an absolute path or a path relative to the configuration file.
-        /// </remarks>
-        public string AssemblyLocation {
-            get { return assembly_location_; }
-            set { assembly_location_ = value; }
         }
     }
 }
