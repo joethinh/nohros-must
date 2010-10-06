@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Threading;
 
+using Nohros.Logging;
 using Nohros.Security.Auth;
 using Nohros.Resources;
 
@@ -89,8 +90,8 @@ namespace Nohros.Configuration
                 if (module_ == null) {
                     try {
                         Interlocked.CompareExchange<ILoginModule>(ref module_, Activator.CreateInstance(type_) as ILoginModule, null);
-                    } catch {
-                        // TODO: log the exception.
+                    } catch(Exception exception) {
+                        FileLogger.ForCurrentProcess.Logger.Error("[Module   Nohros.COnfiguration.LoginModuleNode]", exception);
                         module_ = null;
                     }
                 }

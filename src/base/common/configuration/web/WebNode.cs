@@ -52,8 +52,7 @@ namespace Nohros.Configuration
                 if (string.Compare(n.Name, "group", StringComparison.OrdinalIgnoreCase) == 0) {
                     string name;
                     if (!GetAttributeValue(n, "name", out name))
-                        // TODO: Log the exception
-                        Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kContentGroupNodeTree));
+                        Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kContentGroupNodeTree), "[Parse   Nohros.Configuration.WebNode]");
 
                     ContentGroupNode content_group = new ContentGroupNode(name);
                     content_group.Parse(n, config);
