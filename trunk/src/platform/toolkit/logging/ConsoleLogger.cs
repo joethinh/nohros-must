@@ -18,40 +18,32 @@ namespace Nohros.Toolkit.Logging
     /// </summary>
     /// <remarks>
     /// This is a generic logger that loads automatically and configures itself through the code. The messages
-    /// are logged to a file that resides on the same folder of the caller application base directory.The name of
-    /// the file is nohros-logger.log for non-debug messages and nohros-logger.debug for debug messages.
+    /// are logged to the console window.
     /// <para>
     /// The pattern used to log message are:
-    ///     . "[%date %-5level/%thread] %message%newline %exception" for non-debug messages.
+    ///     . "[%date %-5level/%thread] %message%newline %exception" for the non-debug messages.
     ///     . "[%date %-5level/%thread] %line %message%newline %exception" for debug messages.
     /// </para>
     /// </remarks>
-    public class FileLogger
+    public class ConsoleLogger
     {
         const string kReleasePattern = "[%date %-5level/%thread] %message%newline %exception";
         const string kDebugPattern = "[%date %-5level/%thread] %line %message%newline %exception";
-        const string kNonDebugFileName = "nohros-logger.log";
-        const string kDebugFileName = "nohros-logger.debug";
 
         ILog logger_;
-        static FileLogger current_process_logger_;
+        static ConsoleLogger current_process_logger_;
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the Logger class.
+        /// Initializes a new instance of the ConsoleLogger class.
         /// </summary>
-        /// <param name="name">The name of the logger.</param>
-        /// <remarks>
-        /// The logger is not configured here you need to call the <see cref="Configure"/> method to
-        /// configure the logger.
-        /// </remarks>
-        public FileLogger() { }
+        public ConsoleLogger() { }
 
         /// <summary>
         /// Initializes the singleton process's logger instance.
         /// </summary>
-        static FileLogger() {
-            current_process_logger_ = new FileLogger();
+        static ConsoleLogger() {
+            current_process_logger_ = new ConsoleLogger();
             current_process_logger_.Configure();
         }
         #endregion
@@ -61,24 +53,21 @@ namespace Nohros.Toolkit.Logging
         /// </summary>
         public void Configure() {
             // configure the release logger
-            FileAppender release_appender = new FileAppender();
+            ConsoleAppender release_appender = new ConsoleAppender();
             release_appender.Name = "ReleaseLogger";
-            release_appender.File = kNonDebugFileName;
-            release_appender.AppendToFile = true;
-            release_appender.LockingModel = new FileAppender.MinimalLock();
+            release_appender.Target = "Console.Out";
             release_appender.Layout = new PatternLayout(kReleasePattern);
             release_appender.Threshold = Level.Info;
 
             // configure the debug logger
-            FileAppender debug_appender = new FileAppender();
+            ConsoleAppender debug_appender = new ConsoleAppender();
             debug_appender.Name = "DebugAppender";
-            debug_appender.File = kDebugFileName;
-            debug_appender.LockingModel = new FileAppender.MinimalLock();
+            release_appender.Target = "Console.Out";
             debug_appender.Layout = new PatternLayout(kDebugPattern);
             debug_appender.Threshold = Level.Info;
 
             // append the loggers the the root and instantiate it.
-            Logger root =((Hierarchy)LogManager.GetRepository()).Root;
+            Logger root = ((Hierarchy)LogManager.GetRepository()).Root;
             root.AddAppender(release_appender);
             root.Repository.Configured = true;
 
@@ -88,7 +77,7 @@ namespace Nohros.Toolkit.Logging
         /// <summary>
         /// Gets the current process logger.
         /// </summary>
-        public static FileLogger ForCurrentProcess {
+        public static ConsoleLogger ForCurrentProcess {
             get { return current_process_logger_; }
         }
 
