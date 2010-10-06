@@ -9,6 +9,7 @@ using System.Reflection;
 using Nohros;
 using Nohros.Data;
 using Nohros.Configuration;
+using Nohros.Logging;
 
 namespace Nohros.Net
 {
@@ -136,7 +137,7 @@ namespace Nohros.Net
                 cached_file = UpdateFileCache(content_group, cache_key);
                 if (cached_file == null) {
                     // the files to merge are not found
-                    // TODO: log the exception
+                    FileLogger.ForCurrentProcess.Logger.Error("[GetMergedContent   Nohros.Net.MergeHttpHandler]   The files to merge are not found.");
                     context_.Response.StatusCode = kResourceNotFoundCode;
                     context_.Response.End();
                 }
@@ -167,8 +168,8 @@ namespace Nohros.Net
 
             try {
                 settings_ = NohrosConfiguration.DefaultConfiguration;
-            } catch (System.Configuration.ConfigurationErrorsException) {
-                // TODO: Log the exception
+            } catch (System.Configuration.ConfigurationErrorsException exception) {
+                FileLogger.ForCurrentProcess.Logger.Error("[GetMergedContent   Nohros.Net.MergeHttpHandler]", exception);
                 // the configuration file was not defined. we cant do nothing.
                 context.Response.StatusCode = kResourceNotFoundCode;
                 context.Response.End();
@@ -198,7 +199,7 @@ namespace Nohros.Net
             position = requested_file_path.IndexOf(kVirtualFilePathSuffix);
             if(position == -1) {
                 // the handler is configured incorrectly.
-                // TODO: log this unexpected behavior.
+                FileLogger.ForCurrentProcess.Logger.Error("[ProcessRequest   Nohros.Net.MergeHttpHandler] The handler is configured incorrectly. Check handlers session of the the web.config file");
                 context_.Response.StatusCode = kResourceNotFoundCode;
                 context_.Response.End();
                 return;

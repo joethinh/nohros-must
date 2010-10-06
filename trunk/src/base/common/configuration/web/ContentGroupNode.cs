@@ -50,21 +50,19 @@ namespace Nohros.Configuration
                     GetAttributeValue(node, kMimeTypeAttributeName, out mime_type) &&
                     GetAttributeValue(node, kPathRefAttributeName, out path_ref)
                 )) {
-                // TODO: log the exception.
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "a required attribute", NohrosConfiguration.kContentGroupNodeTree + ".any"));
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "a required attribute", NohrosConfiguration.kContentGroupNodeTree + ".any"), "[Parse   Nohros.Configuration.ContentGroupNode]");
             }
 
             // sanity check the build type
             if (build != "release" && build != "debug")
-                // TODO: log the exception.
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, build, NohrosConfiguration.kContentGroupNodeTree + "." + name + "." + kBuildAttributeName));
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, build, NohrosConfiguration.kContentGroupNodeTree + "." + name + "." + kBuildAttributeName), "[Parse   Nohros.Configuration.ContentGroupNode]");
 
             // resolve the base path
             RepositoryNode str;
             str = config.Repositories[path_ref] as RepositoryNode;
 
             if (str == null)
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, path_ref, NohrosConfiguration.kContentGroupNodeTree + "." + name + "." + kPathRefAttributeName));
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, path_ref, NohrosConfiguration.kContentGroupNodeTree + "." + name + "." + kPathRefAttributeName), "[Parse   Nohros.Configuration.ContentGroupNode]");
 
             build_type_ = (build == "release") ? BuildType.Release : BuildType.Debug;
             mime_type_ = mime_type;
@@ -74,8 +72,7 @@ namespace Nohros.Configuration
             foreach (XmlNode file_node in node.ChildNodes) {
                 if (string.Compare(file_node.Name, "add", StringComparison.OrdinalIgnoreCase) == 0) {
                     if (!GetAttributeValue(file_node, kFileNameAttributeName, out file_name)) {
-                        // TODO: log the exception.
-                        Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, kFileNameAttributeName, Name));
+                        Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, kFileNameAttributeName, Name), "[Parse   Nohros.Configuration.ContentGroupNode]");
                     }
                     files_.Add(file_name);
                 }

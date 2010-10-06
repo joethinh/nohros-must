@@ -8,6 +8,7 @@ using System.Web;
 using System.Reflection;
 using System.Configuration;
 
+using Nohros.Logging;
 using Nohros.Resources;
 using Nohros.Data;
 
@@ -196,8 +197,9 @@ namespace Nohros.Configuration
             }
             else
             {
-                // TODO: Log the exception
-                throw new System.IO.FileNotFoundException(string.Format(StringResources.Config_FileNotFound_Path, config_file_info.FullName));
+                string message = string.Format(StringResources.Config_FileNotFound_Path, config_file_info.FullName);
+                FileLogger.ForCurrentProcess.Logger.Error("[GetMergedContent   Nohros.Net.MergeHttpHandler]   " + message);
+                throw new System.IO.FileNotFoundException(message);
             }
         }
 

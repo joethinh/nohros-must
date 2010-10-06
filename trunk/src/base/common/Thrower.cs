@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 
+using Nohros.Logging;
 using Nohros.Resources;
 
 namespace Nohros
@@ -211,6 +212,11 @@ namespace Nohros
 
         internal static void ThrowConfigurationException(string message) {
             throw new System.Configuration.ConfigurationErrorsException(message);
+        }
+
+        internal static void ThrowConfigurationException(string message, string source) {
+            FileLogger.ForCurrentProcess.Logger.Error(source + "   " + message);
+            ThrowConfigurationException(message);
         }
 
         internal static void ThrowProviderException(ExceptionResource resource)
