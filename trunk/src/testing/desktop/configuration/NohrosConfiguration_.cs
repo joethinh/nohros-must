@@ -9,6 +9,7 @@ using NUnit.Framework;
 using Nohros.Security.Auth;
 using Nohros.Data;
 using Nohros.Configuration;
+using Nohros.Logging;
 
 namespace Nohros.Test.Configuration
 {
@@ -167,6 +168,13 @@ namespace Nohros.Test.Configuration
             Assert.AreEqual("auth-login-module", node.Name);
             Assert.AreEqual(node.Options.Count, 0);
             Assert.AreEqual(node.Type, typeof(Nohros.Test.Configuration.StringLoginModule));
+        }
+
+        [Test]
+        public void Threshold() {
+            NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
+            Assert.AreEqual(log4net.Core.Level.Debug, FileLogger.ForCurrentProcess.Threshold);
+            Assert.AreEqual(log4net.Core.Level.Debug, ConsoleLogger.ForCurrentProcess.Threshold);
         }
     }
 }

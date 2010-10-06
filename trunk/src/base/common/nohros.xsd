@@ -11,6 +11,19 @@
         <xs:element name="common" type="CommonSchema" minOccurs="0" maxOccurs="1"/>
         <xs:element name="web" type="WebSchema" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
+      <xs:attribute name="log4net-threshold" use="optional" default="INFO">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="ALL"/>
+            <xs:enumeration value="DEBUG"/>
+            <xs:enumeration value="INFO"/>
+            <xs:enumeration value="WARN"/>
+            <xs:enumeration value="ERROR"/>
+            <xs:enumeration value="FATAL"/>
+            <xs:enumeration value="OFF"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
 		</xs:complexType>
 	</xs:element>
 
