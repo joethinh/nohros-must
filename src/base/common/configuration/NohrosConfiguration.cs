@@ -5,6 +5,7 @@ using System.Xml;
 using System.IO;
 using System.Configuration;
 
+using Nohros.Logging;
 using Nohros.Data;
 using Nohros.Resources;
 
@@ -40,6 +41,8 @@ namespace Nohros.Configuration
         internal const string kChainNodeTree = kCommonNodeTree + "." + kChainsNodeName;
         internal const string kWebNodeTree = kWebNodeName;
         internal const string kContentGroupNodeTree = kWebNodeTree + "." + kContentGroupsNodeName;
+
+        const string kLog4NetThreshold = "log4net-threshold";
 
         protected static NohrosConfiguration default_process_config_;
 
@@ -137,6 +140,46 @@ namespace Nohros.Configuration
 
             if (root_node == null)
                 Thrower.ThrowConfigurationException(string.Format(StringResources.Config_KeyNotFound, kNohrosNodeName));
+
+            // the logger is used by some methods above and the level threshold of it
+            // could be overloaded by a configuration key. So, we need to do the first logger
+            // instantiation here and adjust the threshold level if needed.
+            log4net.Core.Level level = log4net.Core.Level.Info;
+            XmlAttribute attribute = root_node.Attributes[kLog4NetThreshold];
+            if (attribute != null) {
+                switch (attribute.Value.ToLower()) {
+                    case "all":
+                        level = log4net.Core.Level.All;
+                        break;
+
+                    case "debug":
+                        level = log4net.Core.Level.Debug;
+                        break;
+
+                    case "info":
+                        level = log4net.Core.Level.Info;
+                        break;
+
+                    case "warn":
+                        level = log4net.Core.Level.Warn;
+                        break;
+
+                    case "error":
+                        level = log4net.Core.Level.Error;
+                        break;
+
+                    case "fatal":
+                        level = log4net.Core.Level.Fatal;
+                        break;
+
+                    case "off":
+                        level = log4net.Core.Level.Off;
+                        break;
+                }
+                FileLogger.ForCurrentProcess.Threshold = level;
+                ConsoleLogger.ForCurrentProcess.Threshold = level;
+            }
+
 
             // parse the common node
             XmlNode node = IConfiguration.SelectNode(root_node, NohrosConfiguration.kCommonNodeName);
