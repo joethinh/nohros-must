@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Threading;
+using System.Configuration;
 
 using Nohros.Logging;
 using Nohros.Security.Auth;
@@ -37,15 +38,15 @@ namespace Nohros.Configuration
         public override void Parse(XmlNode node, NohrosConfiguration config) {
             string type, flag;
             if (!GetAttributeValue(node, kTypeAttributeName, out type))
-                Thrower.ThrowConfigurationException(StringResources.Auth_Config_Missing_LoginModuleType);
+                throw new ConfigurationErrorsException(StringResources.Auth_Config_Missing_LoginModuleType);
 
             // attempt to get the .NET type from the type string.
             type_ = Type.GetType(type);
             if (type_ == null)
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Auth_Config_InvalidModuleType, type));
+                throw new ConfigurationErrorsException(string.Format(StringResources.Auth_Config_InvalidModuleType, type));
 
             if (!GetAttributeValue(node, kFlagAttributeName, out flag))
-                Thrower.ThrowConfigurationException(StringResources.Auth_Config_Missing_ControlFlag);
+                throw new ConfigurationErrorsException(StringResources.Auth_Config_Missing_ControlFlag);
 
             flag = flag.ToLower();
 
@@ -59,7 +60,7 @@ namespace Nohros.Configuration
             else if(flag == "optional")
                 control_flag_ = LoginModuleControlFlag.OPTIONAL;
             else
-                Thrower.ThrowConfigurationException(StringResources.Auth_Config_InvalidControlFlag);
+                throw new ConfigurationErrorsException(StringResources.Auth_Config_InvalidControlFlag);
 
             options_ = GetOptions(node);
         }

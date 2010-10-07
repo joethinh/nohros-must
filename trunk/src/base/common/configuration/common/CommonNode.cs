@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.IO;
+using System.Configuration;
 
 using Nohros.Data;
 using Nohros.Resources;
@@ -45,7 +46,7 @@ namespace Nohros.Configuration
                     if (string.Compare(n.Name, "add") == 0) {
                         string name = null;
                         if (!GetAttributeValue(n, "name", out name))
-                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ErrorAt, "attribute name", NohrosConfiguration.kCommonNodeTree + "." + NohrosConfiguration.kRepositoryNodeName));
+                            throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, "attribute name", NohrosConfiguration.kCommonNodeTree + "." + NohrosConfiguration.kRepositoryNodeName));
 
                         RepositoryNode repository = new RepositoryNode(name);
                         repository.Parse(n, config);
@@ -64,7 +65,7 @@ namespace Nohros.Configuration
                     if (string.Compare(n.Name, "add") == 0) {
                         string name = null;
                         if (!(GetAttributeValue(n, "name", out name)))
-                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kCommonNodeTree + "." + NohrosConfiguration.kConnectionStringsNodeName));
+                            throw new ConfigurationErrorsException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kCommonNodeTree + "." + NohrosConfiguration.kConnectionStringsNodeName));
 
                         ConnectionStringNode conn_string_node = new ConnectionStringNode(name);
                         conn_string_node.Parse(n, config);
@@ -79,13 +80,18 @@ namespace Nohros.Configuration
 
                 ProviderType provider_type = default(ProviderType);
                 DictionaryValue<DataProviderNode> data_providers = null;
+                DictionaryValue<MessengerProviderNode> messenger_providers = null;
 
                 foreach (XmlNode provider_node in data_node.ChildNodes) {
-                    if (string.Compare(provider_node.Name, NohrosConfiguration.kDataProviderNodeName, StringComparison.OrdinalIgnoreCase) ==0) {
+                    if (string.Compare(provider_node.Name, NohrosConfiguration.kDataProviderNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
                         // parse the data providers
                         data_providers = new DictionaryValue<DataProviderNode>();
                         config.Nodes[NohrosConfiguration.kDataProviderNodeTree] = data_providers;
                         provider_type = ProviderType.Data;
+                    } else if (string.Compare(provider_node.Name, NohrosConfiguration.kMessengerProviderNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
+                        messenger_providers = new DictionaryValue<MessengerProviderNode>();
+                        config.Nodes[NohrosConfiguration.kMessengerProviderNodeTree] = messenger_providers;
+                        provider_type = ProviderType.Messenger;
                     }
 
                     foreach (XmlNode n in provider_node.ChildNodes) {
@@ -94,13 +100,19 @@ namespace Nohros.Configuration
                             // the name and type property are mandatory for all providers.
                             string name = null, type = null;
                             if (!(GetAttributeValue(n, "name", out name) && GetAttributeValue(n, "type", out type)))
-                                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name or type", NohrosConfiguration.kProvidersNodeTree));
+                                throw new ConfigurationErrorsException(string.Format(StringResources.Config_MissingAt, "name or type", NohrosConfiguration.kProvidersNodeTree));
 
                             switch (provider_type) {
                                 case ProviderType.Data:
                                     DataProviderNode provider = new DataProviderNode(name, type);
                                     provider.Parse(n, config);
                                     data_providers[provider.Name] = provider;
+                                    break;
+
+                                case ProviderType.Messenger:
+                                    MessengerProviderNode messenger = new MessengerProviderNode(name, type);
+                                    messenger.Parse(n, config);
+                                    messenger_providers[messenger.Name] = messenger;
                                     break;
                             }
                         }
@@ -118,7 +130,7 @@ namespace Nohros.Configuration
                     if (string.Compare(n.Name, NohrosConfiguration.kModuleNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
                         string name = null;
                         if (!GetAttributeValue(n, "name", out name))
-                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kLoginModuleNodeTree));
+                            throw new ConfigurationErrorsException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kLoginModuleNodeTree));
 
                         LoginModuleNode login_module = new LoginModuleNode(name);
                         login_module.Parse(n, config);
@@ -137,7 +149,7 @@ namespace Nohros.Configuration
                     if (string.Compare(n.Name, NohrosConfiguration.kChainNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
                         string name = null;
                         if (!GetAttributeValue(n, "name", out name))
-                            Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kChainNodeTree + "." + NohrosConfiguration.kChainNodeName));
+                            throw new ConfigurationErrorsException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kChainNodeTree + "." + NohrosConfiguration.kChainNodeName));
 
                         ChainNode chain = new ChainNode(name);
                         chain.Parse(n, config);

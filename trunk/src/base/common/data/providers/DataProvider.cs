@@ -82,9 +82,9 @@ namespace Nohros.Data
                 newObject = (T)Activator.CreateInstance(type, provider.DatabaseOwner, provider.ConnectionString);
             }
 
-            // if a instance_ could not be created a exception will be thrown.
+            // if a instance could not be created a exception will be thrown.
             if (newObject == null)
-                Thrower.ThrowProviderException(ExceptionResource.Provider_CreateInstance, null);
+                throw new ProviderException(string.Format(StringResources.Type_CreateInstanceOf, "IDataProvider"));
 
             newObject.DataSourceType = provider.DataSourceType;
 
@@ -114,15 +114,15 @@ namespace Nohros.Data
         protected static T CreateInstance(string provider_name, NohrosConfiguration config)
         {
             if (config == null)
-                Thrower.ThrowArgumentException(ExceptionResource.Config_InvalidObject);
+                throw new ProviderException(StringResources.Config_InvalidObject);
 
             CommonNode common = config.CommonNode;
             if (common == null)
-                Thrower.ThrowArgumentException(ExceptionResource.Config_InvalidObject);
+                throw new ProviderException(StringResources.Config_InvalidObject);
 
             DataProviderNode provider = config.DataProviders[provider_name] as DataProviderNode;
             if (provider == null)
-                Thrower.ThrowArgumentException(ExceptionResource.DataProvider_InvalidProvider);
+                throw new ProviderException(StringResources.Config_InvalidObject);
 
             return CreateInstance(provider);
         }

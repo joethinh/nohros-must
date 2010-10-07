@@ -2,20 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Nohros.Data;
 using Nohros.Configuration;
+using Nohros.Resources;
 
 namespace Nohros.Toolkit.Messaging
 {
     /// <summary>
     /// Serves as the base class for custom <see cref="Nohros.Toolkit.IMessenger"/>.
     /// </summary>
-    public class Messenger : IMessenger
+    public abstract class Messenger : IMessenger
     {
+        /// <summary>
+        /// The name of the messenger.
+        /// </summary>
+        protected string name_;
+
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the Messenger class.
+        /// Initializes a new instance of the Messenger class, using the specified messenger name.
         /// </summary>
-        public Messenger() { }
+        public Messenger(string name) {
+            name_ = name;
+        }
         #endregion
 
         /// <summary>
@@ -37,12 +46,19 @@ namespace Nohros.Toolkit.Messaging
         /// <exception cref="ArgumentNullException"><paramref name="provider"/> is null</exception>
         /// <exception cref="ProviderException">The type could not be created.</exception>
         /// <exception cref="ProviderException"><paramref name="provider"/> is invalid.</exception>
-        public IMessenger CreateInstace(MessengerProviderNode provider) {
+        public static IMessenger CreateInstance(MessengerProviderNode provider) {
             if (provider == null)
                 throw new ArgumentNullException("provider");
 
-            IMessenger new_object;
+            IMessenger new_object = null;
             Type type = ProviderHelper.GetTypeFromProviderNode(provider);
+            if (type != null)
+                new_object = Activator.CreateInstance(type, provider.Name) as IMessenger;
+
+            if (new_object == null)
+                throw new ProviderException(string.Format(StringResources.Type_CreateInstanceOf, "IMessenger"));
+
+            return new_object;
         }
 
         /// <summary>
@@ -59,5 +75,12 @@ namespace Nohros.Toolkit.Messaging
         /// from messaging system after a message is sent, when a applications needs to
         /// performs some post processing operation(ex. store the response into a database).</remarks>
         public abstract void ProcessResponse(IMessage message);
+
+        /// <summary>
+        /// Gets the provider name.
+        /// </summary>
+        public string Name {
+            get { return name_; }
+        }
     }
 }

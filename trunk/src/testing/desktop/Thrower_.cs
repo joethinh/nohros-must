@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Configuration;
 using NUnit.Framework;
 
 namespace Nohros.Test.Common
@@ -9,52 +10,51 @@ namespace Nohros.Test.Common
     public class Thrower_
     {
         [Test]
+        [ExpectedExceptionAttribute(typeof(ArgumentException))]
         public void ThrowArgumentException() {
-            Assert.Throws<ArgumentException>(delegate() {
-                Thrower.ThrowArgumentException(ExceptionResource.Argument_Empty);
-            });
+            Thrower.ThrowArgumentException(ExceptionResource.Argument_Empty);
         }
 
         [Test]
+        [ExpectedExceptionAttribute(typeof(ArgumentNullException))]
         public void ThrowArgumentNullException() {
-            Assert.Throws<ArgumentNullException>(delegate() {
-                Thrower.ThrowArgumentNullException(ExceptionArgument.any);
-            });
+            Thrower.ThrowArgumentNullException(ExceptionArgument.any);
         }
 
         [Test]
+        [ExpectedExceptionAttribute(typeof(ArgumentOutOfRangeException))]
         public void ThrowArgumentOutOfRangeException() {
-            Assert.Throws<ArgumentOutOfRangeException>(delegate() {
-                Thrower.ThrowArgumentOutOfRangeException(ExceptionArgument.any);
-            });
+            Thrower.ThrowArgumentOutOfRangeException(ExceptionArgument.any);
         }
 
         [Test]
+        [ExpectedExceptionAttribute(typeof(ArgumentException))]
         public void ThrowEmptyArgumentException() {
-            Assert.Throws<ArgumentException>(delegate() {
-                Thrower.ThrowEmptyArgumentException(ExceptionArgument.any);
-            });
+            Thrower.ThrowEmptyArgumentException(ExceptionArgument.any);
         }
 
         [Test]
+        [ExpectedExceptionAttribute(typeof(InvalidOperationException))]
         public void ThrowInvalidOperationException() {
-            Assert.Throws<InvalidOperationException>(delegate() {
-                Thrower.ThrowInvalidOperationException(ExceptionResource.Argument_Empty);
-            });
+            Thrower.ThrowInvalidOperationException(ExceptionResource.Argument_Empty);
         }
 
         [Test]
-        public void ThrowKeyNotFoundException() {
-            Assert.Throws<KeyNotFoundException>(delegate() {
-                Thrower.ThrowKeyNotFoundException();
-            });
-        }
-
-        [Test]
+        [ExpectedExceptionAttribute(typeof(ProviderException))]
         public void ThrowProviderException() {
-            Assert.Throws<ProviderException>(delegate() {
-                Thrower.ThrowProviderException(ExceptionResource.DataProvider_ConnectionString);
-            });
+            Thrower.ThrowProviderException(ExceptionResource.Arg_ArrayPlusOffTooSmall);
+        }
+
+        [Test]
+        [ExpectedExceptionAttribute(typeof(ConfigurationErrorsException))]
+        public void ThrowConfigurationException() {
+            Thrower.ThrowConfigurationException("message", "[Nohros.Test.Common.Thrower]");
+        }
+
+        [Test]
+        [ExpectedExceptionAttribute(typeof(ProviderException))]
+        public void ThrowConfigurationException_FileInvalid() {
+            Thrower.ThrowConfigurationException_FileInvalid();
         }
     }
 }

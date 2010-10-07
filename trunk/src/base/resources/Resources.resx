@@ -232,9 +232,6 @@
   <data name="JSON_UnquotedDictionaryKey" xml:space="preserve">
     <value>Dictionary keys must be quoted at "{0}".</value>
   </data>
-  <data name="Provider_CreateInstance" xml:space="preserve">
-    <value>Instance of the requested provider could not be created. Check the constructor implied by the respective provider interface.</value>
-  </data>
   <data name="Provider_LoadAssembly" xml:space="preserve">
     <value>The assembly could not be loaded. {0}.</value>
   </data>

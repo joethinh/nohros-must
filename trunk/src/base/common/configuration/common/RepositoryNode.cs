@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.IO;
+using System.Configuration;
 
 using Nohros.Resources;
 
@@ -41,7 +42,7 @@ namespace Nohros.Configuration
         public override void Parse(XmlNode node, NohrosConfiguration config) {
             string relative_path = null;
             if (!GetAttributeValue(node, "relative-path", out relative_path))
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ErrorAt, "attribute name", NohrosConfiguration.kRepositoryNodeTree + "." + name_));
+                throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, "attribute name", NohrosConfiguration.kRepositoryNodeTree + "." + name_));
 
             Path = relative_path;
         }
@@ -60,7 +61,7 @@ namespace Nohros.Configuration
                 // sanity check if the path is rooted. It must be relative to the application
                 // base directory.
                 if (System.IO.Path.IsPathRooted(value))
-                    Thrower.ThrowConfigurationException(string.Format(StringResources.Config_PathIsRooted, value));
+                    throw new ConfigurationErrorsException(string.Format(StringResources.Config_PathIsRooted, value));
 
                 path_ = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, value);
             }

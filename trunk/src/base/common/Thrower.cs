@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
+using System.Configuration;
 
 using Nohros.Logging;
 using Nohros.Resources;
@@ -31,15 +32,19 @@ namespace Nohros
     ///     C# source
     ///         Thrower.ThrowArgumentNullException(ExceptionArgument.key, ExceptionResource.ArgumentNull_Key);
     ///     IL code:m
-    ///         IL_0000:    ldc.i4.4
-    ///         IL_0001:    ldc.i4.5    25
-    ///         IL_0003:    call        void Nohros.Thrower::ThrowArgumentNullException(valurtype Nohros.ExceptionArgument, valuetype ExceptionResource)
-    ///         IL_0008:    ret
-    ///     which is 9 bytes in IL
+    ///         IL_0000:    ldc.i4.0
+    ///         IL_0001:    ldc.i4.0
+    ///         IL_0002:    call        void Nohros.Thrower::ThrowArgumentNullException(valuetype Nohros.ExceptionArgument, valuetype ExceptionResource)
+    ///         IL_0007:    ret
+    ///     which is 8 bytes in IL
     /// 
     /// This will also reduce the Jitted code size a lot.
     /// 
+    /// It is very important we do this for generic classes because we can easily generate the same code
+    /// multiple times for diferrent instantiation.
     /// 
+    /// Some methods produce the same Jited size as the common way to through exceptions and their exists here only to
+    /// avoid duplicated code.
     /// </code>
     /// </summary>
     internal class Thrower
@@ -53,8 +58,7 @@ namespace Nohros
         {
             string argumentName = null;
 
-            switch (argument)
-            {
+            switch (argument) {
                 case ExceptionArgument.index:
                     argumentName = "index";
                     break;
@@ -81,10 +85,6 @@ namespace Nohros
 
                 case ExceptionArgument.name:
                     argumentName = "name";
-                    break;
-
-                case ExceptionArgument.principal:
-                    argumentName = "principal";
                     break;
 
                 case ExceptionArgument.provider:
@@ -126,8 +126,7 @@ namespace Nohros
         /// <returns>A string representation of the specified <see cref="ExceptionResource"/></returns>
         internal static string GetResourceByName(ExceptionResource resource)
         {
-            switch(resource)
-            {
+            switch(resource) {
                 case ExceptionResource.Argument_AddingDuplicate:
                     return StringResources.Argument_AddingDuplicate;
 
@@ -137,32 +136,11 @@ namespace Nohros
                 case ExceptionResource.Argument_Empty:
                     return StringResources.Argument_Empty;
 
-                case ExceptionResource.DataProvider_ConnectionString:
-                    return StringResources.DataProvider_ConnectionString;
-
-                case ExceptionResource.Provider_CreateInstance:
-                    return StringResources.Provider_CreateInstance;
-
-                case ExceptionResource.DataProvider_Provider_Attributes:
-                    return StringResources.DataProvider_Provider_Attributes;
-
-                case ExceptionResource.DataProvider_InvalidProvider:
-                    return StringResources.DataProvider_InvalidProvider;
-
                 case ExceptionResource.ArgumentOutOfRange_Index:
                     return StringResources.ArgumentOutOfRange_Index;
                     
                 case ExceptionResource.Argument_InvalidOfLen:
                     return StringResources.Argument_InvalidOfLen;
-
-                case ExceptionResource.InvalidOperation_EmptyQueue:
-                    return StringResources.InvalidOperation_EmptyQueue;
-
-                case ExceptionResource.InvalidOperation_FullQueue:
-                    return StringResources.InvalidOperation_FullQueue;
-
-                case ExceptionResource.Config_InvalidObject:
-                    return StringResources.Config_InvalidObject;
 
                 default:
                     Debug.Assert(false, "The enum value is not defined, please checked ExceptionArgumentName Enum");
@@ -170,69 +148,75 @@ namespace Nohros
             }
         }
 
-        #region Throws
-        internal static void ThrowArgumentException(ExceptionResource resource)
-        {
+        #region size reduced methods
+        internal static void ThrowArgumentException(ExceptionResource resource) {
             throw new ArgumentException(GetResourceByName(resource));
         }
 
-        internal static void ThrowEmptyArgumentException(ExceptionArgument argument)
-        {
+        internal static void ThrowEmptyArgumentException(ExceptionArgument argument) {
             throw new ArgumentException(StringResources.Argument_Empty, GetArgumentName(argument));
         }
 
-        internal static void ThrowInvalidOperationException(ExceptionResource resource)
-        {
+        internal static void ThrowInvalidOperationException(ExceptionResource resource) {
             throw new InvalidOperationException(GetResourceByName(resource));
         }
 
-        internal static void ThrowArgumentNullException(ExceptionArgument argument)
-        {
+        internal static void ThrowArgumentNullException(ExceptionArgument argument) {
             throw new ArgumentNullException(GetArgumentName(argument));
         }
 
-        internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument)
-        {
+        internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument) {
             throw new ArgumentOutOfRangeException(GetArgumentName(argument));
         }
 
-        internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
-        {
+        internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource) {
             throw new ArgumentOutOfRangeException(GetArgumentName(argument), GetResourceByName(resource));
         }
 
-        internal static void ThrowKeyNotFoundException()
-        {
-            throw new KeyNotFoundException();
+        /// <summary>
+        /// Throws a <see cref="ConfigurationErrorsException"/> using the <see cref="StringResources.Config_FileInvalid"/>
+        /// like the exception message.
+        /// </summary>
+        internal static void ThrowConfigurationException_FileInvalid() {
+            throw new ConfigurationErrorsException(StringResources.Config_FileInvalid);
         }
+        #endregion
 
-        internal static void ThrowConfigurationException() {
-            throw new System.Configuration.ConfigurationErrorsException(StringResources.Config_FileInvalid);
-        }
-
-        internal static void ThrowConfigurationException(string message) {
-            throw new System.Configuration.ConfigurationErrorsException(message);
-        }
-
+        #region non size reduced methods
+        /// <summary>
+        /// Throws a <see cref="ConfigurationErrorsException"/> and logs the exception.
+        /// </summary>
+        /// <param name="message">The exception message.</param>
+        /// <param name="source">A string representing the exception source.</param>
+        /// <remarks>
+        /// The exception is logged by using the <see cref="FileLogger"/> class.
+        /// </remarks>
         internal static void ThrowConfigurationException(string message, string source) {
             FileLogger.ForCurrentProcess.Logger.Error(source + "   " + message);
-            ThrowConfigurationException(message);
+            throw new ConfigurationErrorsException(message);
         }
 
-        internal static void ThrowProviderException(ExceptionResource resource)
-        {
+        /// <summary>
+        /// Throws a <see cref="ProviderException"/>, using the specified resource name.
+        /// </summary>
+        internal static void ThrowProviderException(ExceptionResource resource) {
             throw new ProviderException(GetResourceByName(resource));
         }
 
-        internal static void ThrowProviderException(ExceptionResource resource, System.Exception innerException)
-        {
-            throw new ProviderException(GetResourceByName(resource), innerException);
+        /// <summary>
+        /// Throws a <see cref="ProviderException"/>, using the specified resource name and inner exception.
+        /// </summary>
+        internal static void ThrowProviderException(ExceptionResource resource, System.Exception inner_exception) {
+            throw new ProviderException(GetResourceByName(resource), inner_exception);
         }
         #endregion
     }
 
-    internal enum ExceptionArgument
-    {
+    #region Enums
+    /// <summary>
+    /// The convention for this enum is using the argument name as the enum name.
+    /// </summary>
+    internal enum ExceptionArgument {
         obj,
         index,
         arrayIndex,
@@ -240,7 +224,6 @@ namespace Nohros
         comparer,
         array,
         name,
-        principal,
         provider,
         type,
         value,
@@ -249,20 +232,16 @@ namespace Nohros
         capacity
     }
 
-    internal enum ExceptionResource
-    {
+    /// <summary>
+    /// The convention for this enum is using resource name as the enum name.
+    /// </summary>
+    internal enum ExceptionResource {
         Argument_AddingDuplicate = 0,
         Arg_ArrayPlusOffTooSmall = 1,
         Argument_Empty = 2,
-        DataProvider_ConnectionString = 3,
-        Provider_CreateInstance = 4,
-        DataProvider_Provider_Attributes = 5,
         Caching_Invalid_expiration_combination = 6,
-        DataProvider_InvalidProvider = 7,
         ArgumentOutOfRange_Index = 8,
-        Argument_InvalidOfLen = 9,
-        InvalidOperation_EmptyQueue = 10,
-        InvalidOperation_FullQueue = 11,
-        Config_InvalidObject = 12
+        Argument_InvalidOfLen = 9
     }
+    #endregion
 }

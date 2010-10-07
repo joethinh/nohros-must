@@ -19,7 +19,8 @@ using System.Runtime.InteropServices;
            InternalsVisibleTo("Nohros.Test.Data"),
            InternalsVisibleTo("Nohros.Test.Configuration"),
            InternalsVisibleTo("Nohros.Net"),
-           InternalsVisibleTo("Nohros.Desktop")]
+           InternalsVisibleTo("Nohros.Desktop"),
+           InternalsVisibleTo("Nohros.Toolkit")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -38,6 +39,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("0.5.3.32")]
-[assembly: AssemblyFileVersion("0.5.3.32")]
+[assembly: AssemblyVersion("0.5.3.98")]
+[assembly: AssemblyFileVersion("0.5.3.98")]
 

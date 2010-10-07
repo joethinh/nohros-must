@@ -21,7 +21,7 @@ namespace Nohros.Toolkit.Messaging
         /// Initializes a new instance of the MessengerChain, using the specified chain name.
         /// </summary>
         public MessengerChain(string name) {
-            name_ name;
+            name_ = name;
             messengers_ = new List<IMessenger>();
         }
         #endregion
@@ -38,18 +38,23 @@ namespace Nohros.Toolkit.Messaging
         /// <para>
         /// If a chain with name <paramref name="name"/> was not found. The returned chain will have no messegers.
         /// </para>
+        /// <para>
+        /// If a messenger of a chain could not be instantiate for any reason a <see cref="ProviderException"/> is
+        /// throw.
+        /// </para>
         /// </remarks>
-        MessengerChain FromConfiguration(string name, NohrosConfiguration config) {
+        static MessengerChain FromConfiguration(string name, NohrosConfiguration config) {
+            MessengerChain messenger_chain = new MessengerChain(name);
             ChainNode chain = config.Chains[name];
             if (chain != null) {
                 string[] nodes = chain.Nodes;
                 for (int i = 0, j = nodes.Length; i < j; i++) {
                     MessengerProviderNode node = config.MessengerProviders[nodes[i]];
-                    if (node != null) {
-                        Add(CreateInstance(node));
-                    }
+                    if (node != null)
+                        messenger_chain.Add(Messenger.CreateInstance(node));
                 }
             }
+            return messenger_chain;
         }
 
         /// <summary>
@@ -76,22 +81,21 @@ namespace Nohros.Toolkit.Messaging
             List<ErrorMessage> errors = new List<ErrorMessage>();
 
             foreach (IMessenger messenger in messengers_) {
-                // the try/catch block is used here to ensure that
-                // the message is received by all messengers.
+                // the try/catch block is used here to ensure that the message
+                // is delivered to all messengers.
                 try {
                     IMessage response = messenger.Send(message);
                     if (response != null)
                         messenger.ProcessResponse(response);
                 } catch(Exception exception) {
-                    FileLogger.ForCurrentProcess.Logger.Error("[Send   Nohros.Toolkit.Messaging.MessengerChain]", exception);
-                    errors.Add(new ErrorMessage(ex.Message));
+                    errors.Add(new ErrorMessage(exception.Message));
                 }
             }
             return errors;
         }
 
         /// <summary>
-        /// Gets the number of <see cref="IMessenger"/> object actually contained in the MessengerChain.
+        /// Gets the number of <see cref="IMessenger"/> objects actually contained in the MessengerChain.
         /// </summary>
         public int Count {
             get { return messengers_.Count; }

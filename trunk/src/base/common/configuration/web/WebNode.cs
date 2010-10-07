@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Configuration;
 
 using Nohros.Data;
 using Nohros.Resources;
@@ -52,7 +53,7 @@ namespace Nohros.Configuration
                 if (string.Compare(n.Name, "group", StringComparison.OrdinalIgnoreCase) == 0) {
                     string name;
                     if (!GetAttributeValue(n, "name", out name))
-                        Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kContentGroupNodeTree), "[Parse   Nohros.Configuration.WebNode]");
+                        Thrower.ThrowConfigurationException("[Parse   Nohros.Configuration.WebNode]", string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kContentGroupNodeTree));
 
                     ContentGroupNode content_group = new ContentGroupNode(name);
                     content_group.Parse(n, config);
