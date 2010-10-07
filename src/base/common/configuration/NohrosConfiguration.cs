@@ -24,7 +24,7 @@ namespace Nohros.Configuration
         internal const string kConnectionStringsNodeName = "connection-strings";
         internal const string kProvidersNodeName = "providers";
         internal const string kDataProviderNodeName = "data";
-        internal const string kMessengerProviderNodeName = "messengers";
+        internal const string kMessengerProviderNodeName = "messenger";
         internal const string kProviderNodeName = "provider";
         internal const string kLoginModulesNodeName = "login-modules";
         internal const string kModuleNodeName = "module";
@@ -117,7 +117,7 @@ namespace Nohros.Configuration
                 throw new ConfigurationErrorsException(string.Format(StringResources.Config_KeyNotFound, kConfigurationFileKey));
 
             if (Path.IsPathRooted(config_file_path))
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_PathIsRooted, config_file_path));
+                throw new ConfigurationErrorsException(string.Format(StringResources.Config_PathIsRooted, config_file_path));
 
             config_file_path = Path.Combine(Location, config_file_path);
 
@@ -141,7 +141,7 @@ namespace Nohros.Configuration
             }
 
             if (root_node == null)
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_KeyNotFound, kNohrosNodeName));
+                throw new ConfigurationErrorsException(string.Format(StringResources.Config_KeyNotFound, kNohrosNodeName));
 
             // the logger is used by some methods above and the level threshold of it
             // could be overloaded by a configuration key. So, we need to do the first logger

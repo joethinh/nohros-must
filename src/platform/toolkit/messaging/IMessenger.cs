@@ -13,6 +13,11 @@ namespace Nohros.Toolkit.Messaging
     public interface IMessenger
     {
         /// <summary>
+        /// Gets the name of the messenger.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
         /// Sends the message.
         /// </summary>
         /// <returns>A <see cref="IMessage"/> containing the response from the messaging system.</returns>

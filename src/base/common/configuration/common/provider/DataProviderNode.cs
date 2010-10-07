@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
 using System.IO;
+using System.Configuration;
 
 using Nohros.Resources;
 using Nohros.Data;
@@ -86,7 +87,7 @@ namespace Nohros.Configuration
 
             // the name, type and connection string parameters are mandatory.
             if (name_ == null || type_ == null || connection_string_ == null)
-                Thrower.ThrowProviderException((connection_string_ == null) ? ExceptionResource.DataProvider_ConnectionString : ExceptionResource.DataProvider_Provider_Attributes);
+                throw new ConfigurationErrorsException(StringResources.DataProvider_Provider_Attributes);
 
             // if the connection string node is a reference to a global value, we need to resolve it.
             ConnectionStringNode dbstring_node = config.ConnectionStrings[connection_string_];

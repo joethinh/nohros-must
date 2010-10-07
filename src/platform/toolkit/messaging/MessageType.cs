@@ -27,6 +27,11 @@ namespace Nohros.Toolkit.Messaging
         /// <summary>
         /// A error message. Used internally.
         /// </summary>
-        ErrorMessage
+        ErrorMessage = 3,
+
+        /// <summary>
+        /// A response message.
+        /// </summary>
+        ResponseMessage = 4
     }
 }

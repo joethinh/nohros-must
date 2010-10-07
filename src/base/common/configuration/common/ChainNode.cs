@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Configuration;
 
 using Nohros.Resources;
 
@@ -32,7 +33,7 @@ namespace Nohros.Configuration
                 if (string.Compare(n.Name, "node", StringComparison.OrdinalIgnoreCase) == 0) {
                     string name = null;
                     if (!GetAttributeValue(n, "name", out name))
-                        Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kChainNodeTree + "." + name_));
+                        throw new ConfigurationErrorsException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kChainNodeTree + "." + name_));
                     nodes.Add(name);
                 }
             }

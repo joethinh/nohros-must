@@ -78,8 +78,9 @@ namespace Nohros.Data
         /// <param name="item">The object to add to the TransferQueue. The value can be null for references types.</param>
         public void Enqueue(T item)
         {
-            if (_size == _array.Length)
-                Thrower.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_FullQueue);
+            // TODO: throw an exception
+            //if (_size == _array.Length)
+                //Thrower.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_FullQueue);
 
             _array[_tail] = item;
 
@@ -95,8 +96,9 @@ namespace Nohros.Data
         /// <returns>The object that is removed from the beginning of the TransferQueue.</returns>
         public T Dequeue()
         {
-            if (_size == 0)
-                Thrower.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_EmptyQueue);
+            // TODO: throw an exception
+            //if (_size == 0)
+                //Thrower.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_EmptyQueue);
 
             T local = _array[_head];
             _array[_head] = null;
@@ -112,8 +114,9 @@ namespace Nohros.Data
         /// <exception cref="InvalidOperationException">The TransferQueue is empty</exception>
         public T Peek()
         {
-            if (_size == 0)
-                Thrower.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_EmptyQueue);
+            // TODO: throw an exception
+            //if (_size == 0)
+                //Thrower.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_EmptyQueue);
             return _array[_head];
         }
 

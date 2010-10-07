@@ -69,6 +69,7 @@
     <Compile Include="messaging\MessengerChain.cs" />
     <Compile Include="messaging\Recipient.cs" />
     <Compile Include="messaging\RecipientType.cs" />
+    <Compile Include="messaging\ResponseMessage.cs" />
     <Compile Include="messaging\SmsMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">

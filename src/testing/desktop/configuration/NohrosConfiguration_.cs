@@ -121,7 +121,7 @@ namespace Nohros.Test.Configuration
         }
 
         [Test]
-        public void ProviderNode() {
+        public void DataProviderNode() {
             TestingConfiguration config = new TestingConfiguration();
             config.Load("desktop");
 
@@ -132,6 +132,18 @@ namespace Nohros.Test.Configuration
             Assert.AreEqual("SQLSERVER", node.ConnectionString);
             Assert.AreEqual("dbo", node.DatabaseOwner);
             Assert.AreEqual(DataSourceType.MsSql, node.DataSourceType);
+        }
+
+        [Test]
+        public void MessengerProviderNode() {
+            TestingConfiguration config = new TestingConfiguration();
+            config.Load("desktop");
+
+            MessengerProviderNode node = config.MessengerProviders["SmsMessenger"] as MessengerProviderNode;
+            Assert.IsNotNull(node);
+            Assert.AreEqual("SmsMessenger", node.Name);
+            Assert.AreEqual("Nohros.Test.Configuration.SmsMessenger, nohros.test.desktop", node.Type);
+            Assert.AreEqual(config.Location, node.AssemblyLocation);
         }
 
         [Test]

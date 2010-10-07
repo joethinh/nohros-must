@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="CommandLine_.cs" />
     <Compile Include="configuration\NohrosConfiguration_.cs" />
+    <Compile Include="configuration\SmsMessenger.cs" />
     <Compile Include="configuration\StringLoginModule.cs" />
     <Compile Include="data\type\collections\trees\AndersonTree_.cs" />
     <Compile Include="configuration\IConfiguration_.cs" />

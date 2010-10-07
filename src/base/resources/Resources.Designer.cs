@@ -404,15 +404,6 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Instance of the requested provider could not be created. Check the constructor implied by the respective provider interface..
-        /// </summary>
-        internal static string Provider_CreateInstance {
-            get {
-                return ResourceManager.GetString("Provider_CreateInstance", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The assembly could not be loaded. {0}..
         /// </summary>
         internal static string Provider_LoadAssembly {
