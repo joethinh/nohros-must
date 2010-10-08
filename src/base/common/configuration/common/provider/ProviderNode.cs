@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.IO;
+using System.Configuration;
 
 using Nohros.Resources;
 
@@ -41,17 +42,17 @@ namespace Nohros.Configuration
         /// </summary>
         /// <param name="node">The XML node to parse.</param>
         /// <param name="config">The <see cref="NohrosConfiguration"/> object related with the provider.</param>
-        /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a valid
+        /// <exception cref="ConfigurationErrorsException">The <paramref name="node"/> is not a valid
         /// representation of a data provider.</exception>
         internal void InternalParse(XmlNode node, NohrosConfiguration config) {
             string location = null;
 
-            if (GetAttributeValue(node, kAssemblyLocationKey, out location)) {
+            if (GetTrimmedAttributeValue(node, kAssemblyLocationKey, out location)) {
                 // if the provider assembly location property is a relative path we need to resolve it
-                // using the configuration file location.
-                if (location != null && !Path.IsPathRooted(location)) {
+                // using the configuration file location. An empty string will be resolved to the
+                // configuration file location.
+                if (location != null && !Path.IsPathRooted(location))
                     location = Path.Combine(config.Location, location);
-                }
                 assembly_location_ = location;
             }
         }
@@ -60,7 +61,7 @@ namespace Nohros.Configuration
         /// Parses a XML node that contains information about a provider.
         /// </summary>
         /// <param name="node">The XML node to parse.</param>
-        /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
+        /// <exception cref="ConfigurationErrorsException">The <paramref name="node"/> is not a
         /// valid representation of a provider.</exception>
         public override abstract void Parse(XmlNode node, NohrosConfiguration config);
 
@@ -69,7 +70,7 @@ namespace Nohros.Configuration
         /// </summary>
         /// <seealso cref="AssemblyQualifiedName"/>
         public string Type {
-            get { return type_; }
+            get { return type_;}
         }
 
         /// <summary>

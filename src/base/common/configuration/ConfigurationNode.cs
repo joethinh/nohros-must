@@ -50,6 +50,27 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
+        /// Gets the trimmed value of an attribute of a xml node.
+        /// </summary>
+        /// <param name="node">The node that contains the attribute.</param>
+        /// <param name="name">The name of the attribute.</param>
+        /// <param name="value">When this method returns contains the trimmed value of the attribute or null
+        /// if the value could not be retrieved.</param>
+        /// <returns>true if the atribbute retrieval operation is successful; otherwise false.</returns>
+        protected bool GetTrimmedAttributeValue(XmlNode node, string name, out string value) {
+            if (node == null || name == null)
+                throw new ArgumentNullException((node == null) ? "node" : "name");
+
+            XmlAttribute att = node.Attributes[name];
+            value = null;
+            if (att != null) {
+                value = att.Value.Trim();
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Parses a XML node that contains information about a configuration node.
         /// </summary>
         /// <param name="node">A XML node containing the data to parse.</param>
