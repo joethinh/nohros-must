@@ -25,7 +25,7 @@ namespace Nohros.Data
 
             Type type = null;
             // attempt to load .NET type of the provider. If the location of the assemlby is specified we
-            // need to load the assemlby and try to get the type from the loaded assembly. The name of the
+            // need to load the assembly and try to get the type from the loaded assembly. The name of the
             // assembly will be extracted from the provider type.
             if (provider.AssemblyLocation != null) {
                 string assembly_name = provider.Type;

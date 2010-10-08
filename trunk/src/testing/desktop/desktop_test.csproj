@@ -64,6 +64,7 @@
     <Compile Include="logging\FileLogger_.cs" />
     <Compile Include="toolkit\mailchecker\MailChecker_.cs" />
     <Compile Include="toolkit\mailchecker\SmtpReply_.cs" />
+    <Compile Include="toolkit\messaging\MessengerChain_.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\base\common\common.csproj">

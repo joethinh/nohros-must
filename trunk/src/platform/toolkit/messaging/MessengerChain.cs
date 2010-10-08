@@ -43,7 +43,7 @@ namespace Nohros.Toolkit.Messaging
         /// throw.
         /// </para>
         /// </remarks>
-        static MessengerChain FromConfiguration(string name, NohrosConfiguration config) {
+        public static MessengerChain FromConfiguration(string name, NohrosConfiguration config) {
             MessengerChain messenger_chain = new MessengerChain(name);
             ChainNode chain = config.Chains[name];
             if (chain != null) {
