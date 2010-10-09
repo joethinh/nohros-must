@@ -200,11 +200,11 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Gets the default application configuration file.
+        /// Gets the default nohros based application configuration object.
         /// </summary>
-        public static NohrosConfiguration DefaultConfiguration {
+        protected internal static NohrosConfiguration DefaultConfiguration {
             get { return default_process_config_; }
-            protected set { default_process_config_ = value; }
+            set { default_process_config_ = value; }
         }
 
         /// <summary>

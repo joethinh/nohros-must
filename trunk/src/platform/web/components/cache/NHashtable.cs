@@ -130,7 +130,7 @@ namespace Nohros.Net
         }
 
         /// <summary>
-        /// Initializes a new, empty instance_ of the Hashtable class using the specified initial capacity,
+        /// Initializes a new, empty instance of the Hashtable class using the specified initial capacity,
         /// load factor, and IEqualityComparer object.
         /// </summary>
         /// <param name="capacity">The approximate number of elements that the Hashtable object can initially contain.</param>
@@ -246,8 +246,7 @@ namespace Nohros.Net
             object obj = null;
 
             NHashtable nHash = ((HashCacheEntry)cacheEntry).RefTable;
-            if (nHash != null)
-            {
+            if (nHash != null) {
                 obj = nHash[cacheKey];
                 if(obj != null)
                     NCache.Insert(cacheKey, obj, null, (int)cacheEntry.SlidingExpiration.TotalSeconds, CacheItemPriority.Normal, new CacheItemRemovedCallback(NHashtable.ItemRemovedCallback));

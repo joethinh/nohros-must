@@ -39,8 +39,7 @@ namespace Nohros.Net
         }
         #endregion
 
-        public static void Clear()
-        {
+        public static void Clear() {
             IDictionaryEnumerator enumerator = _cache.GetEnumerator();
             ArrayList list = new ArrayList();
             while (enumerator.MoveNext()) {
@@ -51,8 +50,7 @@ namespace Nohros.Net
             }
         }
 
-        public static void RemoveByPattern(string pattern)
-        {
+        public static void RemoveByPattern(string pattern) {
             IDictionaryEnumerator enumerator = _cache.GetEnumerator();
             Regex regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
             while(enumerator.MoveNext())
@@ -62,8 +60,7 @@ namespace Nohros.Net
             }
         }
 
-        public static bool ContainsCacheEntry(string key)
-        {
+        public static bool ContainsCacheEntry(string key) {
             return CacheLockbox.ContainsCacheEntry(key);
         }
 
@@ -129,8 +126,12 @@ namespace Nohros.Net
         }
 
         public static void Insert(string key, object obj, CacheDependency dep, int seconds, CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback) {
+            Insert(key, obj, dep, DateTime.Now.AddSeconds((double)(Factor * seconds)), priority, onRemoveCallback);
+        }
+
+        public static void Insert(string key, object obj, CacheDependency dep, DateTime absolute_expiration, CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback) {
             if (obj != null) {
-                _cache.Insert(key, obj, dep, DateTime.Now.AddSeconds((double)(Factor * seconds)), TimeSpan.Zero, priority, onRemoveCallback);
+                _cache.Insert(key, obj, dep, absolute_expiration, TimeSpan.Zero, priority, onRemoveCallback);
             }
         }
         #endregion
@@ -146,23 +147,17 @@ namespace Nohros.Net
                 return null;
 
             object obj2 = null;
-            try
-            {
+            try {
                 obj2 = cacheLoader();
-            }
-            catch (Exception exception)
-            {
-                if (_cacheLoaderErrorDelegate != null)
-                {
-                    try
-                    {
+            } catch (Exception exception) {
+                if (_cacheLoaderErrorDelegate != null) {
+                    try {
                         _cacheLoaderErrorDelegate(key, exception);
                     }
                     catch { }
                 }
             }
-            if (obj2 != null)
-            {
+            if (obj2 != null) {
                 Insert(key, obj2, null, (int)cacheEntry.RefreshInterval.TotalSeconds, CacheItemPriority.Normal, new CacheItemRemovedCallback(NCache.ItemRemovedCallback));
                 CacheLockbox.UpdateCacheEntry(key, DateTime.Now);
             }
@@ -176,16 +171,14 @@ namespace Nohros.Net
                 CacheEntry cacheEntry = CacheLockbox.GetCacheEntry(key);
                 
                 // If the sliding expirarion was not reached...
-                if(cacheEntry.LastUse.Add(cacheEntry.SlidingExpiration) > DateTime.Now)
-                {
+                if(cacheEntry.LastUse.Add(cacheEntry.SlidingExpiration) > DateTime.Now) {
                     //... the object will be temporary inserted in cache...
                     _cache.Insert(key, value, null, DateTime.Now.Add(TimeSpan.FromSeconds(30.0)), TimeSpan.Zero, CacheItemPriority.Low, null);
 
                     //...reloaded, and reinserted in cache again.
                     ThreadPool.QueueUserWorkItem(delegate(object o) {
                         string s = o.ToString();
-                        lock(CacheLockbox.GetInternalLock(s))
-                        {
+                        lock(CacheLockbox.GetInternalLock(s)) {
                             InternalCallback(s);
                         }
                     },key);
