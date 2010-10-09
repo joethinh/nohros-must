@@ -46,6 +46,8 @@
     <Compile Include="components\cache\cachelock\CacheEntry.cs" />
     <Compile Include="components\cache\cachelock\CacheLockBox.cs" />
     <Compile Include="components\cache\cachelock\HashCacheEntry.cs" />
+    <Compile Include="components\cache\ITemporaryObject.cs" />
+    <Compile Include="components\cache\TemporaryObject.cs" />
     <Compile Include="components\cache\NHashtable.cs" />
     <Compile Include="components\cache\NCache.cs" />
     <Compile Include="components\LongRunningTask.cs" />
