@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema id="nohros"
-	targetNamespace="http://nohros.com/schemas/nohros.xsd"
+	targetNamespace="http://nohros.com/schemas/nohros"
 	elementFormDefault="qualified"
-	xmlns="http://nohros.com/schemas/nohros.xsd"
+	xmlns="http://nohros.com/schemas/nohros"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:element name="nohros">
@@ -27,12 +27,6 @@
       <xs:anyAttribute/>
     </xs:complexType>
   </xs:element>
-
-  <xs:complexType name="ConfigurationRepository">
-    <xs:attribute name="name" type="xs:string" use="required"/>
-    <xs:attribute name="path" type="xs:string" use="required"/>
-    <xs:attribute name="root" type="xs:string" use="required"/>
-  </xs:complexType>
   
   <xs:complexType name="CommonSchema">
     <xs:sequence minOccurs="0" maxOccurs="1">

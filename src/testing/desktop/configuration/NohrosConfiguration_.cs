@@ -143,7 +143,7 @@ namespace Nohros.Test.Configuration
             Assert.IsNotNull(node);
             Assert.AreEqual("SmsMessenger", node.Name);
             Assert.AreEqual("Nohros.Test.Configuration.SmsMessenger, nohros.test.desktop", node.Type);
-            Assert.AreEqual(config.Location, node.AssemblyLocation);
+            Assert.AreEqual(null, node.AssemblyLocation);
         }
 
         [Test]

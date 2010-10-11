@@ -204,19 +204,56 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Selects the first child <see cref="XmlNode"/> of the specified node that matches the specified name.
+        /// Selects the first sibling <see cref="XmlNode"/> of the specified node that matches the specified name.
         /// </summary>
         /// <param name="node">The parent node.</param>
-        /// <param name="name">The name of the node.</param>
-        /// <returns>The first child <see cref="XmlNode"/> of the <paramref name="node"/> that matches the XPath
-        /// query or null if no matching node is found.</returns>
-        internal static XmlNode SelectNode(XmlNode node, string name) {
-            if (node == null || name == null)
+        /// <param name="xpath">The name of the node.</param>
+        /// <returns>The first sibling <see cref="XmlNode"/> of the <paramref name="node"/> that matches the name
+        /// or null if no matching node is found.</returns>
+        /// <remarks>
+        /// Exists a bug into the .NET framework that causes the <see cref="XmlNode.SelectSingleNode"/> to work
+        /// incorrectly. When a XML document is explicit bounded to a schema(xmlns="shcema"), the following code
+        /// will return null:
+        /// <para>
+        ///     <code>
+        ///         doc.SelectSingleNode("/smsproject");
+        ///     </code>
+        /// </para>
+        /// This bug could be worked around by using a <see cref="XmlNamespaceManager"/> and the
+        /// <see cref="XmlNode.SelectSingleNode(string, XmlNamespaceManager)"/> method overload.
+        /// <para>
+        ///     <code>
+        ///         nsmgr = new XmlNamespaceManager(doc.NameTable);
+        ///         nsmgr.AddNamespace("tns", xpath);
+        ///         doc.SelectSingleNode("/tns:xpath", nsmgr);
+        ///     </code>
+        /// </para>
+        /// <para>
+        /// However, we need to add the prefix "tns" before every element in the XPath string,
+        /// <example>/tns:xpath</example>. This is not good, and cause a lot of problems.
+        /// </para>
+        /// <para>
+        /// The SelectNode method works like the <see cref="XmlNode.SelectSingleNode(string)"/> except for the above.
+        ///     . The namespaces are ignored while selecting a node
+        ///     . The "/" is the only recognized token. Any other token(., .., //, @, etc) will be considered
+        ///       as part of the node name.
+        /// </para>
+        /// </remarks>
+        internal protected static XmlNode SelectNode(XmlNode node, string xpath) {
+            if (node == null || xpath == null)
                 throw new ArgumentNullException((node == null) ? "name" : "xpath");
 
+            string name = xpath;
+            int delimiter_position = xpath.IndexOf('/', 0);
+            if (delimiter_position != -1)
+                name = xpath.Substring(0, delimiter_position);
+
             foreach (XmlNode n in node.ChildNodes) {
-                if (string.Compare(n.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
-                    return n;
+                if (string.Compare(n.Name, name, StringComparison.OrdinalIgnoreCase) == 0) {
+                    if (delimiter_position == -1)
+                        return n;
+                    return SelectNode(n, xpath.Substring(delimiter_position + 1));
+                }
             }
             return null;
         }
