@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Xml;
 
 using NUnit.Framework;
 using Nohros.Configuration;
@@ -39,6 +40,10 @@ namespace Nohros.Test.Configuration
             public bool Debug {
                 get { return debug_; }
                 internal set { debug_ = value; }
+            }
+
+            public XmlNode XmlElement {
+                get { return element_; }
             }
         }
         #endregion
@@ -109,6 +114,19 @@ namespace Nohros.Test.Configuration
         public void Version() {
             TestingConfiguration config = new TestingConfiguration();
             Assert.LessOrEqual(DateTime.Now, config.Version);
+        }
+
+        [Test]
+        public void SelectNode() {
+            TestingConfiguration config = new TestingConfiguration();
+            config.Load("desktop.config", "desktop");
+            Assert.IsNotNull(config.XmlElement);
+
+            XmlNode node = IConfiguration.SelectNode(config.XmlElement, "/nohros/common/providers");
+            Assert.IsNull(node);
+
+            node = IConfiguration.SelectNode(config.XmlElement, "nohros/common/providers");
+            Assert.IsNotNull(node);
         }
     }
 }
