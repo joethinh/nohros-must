@@ -11,50 +11,11 @@ namespace Nohros.Data
     /// </summary>
     public class ParameterizedString
     {
-        #region Parameter
-        protected class Parameter
-        {
-            int _position;
-            string _value;
+        string flat_string_;
+        char parameter_delimiter_char_;
+        char[] parameter_parsing_stop_chars_;
 
-            public Parameter()
-            {
-                _position = -1;
-                _value = null;
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="name">The name of the parameter</param>
-            /// <param name="position">The position where the data will be inserted into the base string</param>
-            public Parameter(int position, string value)
-            {
-                _position = position;
-                _value = value;
-            }
-
-            /// <summary>
-            /// Gets or sets the position of the parameter within the parameterized string.
-            /// </summary>
-            public int Position {
-                get { return _position; }
-                set { _position = value; }
-            }
-
-            public string Value {
-                get { return _value; }
-                set { _value = value; }
-            }
-        }
-        #endregion
-
-        object _sync = new object();
-
-        protected char _delimiter;
-        protected string _base;
-        protected char[] _breaks;
-        protected IDictionary<string, Parameter> _parms;
+        Dictionary<string, ParameterizedStringPart> parts_;
 
         #region .ctor
         /// <summary>
@@ -72,11 +33,11 @@ namespace Nohros.Data
         ///  [(delimiter)some text(break char)some text].
         /// </param>
         ///</param>
-        private ParameterizedString(int capacity, string str, char delimiter)
+        ParameterizedString(int capacity, string str, char delimiter)
         {
             _parms = new Dictionary<string, Parameter>(capacity);
             _base = str;
-            _delimiter = ((byte)delimiter < 32 || (byte)delimiter > 126) ? '$' : delimiter;
+            delimiter_ = ((byte)delimiter < 32 || (byte)delimiter > 126) ? '$' : delimiter;
         }
         public ParameterizedString(string str, char delimiter, char[] breaks): this(4, str, delimiter)
         {
@@ -84,7 +45,7 @@ namespace Nohros.Data
             Parameterize();
         }
         /// <summary>
-        /// Initializes a new instance_ of the ParameterizedString class by using
+        /// Initializes a new instance of the ParameterizedString class by using
         /// the specified base string.
         /// </summary>
         /// <param name="str">The base string</param>
@@ -152,7 +113,7 @@ namespace Nohros.Data
             for (int i = 0, j = str.Length; i < j; i++)
             {
                 c = str[i];
-                if(c == _delimiter)
+                if(c == delimiter_)
                 {
                     if(b)
                     {
@@ -189,7 +150,7 @@ namespace Nohros.Data
 
         public virtual ParameterizedString DeepCopy()
         {
-            ParameterizedString str = new ParameterizedString(this._parms.Count, this._base, this._delimiter);
+            ParameterizedString str = new ParameterizedString(this._parms.Count, this._base, this.delimiter_);
             
             lock (_sync)
             {

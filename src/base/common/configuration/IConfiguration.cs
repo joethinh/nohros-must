@@ -239,7 +239,7 @@ namespace Nohros.Configuration
         ///       as part of the node name.
         /// </para>
         /// </remarks>
-        internal protected static XmlNode SelectNode(XmlNode node, string xpath) {
+        public static XmlNode SelectNode(XmlNode node, string xpath) {
             if (node == null || xpath == null)
                 throw new ArgumentNullException((node == null) ? "name" : "xpath");
 
