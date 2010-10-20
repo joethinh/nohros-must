@@ -19,7 +19,7 @@ namespace Nohros.Data
         /// </summary>
         /// <param name="literal_text">A string that contains the parameterized string part.</param>
         public ParameterizedStringPart(string literal_text) {
-            parameter_name_ = null;
+            parameter_name_ = string.Empty;
             parameter_value_ = literal_text;
             is_parameter_ = false;
         }
@@ -76,6 +76,18 @@ namespace Nohros.Data
         }
 
         /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
+        /// <remarks>
+        /// This ethod overrides the <see cref="object.GetHashCode()"/> and more complete documentation might
+        /// be available in that topic.
+        /// </remarks>
+        public override int GetHashCode() {
+            return string.Concat(parameter_name_, parameter_value_).GetHashCode();
+        }
+
+        /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
         public string ParameterName {
@@ -86,7 +98,7 @@ namespace Nohros.Data
         /// Gets the literal string for this parameterized part.
         /// </summary>
         public string LiteralValue {
-            get { return parameter_name_ ?? string.Empty; }
+            get { return parameter_value_; }
         }
 
         /// <summary>
