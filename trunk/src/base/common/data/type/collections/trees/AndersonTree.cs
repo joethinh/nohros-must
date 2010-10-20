@@ -12,7 +12,12 @@ namespace Nohros.Data
     /// An implementation of a Anderson tree.
     /// </summary>
     /// <see cref="http://user.it.uu.se/~arnea/ps/gb.pdf"/>
-    public class AndersonTree<TKey, TValue> : ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable
+    public class AndersonTree<TKey, TValue> :
+        ICollection<KeyValuePair<TKey, TValue>>,
+        IEnumerable<KeyValuePair<TKey, TValue>>,
+        IInOrderVisitable<TKey, TValue>,
+        IInOrderVisitable<TValue>,
+        IEnumerable
     {
         /// <summary>
         /// The end of the tree
@@ -77,8 +82,7 @@ namespace Nohros.Data
         internal void Skew(ref AndersonTreeNode<TKey, TValue> node)
         {
             // non-sentinel node with a horizontal link
-            if (node.Level != 0 && node.Left.Level == node.Level)
-            {
+            if (node.Level != 0 && node.Left.Level == node.Level) {
                 // remove the horizontal link by rotating right
                 AndersonTreeNode<TKey, TValue> save = node.Left;
                 node.Left = save.Right;
@@ -96,10 +100,8 @@ namespace Nohros.Data
         internal void Split(ref AndersonTreeNode<TKey, TValue> node)
         {
             // non-sentinel node with a consecutive horizontal link
-            if (node.Level != 0 && node.Right.Right.Level == node.Level)
-            {
-                // remove the horizontal link by rotating left and
-                // increasing the node level
+            if (node.Level != 0 && node.Right.Right.Level == node.Level) {
+                // remove the horizontal link by rotating left and increasing the node level
                 AndersonTreeNode<TKey, TValue> save = node.Right;
                 node.Right = save.Left;
                 save.Left = node;
@@ -122,8 +124,7 @@ namespace Nohros.Data
                 Thrower.ThrowArgumentNullException(ExceptionArgument.key);
 
             int cmp;
-            for (AndersonTreeNode<TKey, TValue> node = _root; node.Level != 0; node = (cmp < 0) ? node.Left : node.Right)
-            {
+            for (AndersonTreeNode<TKey, TValue> node = _root; node.Level != 0; node = (cmp < 0) ? node.Left : node.Right) {
                 cmp = _comparer.Compare(key, node.Key);
                 if (cmp == 0)
                     return node;
@@ -132,34 +133,33 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Performs  in-order traversal on the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>
+        /// Performs in-order traversal on the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>
         /// </summary>
-        /// <param name="action">A method used to perform some action with each
-        /// each node in the tree</param>
-        /// <remarks>The <paramref name="action"/> must return true in order to allow the
-        /// traversal to continue</remarks>
+        /// <param name="action">A method used to perform some action with each node in the tree.</param>
+        /// <remarks>The <paramref name="action"/> must return true in order to allow the traversal
+        /// to continue.</remarks>
         internal bool InOrderTreeWalk(TreeWalkAction<TKey, TValue> action)
         {
-            if (_root.Level != 0)
-            {
+            if (_root.Level != 0) {
                 Stack<AndersonTreeNode<TKey, TValue>> stack = new Stack<AndersonTreeNode<TKey, TValue>>(2 * ((int)Math.Log((double)(_count +1))));
                 AndersonTreeNode<TKey, TValue> node = _root;
-                while (node.Level != 0)
-                {
+
+                // traverse the left branch of the tree until reach a sentinel node.
+                while (node.Level != 0) {
                     stack.Push(node);
                     node = node.Left;
                 }
-                while (stack.Count != 0)
-                {
+
+                while (stack.Count != 0) {
                     node = stack.Pop();
+
                     if (!action(node))
-                    {
                         return false;
-                    }
+
+                    // traverse the right branch of the current node and store then into the
+                    // execution stack.
                     for (AndersonTreeNode<TKey, TValue> node2 = node.Right; node2.Level != 0; node2 = node2.Left)
-                    {
                         stack.Push(node2);
-                    }
                 }
             }
             return true;
@@ -171,14 +171,12 @@ namespace Nohros.Data
         /// <param name="key">The key of the value to insert into the tree</param>
         /// <param name="value">The value to insert into the tree</param>
         /// <param name="add">a value indicating when the item will be added or modified</param>
-        private void Insert(TKey key, TValue value, bool add)
-        {
+        private void Insert(TKey key, TValue value, bool add) {
             if (key == null)
                 Thrower.ThrowArgumentNullException(ExceptionArgument.key);
 
             // empty tree
-            if (_root.Level == 0)
-            {
+            if (_root.Level == 0) {
                 _root = new AndersonTreeNode<TKey, TValue>(key, value, sentinel);
                 _count++;
                 return;
@@ -193,13 +191,12 @@ namespace Nohros.Data
             //    throw an exception - no duplicate items allowed.
             //  - If a leaf is reached, insert the item in the correct place.
             //  - Else, traverse the tree further.
-            while (true)
-            {
+            while (true) {
                 path.Add(node);
 
                 cmp = _comparer.Compare(key, node.Key);
-                if (cmp == 0)
-                {
+                if (cmp == 0) {
+
                     if (add)
                         Thrower.ThrowArgumentException(ExceptionResource.Argument_AddingDuplicate);
 
@@ -222,8 +219,7 @@ namespace Nohros.Data
 
             // Walk back and rebalance
             int top = path.Count;
-            while (--top >= 0)
-            {
+            while (--top >= 0) {
                 AndersonTreeNode<TKey, TValue> n = path[top];
 
                 //which child ?
@@ -248,14 +244,12 @@ namespace Nohros.Data
         /// <returns>A <see cref="IEnumerator&lt;,&gt;"/>that can be used to iterate through the collection</returns>
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            if (_root.Level != 0)
-            {
+            if (_root.Level != 0) {
                 Stack<AndersonTreeNode<TKey, TValue>> stack = new Stack<AndersonTreeNode<TKey, TValue>>();
 
                 stack.Push(_root);
 
-                while (stack.Count > 0)
-                {
+                while (stack.Count > 0) {
                     AndersonTreeNode<TKey, TValue> node = stack.Pop();
 
                     KeyValuePair<TKey, TValue> keyValuePair = new KeyValuePair<TKey, TValue>(node.Key, node.Value);
@@ -263,17 +257,51 @@ namespace Nohros.Data
                     yield return keyValuePair;
 
                     if (node.Left.Level != 0)
-                    {
                         stack.Push(node.Left);
-                    }
 
                     if (node.Right.Level != 0)
-                    {
                         stack.Push(node.Right);
-                    }
                 }
             }
         }
+
+        #region IInOrderVisitable
+        /// <summary>
+        /// Accepts the specified visitor and allow it to visit every node of the tree.
+        /// </summary>
+        /// <param name="visitor">The visitor to accepts.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="visitor"/> is a null reference</exception>
+        public void Accept(InOrderVisitor<TValue> visitor) {
+            if (visitor == null)
+                throw new ArgumentNullException("visitor");
+
+            InOrderTreeWalk(new TreeWalkAction<TKey, TValue>(
+                delegate(AndersonTreeNode<TKey, TValue> node)
+                {
+                    visitor.Visit(node.Value);
+                    return visitor.HasCompleted;
+                })
+            );
+        }
+
+        /// <summary>
+        /// Accepts the specified visitor and allow it to visit every node of the tree.
+        /// </summary>
+        /// <param name="visitor">The visitor to accepts.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="visitor"/> is a null reference</exception>
+        public void Accept(InOrderVisitor<TKey, TValue> visitor) {
+            if (visitor == null)
+                throw new ArgumentNullException("visitor");
+
+            InOrderTreeWalk(new TreeWalkAction<TKey, TValue>(
+                delegate(AndersonTreeNode<TKey, TValue> node)
+                {
+                    visitor.Visit(node.Key, node.Value);
+                    return visitor.HasCompleted;
+                })
+            );
+        }
+        #endregion
 
         #region ICollection<KeyValuePair<TKey, TValue>> members
 
@@ -583,16 +611,14 @@ namespace Nohros.Data
         /// <exception cref="KeyNotFoundException">The key does not exists in the tree</exception>
         public TValue this[TKey key]
         {
-            get
-            {
+            get {
                 AndersonTreeNode<TKey, TValue> node = FindNode(key);
                 if (node.Level == 0)
                     throw new KeyNotFoundException("key");
 
                 return node.Value;
             }
-            set
-            {
+            set {
                 Insert(key, value, false);
             }
         }

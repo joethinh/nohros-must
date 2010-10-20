@@ -72,6 +72,8 @@
     <Compile Include="data\StringMap.cs" />
     <Compile Include="configuration\web\WebNode.cs" />
     <Compile Include="data\CacheEntry.cs" />
+    <Compile Include="data\type\collections\IInOrderVisitable.cs" />
+    <Compile Include="data\type\collections\InOrderVisitor.cs" />
     <Compile Include="data\type\collections\trees\AndersonTree.cs" />
     <Compile Include="data\type\collections\trees\AndersonTreeNode.cs" />
     <Compile Include="data\ComparisonComparer.cs" />
@@ -99,7 +101,9 @@
     <Compile Include="data\type\collections\values\StringValue.cs" />
     <Compile Include="data\type\collections\values\Value.cs" />
     <Compile Include="data\type\collections\values\ValueType.cs" />
+    <Compile Include="data\type\collections\IVisitable.cs" />
     <Compile Include="data\type\IPointer.cs" />
+    <Compile Include="data\type\IVisitor.cs" />
     <Compile Include="data\type\Pointer.cs" />
     <Compile Include="logging\ConsoleLogger.cs" />
     <Compile Include="logging\FileLogger.cs" />
@@ -154,7 +158,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
