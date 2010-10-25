@@ -166,6 +166,38 @@ namespace Nohros.Data
         }
 
         /// <summary>
+        /// Performs reverse in-order traversal on the <see cref="AndersonTree&lt;TKey,TValue&gt;"/>
+        /// </summary>
+        /// <param name="action">A method used to perform some action with each node in the tree.</param>
+        /// <remarks>The <paramref name="action"/> must return true in order to allow the traversal
+        /// to continue.</remarks>
+        internal bool ReverseInOrderTreeWalk(TreeWalkAction<TKey, TValue> action) {
+            if (_root.Level != 0) {
+                Stack<AndersonTreeNode<TKey, TValue>> stack = new Stack<AndersonTreeNode<TKey, TValue>>(2 * ((int)Math.Log((double)(_count + 1))));
+                AndersonTreeNode<TKey, TValue> node = _root;
+
+                // traverse the left branch of the tree until reach a sentinel node.
+                while (node.Level != 0) {
+                    stack.Push(node);
+                    node = node.Right;
+                }
+
+                while (stack.Count != 0) {
+                    node = stack.Pop();
+
+                    if (!action(node))
+                        return false;
+
+                    // traverse the right branch of the current node and store then into the
+                    // execution stack.
+                    for (AndersonTreeNode<TKey, TValue> node2 = node.Left; node2.Level != 0; node2 = node2.Right)
+                        stack.Push(node2);
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Inserts an item to the AndersonTree
         /// </summary>
         /// <param name="key">The key of the value to insert into the tree</param>
@@ -270,36 +302,44 @@ namespace Nohros.Data
         /// Accepts the specified visitor and allow it to visit every node of the tree.
         /// </summary>
         /// <param name="visitor">The visitor to accepts.</param>
+        /// <param name="reverse_order">A value indicating if the elements will be visit in the reverse order or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="visitor"/> is a null reference</exception>
-        public void Accept(InOrderVisitor<TValue> visitor) {
+        public void Accept(InOrderVisitor<TValue> visitor, bool reverse) {
             if (visitor == null)
                 throw new ArgumentNullException("visitor");
 
-            InOrderTreeWalk(new TreeWalkAction<TKey, TValue>(
-                delegate(AndersonTreeNode<TKey, TValue> node)
-                {
+            TreeWalkAction<TKey, TValue> on_tree_walk =
+                new TreeWalkAction<TKey, TValue>(delegate(AndersonTreeNode<TKey, TValue> node) {
                     visitor.Visit(node.Value);
                     return visitor.HasCompleted;
-                })
-            );
+                });
+
+            if (reverse)
+                ReverseInOrderTreeWalk(on_tree_walk);
+            else
+                InOrderTreeWalk(on_tree_walk);
         }
 
         /// <summary>
         /// Accepts the specified visitor and allow it to visit every node of the tree.
         /// </summary>
         /// <param name="visitor">The visitor to accepts.</param>
+        /// <param name="reverse_order">A value indicating if the elements will be visit in the reverse order or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="visitor"/> is a null reference</exception>
-        public void Accept(InOrderVisitor<TKey, TValue> visitor) {
+        public void Accept(InOrderVisitor<TKey, TValue> visitor, bool reverse) {
             if (visitor == null)
                 throw new ArgumentNullException("visitor");
 
-            InOrderTreeWalk(new TreeWalkAction<TKey, TValue>(
-                delegate(AndersonTreeNode<TKey, TValue> node)
-                {
-                    visitor.Visit(node.Key, node.Value);
-                    return visitor.HasCompleted;
-                })
-            );
+                TreeWalkAction<TKey, TValue> on_tree_walk =
+                    new TreeWalkAction<TKey, TValue>(delegate(AndersonTreeNode<TKey, TValue> node) {
+                        visitor.Visit(node.Key, node.Value);
+                        return visitor.HasCompleted;
+                    });
+
+                if (reverse)
+                    ReverseInOrderTreeWalk(on_tree_walk);
+                else
+                    InOrderTreeWalk(on_tree_walk);
         }
         #endregion
 
