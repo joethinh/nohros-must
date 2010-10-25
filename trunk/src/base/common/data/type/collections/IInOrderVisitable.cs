@@ -16,9 +16,10 @@ namespace Nohros.Data
         /// <summary>
         /// Accepts the specified visitor.
         /// </summary>
-        /// <param name="visitor">The visitor to accepts.</param>
+        /// <param name="visitor">The visitor to accepts</param>
+        /// <param name="reverse_order">A value indicating if the elements will be visit in the reverse order or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="visitor"/> is a null reference</exception>
-        void Accept(InOrderVisitor<T> visitor);
+        void Accept(InOrderVisitor<T> visitor, bool reverse_order);
     }
 
     /// <summary>
@@ -33,8 +34,9 @@ namespace Nohros.Data
         /// <summary>
         /// Accepts the specified visitor.
         /// </summary>
-        /// <param name="visitor">The visitor to accepts.</param>
+        /// <param name="visitor">The visitor to accepts</param>
+        /// <param name="reverse_order">A value indicating if the elements will be visit in the reverse order or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="visitor"/> is a null reference</exception>
-        void Accept(InOrderVisitor<T1, T2> visitor);
+        void Accept(InOrderVisitor<T1, T2> visitor, bool reverse_order);
     }
 }
