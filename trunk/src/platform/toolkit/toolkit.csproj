@@ -14,7 +14,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>$(SolutionDir)bin\debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -22,10 +22,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>$(SolutionDir)bin\release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>$(SolutionDir)..\docs\nohros.toolkit.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
@@ -58,19 +59,21 @@
     <Compile Include="dnslookup\resolver.cs" />
     <Compile Include="mailchecker\smtpreply.cs" />
     <Compile Include="mailchecker\smtpclient.cs" />
-    <Compile Include="messaging\ErrorMessage.cs" />
-    <Compile Include="messaging\IMessage.cs" />
+    <Compile Include="messaging\messages\IMessage.cs" />
     <Compile Include="messaging\IMessenger.cs" />
-    <Compile Include="messaging\MailMessage.cs" />
-    <Compile Include="messaging\Message.cs" />
-    <Compile Include="messaging\MessageType.cs" />
-    <Compile Include="messaging\IRecipient.cs" />
+    <Compile Include="messaging\messages\EmailMessage.cs" />
+    <Compile Include="messaging\messages\Message.cs" />
+    <Compile Include="messaging\messages\ResponseMessageType.cs" />
+    <Compile Include="messaging\agents\EmailAgent.cs" />
+    <Compile Include="messaging\agents\IAgent.cs" />
     <Compile Include="messaging\Messenger.cs" />
     <Compile Include="messaging\MessengerChain.cs" />
-    <Compile Include="messaging\Recipient.cs" />
+    <Compile Include="messaging\agents\Agent.cs" />
     <Compile Include="messaging\RecipientType.cs" />
-    <Compile Include="messaging\ResponseMessage.cs" />
-    <Compile Include="messaging\SmsMessage.cs" />
+    <Compile Include="messaging\messages\ResponseMessage.cs" />
+    <Compile Include="messaging\messages\SmsMessage.cs" />
+    <Compile Include="messaging\SmtpMessenger.cs" />
+    <Compile Include="messaging\ProcessResponseEventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>

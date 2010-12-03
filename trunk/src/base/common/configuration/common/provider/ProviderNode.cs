@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -15,8 +16,11 @@ namespace Nohros.Configuration
     public abstract class ProviderNode : ConfigurationNode, IProviderNode
     {
         const string kAssemblyLocationKey = "assembly-location";
+        const string kNameAttribute = "name";
+        const string kValueAttribute = "value";
 
         string assembly_location_;
+        IDictionary<string, string> options_;
 
         /// <summary>
         /// The assembly-qualified name of the provider type.
@@ -34,6 +38,7 @@ namespace Nohros.Configuration
             if (type == null)
                 throw new ArgumentNullException("type");
             type_ = type;
+            options_ = null;
         }
         #endregion
 
@@ -55,6 +60,24 @@ namespace Nohros.Configuration
                     location = Path.Combine(config.Location, location);
                 assembly_location_ = location;
             }
+
+            options_ = GetOptions(node);
+        }
+
+        /// <summary>
+        /// Gets the options configure for a <see cref="Provider"/> from the specified <see cref="XmlNode"/> provider node.
+        /// </summary>
+        /// <param name="node">A <see cref="XmlNode"/> node that represents a provider.</param>
+        /// <returns>A <see cref="IDictionary&gt;string, string&lt;"/> containing the options configured for a provider.</returns>
+        IDictionary<string, string> GetOptions(XmlNode node) {
+            Dictionary<string, string> options = new Dictionary<string, string>();
+            foreach (XmlNode n in node.ChildNodes) {
+                string name, value;
+                if (!(GetAttributeValue(n, kNameAttribute, out name) && GetAttributeValue(n, kValueAttribute, out value)))
+                    throw new ConfigurationErrorsException(string.Format(StringResources.Provider_Attributes, "name", NohrosConfiguration.kProvidersNodeTree + "." + name_ + ".option"));
+                options[name] = value;
+            }
+            return options;
         }
 
         /// <summary>
@@ -70,18 +93,42 @@ namespace Nohros.Configuration
         /// </summary>
         /// <seealso cref="AssemblyQualifiedName"/>
         public string Type {
-            get { return type_;}
+            get { return type_; }
+            internal set { type_ = value; }
         }
 
         /// <summary>
         /// Gets a string representing the fully qualified path to the directory where
         /// the assembly associated with the provider is located.
         /// </summary>
+        /// <value>
+        /// The fully qualified path to the folder where the provider assembly is stored.
+        /// </value>
         /// <remarks>
         /// The AssemblyLocation must be an absolute path or a path relative to the configuration file.
         /// </remarks>
         public string AssemblyLocation {
             get { return assembly_location_; }
+            set { assembly_location_ = value; }
+        }
+
+        /// <summary>
+        /// Gets a collection of key/value pairs containing the options configured for a provider.
+        /// </summary>
+        /// <value>
+        /// A collection of key/value pairs representing the options configured for the provider.
+        /// </value>
+        /// <remarks>The <see cref="Options"/> represents the options configured for a <see cref="Provider"/>
+        /// by a user in the configuration repository. The options are defined by the <see cref="Provider"/> itself
+        /// and control the behavior within it. For example a <see cref="Provider"/> may define options
+        /// to support debugging/testing capabilities. Options are defined using a key-value syntaxm such as <c>debug=true</c>.
+        /// The <see cref="Provider"/> stores the options as a <see cref="IDictionary&gt;string, string&lt;"/> so that the
+        /// values may be retrieved using the key. Note that there is no limit to the number of options a <see cref="Provider"/>
+        /// chooses to define.
+        /// </remarks>
+        public IDictionary<string, string> Options {
+            get { return options_; }
+            set { options_ = value; }
         }
     }
 }

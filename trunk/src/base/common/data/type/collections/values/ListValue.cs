@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Data
+namespace Nohros.Data.Collections
 {
     public class ListValue : Value
     {

@@ -8,6 +8,7 @@ using System.Configuration;
 
 using Nohros.Resources;
 using Nohros.Data;
+using Nohros.Data.Providers;
 
 namespace Nohros.Configuration
 {
@@ -31,15 +32,8 @@ namespace Nohros.Configuration
         /// Initializes a new instance_ of the DataProviderNode.
         /// </summary>
         /// <param name="name">The name of the data provider.</param>
-        /// <param name="type">The data type of the provider.</param>
-        /// <remarks>
-        /// The connection string and database owner of a provider is declared as a reference to a connection string
-        /// declared on the connection-strings node of the configuration file. These references will be resolved
-        /// through the specified common_node. If a reference could not be resolved we assume the reference as
-        /// the final data.
-        /// </remarks>
+        /// <param name="type">The assembly-qualified type of the provider.</param>
         public DataProviderNode(string name, string type): base(name, type) {
-            attributes_ = new NameValueCollection();
             database_owner_ = "dbo";
             connection_string_ = null;
         }
@@ -54,40 +48,24 @@ namespace Nohros.Configuration
         public override void Parse(XmlNode node, NohrosConfiguration config) {
             InternalParse(node, config);
 
+            string attribute;
             bool connstring_is_encrypted = false;
-            XmlAttributeCollection attributes = node.Attributes;
-            for (int i = 0, j = attributes.Count; i < j; i++) {
-                XmlAttribute attribute = attributes[i];
-                switch (attribute.Name) {
-                    case kTypeKey:
-                        type_ = attribute.Value;
-                        break;
 
-                    case kConnectionStringKey:
-                        connection_string_ = attribute.Value;
-                        break;
-
-                    case kDataBaseOwnerKey:
-                        database_owner_ = attribute.Value;
-                        break;
-
-                    case kIsEncryptedKey:
-                        connstring_is_encrypted = (string.Compare("true", attribute.Value, StringComparison.OrdinalIgnoreCase) == 0) ? true : false;
-                        break;
-
-                    case kDataSourceTypeKey:
-                        data_source_ = DataHelper.ParseStringEnum<DataSourceType>(attribute.Value, DataSourceType.Unknown);
-                        break;
-
-                    default:
-                        attributes_.Add(attribute.Name, attribute.Value);
-                        break;
-                }
-            }
-
-            // the name, type and connection string parameters are mandatory.
-            if (name_ == null || type_ == null || connection_string_ == null)
+            // "connection-string" attribute is mandatory.
+            if (!GetAttributeValue(node, kConnectionStringKey, out connection_string_))
                 throw new ConfigurationErrorsException(StringResources.DataProvider_Provider_Attributes);
+
+            // get the "database-owner" attribute
+            if (!GetAttributeValue(node, kDataBaseOwnerKey, out database_owner_))
+                database_owner_ = "dbo";
+
+            // get the "encrypted" attribute
+            GetAttributeValue(node, kIsEncryptedKey, out attribute);
+            connstring_is_encrypted = (string.Compare("true", attribute, StringComparison.OrdinalIgnoreCase) == 0) ? true : false;
+
+            // get the "data-source-type" attribute
+            GetAttributeValue(node, kDataSourceTypeKey, out attribute);
+            DataHelper.ParseStringEnum<DataSourceType>(attribute, DataSourceType.Unknown);
 
             // if the connection string node is a reference to a global value, we need to resolve it.
             ConnectionStringNode dbstring_node = config.ConnectionStrings[connection_string_];

@@ -12,7 +12,7 @@ namespace Nohros.Data
         Comparison<T> _comparison;
 
         /// <summary>
-        /// Initializes a new instance_ of the <see cref="ComparisonComparer"/> class.
+        /// Initializes a new instance of the <see cref="ComparisonComparer"/> class.
         /// </summary>
         /// <exception cref="ArgumentNullException">comparison is null</exception>
         public ComparisonComparer(Comparison<T> comparison)

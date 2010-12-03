@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 
 using Nohros.Data;
+using Nohros.Data.Collections;
 
 namespace Nohros.Test.Data.Type
 {

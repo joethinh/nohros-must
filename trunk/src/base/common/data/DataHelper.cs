@@ -7,6 +7,7 @@ using System.Reflection;
 using System.IO;
 
 using Nohros.Resources;
+using Nohros.Data.TransferObjects;
 
 namespace Nohros.Data
 {

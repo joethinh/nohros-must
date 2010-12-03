@@ -7,44 +7,48 @@ namespace Nohros.Toolkit.Messaging
     /// <summary>
     /// Serves as the base class for custom <see cref="Nohros.Toolkit.IMessage"/>.
     /// </summary>
+    /// <remarks>This class implements all the methods of the <see cref="IMessage"/> interface.
     public abstract class Message : IMessage
     {
-        protected Dictionary<string, IRecipient> recipients_;
-        protected IRecipient sender_;
-        protected MessageType type_;
+        protected Dictionary<string, IAgent> recipients_;
+        protected IAgent sender_;
         protected DateTime timestamp_;
+        protected string subject_;
+        protected string message_;
 
         #region .ctor
         /// <summary>
-        /// Intiializes a new instance_ of the Message class.
+        /// Intiializes a new instance of the Message class.
         /// </summary>
-        public Message(MessageType type) {
-            type_ = type;
+        protected Message() {
             timestamp_ = DateTime.Now;
+            subject_ = string.Empty;
+            message_ = string.Empty;
+            recipients_ = new Dictionary<string, IAgent>();
         }
 
         /// <summary>
         /// Initializes a new instance_ of the Message class by using the message sender.
         /// </summary>
         /// <param name="sender">A string that identifies the message sender</param>
-        public Message(MessageType type, IRecipient sender): this(type) {
+        public Message(IAgent sender): this() {
             if (sender == null)
                 throw new ArgumentNullException("sender");
             sender_ = sender;
         }
 
         /// <summary>
-        /// Initializes a new instance_ of the Message class by using the message sender and recipients
+        /// Initializes a new instance of the Message class by using the message sender and recipients
         /// </summary>
         /// <param name="sender">A string that identifies the message sender.</param>
         /// <param name="receipts">A string array containing the message recipients.</param>
-        public Message(MessageType type, IRecipient sender, IRecipient[] recipients): this(type, sender) {
+        public Message(IAgent sender, IAgent[] recipients): this(sender) {
             if (recipients == null)
                 throw new ArgumentNullException("recipients");
 
             for (int i = 0, j = recipients.Length; i < j; i++) {
-                IRecipient recipient = recipients[i];
-                recipients_.Add(recipient.Name, recipient);
+                IAgent recipient = recipients[i];
+                recipients_.Add(recipient.Address, recipient);
             }
         }
         #endregion
@@ -53,10 +57,10 @@ namespace Nohros.Toolkit.Messaging
         /// Adds a recipient to the receipts collection.
         /// </summary>
         /// <param name="recipient">A string that identifies the message recipient.</param>
-        public void AddRecipient(IRecipient recipient) {
+        public void AddRecipient(IAgent recipient) {
             if (recipient == null)
                 throw new ArgumentNullException("recipient");
-            recipients_[recipient.Name] = recipient;
+            recipients_[recipient.Address] = recipient;
         }
 
         /// <summary>
@@ -70,7 +74,7 @@ namespace Nohros.Toolkit.Messaging
         /// <summary>
         /// A string that identifies the message sender.
         /// </summary>
-        public IRecipient Sender {
+        public IAgent Sender {
             get { return sender_; }
             set { sender_ = value; }
         }
@@ -78,26 +82,28 @@ namespace Nohros.Toolkit.Messaging
         /// <summary>
         /// An string array containing the message recipients.
         /// </summary>
-        public IRecipient[] Recipients {
+        public IAgent[] Recipients {
             get {
-                if (recipients_ == null)
-                    return null;
-                IRecipient[] recipients = new IRecipient[recipients_.Count];
+                IAgent[] recipients = new IAgent[recipients_.Count];
                 recipients_.Values.CopyTo(recipients, 0);
                 return recipients;
             }
         }
 
         /// <summary>
-        /// Gets the message's text body.
+        /// Gets or sets the e-mail message's text body.
         /// </summary>
-        public abstract string Body { get; }
+        public virtual string Body {
+            get { return message_; }
+            set { message_ = value; }
+        }
 
         /// <summary>
-        /// Gets the message's text body.
+        /// Gets the message's subject.
         /// </summary>
-        public MessageType Type {
-            get { return type_; }
+        public virtual string Subject {
+            get { return subject_; }
+            set { subject_ = value; }
         }
     }
 }

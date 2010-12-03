@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 
-namespace Nohros.Data
+namespace Nohros.Data.Providers
 {
     /// <summary>
     /// Allows an object to implements a DataProvider, and represents a set of methods and properties used

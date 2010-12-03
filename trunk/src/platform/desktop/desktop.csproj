@@ -26,7 +26,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\docs\must.desktop.xml</DocumentationFile>
+	<DocumentationFile>$(SolutionDir)..\docs\nohros.desktop.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

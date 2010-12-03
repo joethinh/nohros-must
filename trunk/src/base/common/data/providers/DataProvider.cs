@@ -11,7 +11,7 @@ using System.IO;
 using Nohros.Resources;
 using Nohros.Configuration;
 
-namespace Nohros.Data
+namespace Nohros.Data.Providers
 {
     /// <summary>
     /// An generic abstract implementation of the IDataProvider interface

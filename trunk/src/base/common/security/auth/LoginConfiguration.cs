@@ -6,6 +6,7 @@ using System.Xml;
 using System.IO;
 
 using Nohros.Data;
+using Nohros.Data.Collections;
 using Nohros.Configuration;
 
 namespace Nohros.Security.Auth

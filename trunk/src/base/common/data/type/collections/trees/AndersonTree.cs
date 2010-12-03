@@ -4,14 +4,16 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace Nohros.Data
+namespace Nohros.Data.Collections
 {
     internal delegate bool TreeWalkAction<TKey, TValue>(AndersonTreeNode<TKey, TValue> node);
 
     /// <summary>
     /// An implementation of a Anderson tree.
     /// </summary>
-    /// <see cref="http://user.it.uu.se/~arnea/ps/gb.pdf"/>
+    /// <remarks>
+    /// http://user.it.uu.se/~arnea/ps/gb.pdf
+    /// </remarks>
     public class AndersonTree<TKey, TValue> :
         ICollection<KeyValuePair<TKey, TValue>>,
         IEnumerable<KeyValuePair<TKey, TValue>>,
@@ -302,16 +304,18 @@ namespace Nohros.Data
         /// Accepts the specified visitor and allow it to visit every node of the tree.
         /// </summary>
         /// <param name="visitor">The visitor to accepts.</param>
-        /// <param name="reverse_order">A value indicating if the elements will be visit in the reverse order or not.</param>
+        /// <param name="reverse">A value indicating if the elements will be visit in the reverse order or not.</param>
+        /// <param name="state">A user-defined object that qualifies or contains information about the visitor's
+        /// current state.</param>
         /// <exception cref="ArgumentNullException"><paramref name="visitor"/> is a null reference</exception>
-        public void Accept(InOrderVisitor<TValue> visitor, bool reverse) {
+        public void Accept(InOrderVisitor<TValue> visitor, object state, bool reverse) {
             if (visitor == null)
                 throw new ArgumentNullException("visitor");
 
             TreeWalkAction<TKey, TValue> on_tree_walk =
                 new TreeWalkAction<TKey, TValue>(delegate(AndersonTreeNode<TKey, TValue> node) {
-                    visitor.Visit(node.Value);
-                    return visitor.HasCompleted;
+                    visitor.Visit(node.Value, state);
+                    return !visitor.IsCompleted;
                 });
 
             if (reverse)
@@ -324,16 +328,16 @@ namespace Nohros.Data
         /// Accepts the specified visitor and allow it to visit every node of the tree.
         /// </summary>
         /// <param name="visitor">The visitor to accepts.</param>
-        /// <param name="reverse_order">A value indicating if the elements will be visit in the reverse order or not.</param>
+        /// <param name="reverse">A value indicating if the elements will be visit in the reverse order or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="visitor"/> is a null reference</exception>
-        public void Accept(InOrderVisitor<TKey, TValue> visitor, bool reverse) {
+        public void Accept(InOrderVisitor<TKey, TValue> visitor, object state, bool reverse) {
             if (visitor == null)
                 throw new ArgumentNullException("visitor");
 
                 TreeWalkAction<TKey, TValue> on_tree_walk =
                     new TreeWalkAction<TKey, TValue>(delegate(AndersonTreeNode<TKey, TValue> node) {
-                        visitor.Visit(node.Key, node.Value);
-                        return visitor.HasCompleted;
+                        visitor.Visit(node.Key, node.Value, state);
+                        return !visitor.IsCompleted;
                     });
 
                 if (reverse)

@@ -52,7 +52,7 @@ namespace Nohros.Test.Common
         }
 
         [Test]
-        [ExpectedExceptionAttribute(typeof(ProviderException))]
+        [ExpectedExceptionAttribute(typeof(ConfigurationErrorsException))]
         public void ThrowConfigurationException_FileInvalid() {
             Thrower.ThrowConfigurationException_FileInvalid();
         }

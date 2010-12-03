@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Nohros.Toolkit.Messaging
 {
-    public enum RecipientType
+    internal enum RecipientType
     {
         /// <summary>
-        /// A sender recipient.
+        /// A generic sender recipient.
         /// </summary>
-        Sender= 0,
+        Sender = 0,
 
         /// <summary>
         /// A e-mail recipient
@@ -17,7 +17,7 @@ namespace Nohros.Toolkit.Messaging
         Email = 1,
 
         /// <summary>
-        /// A short message service recipient
+        /// A short message service recipient.
         /// </summary>
         Sms = 2
     }

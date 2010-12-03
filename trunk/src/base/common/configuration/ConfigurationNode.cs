@@ -58,9 +58,6 @@ namespace Nohros.Configuration
         /// if the value could not be retrieved.</param>
         /// <returns>true if the atribbute retrieval operation is successful; otherwise false.</returns>
         protected bool GetTrimmedAttributeValue(XmlNode node, string name, out string value) {
-            if (node == null || name == null)
-                throw new ArgumentNullException((node == null) ? "node" : "name");
-
             XmlAttribute att = node.Attributes[name];
             value = null;
             if (att != null) {
@@ -109,6 +106,7 @@ namespace Nohros.Configuration
         /// </summary>
         public string Name {
             get { return name_; }
+            internal set { name_ = value; }
         }
 
         /// <summary>

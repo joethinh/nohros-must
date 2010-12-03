@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Data
+namespace Nohros.Data.Collections
 {
     /// <summary>
     /// A visitor that visits single objects in order.
@@ -31,8 +31,10 @@ namespace Nohros.Data
         /// Visits the specified object.
         /// </summary>
         /// <param name="obj">The object to visit.</param>
-        public void Visit(T obj) {
-            visitor_.Visit(obj);
+        /// <param name="state">A user-defined object that qualifies or contains information about the visitor's
+        /// current state.</param>
+        public void Visit(T obj, object state) {
+            visitor_.Visit(obj, state);
         }
 
         /// <summary>
@@ -46,8 +48,8 @@ namespace Nohros.Data
         /// this property to false. The visited collection can check the value of this property for each visited
         /// element and then determine when the traversal operation must be stoped.
         /// </remarks>
-        public bool HasCompleted {
-            get { return visitor_.HasCompleted; }
+        public bool IsCompleted {
+            get { return visitor_.IsCompleted; }
         }
     }
 
@@ -55,8 +57,8 @@ namespace Nohros.Data
     /// A visitor that visits compound objects in order. Compound objects are objects that are identified
     /// by more than one object.<example>A node within a <see cref="IDictionary&gt;T&lt;"/></example>
     /// </summary>
-    /// <typeparam name="T">The type of objects to be visited.</typeparam>
-    /// <remarks>This class only wraps the methods of the <see cref="Visitor"/>. It is useful
+    /// <typeparam name="T1">The type of objects to be visited.</typeparam>
+    /// <remarks>This class only wraps the methods of the <see cref="IVisitor&lt;T&gt;"/>. It is useful
     /// for classes that could be traversed in different orders(PreOrder, PostOrder, InOrder, ...)</remarks>
     public class InOrderVisitor<T1, T2> : IVisitor<T1, T2>
     {
@@ -80,8 +82,10 @@ namespace Nohros.Data
         /// </summary>
         /// <param name="obj1">The first component of the object to visit.</param>
         /// <param name="obj2">The second component of the object to visit.</param>
-        public void Visit(T1 obj1, T2 obj2) {
-            visitor_.Visit(obj1, obj2);
+        /// <param name="state">A user-defined object that qualifies or contains information about the visitor's
+        /// current state.</param>
+        public void Visit(T1 obj1, T2 obj2, object state) {
+            visitor_.Visit(obj1, obj2, state);
         }
 
         /// <summary>
@@ -95,8 +99,8 @@ namespace Nohros.Data
         /// this property to false. The visited collection can check the value of this property for each visited
         /// element and then determine when the traversal operation must be stoped.
         /// </remarks>
-        public bool HasCompleted {
-            get { return visitor_.HasCompleted; }
+        public bool IsCompleted {
+            get { return visitor_.IsCompleted; }
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Nohros.Toolkit.Messaging
     public interface IMessage
     {
         /// <summary>
-        /// Gets the recipient who sent the message.
+        /// Gets the agent who sent the message.
         /// </summary>
-        IRecipient Sender { get; set; }
+        IAgent Sender { get; set; }
 
         /// <summary>
         /// Gets the timestamp indicating the date and time the message was sent or received.
@@ -20,18 +20,18 @@ namespace Nohros.Toolkit.Messaging
         DateTime TimeStamp { get; set; }
 
         /// <summary>
-        /// Gets the message type.
-        /// </summary>
-        MessageType Type { get; }
-
-        /// <summary>
         /// Gets the collection of recipients for the message.
         /// </summary>
-        IRecipient[] Recipients { get; }
+        IAgent[] Recipients { get; }
 
         /// <summary>
-        /// Gets the message's text body.
+        /// Gets or sets the message's text body.
         /// </summary>
-        string Body { get; }
+        string Body { get; set; }
+
+        /// <summary>
+        /// Gets or sets the message's subject.
+        /// </summary>
+        string Subject { get; set; }
     }
 }
