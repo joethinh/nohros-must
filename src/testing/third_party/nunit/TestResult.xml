@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="J:\projects\net\libs\nohros\must\src\testing\third_party\nunit\must.nunit" total="12" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2010-12-03" time="17:49:59">
+  <environment nunit-version="2.5.5.10112" clr-version="2.0.50727.3615" os-version="Microsoft Windows NT 5.1.2600 Service Pack 3" platform="Win32NT" cwd="J:\projects\net\libs\nohros\must\src\testing\third_party\nunit" machine-name="P2182" user="neylor" user-domain="ACAO" />
+  <culture-info current-culture="pt-BR" current-uiculture="pt-BR" />
+  <test-suite type="Project" name="J:\projects\net\libs\nohros\must\src\testing\third_party\nunit\must.nunit" executed="True" result="Success" success="True" time="2.774" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="J:\projects\net\libs\nohros\must\src\testing\third_party\nunit\..\..\..\bin\debug\nohros.test.desktop.exe" executed="True" result="Success" success="True" time="2.759" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="Nohros" executed="True" result="Success" success="True" time="2.759" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Test" executed="True" result="Success" success="True" time="2.759" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="Toolkit" executed="True" result="Success" success="True" time="2.759" asserts="0">
+                    <results>
+                      <test-suite type="Namespace" name="Messaging" executed="True" result="Success" success="True" time="2.743" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="Messenger_" executed="True" result="Success" success="True" time="0.249" asserts="0">
+                            <results>
+                              <test-case name="Nohros.Test.Toolkit.Messaging.Messenger_.CreateInstanceInvalidConstructor" executed="True" result="Success" success="True" time="0.203" asserts="0" />
+                              <test-case name="Nohros.Test.Toolkit.Messaging.Messenger_.CreateInstanceNullConfigNode" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                              <test-case name="Nohros.Test.Toolkit.Messaging.Messenger_.CreateInstanceNullOptions" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                              <test-case name="Nohros.Test.Toolkit.Messaging.Messenger_.GetRequiredOption" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                              <test-case name="Nohros.Test.Toolkit.Messaging.Messenger_.GetRequiredOptionMissingOption" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                              <test-case name="Nohros.Test.Toolkit.Messaging.Messenger_.GetRequiredOptionNullOption" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                            </results>
+                          </test-suite>
+                          <test-suite type="TestFixture" name="MessengerChain_" executed="True" result="Success" success="True" time="0.125" asserts="0">
+                            <results>
+                              <test-case name="Nohros.Test.Toolkit.Messaging.MessengerChain_.FromConfiguration" executed="True" result="Success" success="True" time="0.125" asserts="2" />
+                            </results>
+                          </test-suite>
+                          <test-suite type="TestFixture" name="SmtpMessenger_" executed="True" result="Success" success="True" time="2.353" asserts="0">
+                            <results>
+                              <test-case name="Nohros.Test.Toolkit.Messaging.SmtpMessenger_.CtorNullOptions" executed="True" result="Success" success="True" time="0.016" asserts="0" />
+                              <test-case name="Nohros.Test.Toolkit.Messaging.SmtpMessenger_.CtorStringNull" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                              <test-case name="Nohros.Test.Toolkit.Messaging.SmtpMessenger_.CtorStringOptionMissingRequired" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                              <test-case name="Nohros.Test.Toolkit.Messaging.SmtpMessenger_.CtorStringOptions" executed="True" result="Success" success="True" time="0.125" asserts="0">
+                                <reason>
+                                  <message><![CDATA[]]></message>
+                                </reason>
+                              </test-case>
+                              <test-case name="Nohros.Test.Toolkit.Messaging.SmtpMessenger_.SendText" executed="True" result="Success" success="True" time="2.213" asserts="1" />
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
