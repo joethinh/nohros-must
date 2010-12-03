@@ -11,8 +11,8 @@ namespace Nohros.Configuration
         /// <summary>
         /// Initializes a new instance of the MessengerProviderNode class by using the provider name and data type.
         /// </summary>
-        /// <param name="name">The name of the messenger</param>
-        /// <param name="type">The type of the messenger</param>
+        /// <param name="name">The name of the messenger.</param>
+        /// <param name="type">The assembly-qualified type of the provider.</param>
         public MessengerProviderNode(string name, string type) : base(name, type) { }
         #endregion
 

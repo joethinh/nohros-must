@@ -163,6 +163,9 @@
   <data name="Caching_Invalid_expiration_combination" xml:space="preserve">
     <value>absoluteExpiration must be DateTime.MaxValue or slidingExpiration must be timeSpan.Zero.</value>
   </data>
+  <data name="Collection_elm_AddingDuplicate" xml:space="preserve">
+    <value>The element {0} is already in collection.</value>
+  </data>
   <data name="Config_ArgOutOfRange" xml:space="preserve">
     <value>{0} is not a valid value for {1}.</value>
   </data>
@@ -202,9 +205,6 @@
   <data name="DataProvider_InvalidProvider" xml:space="preserve">
     <value>The Provider is invalid.</value>
   </data>
-  <data name="DataProvider_Provider_Attributes" xml:space="preserve">
-    <value>An invalid attributes collection has been supplied, or a required attribute has not been supplied.</value>
-  </data>
   <data name="Generic_SyntaxError" xml:space="preserve">
     <value>Syntax error</value>
   </data>
@@ -232,8 +232,14 @@
   <data name="JSON_UnquotedDictionaryKey" xml:space="preserve">
     <value>Dictionary keys must be quoted at "{0}".</value>
   </data>
+  <data name="Provider_Attributes" xml:space="preserve">
+    <value>An invalid collection of attributes has been supplied, or a required attribute has not been supplied.</value>
+  </data>
   <data name="Provider_LoadAssembly" xml:space="preserve">
     <value>The assembly could not be loaded. {0}.</value>
+  </data>
+  <data name="Provider_Option_MissingAt" xml:space="preserve">
+    <value>Missing required option "{0}" for provider.</value>
   </data>
   <data name="Type_CreateInstanceOf" xml:space="preserve">
     <value>Instance of the requested type could not be created. Check the constructor implied by the {0}.</value>

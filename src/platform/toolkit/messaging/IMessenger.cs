@@ -10,6 +10,13 @@ namespace Nohros.Toolkit.Messaging
     /// into the format used by a foreign messaging system, as well as to translate the returned
     /// data back into a <see cref="IMessage"/> class.
     /// </summary>
+    /// <remarks>
+    /// All messengers must have a constructor that accepts a string and a <see cref="IDictionary&gt;string, string&lt;"/>
+    /// object. The string parameter represents the name of the provider and the dictionary parameter represents the
+    /// options configured for the provider. Note that the options parameter could be a null reference, but the name
+    /// parameter could not. If the name parameter is null the constructor should throw an <see cref="ArgumentNullException"/> must be raised.
+    /// exception.
+    /// </remarks>
     public interface IMessenger
     {
         /// <summary>
@@ -21,15 +28,6 @@ namespace Nohros.Toolkit.Messaging
         /// Sends the message.
         /// </summary>
         /// <returns>A <see cref="IMessage"/> containing the response from the messaging system.</returns>
-        IMessage Send(IMessage message);
-
-        /// <summary>
-        /// Process the message response sent from the messaging system.
-        /// </summary>
-        /// <param name="message">The response message to process</param>
-        /// <remarks>This method is used to process response message that could be sent
-        /// from messaging system after a message is sent, when a applications needs to
-        /// performs some post processing operation(ex. store the response into a database).</remarks>
-        void ProcessResponse(IMessage message);
+        ResponseMessage Send(IMessage message);
     }
 }

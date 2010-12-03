@@ -7,6 +7,7 @@ using System.Configuration;
 
 using Nohros.Logging;
 using Nohros.Data;
+using Nohros.Data.Collections;
 using Nohros.Resources;
 
 namespace Nohros.Configuration
@@ -64,6 +65,10 @@ namespace Nohros.Configuration
         /// <summary>
         /// Singleton initializer. Used to load the default configuration file.
         /// </summary>
+        /// <remarks>
+        /// The default configuration object is loaded only if a key with name "NohrosConfigurationFile" is found
+        /// on the main application configuration file.
+        /// </remarks>
         static NohrosConfiguration() {
             default_process_config_ = null;
 
@@ -202,6 +207,16 @@ namespace Nohros.Configuration
         /// <summary>
         /// Gets the default nohros based application configuration object.
         /// </summary>
+        /// <value>
+        /// An instance of the <see cref="NohrosConfiguration"/> class or null if the default configuration object
+        /// could not be loaded.
+        /// </value>
+        /// <remarks>
+        /// The default configuration object is loaded by an static constructor. The static constructor searchs for a key
+        /// with name "NohrosConfigurationFile" into the main application configuration file and - if the key is found -
+        /// constructs a new object of the type <see cref="NohrosConfiguration"/> by parsing the configuration file
+        /// defined by the found key.
+        /// </remarks>
         protected internal static NohrosConfiguration DefaultConfiguration {
             get { return default_process_config_; }
             set { default_process_config_ = value; }

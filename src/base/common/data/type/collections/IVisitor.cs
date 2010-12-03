@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Data
+namespace Nohros.Data.Collections
 {
     /// <summary>
     /// Provides an interface for visitors that visits single objects.
@@ -13,7 +13,9 @@ namespace Nohros.Data
         /// Visits the specified object.
         /// </summary>
         /// <param name="obj">The object to visit.</param>
-        void Visit(T obj);
+        /// <param name="state">A user-defined object that qualifies or contains information about the visitor's
+        /// current state.</param>
+        void Visit(T obj, object state);
 
         /// <summary>
         /// Gets a value indicating whether the visitor is done performing your work.
@@ -26,7 +28,7 @@ namespace Nohros.Data
         /// this property to false. The visited collection can check the value of this property for each visited
         /// element and then determine when the traversal operation must be stoped.
         /// </remarks>
-        bool HasCompleted { get; }
+        bool IsCompleted { get; }
     }
 
     /// <summary>
@@ -40,7 +42,9 @@ namespace Nohros.Data
         /// </summary>
         /// <param name="obj1">The first component of the object to visit.</param>
         /// <param name="obj2">The second component of the object to visit.</param>
-        void Visit(T1 obj1, T2 obj2);
+        /// <param name="state">A user-defined object that qualifies or contains information about the visitor's
+        /// current state.</param>
+        void Visit(T1 obj1, T2 obj2, object state);
 
         /// <summary>
         /// Gets a value indicating whether the visitor is done performing your work.
@@ -53,6 +57,6 @@ namespace Nohros.Data
         /// this property to false. The visited collection can check the value of this property for each visited
         /// element and then determine when the traversal operation must be stoped.
         /// </remarks>
-        bool HasCompleted { get; }
+        bool IsCompleted { get; }
     }
 }

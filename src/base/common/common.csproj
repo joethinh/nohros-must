@@ -32,7 +32,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\docs\nohros.xml</DocumentationFile>
     <DocumentationFile>$(SolutionDir)..\docs\nohros.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
@@ -63,7 +62,8 @@
     <Compile Include="configuration\web\ContentGroupNode.cs" />
     <Compile Include="configuration\common\provider\IProviderNode.cs" />
     <Compile Include="configuration\common\LoginModuleNode.cs" />
-    <Compile Include="data\ParameterizedStringPart.cs" />
+    <Compile Include="data\type\ParameterizedStringPart.cs" />
+    <Compile Include="data\type\collections\ParameterizedStringPartCollection.cs" />
     <Compile Include="data\providers\DataSourceType.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\IConfigurationNode.cs" />
@@ -71,39 +71,39 @@
     <Compile Include="configuration\common\provider\DataProviderNode.cs" />
     <Compile Include="data\StringMap.cs" />
     <Compile Include="configuration\web\WebNode.cs" />
-    <Compile Include="data\CacheEntry.cs" />
+    <Compile Include="data\type\CacheEntry.cs" />
     <Compile Include="data\type\collections\IInOrderVisitable.cs" />
     <Compile Include="data\type\collections\InOrderVisitor.cs" />
     <Compile Include="data\type\collections\trees\AndersonTree.cs" />
     <Compile Include="data\type\collections\trees\AndersonTreeNode.cs" />
-    <Compile Include="data\ComparisonComparer.cs" />
+    <Compile Include="data\type\ComparisonComparer.cs" />
     <Compile Include="data\DataHelper.cs" />
-    <Compile Include="data\dto\TableTransferObject.cs" />
-    <Compile Include="data\dto\TableTransferObjectEnumerator.cs" />
-    <Compile Include="data\IValidator.cs" />
+    <Compile Include="data\transferobjects\TableTransferObject.cs" />
+    <Compile Include="data\transferobjects\TableTransferObjectEnumerator.cs" />
+    <Compile Include="data\type\IValidator.cs" />
     <Compile Include="data\json\JSONReader.cs" />
-    <Compile Include="data\dto\TransferQueue.cs" />
-    <Compile Include="data\dto\DataTransferObject.cs" />
-    <Compile Include="data\dto\DataTransferObjects.cs" />
-    <Compile Include="data\dto\IDataTransferObject.cs" />
-    <Compile Include="data\dto\StringTransferObject.cs" />
+    <Compile Include="data\transferobjects\TransferQueue.cs" />
+    <Compile Include="data\transferobjects\DataTransferObject.cs" />
+    <Compile Include="data\transferobjects\DataTransferObjects.cs" />
+    <Compile Include="data\transferobjects\IDataTransferObject.cs" />
+    <Compile Include="data\transferobjects\StringTransferObject.cs" />
     <Compile Include="data\providers\DataProvider.cs" />
     <Compile Include="data\providers\IDataProvider.cs" />
-    <Compile Include="data\ParameterizedString.cs" />
+    <Compile Include="data\type\ParameterizedString.cs" />
     <Compile Include="data\providers\ProviderHelper.cs" />
     <Compile Include="data\type\collections\values\DictionaryValue.cs" />
-    <Compile Include="data\type\collections\values\DictionaryValueT.cs" />
-    <Compile Include="data\type\collections\values\FundamentalValue.cs" />
-    <Compile Include="data\type\collections\values\GenericValue.cs" />
+    <Compile Include="data\type\collections\values\GenericDictionaryValue.cs" />
+    <Compile Include="data\type\values\FundamentalValue.cs" />
+    <Compile Include="data\type\GenericValue.cs" />
     <Compile Include="data\type\collections\values\IDictionaryValue.cs" />
-    <Compile Include="data\type\collections\values\IValue.cs" />
+    <Compile Include="data\type\values\IValue.cs" />
     <Compile Include="data\type\collections\values\ListValue.cs" />
-    <Compile Include="data\type\collections\values\StringValue.cs" />
-    <Compile Include="data\type\collections\values\Value.cs" />
-    <Compile Include="data\type\collections\values\ValueType.cs" />
+    <Compile Include="data\type\values\StringValue.cs" />
+    <Compile Include="data\type\values\Value.cs" />
+    <Compile Include="data\type\values\ValueType.cs" />
     <Compile Include="data\type\collections\IVisitable.cs" />
     <Compile Include="data\type\IPointer.cs" />
-    <Compile Include="data\type\IVisitor.cs" />
+    <Compile Include="data\type\collections\IVisitor.cs" />
     <Compile Include="data\type\Pointer.cs" />
     <Compile Include="logging\ConsoleLogger.cs" />
     <Compile Include="logging\FileLogger.cs" />
@@ -146,6 +146,9 @@
   <ItemGroup>
     <None Include="nohros.xsd">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="nohros.xsx">
+      <DependentUpon>nohros.xsd</DependentUpon>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

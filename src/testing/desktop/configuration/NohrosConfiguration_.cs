@@ -8,6 +8,8 @@ using NUnit.Framework;
 
 using Nohros.Security.Auth;
 using Nohros.Data;
+using Nohros.Data.Providers;
+using Nohros.Data.Collections;
 using Nohros.Configuration;
 using Nohros.Logging;
 
@@ -142,8 +144,20 @@ namespace Nohros.Test.Configuration
             MessengerProviderNode node = config.MessengerProviders["SmsMessenger"] as MessengerProviderNode;
             Assert.IsNotNull(node);
             Assert.AreEqual("SmsMessenger", node.Name);
-            Assert.AreEqual("Nohros.Test.Configuration.SmsMessenger, nohros.test.desktop", node.Type);
+            Assert.AreEqual("Nohros.Test.Toolkit.Messaging.SmsMessenger, nohros.test.desktop", node.Type);
             Assert.AreEqual(null, node.AssemblyLocation);
+
+            node = config.MessengerProviders["SimpleMessenger"] as MessengerProviderNode;
+            Assert.IsNotNull(node);
+            Assert.AreEqual("SimpleMessenger", node.Name);
+            Assert.AreEqual("Nohros.Test.Toolkit.Messaging.SimpleMessenger, nohros.test.desktop", node.Type);
+            Assert.AreEqual(null, node.AssemblyLocation);
+
+            string host, port;
+            Assert.IsTrue(node.Options.TryGetValue("smtp-host", out host));
+            Assert.IsTrue(node.Options.TryGetValue("smtp-port", out port));
+            Assert.AreEqual(host, "smtp.acaoassessoria.com.br");
+            Assert.AreEqual(port, "587");
         }
 
         [Test]

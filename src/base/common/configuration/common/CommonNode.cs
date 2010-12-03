@@ -7,6 +7,7 @@ using System.IO;
 using System.Configuration;
 
 using Nohros.Data;
+using Nohros.Data.Collections;
 using Nohros.Resources;
 
 namespace Nohros.Configuration
@@ -36,7 +37,15 @@ namespace Nohros.Configuration
         /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
         /// valid representation of a common node.</exception>
         public override void Parse(XmlNode node, NohrosConfiguration config) {
-            // parse the repository node.
+            // order matters
+            ParseRepository(node, config);
+            ParseConnectionStrings(node, config);
+            ParseProviders(node, config);
+            ParseLoginModules(node, config);
+            ParseChains(node, config);
+        }
+
+        void ParseRepository(XmlNode node, NohrosConfiguration config) {
             XmlNode data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kRepositoryNodeName);
             if (data_node != null) {
                 DictionaryValue<RepositoryNode> repositories = new DictionaryValue<RepositoryNode>();
@@ -54,9 +63,10 @@ namespace Nohros.Configuration
                     }
                 }
             }
+        }
 
-            // parse the connection strings
-            data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kConnectionStringsNodeName);
+        void ParseConnectionStrings(XmlNode node, NohrosConfiguration config) {
+            XmlNode data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kConnectionStringsNodeName);
             if (data_node != null) {
                 DictionaryValue<ConnectionStringNode> connection_strings = new DictionaryValue<ConnectionStringNode>();
                 config.Nodes[NohrosConfiguration.kConnectionStringNodeTree] = connection_strings;
@@ -73,9 +83,10 @@ namespace Nohros.Configuration
                     }
                 }
             }
+        }
 
-            // parse the providers
-            data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kProvidersNodeName);
+        void ParseProviders(XmlNode node, NohrosConfiguration config) {
+            XmlNode data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kProvidersNodeName);
             if (data_node != null) {
 
                 ProviderType provider_type = default(ProviderType);
@@ -119,9 +130,10 @@ namespace Nohros.Configuration
                     }
                 }
             }
+        }
 
-            // parse the login modules
-            data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kLoginModulesNodeName);
+        void ParseLoginModules(XmlNode node, NohrosConfiguration config) {
+            XmlNode data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kLoginModulesNodeName);
             if (data_node != null) {
                 DictionaryValue<LoginModuleNode> login_modules = new DictionaryValue<LoginModuleNode>();
                 config.Nodes[NohrosConfiguration.kLoginModuleNodeTree] = login_modules;
@@ -138,9 +150,10 @@ namespace Nohros.Configuration
                     }
                 }
             }
+        }
 
-            // parse the chains
-            data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kChainsNodeName);
+        void ParseChains(XmlNode node, NohrosConfiguration config) {
+            XmlNode data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kChainsNodeName);
             if(data_node != null) {
                 DictionaryValue<ChainNode> chains = new DictionaryValue<ChainNode>();
                 config.Nodes[NohrosConfiguration.kChainNodeTree] = chains;

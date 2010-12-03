@@ -18,7 +18,11 @@ namespace Nohros.Data
         /// Initializes a new instance of the ParameterizedStringPart class by using the specified literal text.
         /// </summary>
         /// <param name="literal_text">A string that contains the parameterized string part.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="literal_text"/> is null</exception>
         public ParameterizedStringPart(string literal_text) {
+            if (literal_text == null)
+                throw new ArgumentNullException("literal_text");
+
             parameter_name_ = string.Empty;
             parameter_value_ = literal_text;
             is_parameter_ = false;
@@ -30,7 +34,15 @@ namespace Nohros.Data
         /// </summary>
         /// <param name="parameter_name">The name of the parameter.</param>
         /// <param name="parameter_value">The value of the parameter. This could be null.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="parameter_name"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="parameter_name"/>is a empty string.</exception>
         public ParameterizedStringPart(string parameter_name, string parameter_value) {
+            if (parameter_name == null)
+                throw new ArgumentNullException("parameter_name");
+
+            if (parameter_name.Length == 0)
+                throw new ArgumentException("parameter_name");
+
             parameter_name_ = parameter_name;
             parameter_value_ = parameter_value;
             is_parameter_ = true;
@@ -43,13 +55,18 @@ namespace Nohros.Data
         /// <param name="other">A ParameterizedStringPart object.</param>
         /// <returns>true if the provided object is equals to this object; otherwise, false.</returns>
         public bool Equals(ParameterizedStringPart other) {
-            return ((is_parameter_ == other.is_parameter_) && string.Equals(parameter_name_, other.parameter_name_, StringComparison.OrdinalIgnoreCase));
+            if (((object)other) != null && is_parameter_ == other.is_parameter_) {
+                return (is_parameter_) ?
+                    string.Equals(parameter_name_, other.parameter_name_, StringComparison.OrdinalIgnoreCase) :
+                    string.Equals(parameter_value_, other.parameter_value_, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
         }
 
         /// <summary>
         /// Gets a value that indicates whether the provided object is equal to this object.
         /// </summary>
-        /// <param name="other">An object that can be cast to a ParameterizedStringPart object.</param>
+        /// <param name="obj">An object that can be cast to a ParameterizedStringPart object.</param>
         /// <returns>true if the provided object is equals to this object; otherwise, false.</returns>
         public override bool Equals(object obj) {
             return ((obj is ParameterizedStringPart) && Equals((ParameterizedStringPart)obj));
@@ -62,7 +79,7 @@ namespace Nohros.Data
         /// <param name="part2">A ParameterizedStringPart object.</param>
         /// <returns>true if the two objects are equals; otherwise, false.</returns>
         public static bool operator ==(ParameterizedStringPart part1, ParameterizedStringPart part2) {
-            return part1.Equals(part2);
+            return (((((object)part1) == null) && (((object)part2) == null)) || part1.Equals(part2));
         }
 
         /// <summary>
@@ -72,7 +89,7 @@ namespace Nohros.Data
         /// <param name="part2">A ParameterizedStringPart object.</param>
         /// <returns>true if the two objects are not equals; otherwise, false.</returns>
         public static bool operator !=(ParameterizedStringPart part1, ParameterizedStringPart part2) {
-            return !part1.Equals(part2);
+            return !(part1 == part2);
         }
 
         /// <summary>
@@ -99,6 +116,7 @@ namespace Nohros.Data
         /// </summary>
         public string LiteralValue {
             get { return parameter_value_; }
+            set { parameter_value_ = value; }
         }
 
         /// <summary>

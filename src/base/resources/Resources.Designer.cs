@@ -197,6 +197,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The element {0} is already in collection..
+        /// </summary>
+        internal static string Collection_elm_AddingDuplicate {
+            get {
+                return ResourceManager.GetString("Collection_elm_AddingDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} is not a valid value for {1}..
         /// </summary>
         internal static string Config_ArgOutOfRange {
@@ -314,15 +323,6 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An invalid attributes collection has been supplied, or a required attribute has not been supplied..
-        /// </summary>
-        internal static string DataProvider_Provider_Attributes {
-            get {
-                return ResourceManager.GetString("DataProvider_Provider_Attributes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Syntax error.
         /// </summary>
         internal static string Generic_SyntaxError {
@@ -404,11 +404,29 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An invalid collection of attributes has been supplied, or a required attribute has not been supplied..
+        /// </summary>
+        internal static string Provider_Attributes {
+            get {
+                return ResourceManager.GetString("Provider_Attributes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The assembly could not be loaded. {0}..
         /// </summary>
         internal static string Provider_LoadAssembly {
             get {
                 return ResourceManager.GetString("Provider_LoadAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing required option &quot;{0}&quot; for provider..
+        /// </summary>
+        internal static string Provider_Option_MissingAt {
+            get {
+                return ResourceManager.GetString("Provider_Option_MissingAt", resourceCulture);
             }
         }
         

@@ -6,7 +6,7 @@ using System.Reflection;
 using Nohros.Resources;
 using Nohros.Configuration;
 
-namespace Nohros.Data
+namespace Nohros.Data.Providers
 {
     /// <summary>
     /// Defines helper methods used by providers.

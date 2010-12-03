@@ -138,4 +138,16 @@
   <data name="MailChecker_Socket" xml:space="preserve">
     <value>Socket Exception: {0}.</value>
   </data>
+  <data name="Messaging_SMTP_InvalidPort" xml:space="preserve">
+    <value>The "{0}" string does not represents a valid port number.</value>
+  </data>
+  <data name="Messaging_smtperr_NoRecipients" xml:space="preserve">
+    <value>The recipients of the message was not specified.</value>
+  </data>
+  <data name="Messaging_smtperr_NoSender" xml:space="preserve">
+    <value>The message sender was not specified.</value>
+  </data>
+  <data name="Messaging_smtperr_NoSenderAddress" xml:space="preserve">
+    <value>The address of the message sender was not specified.</value>
+  </data>
 </root>

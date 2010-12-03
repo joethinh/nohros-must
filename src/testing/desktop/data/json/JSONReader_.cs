@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+
+using Nohros.Data.Collections;
 using Nohros.Data;
 
 namespace Nohros.Test.Data.JSon

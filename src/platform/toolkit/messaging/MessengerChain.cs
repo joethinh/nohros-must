@@ -8,7 +8,8 @@ using Nohros.Configuration;
 namespace Nohros.Toolkit.Messaging
 {
     /// <summary>
-    /// Represents a chain of messenger to use to send a message using multiples messengers.
+    /// Represents a chain of messengers.Its is typically used to send a message using multiples
+    /// messengers(broadcast messages).
     /// </summary>
     /// <remarks></remarks>
     public class MessengerChain
@@ -77,22 +78,32 @@ namespace Nohros.Toolkit.Messaging
         /// does not send a message for some reason the send method must return a null reference or
         /// a <see cref="ErrorMessage"/> explaining the error.
         /// </remarks>
-        List<ErrorMessage> Send(IMessage message) {
-            List<ErrorMessage> errors = new List<ErrorMessage>();
+        List<ResponseMessage> Send(IMessage message) {
+            List<ResponseMessage> errors = new List<ResponseMessage>();
 
             foreach (IMessenger messenger in messengers_) {
                 // the try/catch block is used here to ensure that the message
                 // is delivered to all messengers.
                 try {
                     IMessage response = messenger.Send(message);
-                    if (response != null)
-                        messenger.ProcessResponse(response);
+                    OnProcessResponse(messenger, response);
                 } catch(Exception exception) {
-                    errors.Add(new ErrorMessage(exception.Message));
+                    errors.Add(new ResponseMessage(exception.Message, ResponseMessageType.ErrorMessage));
                 }
             }
             return errors;
         }
+
+        void OnProcessResponse(IMessenger messenger, IMessage response) {
+            if (ProcessResponse != null && response != null) {
+                ProcessResponse(messenger, response);
+            }
+        }
+
+        /// <summary>
+        /// Occurs when a messenger sents a message.
+        /// </summary>
+        public event ProcessResponseEventHandler ProcessResponse;
 
         /// <summary>
         /// Gets the number of <see cref="IMessenger"/> objects actually contained in the MessengerChain.

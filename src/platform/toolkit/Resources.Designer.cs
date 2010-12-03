@@ -122,5 +122,41 @@ namespace Nohros.Toolkit {
                 return ResourceManager.GetString("MailChecker_Socket", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &quot;{0}&quot; string does not represents a valid port number..
+        /// </summary>
+        internal static string Messaging_SMTP_InvalidPort {
+            get {
+                return ResourceManager.GetString("Messaging_SMTP_InvalidPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The recipients of the message was not specified..
+        /// </summary>
+        internal static string Messaging_smtperr_NoRecipients {
+            get {
+                return ResourceManager.GetString("Messaging_smtperr_NoRecipients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The message sender was not specified..
+        /// </summary>
+        internal static string Messaging_smtperr_NoSender {
+            get {
+                return ResourceManager.GetString("Messaging_smtperr_NoSender", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The address of the message sender was not specified..
+        /// </summary>
+        internal static string Messaging_smtperr_NoSenderAddress {
+            get {
+                return ResourceManager.GetString("Messaging_smtperr_NoSenderAddress", resourceCulture);
+            }
+        }
     }
 }

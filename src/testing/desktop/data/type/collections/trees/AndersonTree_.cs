@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 
 using Nohros.Data;
+using Nohros.Data.Collections;
 
 namespace Nohros.Test.Data.Tree
 {
@@ -18,7 +19,7 @@ namespace Nohros.Test.Data.Tree
             tree.Add(1, 1);
 
             // split must perform a left rotation and increase
-            // the levelof the node with key 1.
+            // the level of the node with key 1.
             tree.Add(2, 2);
             AndersonTreeNode<int, int> node = tree.FindNode(1);
             Assert.AreEqual(node.Level, 2);
@@ -87,8 +88,7 @@ namespace Nohros.Test.Data.Tree
 
             List<AndersonTreeNode<int, int>> array = new List<AndersonTreeNode<int,int>>(6);
 
-            tree.InOrderTreeWalk(delegate(AndersonTreeNode<int, int> node)
-            {
+            tree.InOrderTreeWalk(delegate(AndersonTreeNode<int, int> node) {
                 array.Add(node);
                 return true;
             });
@@ -118,6 +118,75 @@ namespace Nohros.Test.Data.Tree
             Assert.AreEqual(array[4].Value, 4);
             Assert.AreEqual(array[5].Value, 5);
             Assert.AreEqual(array[6].Value, 6);
+        }
+
+        #region TreeOrderedVisitor
+        class TreeOrderedVisitor : IVisitor<int> {
+
+            public TreeOrderedVisitor() {
+                values_ = new List<int>();
+            }
+
+            List<int> values_;
+
+            public void Visit(int value, object state) {
+                values_.Add(value);
+            }
+
+            public bool IsCompleted {
+                get { return false; }
+            }
+
+            public object State {
+                get { return null; }
+            }
+
+            public List<int> Values {
+                get { return values_; }
+            }
+        }
+        #endregion
+
+        [Test]
+        public void InOrderAccept() {
+            AndersonTree<int, int> tree = new AndersonTree<int,int>();
+            tree.Add(0, 0);
+            tree.Add(1, 1);
+            tree.Add(2, 2);
+            tree.Add(3, 3);
+            tree.Add(4, 4);
+            tree.Add(5, 5);
+            tree.Add(6, 6);
+
+            TreeOrderedVisitor visitor = new TreeOrderedVisitor();
+            tree.Accept(new InOrderVisitor<int>(visitor), null, false);
+
+            Assert.AreEqual(7, visitor.Values.Count);
+
+            for (int i = 0, j = visitor.Values.Count; i < j; i++) {
+                Assert.AreEqual(tree[i], visitor.Values[i]);
+            }
+        }
+
+        [Test]
+        public void ReverseInOrderAccept() {
+            AndersonTree<int, int> tree = new AndersonTree<int, int>();
+            tree.Add(0, 0);
+            tree.Add(1, 1);
+            tree.Add(2, 2);
+            tree.Add(3, 3);
+            tree.Add(4, 4);
+            tree.Add(5, 5);
+            tree.Add(6, 6);
+
+            TreeOrderedVisitor visitor = new TreeOrderedVisitor();
+            tree.Accept(new InOrderVisitor<int>(visitor), null, true);
+
+            Assert.AreEqual(7, visitor.Values.Count);
+
+            for (int i = 0, j = visitor.Values.Count; i < j; i++) {
+                Assert.AreEqual(tree[tree.Count - i - 1], visitor.Values[i]);
+            }
         }
 
         [Test]

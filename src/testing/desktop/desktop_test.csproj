@@ -34,7 +34,7 @@
     </Reference>
     <Reference Include="nunit.framework, Version=2.5.5.10112, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\third_party\nunit.framework.dll</HintPath>
+      <HintPath>..\third_party\nunit\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -45,13 +45,16 @@
   <ItemGroup>
     <Compile Include="CommandLine_.cs" />
     <Compile Include="configuration\NohrosConfiguration_.cs" />
-    <Compile Include="configuration\SmsMessenger.cs" />
+    <Compile Include="toolkit\messaging\Messenger_.cs" />
     <Compile Include="configuration\StringLoginModule.cs" />
     <Compile Include="data\type\collections\trees\AndersonTree_.cs" />
     <Compile Include="configuration\IConfiguration_.cs" />
     <Compile Include="data\type\collections\values\DictionaryValueT_.cs" />
     <Compile Include="data\type\collections\values\DictionaryValue_.cs" />
     <Compile Include="data\type\collections\values\Value_.cs" />
+    <Compile Include="data\type\collections\ParameterizedStringPartCollection_.cs" />
+    <Compile Include="data\type\ParameterizedStringPart_.cs" />
+    <Compile Include="data\type\ParameterizedString_.cs" />
     <Compile Include="data\type\Pointer_.cs" />
     <Compile Include="security\auth\LoginContext_.cs" />
     <Compile Include="Program.cs" />
@@ -65,6 +68,8 @@
     <Compile Include="toolkit\mailchecker\MailChecker_.cs" />
     <Compile Include="toolkit\mailchecker\SmtpReply_.cs" />
     <Compile Include="toolkit\messaging\MessengerChain_.cs" />
+    <Compile Include="toolkit\messaging\SimpleMessenger.cs" />
+    <Compile Include="toolkit\messaging\SmtpMessenger_.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\base\common\common.csproj">

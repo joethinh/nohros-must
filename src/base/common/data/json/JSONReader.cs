@@ -5,6 +5,8 @@ using System.Text;
 
 using Nohros.Resources;
 
+using Nohros.Data.Collections;
+
 namespace Nohros.Data
 {
     /// <summary>
