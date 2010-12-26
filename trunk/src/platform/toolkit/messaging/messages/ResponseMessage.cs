@@ -40,7 +40,7 @@ namespace Nohros.Toolkit.Messaging
         /// <param name="type">The type of the response.</param>
         /// <exception cref="ArgumentNullException"><paramref name="response"/> is null.</exception>
         public ResponseMessage(string response, ResponseMessageType type) {
-            if (response_ == null)
+            if (response == null)
                 throw new ArgumentNullException("response");
 
             type_ = type;

@@ -28,7 +28,7 @@ namespace Nohros.Toolkit.Messaging
         }
 
         /// <summary>
-        /// Initializes a new instance_ of the Message class by using the message sender.
+        /// Initializes a new instance of the Message class by using the message sender.
         /// </summary>
         /// <param name="sender">A string that identifies the message sender</param>
         public Message(IAgent sender): this() {

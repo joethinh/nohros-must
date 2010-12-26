@@ -73,14 +73,15 @@ namespace Nohros.Toolkit.Messaging
         /// <returns>A <see cref="ResponseMessage"/> object containing the message that the server sent in response.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="message"/> is a null reference.</exception>
         /// <remarks>
-        /// The <paramref name="message"/> must be a mail message or a sms message. Any other message type causes
-        /// the Send method to returns a error <see cref="ResponseMessage"/> as response.
+        /// The <paramref name="message"/> must be a object of the type <see cref="EmailMessage"/> or an object that
+        /// derives from that type. Any other message type causes the Send method to returns a
+        /// error <see cref="ResponseMessage"/> as response.
         /// <para>
         /// If the message is successfully sent the Send method will returns a processed <see cref="ResponseMessage"/> as
         /// response.
         /// </para>
         /// <para>
-        /// If a required information is missing this method will returns an error<see cref="ResponseMessage"/> containing
+        /// If a required information is missing this method will returns an error <see cref="ResponseMessage"/> containing
         /// the text describing the cause of the error as response.
         /// </para>
         /// <para>
@@ -92,7 +93,7 @@ namespace Nohros.Toolkit.Messaging
         /// <seealso cref="SmtpClient"/>
         ResponseMessage IMessenger.Send(IMessage message) {
             EmailMessage email_message = message as EmailMessage;
-            if (message != null)
+            if (email_message != null)
                 return Send(email_message);
             return new ResponseMessage(ResponseMessageType.NotProcessedMessage);
         }
@@ -104,12 +105,8 @@ namespace Nohros.Toolkit.Messaging
         /// <returns>A <see cref="ResponseMessage"/> object containing the message that the server sent in response.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="message"/> is a null reference.</exception>
         /// <remarks>
-        /// The <paramref name="message"/> must be a mail message or a sms message. Any other message type causes
-        /// the Send method to returns a error <see cref="ResponseMessage"/> as response.
-        /// <para>
         /// If the message is successfully sent the Send method will returns a processed <see cref="ResponseMessage"/> as
         /// response.
-        /// </para>
         /// <para>
         /// If a required information is missing this method will returns an error<see cref="ResponseMessage"/> containing
         /// the text describing the cause of the error as response.
@@ -152,9 +149,9 @@ namespace Nohros.Toolkit.Messaging
         /// </summary>
         /// <param name="message">The message to validate.</param>
         /// <param name="error_message">An <see cref="ResponseMessage"/> that contains description of the error
-        /// taht cause the validation error.</param>
+        /// that cause the validation error.</param>
         /// <returns>true if the message is valid; otherwise false.</returns>
-        bool ValidateMessage(IMessage message, ref ResponseMessage error_message) {
+        protected bool ValidateMessage(IMessage message, ref ResponseMessage error_message) {
             if (message.Sender == null) {
                 error_message = new ResponseMessage(Resources.Messaging_smtperr_NoSender, ResponseMessageType.ErrorMessage);
                 return false;
