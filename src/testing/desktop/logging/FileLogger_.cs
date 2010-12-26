@@ -29,5 +29,11 @@ namespace Nohros.Test.Logging
             FileLogger logger = FileLogger.ForCurrentProcess;
             Assert.IsNotNull(logger);
         }
+
+        [Test]
+        public void LogError() {
+            FileLogger logger = FileLogger.ForCurrentProcess;
+            logger.Logger.Error("[NUnit   LogError method]");
+        }
     }
 }
