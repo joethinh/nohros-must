@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+using System.Reflection;
 
 using log4net;
 using log4net.Core;
@@ -19,11 +21,10 @@ namespace Nohros.Logging
     /// <remarks>
     /// This is a generic logger that loads automatically and configures itself through the code. The messages
     /// are logged to a file that resides on the same folder of the caller application base directory.The name of
-    /// the file is nohros-logger.log for non-debug messages and nohros-logger.debug for debug messages.
+    /// the file is nohros-logger.log.
     /// <para>
     /// The pattern used to log message are:
-    ///     . "[%date %-5level/%thread] %message%newline %exception" for non-debug messages.
-    ///     . "[%date %-5level/%thread] %line %message%newline %exception" for debug messages.
+    ///     . "[%date %-5level/%thread] %message%newline %exception".
     /// </para>
     /// <para>
     /// The default threshold level is INFO and could be overloaded on the nohros configuration file.
@@ -31,13 +32,12 @@ namespace Nohros.Logging
     /// </remarks>
     public class FileLogger
     {
-        const string kReleasePattern = "[%date %-5level/%thread] %message%newline %exception";
-        const string kDebugPattern = "[%date %-5level/%thread] %line %message%newline %exception";
-        const string kNonDebugFileName = "nohros-logger.log";
-        const string kDebugFileName = "nohros-logger.debug";
+        const string kLogMessagePattern = "[%date %-5level/%thread] %message%newline %exception";
+        const string kFileName = "nohros-logger.log";
 
         ILog logger_;
         static FileLogger current_process_logger_;
+        string logger_file_path_;
 
         #region .ctor
         /// <summary>
@@ -62,27 +62,27 @@ namespace Nohros.Logging
         /// <summary>
         /// Configures the <see cref="FileLogger"/> logger adding the appenders to the root repository.
         /// </summary>
+        /// <remarks></remarks>
         public void Configure() {
-            // configure the release logger
-            FileAppender release_appender = new FileAppender();
-            release_appender.Name = "ReleaseLogger";
-            release_appender.File = kNonDebugFileName;
-            release_appender.AppendToFile = true;
-            release_appender.LockingModel = new FileAppender.MinimalLock();
-            release_appender.Layout = new PatternLayout(kReleasePattern);
-            release_appender.Threshold = Level.Info;
+            // create the layout
+            PatternLayout layout = new PatternLayout();
+            layout.ConversionPattern = kLogMessagePattern;
+            layout.ActivateOptions();
 
-            // configure the debug logger
-            FileAppender debug_appender = new FileAppender();
-            debug_appender.Name = "DebugAppender";
-            debug_appender.File = kDebugFileName;
-            debug_appender.LockingModel = new FileAppender.MinimalLock();
-            debug_appender.Layout = new PatternLayout(kDebugPattern);
-            debug_appender.Threshold = Level.Info;
+            // create the appender
+            FileAppender appender = new FileAppender();
+            appender.Name = "NohrosFileAppender";
+            appender.File = kFileName;
+            appender.AppendToFile = true;
+            appender.LockingModel = new FileAppender.MinimalLock();
+            appender.Layout = layout;
+            appender.Threshold = Level.Info;
+            appender.ActivateOptions();
 
-            // append the loggers the the root and instantiate it.
-            Logger root =((Hierarchy)LogManager.GetRepository()).Root;
-            root.AddAppender(release_appender);
+            logger_file_path_ = appender.File;
+
+            Logger root = ((Hierarchy)LogManager.GetRepository()).Root;
+            root.AddAppender(appender);
             root.Repository.Configured = true;
 
             logger_ = LogManager.GetLogger(typeof(FileLogger));
@@ -111,6 +111,13 @@ namespace Nohros.Logging
         /// </remarks>
         public ILog Logger {
             get { return logger_; }
+        }
+
+        /// <summary>
+        /// Gets the fully qualified path of the log file.
+        /// </summary>
+        public string LoggerFilePath {
+            get { return logger_file_path_; }
         }
     }
 }

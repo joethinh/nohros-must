@@ -22,7 +22,6 @@ namespace Nohros.Logging
     /// <para>
     /// The pattern used to log message are:
     ///     . "[%date %-5level/%thread] %message%newline %exception" for the non-debug messages.
-    ///     . "[%date %-5level/%thread] %line %message%newline %exception" for debug messages.
     /// </para>
     /// <para>
     /// The default threshold level is INFO and could be overloaded on the nohros configuration file.
@@ -30,8 +29,7 @@ namespace Nohros.Logging
     /// </remarks>
     public class ConsoleLogger
     {
-        const string kReleasePattern = "[%date %-5level/%thread] %message%newline %exception";
-        const string kDebugPattern = "[%date %-5level/%thread] %line %message%newline %exception";
+        const string kLogMessagePattern = "[%date %-5level/%thread] %message%newline %exception";
 
         ILog logger_;
         static ConsoleLogger current_process_logger_;
@@ -55,26 +53,24 @@ namespace Nohros.Logging
         /// Configures the <see cref="FileLogger"/> logger adding the appenders to the root repository.
         /// </summary>
         public void Configure() {
-            // configure the release logger
-            ConsoleAppender release_appender = new ConsoleAppender();
-            release_appender.Name = "ReleaseLogger";
-            release_appender.Target = "Console.Out";
-            release_appender.Layout = new PatternLayout(kReleasePattern);
-            release_appender.Threshold = Level.Info;
+            // create the layout
+            PatternLayout layout = new PatternLayout();
+            layout.ConversionPattern = kLogMessagePattern;
+            layout.ActivateOptions();
 
-            // configure the debug logger
-            ConsoleAppender debug_appender = new ConsoleAppender();
-            debug_appender.Name = "DebugAppender";
-            release_appender.Target = "Console.Out";
-            debug_appender.Layout = new PatternLayout(kDebugPattern);
-            debug_appender.Threshold = Level.Info;
+            // create the appender
+            ConsoleAppender appender = new ConsoleAppender();
+            appender.Name = "NohrosConsoleAppender";
+            appender.Layout = layout;
+            appender.Target = "Console.Out";
+            appender.Threshold = Level.Info;
+            appender.ActivateOptions();
 
-            // append the loggers the the root and instantiate it.
             Logger root = ((Hierarchy)LogManager.GetRepository()).Root;
-            root.AddAppender(release_appender);
+            root.AddAppender(appender);
             root.Repository.Configured = true;
 
-            logger_ = LogManager.GetLogger(typeof(FileLogger));
+            logger_ = LogManager.GetLogger(root.Name);
         }
 
         /// <summary>
