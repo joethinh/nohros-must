@@ -17,6 +17,11 @@ namespace Nohros.Configuration
         /// <summary>
         /// A messenger provider.
         /// </summary>
-        Messenger = 1
+        Messenger = 1,
+
+        /// <summary>
+        /// A cache provider.
+        /// </summary>
+        Cache = 2
     }
 }

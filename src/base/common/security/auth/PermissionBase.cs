@@ -6,53 +6,45 @@ namespace Nohros.Security.Auth
     /// <summary>
     /// Provides the abstract base class for the <see cref="IPermission"/> interface.
     /// <para>
-    /// This class implements the GetDataObject method as well as the constructor implied
-    /// by the <see cref="ISerializable"/> interface. The methods of the <see cref="IPermission"/>
-    /// are not implemented and must be overrided by derived classes.
+    /// This class implements the <see cref="IPermission.Name"/>, <see cref="IPermission.Mask"/> and the
+    /// <see cref="Object.GetHashCode"/> method.
     /// </para>
     /// </summary>
     public abstract class PermissionBase : IPermission
     {
         /// <summary>
-        /// Permission name
+        /// The name of the permission name.
         /// </summary>
         protected string name_;
 
         /// <summary>
-        /// Permission actions bitmask
+        /// The permission actions bitmask.
         /// </summary>
         protected long mask_;
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance_ of the PermissionBase class with the default initial capacity.
+        /// Initializes a new instance of the <see cref="PermissionBase"/> class with the specified name.
         /// </summary>
-        protected PermissionBase()
-        {
+        /// <param name="name">The name of the permission.</param>
+        /// <remarks>
+        /// Permissions objects created by using this constructor have the value of the actions
+        /// bitmask equals to zero.
+        /// </remarks>
+        protected PermissionBase(string name) {
+            name_ = name;
+            mask_ = 0;
         }
 
         /// <summary>
-        /// Initializes a new instance_ of the PermissionBase class with serialized data.
+        /// Initializes a new instance of the <see cref="PermissionBase"/> class by using the specified
+        /// permission name and action bit mask.
         /// </summary>
-        /// <param name="info">The object taht holds the serialized object data.</param>
-        /// <param name="context">An object that describes the source or destination of the serialized data.</param>
-        protected PermissionBase(SerializationInfo info , StreamingContext context)
-        {
-            name_ = info.GetString("name");
-            mask_ = info.GetInt64("mask");
+        protected PermissionBase(string name, long mask) {
+            name_ = name;
+            mask_ = mask;
         }
         #endregion
-
-        /// <summary>
-        /// Populates a <see cref="SerializationInfo"/> with the data needed to serialize the target object.
-        /// </summary>
-        /// <param name="info">The <see cref="SerializationInfo"/> to populate with data</param>
-        /// <param name="context">The destination <see cref="StreamingContext"/>for this serialization</param>
-        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("name", name_, typeof(string));
-            info.AddValue("mask", mask_, typeof(long));
-        }
 
         /// <summary>
         /// Checks if the specified permission's actions are "implied by" this object's actions. This must
@@ -61,18 +53,36 @@ namespace Nohros.Security.Auth
         /// whether or not a requested permission is implied by another permission that is known to be valid
         /// in the current execution context.
         /// </summary>
-        /// <param name="perm">The permission to check against</param>
-        /// <returns>true if the specified permission is implied by this object, false if not</returns>
+        /// <param name="perm">The permission to check against.</param>
+        /// <returns>true if the specified permission is implied by this object, false if not.</returns>
         public abstract bool Implies(IPermission perm);
+
+        /// <summary>
+        /// Serves as a hash function for the <see cref="PermisionBase"/> class.
+        /// </summary>
+        /// <returns>A hash code for the current permission.</returns>
+        /// <remarks>
+        /// The hash code is calculated by invoking the GethashCode method of the resulting string of the
+        /// concatenation between the permission name and the string representation of the actions bitmask
+        /// flag. In this way we can guarantee that two permissions with the same name and actions bitmask
+        /// have the same hash code.
+        /// </remarks>
+        public override int GetHashCode() {
+            return string.Concat(name_, mask_).GetHashCode();
+        }
 
         /// <summary>
         /// Gets the name of this permission.
         /// </summary>
-        public abstract string Name { get; }
+        public string Name {
+            get { return name_; }
+        }
 
         /// <summary>
         /// Gets the actions bitmask that tells the actions that are permited for the object.
         /// </summary>
-        public abstract long Mask { get; }
+        public long Mask {
+            get { return mask_; }
+        }
     }
 }

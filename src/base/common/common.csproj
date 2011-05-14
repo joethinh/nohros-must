@@ -29,7 +29,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>$(SolutionDir)bin\release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>$(SolutionDir)..\docs\nohros.xml</DocumentationFile>
@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.65.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -50,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="configuration\common\provider\CacheProviderNode.cs" />
     <Compile Include="configuration\common\provider\MessengerProviderNode.cs" />
     <Compile Include="configuration\common\provider\ProviderNode.cs" />
     <Compile Include="configuration\common\provider\ProviderType.cs" />
@@ -121,6 +123,7 @@
     <Compile Include="security\auth\ILoginModuleEntry.cs" />
     <Compile Include="security\auth\PermissionBase.cs" />
     <Compile Include="security\auth\NasUser.cs" />
+    <Compile Include="security\auth\PermissionSet.cs" />
     <Compile Include="security\auth\SecurityContextBase.cs" />
     <Compile Include="security\auth\LoginContext.cs" />
     <Compile Include="security\auth\ILoginModule.cs" />

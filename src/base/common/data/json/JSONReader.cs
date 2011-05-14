@@ -471,7 +471,7 @@ namespace Nohros.Data
 
 
         /// <summary>
-        /// Grabs the next token in the jsin stream. This does not increment the
+        /// Grabs the next token in the json stream. This does not increment the
         /// stream so it can be used to look ahead at the next token.
         /// </summary>
         /// <returns>A token class containing information about the next token in

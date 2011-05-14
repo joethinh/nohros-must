@@ -65,10 +65,10 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Gets the options configure for a <see cref="Provider"/> from the specified <see cref="XmlNode"/> provider node.
+        /// Gets the options configured for a provider from the specified <see cref="XmlNode"/> provider node.
         /// </summary>
         /// <param name="node">A <see cref="XmlNode"/> node that represents a provider.</param>
-        /// <returns>A <see cref="IDictionary&gt;string, string&lt;"/> containing the options configured for a provider.</returns>
+        /// <returns>A <see cref="IDictionary&lt;TKey, TValue&gt;"/> containing the options configured for a provider.</returns>
         IDictionary<string, string> GetOptions(XmlNode node) {
             Dictionary<string, string> options = new Dictionary<string, string>();
             foreach (XmlNode n in node.ChildNodes) {
@@ -84,6 +84,8 @@ namespace Nohros.Configuration
         /// Parses a XML node that contains information about a provider.
         /// </summary>
         /// <param name="node">The XML node to parse.</param>
+        /// <param name="config">A <see cref="NohrosConfiguration"/> object containing the provider configuration
+        /// informations.</param>
         /// <exception cref="ConfigurationErrorsException">The <paramref name="node"/> is not a
         /// valid representation of a provider.</exception>
         public override abstract void Parse(XmlNode node, NohrosConfiguration config);
@@ -91,7 +93,7 @@ namespace Nohros.Configuration
         /// <summary>
         /// Gets the assembly-qualified name of the provider type.
         /// </summary>
-        /// <seealso cref="AssemblyQualifiedName"/>
+        /// <seealso cref="System.Type.AssemblyQualifiedName"/>
         public string Type {
             get { return type_; }
             internal set { type_ = value; }
@@ -105,7 +107,7 @@ namespace Nohros.Configuration
         /// The fully qualified path to the folder where the provider assembly is stored.
         /// </value>
         /// <remarks>
-        /// The AssemblyLocation must be an absolute path or a path relative to the configuration file.
+        /// The assembly location must be an absolute path or a path relative to the configuration file.
         /// </remarks>
         public string AssemblyLocation {
             get { return assembly_location_; }
@@ -118,13 +120,14 @@ namespace Nohros.Configuration
         /// <value>
         /// A collection of key/value pairs representing the options configured for the provider.
         /// </value>
-        /// <remarks>The <see cref="Options"/> represents the options configured for a <see cref="Provider"/>
-        /// by a user in the configuration repository. The options are defined by the <see cref="Provider"/> itself
-        /// and control the behavior within it. For example a <see cref="Provider"/> may define options
-        /// to support debugging/testing capabilities. Options are defined using a key-value syntaxm such as <c>debug=true</c>.
-        /// The <see cref="Provider"/> stores the options as a <see cref="IDictionary&gt;string, string&lt;"/> so that the
-        /// values may be retrieved using the key. Note that there is no limit to the number of options a <see cref="Provider"/>
-        /// chooses to define.
+        /// <remarks>The <see cref="Options"/> property represents the options configured for a provider by a user
+        /// in the configuration repository. The options are defined by the provider itself and control the
+        /// behavior within it. For example a provider may define options to support debugging/testinz capabilities.
+        /// Options are defined using a key-value syntaxm such as <c>debug=true</c>. The provider stores the options
+        /// as a <see cref="IDictionary&lt;TKey, TValue&gt;"/> so that the values may be retrieved using the key.
+        /// <para>
+        /// NOTE: There is no limit to the number of options a provider chooses to define.
+        /// </para>
         /// </remarks>
         public IDictionary<string, string> Options {
             get { return options_; }

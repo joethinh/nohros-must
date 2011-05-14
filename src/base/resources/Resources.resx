@@ -132,6 +132,9 @@
   <data name="Argument_AddingDuplicate" xml:space="preserve">
     <value>An entry with the same key already exists.</value>
   </data>
+  <data name="Argument_any_null" xml:space="preserve">
+    <value>One of the specified arguments is a null reference.</value>
+  </data>
   <data name="Argument_ArrayPlusOffTooSmall" xml:space="preserve">
     <value>Attempting to specify count and offset past end of array.</value>
   </data>

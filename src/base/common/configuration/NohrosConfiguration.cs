@@ -26,6 +26,7 @@ namespace Nohros.Configuration
         internal const string kProvidersNodeName = "providers";
         internal const string kDataProviderNodeName = "data";
         internal const string kMessengerProviderNodeName = "messenger";
+        internal const string kCacheProviderNodeName = "cache";
         internal const string kProviderNodeName = "provider";
         internal const string kLoginModulesNodeName = "login-modules";
         internal const string kModuleNodeName = "module";
@@ -37,9 +38,13 @@ namespace Nohros.Configuration
         internal const string kCommonNodeTree = kCommonNodeName;
         internal const string kRepositoryNodeTree = kCommonNodeTree + "." + kRepositoryNodeName;
         internal const string kConnectionStringNodeTree = kCommonNodeTree + "." + kConnectionStringsNodeName;
+        
+        // providers node trees
         internal const string kProvidersNodeTree = kCommonNodeTree + "." + kProvidersNodeName;
         internal const string kDataProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kDataProviderNodeName;
         internal const string kMessengerProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kMessengerProviderNodeName;
+        internal const string kCacheProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kCacheProviderNodeName;
+
         internal const string kLoginModuleNodeTree = kCommonNodeTree + "." + kLoginModulesNodeName;
         internal const string kChainNodeTree = kCommonNodeTree + "." + kChainsNodeName;
         internal const string kWebNodeTree = kWebNodeName;
@@ -47,7 +52,7 @@ namespace Nohros.Configuration
 
         const string kLog4NetThreshold = "log4net-threshold";
 
-        protected static NohrosConfiguration default_process_config_;
+        static NohrosConfiguration default_process_config_;
 
         DictionaryValue properties_;
         DictionaryValue config_nodes_;

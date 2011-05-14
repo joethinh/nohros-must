@@ -32,7 +32,8 @@ namespace Nohros.Logging
     /// </remarks>
     public class FileLogger
     {
-        const string kLogMessagePattern = "[%date %-5level/%thread] %message%newline %exception";
+        const string kLogErrorMessagePattern = "[%date %-5level/%thread] %message%newline %exception";
+        const string kLogCommonMessagePattern = "[%date %-5level/%thread] %message%newline";
         const string kFileName = "nohros-logger.log";
 
         ILog logger_;
@@ -64,28 +65,43 @@ namespace Nohros.Logging
         /// </summary>
         /// <remarks></remarks>
         public void Configure() {
+            // create a new logger into the repository of the current assembly.
+            ILoggerRepository root_repository = LogManager.GetRepository(Assembly.GetExecutingAssembly());
+            Logger nohros_file_logger = root_repository.GetLogger("NohrosFileAppender") as Logger;
+
             // create the layout
             PatternLayout layout = new PatternLayout();
-            layout.ConversionPattern = kLogMessagePattern;
+            layout.ConversionPattern = kLogErrorMessagePattern;
             layout.ActivateOptions();
 
-            // create the appender
-            FileAppender appender = new FileAppender();
-            appender.Name = "NohrosFileAppender";
-            appender.File = kFileName;
-            appender.AppendToFile = true;
-            appender.LockingModel = new FileAppender.MinimalLock();
-            appender.Layout = layout;
-            appender.Threshold = Level.Info;
-            appender.ActivateOptions();
+            // create the appender for error messages
+            FileAppender error_appender = new FileAppender();
+            error_appender.Name = "NohrosErrorFileAppender";
+            error_appender.File = kFileName;
+            error_appender.AppendToFile = true;
+            error_appender.LockingModel = new FileAppender.MinimalLock();
+            error_appender.Layout = layout;
+            error_appender.Threshold = Level.Error;
+            error_appender.ActivateOptions();
 
-            logger_file_path_ = appender.File;
+            // create the layout and appender for non error messages
+            PatternLayout common_layout = new PatternLayout();
+            layout.ConversionPattern = kLogCommonMessagePattern;
+            layout.ActivateOptions();
 
-            Logger root = ((Hierarchy)LogManager.GetRepository()).Root;
-            root.AddAppender(appender);
-            root.Repository.Configured = true;
+            FileAppender common_appender = new FileAppender();
+            common_appender.Name = "NohrosCommonFileAppender";
+            common_appender.File = kFileName;
+            common_appender.AppendToFile = true;
+            common_appender.LockingModel = new FileAppender.MinimalLock();
+            common_appender.Layout = common_layout;
+            common_appender.Threshold = Level.Info;
+            common_appender.ActivateOptions();
 
-            logger_ = LogManager.GetLogger(typeof(FileLogger));
+            nohros_file_logger.AddAppender(error_appender);
+            nohros_file_logger.AddAppender(common_appender);
+
+            logger_ = LogManager.GetLogger("NohrosFileLogger");
         }
 
         /// <summary>
