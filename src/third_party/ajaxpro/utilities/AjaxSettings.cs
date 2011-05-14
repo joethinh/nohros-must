@@ -115,6 +115,8 @@ namespace AjaxPro
 		private string m_CoreScript = null;
 		private System.Collections.Specialized.StringDictionary m_ScriptReplacements = new System.Collections.Specialized.StringDictionary();
 
+        long sliding_expiration_timeout_ms_ = 30000;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AjaxSettings"/> class.
         /// </summary>
@@ -240,10 +242,14 @@ namespace AjaxPro
         /// <value>The script replacements.</value>
 		internal System.Collections.Specialized.StringDictionary ScriptReplacements
 		{
-			get{ return m_ScriptReplacements; }
-			set{ m_ScriptReplacements = value; }
+			get { return m_ScriptReplacements; }
+			set { m_ScriptReplacements = value; }
 		}
 
+        internal long SlidingExpirationTimeout {
+            get { return sliding_expiration_timeout_ms_; }
+            set { sliding_expiration_timeout_ms_ = value; }
+        }
 		#endregion
 	}
 #endif
