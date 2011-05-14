@@ -9,16 +9,83 @@ using Nohros.Resources;
 namespace Nohros.Security.Auth
 {
     /// <summary>
-    /// Describes the basic methods used to authenticate Users and provides a
-    /// way to develop an application independent of the underlying authentication
-    /// technology. A configuration specifies the <see cref="LoginModule"/>, to be
-    /// used with a particular application. 
-    /// <para>
-    /// In adition to supporting pluggable authentication, this class also support
-    /// the notion of stacked authentication. Applications may be configured to use
-    /// more than on <see cref="LoginModule"/>
-    /// </para>
+    /// Describes the basic methods used to authenticate <see cref="Subject"/>s and provides a way to
+    /// develop an application independent of the underlying authentication technology.
     /// </summary>
+    /// <remarks> A <see cref="LoginConfiguration"/> specifies the authentication technology, or
+    /// <see cref="LoginModule"/>, to be used with a particular application. Therefore, different login
+    /// modules can be plugged in under an application without requiring any modifications to the
+    /// application itself.
+    /// <para>
+    /// In adition to supporting pluggable authentication, this class also support the notion of stacked
+    /// authentication. In other words, an application may be configured to use more than one
+    /// <see cref="LoginModule"/>. For example, one could configure both Kerberos login module and a
+    /// smart card login module under an application
+    /// </para>
+    /// <para>
+    /// A typical caller instantiates this class and passes in a name and a <see cref="IAuthCallbackHandler"/>.
+    /// <see cref="LoginContext"/> uses the name as the index into the <see cref="LoginConfiguration"/>
+    /// to determine which login module should be used, and which ones must succeed in order  for the
+    /// overall authentication to succeed. The <see cref="iAuthCallbackHandler"/> object is passed to the
+    /// underlying login modules so they may communicate and interact with users(prompting for a username
+    /// and password via a graphical user interface, for example.
+    /// </para>
+    /// <para>
+    /// Once the caller has instantiated a <see cref="LoginContext"/>, it invokes the
+    /// <see cref="LoginModule.Login()"/> method for each login module configured for the name specified
+    /// by the caller. Each login module then performs its respective type of authentication(username/
+    /// password, smart card pin verification, etc). Note that the login module will not attempt
+    /// authentication retries or introduces delays if the authentication fails. Such tasks belong to the
+    /// caller.
+    /// </para>
+    /// <para>
+    /// Regardless of whether or not the overall authentication secceeded, this login method completes a
+    /// 2-phase authentication process by then calling either the <see cref="LoginModule.Commit()"/>
+    /// method or the <see cref="LoginModule.Abort()"/> method for each of the configured login modules.
+    /// The commit method for each login module gets invoked if the overall authentication secceeded,
+    /// whereas the abort method for each login module gets invoked if the overall authentication failed.
+    /// Each successful login module's commit method associates the relevant permissions with the
+    /// <see cref="Subject"/>. Each login module's abort method cleans up or removes/destroys any
+    /// previously stored authentication state.
+    /// </para>
+    /// <para>
+    /// If the login method returns without throwing an exception, then the overall authentication
+    /// succeeded. The caller can then retrieve the newly authenticated <see cref="Subject"/> by getting
+    /// the value of the <see cref="Subject"/> property. Permissions associated with the subject may be
+    /// retrieved by getting the value associated with the subject respective
+    /// <see cref="Subject.Permissions"/> property.
+    /// </para>
+    /// <para>
+    /// To logout the subject, the caller simple needs to invoke the <see cref="Logout"/> method. As with
+    /// the <see cref="Login"/> method, this logout method invokes the <see cref="LoginModule.Logout"/>
+    /// method for each login module configured for this login context. Each login module's logout method
+    /// cleans up state and removes/destroys permissions from the subject as appropriate.
+    /// </para>
+    /// <para>
+    /// Each of the configured login module invoked by the login context is initialized with a
+    /// <see cref="Subject"/> object to be authenticated, a <see cref="ICallbackHandler"/> object used to
+    /// communicate with users, shared login module state, and login module specific options.
+    /// </para>
+    /// <para>
+    /// Each login module which successfully authenticates a user updates the subject with the relevant
+    /// user information(permissions). This subject can then be returned via the subject method from the
+    /// <see cref="LoginContext"/> class if the overall authentication succeeds.
+    /// </para>
+    /// <para>
+    /// A login context supports authentication retries by calling application. For example, a login
+    /// context's login method may be invoked mutiple times if the user incorrectly types in a password.
+    /// However, a login context should not be used to authenticate more than one subject. A separate
+    /// login context should be used to authenticate each different subject.
+    /// </para>
+    /// <para>
+    /// Mutiple calls into the same login context do not affect the login module state, or the login
+    /// module specific options.
+    /// </para>
+    /// </remarks>
+    /// <seealso cref="Subject"/>
+    /// <seealso cref="IAuthCallbackHandler"/>
+    /// <seealso cref="ILoginConfiguration"/>
+    /// <seealso cref="ILoginModule"/>
     public sealed class LoginContext
     {
         IAuthCallbackHandler callback_;
@@ -29,7 +96,7 @@ namespace Nohros.Security.Auth
 
         #region .ctor
         /// <summary>
-        /// Initialize a new instance_ of the LoginContext.
+        /// Initialize a new instance of the <see cref="LoginContext"/> class.
         /// </summary>
         public LoginContext()
         {
@@ -39,7 +106,7 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Initializes a new instance_ of the <see cref="LoginContext"/> class by
+        /// Initializes a new instance of the <see cref="LoginContext"/> class by
         /// using the specified subject object.
         /// </summary>
         /// <param name="subject">The <see cref="Subject"/> to authenticate. The

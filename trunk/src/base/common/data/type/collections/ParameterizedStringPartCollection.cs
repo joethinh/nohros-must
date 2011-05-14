@@ -65,6 +65,33 @@ namespace Nohros.Data.Collections
         }
 
         /// <summary>
+        /// Adds a new <see cref="ParameterizedStringPart"/> object to the collection by using the specified literal text.
+        /// </summary>
+        /// <param name="literal_text">A string that contains the parameterized string part.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="literal_text"/> is null</exception>
+        /// <remarks>Thie method overload constructs a new <see cref="ParameterizedStringPart"/> using
+        /// the specified parameters and add it to the collection.</remarks>
+        /// <seealso cref="ParameterizedStringPart(string, string)"/>
+        public void Add(string literal_text) {
+            Add(new ParameterizedStringPart(literal_text));
+        }
+
+        /// <summary>
+        /// Adds a new <see cref="ParameterizedStringPart"/> object to the by using the specified parameter name
+        /// and value.
+        /// </summary>
+        /// <param name="parameter_name">The name of the parameter.</param>
+        /// <param name="parameter_value">The value of the parameter. This could be null.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="parameter_name"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="parameter_name"/>is a empty string.</exception>
+        /// <remarks>Thie method overload constructs a new <see cref="ParameterizedStringPart"/> using
+        /// the specified parameters and add it to the collection.</remarks>
+        /// <seealso cref="ParameterizedStringPart(string, string)"/>
+        public void Add(string parameter_name, string parameter_value) {
+            Add(new ParameterizedStringPart(parameter_name, parameter_value));
+        }
+
+        /// <summary>
         /// Removes all the <see cref="ParameterizedStringPart"/> objects from the <see cref="ParameterizedStringPartCollection"/>.
         /// </summary>
         public void Clear() {

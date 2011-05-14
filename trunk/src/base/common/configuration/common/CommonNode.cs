@@ -34,7 +34,7 @@ namespace Nohros.Configuration
         /// </summary>
         /// <param name="node">A XML node containing the data to parse.</param>
         /// <param name="config">The configuration object which this node belongs to.</param>
-        /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
+        /// <exception cref="System.Configuration.ConfigurationErrorsException">The <paramref name="node"/> is not a
         /// valid representation of a common node.</exception>
         public override void Parse(XmlNode node, NohrosConfiguration config) {
             // order matters
@@ -92,6 +92,7 @@ namespace Nohros.Configuration
                 ProviderType provider_type = default(ProviderType);
                 DictionaryValue<DataProviderNode> data_providers = null;
                 DictionaryValue<MessengerProviderNode> messenger_providers = null;
+                DictionaryValue<CacheProviderNode> cache_providers = null;
 
                 foreach (XmlNode provider_node in data_node.ChildNodes) {
                     if (string.Compare(provider_node.Name, NohrosConfiguration.kDataProviderNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
@@ -103,6 +104,10 @@ namespace Nohros.Configuration
                         messenger_providers = new DictionaryValue<MessengerProviderNode>();
                         config.Nodes[NohrosConfiguration.kMessengerProviderNodeTree] = messenger_providers;
                         provider_type = ProviderType.Messenger;
+                    } else if (string.Compare(provider_node.Name, NohrosConfiguration.kCacheProviderNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
+                        cache_providers = new DictionaryValue<CacheProviderNode>();
+                        config.Nodes[NohrosConfiguration.kCacheProviderNodeTree] = cache_providers;
+                        provider_type = ProviderType.Cache;
                     }
 
                     foreach (XmlNode n in provider_node.ChildNodes) {
@@ -124,6 +129,12 @@ namespace Nohros.Configuration
                                     MessengerProviderNode messenger = new MessengerProviderNode(name, type);
                                     messenger.Parse(n, config);
                                     messenger_providers[messenger.Name] = messenger;
+                                    break;
+
+                                case ProviderType.Cache:
+                                    CacheProviderNode cache_provider = new CacheProviderNode(name, type);
+                                    cache_provider.Parse(n, config);
+                                    cache_providers[cache_provider.Name] = cache_provider;
                                     break;
                             }
                         }

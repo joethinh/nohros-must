@@ -12,6 +12,9 @@ using Nohros.Data.Providers;
 
 namespace Nohros.Configuration
 {
+    /// <summary>
+    /// Contains configuration informations for data providers.
+    /// </summary>
     public class DataProviderNode : ProviderNode
     {
         const string kDataBaseOwnerKey = "database-owner";

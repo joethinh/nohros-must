@@ -276,6 +276,13 @@ namespace Nohros.Resources
         }
 
         /// <summary>
+        /// Looks up a localized string similar to [One of the specified arguments is a null reference].
+        /// </summary>
+        public static string Argument_any_null {
+            get { return GetString("Argument_any_null"); }
+        }
+
+        /// <summary>
         /// Looks up a localized string similar to [Offset and length were out of bounds for the array or count is
         /// greater than the number of elements from index to the end of the source collection].
         /// </summary>

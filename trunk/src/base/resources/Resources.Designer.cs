@@ -106,6 +106,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One of the specified arguments is a null reference..
+        /// </summary>
+        internal static string Argument_any_null {
+            get {
+                return ResourceManager.GetString("Argument_any_null", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attempting to specify count and offset past end of array..
         /// </summary>
         internal static string Argument_ArrayPlusOffTooSmall {

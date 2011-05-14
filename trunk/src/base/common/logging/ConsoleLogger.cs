@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 
 using log4net;
 using log4net.Core;
@@ -29,7 +30,8 @@ namespace Nohros.Logging
     /// </remarks>
     public class ConsoleLogger
     {
-        const string kLogMessagePattern = "[%date %-5level/%thread] %message%newline %exception";
+        const string kErrorLogMessagePattern = "[%date %-5level/%thread] %message%newline %exception";
+        const string kCommonLogMessagePattern = "[%date %-5level/%thread] %message%newline";
 
         ILog logger_;
         static ConsoleLogger current_process_logger_;
@@ -53,24 +55,40 @@ namespace Nohros.Logging
         /// Configures the <see cref="FileLogger"/> logger adding the appenders to the root repository.
         /// </summary>
         public void Configure() {
+            // create a new logger into the repository of the current assembly.
+            ILoggerRepository root_repository = LogManager.GetRepository(Assembly.GetExecutingAssembly());
+            Logger nohros_console_logger = root_repository.GetLogger("NohrosConsoleAppender") as Logger;
+
             // create the layout
-            PatternLayout layout = new PatternLayout();
-            layout.ConversionPattern = kLogMessagePattern;
-            layout.ActivateOptions();
+            PatternLayout error_layout = new PatternLayout();
+            error_layout.ConversionPattern = kErrorLogMessagePattern;
+            error_layout.ActivateOptions();
 
             // create the appender
-            ConsoleAppender appender = new ConsoleAppender();
-            appender.Name = "NohrosConsoleAppender";
-            appender.Layout = layout;
-            appender.Target = "Console.Out";
-            appender.Threshold = Level.Info;
-            appender.ActivateOptions();
+            ConsoleAppender error_appender = new ConsoleAppender();
+            error_appender.Name = "NohrosErrorConsoleAppender";
+            error_appender.Layout = error_layout;
+            error_appender.Target = "Console.Out";
+            error_appender.Threshold = Level.Info;
+            error_appender.ActivateOptions();
 
-            Logger root = ((Hierarchy)LogManager.GetRepository()).Root;
-            root.AddAppender(appender);
-            root.Repository.Configured = true;
+            // create the layout and appender for on error messages.
+            PatternLayout common_layout = new PatternLayout();
+            common_layout.ConversionPattern = kCommonLogMessagePattern;
+            common_layout.ActivateOptions();
 
-            logger_ = LogManager.GetLogger(root.Name);
+            // create the appender
+            ConsoleAppender common_appender = new ConsoleAppender();
+            common_appender.Name = "NohrosCommonConsoleAppender";
+            common_appender.Layout = common_layout;
+            common_appender.Target = "Console.Out";
+            common_appender.Threshold = Level.Info;
+            common_appender.ActivateOptions();
+
+            nohros_console_logger.AddAppender(error_appender);
+            nohros_console_logger.AddAppender(common_appender);
+
+            logger_ = LogManager.GetLogger("NohrosConsoleAppender");
         }
 
         /// <summary>

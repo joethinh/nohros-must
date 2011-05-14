@@ -29,8 +29,8 @@ namespace Nohros.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the ParameterizedStringPart class, using the provided parameter name and
-        /// value.
+        /// Initializes a new instance of the <see cref="ParameterizedStringPart"/> class, using the provided parameter
+        /// name and value.
         /// </summary>
         /// <param name="parameter_name">The name of the parameter.</param>
         /// <param name="parameter_value">The value of the parameter. This could be null.</param>
