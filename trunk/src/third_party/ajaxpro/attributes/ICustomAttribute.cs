@@ -22,10 +22,9 @@
  * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-/*
  * 
- * 
+ * [0] 2010.12.28 - neylor.silva
+ *      initial release
  */
 using System;
 
@@ -34,17 +33,17 @@ namespace AjaxPro
     [AttributeUsage(AttributeTargets.Method, AllowMultiple=false)]
     public abstract class ICustomAttribute : Attribute
     {
-        private string _name = null;
-        private string _value = null;
+        string name_ = null;
+        string value_ = null;
 
         public virtual string Name {
-            get { return _name; }
-            protected set { _name = value; }
+            get { return name_; }
+            protected set { name_ = value; }
         }
 
         public virtual string Value {
-            get { return _value; }
-            protected set { _value = value; }
+            get { return value_; }
+            protected set { value_ = value; }
         }
     }
 }

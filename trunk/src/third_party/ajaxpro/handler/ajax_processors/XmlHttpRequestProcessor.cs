@@ -44,6 +44,8 @@
  *					using new AjaxSecurityProvider
  *					added optional x-ajaxpro-method to querystring
  * 
+ * nohros   2011.02.01  caching the result of the reflective calls on AjaxMethod property.
+ * 
  * 
  * 
  * 
@@ -52,6 +54,7 @@ using System;
 using System.Web;
 using System.Reflection;
 using System.IO;
+using Nohros.Net;
 
 namespace AjaxPro
 {
@@ -194,17 +197,22 @@ namespace AjaxPro
         /// <value>The ajax method.</value>
 		public override MethodInfo AjaxMethod
 		{
-			get
-			{
-				string m = context.Request.Headers["X-" + Constant.AjaxID + "-Method"];
+			get {
+				string method_name = context.Request.Headers["X-" + Constant.AjaxID + "-Method"];
+                if (method_name == null || method_name.Length == 0)
+                    method_name = context.Request["X-" + Constant.AjaxID + "-Method"];
 
-				if (m == null || m.Length == 0)
-					m = context.Request["X-" + Constant.AjaxID + "-Method"];
+                // attempt to get the result from the cache to avoid reflective calls
+                MethodInfo method_info = null;
+                if (method_name != null && method_name.Length > 0) {
+                    MethodInfo method_info = NCache.Get(method_name) as MethodInfo;
+                    if (method_info == null) {
+                        method_info = this.GetMethodInfo(method_name); // TODO: Handle null values.
+                        NCache.Add(method_name, method_info);
+                    }
+                }
 
-				if(m != null && m.Length > 0)
-					return this.GetMethodInfo(m);
-
-				return null;
+				return method_info;
 			}
 		}
 

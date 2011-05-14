@@ -82,26 +82,21 @@ namespace AjaxPro
 			Exception typeException = null;
 			bool isInTypesList = false;
 
-			try
-			{
-				if (Utility.Settings != null && Utility.Settings.UrlNamespaceMappings.Contains(filename))
-				{
+			try {
+				if (Utility.Settings != null && Utility.Settings.UrlNamespaceMappings.Contains(filename)) {
 					isInTypesList = true;
 					t = Type.GetType(Utility.Settings.UrlNamespaceMappings[filename].ToString(), true);
 				}
 
 				if (t == null)
 					t = Type.GetType(filename, true);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				typeException = ex;
 			}
 
 			switch(requestType)
 			{
 				case "GET":		// get the JavaScript files
-
 					switch(filename.ToLower())
 					{
 						case "prototype":
@@ -122,8 +117,7 @@ namespace AjaxPro
 
 						default:
 
-							if (typeException != null)
-							{
+							if (typeException != null) {
 #if(WEBEVENT)
 								string errorText = string.Format(Constant.AjaxID + " Error", context.User.Identity.Name);
 
@@ -150,14 +144,11 @@ namespace AjaxPro
 					p[1] = new IFrameProcessor(context, t);
 
 
-					for(int i=0; i<p.Length; i++)
-					{
+					for(int i=0; i<p.Length; i++) {
                         IAjaxProcessor ap = p[i];
 
-						if(ap.CanHandleRequest)
-						{
-							if (typeException != null)
-							{
+						if(ap.CanHandleRequest) {
+							if (typeException != null) {
 #if(WEBEVENT)
 								string errorText = string.Format(Constant.AjaxID + " Error", context.User.Identity.Name);
 
@@ -176,16 +167,13 @@ namespace AjaxPro
 							if (Utility.Settings.OldStyle.Contains("sessionStateDefaultNone"))
 								sessionReq = HttpSessionStateRequirement.None;
 
-							if(ma.Length > 0)
-							{
+							if(ma.Length > 0) {
 								useAsync = ma[0].UseAsyncProcessing;
-
 								if(ma[0].RequireSessionState != HttpSessionStateRequirement.UseDefault)
 									sessionReq = ma[0].RequireSessionState;
 							}
 
-							switch (sessionReq)
-							{
+							switch (sessionReq) {
 								case HttpSessionStateRequirement.Read:
 									if (!useAsync)
 										return new AjaxSyncHttpHandlerSessionReadOnly(p[i]);

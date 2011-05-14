@@ -31,6 +31,9 @@
  * MS	06-06-06	added ContentType property
  * MS	07-04-24	fixed Ajax token
  * 
+ * [0] 2010.12.28 - neylor.silva
+ *     added support to custom attributes.
+ * 
  */
 using System;
 using System.Web;
@@ -81,41 +84,36 @@ namespace AjaxPro
 
 			AjaxNamespaceAttribute[] ns;
 
-			for (int i = 0; i < methods.Length; i++)
-			{
+			for (int i = 0; i < methods.Length; i++) {
 				if(!isAjaxMethod[i])
 					continue;
-
+                
 				ns = (AjaxNamespaceAttribute[])methods[i].GetCustomAttributes(typeof(AjaxNamespaceAttribute), true);
+                if (ns.Length > 0) {
+                    if (ns[0].ClientNamespace == methodName) {
+                        method = methods[i];
 
-				if (ns.Length > 0 && ns[0].ClientNamespace == methodName)
-				{
-					method = methods[i];
+                        m_methodAttributes = (AjaxMethodAttribute[])methods[i].GetCustomAttributes(typeof(AjaxMethodAttribute), true);
+                        m_namespaceAttributes = ns;
+                        m_serverCacheAttributes = (AjaxServerCacheAttribute[])methods[i].GetCustomAttributes(typeof(AjaxServerCacheAttribute), true);
 
-					m_methodAttributes = (AjaxMethodAttribute[])methods[i].GetCustomAttributes(typeof(AjaxMethodAttribute), true);
-					m_namespaceAttributes = ns;
-					m_serverCacheAttributes = (AjaxServerCacheAttribute[])methods[i].GetCustomAttributes(typeof(AjaxServerCacheAttribute), true);
+                        // retrieve the user-defined attributes. User defined attributes must derive
+                        // from the ICustomAttribute class.
+                        m_customAttributes = (ICustomAttribute[])methods[i].GetCustomAttributes(typeof(ICustomAttribute), true);
 
-					return method;
-				}
-			}
+                        return method;
+                    }
+                } else if (methods[i].Name == methodName) {
+                    method = methods[i];
 
-			for (int i = 0; i < methods.Length; i++)
-			{
-				if (!isAjaxMethod[i])
-					continue;
+                    m_methodAttributes = (AjaxMethodAttribute[])methods[i].GetCustomAttributes(typeof(AjaxMethodAttribute), true);
+                    m_namespaceAttributes = (AjaxNamespaceAttribute[])methods[i].GetCustomAttributes(typeof(AjaxNamespaceAttribute), true);
+                    m_serverCacheAttributes = (AjaxServerCacheAttribute[])methods[i].GetCustomAttributes(typeof(AjaxServerCacheAttribute), true);
 
-				if (methods[i].Name == methodName)
-				{
-					method = methods[i];
-
-					m_methodAttributes = (AjaxMethodAttribute[])methods[i].GetCustomAttributes(typeof(AjaxMethodAttribute), true);
-					m_namespaceAttributes = (AjaxNamespaceAttribute[])methods[i].GetCustomAttributes(typeof(AjaxNamespaceAttribute), true);
-					m_serverCacheAttributes = (AjaxServerCacheAttribute[])methods[i].GetCustomAttributes(typeof(AjaxServerCacheAttribute), true);
+                    // retrieve the user-defined attributes. User defined attributes must derive
+                    // from the AjaxMethodAttribute class.
                     m_customAttributes = (ICustomAttribute[])methods[i].GetCustomAttributes(typeof(ICustomAttribute), true);
-
-					return method;
-				}
+                }
 			}
 
 			return null;

@@ -367,47 +367,41 @@ namespace AjaxPro
 	/// <value>The settings.</value>
 	internal static AjaxSettings Settings
 	{
-	    get
-	    {
-		if (m_Settings != null)
-		    return m_Settings;
+	    get {
+	        if (m_Settings != null)
+	            return m_Settings;
 
-		lock (m_SettingsLock)
-		{
-		    if (m_Settings != null)
-			return m_Settings;      // Ok, one other thread has already initialized this value.
+            lock (m_SettingsLock) {
+                if (m_Settings != null)
+                    return m_Settings;      // Ok, one other thread has already initialized this value.
 
-		    AjaxSettings settings = null;
+                AjaxSettings settings = null;
 
-		    try
-		    {
+                try {
 #if(NET20)
-			settings = (AjaxSettings)System.Configuration.ConfigurationManager.GetSection("ajaxNet/ajaxSettings");
+                    settings = (AjaxSettings)System.Configuration.ConfigurationManager.GetSection("ajaxNet/ajaxSettings");
 #else
-						settings = (AjaxSettings)System.Configuration.ConfigurationSettings.GetConfig("ajaxNet/ajaxSettings");
+                    settings = (AjaxSettings)System.Configuration.ConfigurationSettings.GetConfig("ajaxNet/ajaxSettings");
 #endif
-
-		    }
+                }
 #if(NET20)
-		    catch (System.Configuration.ConfigurationErrorsException)
+            catch (System.Configuration.ConfigurationErrorsException) { }
 #else
-					catch (Exception)
+            catch (Exception) { }
 #endif
-		    { }
+                if (settings == null) {
+                    settings = new AjaxSettings();
+                    AddDefaultConverter(settings);
+                }
 
-		    if (settings == null)
-		    {
-			settings = new AjaxSettings();
-			AddDefaultConverter(settings);
-		    }
+                // now make the setting visible to all threads
+                m_Settings = settings;
 
-		    // now make the setting visible to all threads
-		    m_Settings = settings;
-
-		    return m_Settings;
-		}
+                return m_Settings;
+            }
 	    }
 	}
+
 #if(!JSONLIB)
 	/// <summary>
 	/// Gets the current ajax token.

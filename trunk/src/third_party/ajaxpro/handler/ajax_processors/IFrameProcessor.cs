@@ -249,9 +249,7 @@ namespace AjaxPro
 
 			return false;
 		}
-
 		#endregion
-
 	}
 
 }
