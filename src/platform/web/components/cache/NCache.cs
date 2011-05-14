@@ -7,95 +7,172 @@ using System.Web.Caching;
 using System.Threading;
 using System.Text.RegularExpressions;
 
-namespace Nohros.Net
+namespace Nohros.Net.Caching
 {
+    /// <summary>
+    /// NCache is a wrapper around the buit-in .NET Cache object. It provides convenient methods to
+    /// manipulate objects on the cache. This class also provides a way to automatically refresh a
+    /// cached item a specific rate.
+    /// </summary>
     public sealed class NCache
     {
-        #region Loader delegates
-        public delegate object CacheLoaderDelegate();
-        public delegate void CacheLoaderErrorDelegate(string cacheKey, Exception e);
-        #endregion
+        internal static readonly Cache cache_;
 
-        private static CacheLoaderErrorDelegate _cacheLoaderErrorDelegate;
+        static int factor_ = 5;
+        const double kSecondFactor = 0.2; // default factor plus kSecondFactor must be equals to one.
+        const int kMinuteFactor = 12; // (int)(kSecondFactor * 60);
+        const int kHourFatcor = kMinuteFactor * 60;
+        const int kDayFactor = kHourFatcor * 24;
 
-        internal static readonly Cache _cache;
-
-        public static readonly int DayFactor;
-        private static int Factor;
-        public static readonly int HourFactor;
-        public static readonly int MinuteFactor;
-        public static readonly double SecondFactor;
+        ICacheProvider cache_provider_;
 
         #region .ctor
-        private NCache() { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NCache"/> object.
+        /// </summary>
+        NCache() {
+            // attempt to initialize the cache provider that was specified in configuration.
+            // If the cache provider could not be instantiated the HttpCacheProvider will be
+            // used.
+            try {
 
+            }catch{}
+            factor_ = 5;
+        }
+
+        /// <summary>
+        /// Initializes the static members.
+        /// </summary>
         static NCache() {
-            DayFactor = 0x4380;
-            HourFactor = 720;
-            MinuteFactor = 12;
-            SecondFactor = 0.2;
-            Factor = 5;
-            _cache = HttpRuntime.Cache;
+            cache_ = HttpRuntime.Cache;
         }
         #endregion
 
-        public static void Clear() {
-            IDictionaryEnumerator enumerator = _cache.GetEnumerator();
-            ArrayList list = new ArrayList();
-            while (enumerator.MoveNext()) {
-                list.Add(enumerator.Key);
-            }
-            foreach (string str in list) {
-                _cache.Remove(str);
-            }
-        }
-
+        /// <summary>
+        /// Removes items from the cache by using a regex pattern.
+        /// </summary>
+        /// <param name="pattern">The regex pattern used to remove the items from the cache.</param>
+        /// <remarks>
+        /// This method is not performant. It do a regex operation for each item in the cache. Do not use
+        /// it in a sensitive part of your code.
+        /// </remarks>
         public static void RemoveByPattern(string pattern) {
-            IDictionaryEnumerator enumerator = _cache.GetEnumerator();
+            IDictionaryEnumerator enumerator = cache_.GetEnumerator();
             Regex regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            while(enumerator.MoveNext())
-            {
+            while(enumerator.MoveNext()) {
                 if (regex.IsMatch(enumerator.Key.ToString()))
-                    _cache.Remove(enumerator.Key.ToString());
+                    cache_.Remove(enumerator.Key.ToString());
             }
-        }
-
-        public static bool ContainsCacheEntry(string key) {
-            return CacheLockbox.ContainsCacheEntry(key);
         }
 
         public static object Get(string key) {
-            return _cache[key];
+            return cache_[key];
         }
 
         #region static Add(...) overloads
+        /// <summary>
+        /// Adds the specified item to the <see cref="Cache"/> object.
+        /// </summary>
+        /// <param name="key">The cache key used to reference the item.</param>
+        /// <param name="obj">The item to be added to the cache.</param>
+        /// <remarks></remarks>
         public static void Add(string key, object obj) {
-            Add(key, obj, null, 1);
+            Add(key, obj, 1, null);
         }
 
+        /// <summary>
+        /// Adds the specified item to the <see cref="Cache"/> object with the specified expiration police.
+        /// </summary>
+        /// <param name="key">The cache key used to reference the item.</param>
+        /// <param name="obj">The item to be added to the cache.</param>
+        /// <param name="seconds">The interval between the time the added object was last accessed and the time
+        /// at which that object expires. If this value is the equivalent of 20 minutes, the object expires
+        /// and is removed from the cache 20 minutes after it is last accessed.</param>
         public static void Add(string key, object obj, int seconds) {
-            Add(key, obj, null, seconds);
+            Add(key, obj, seconds, null);
         }
 
+        /// <summary>
+        /// Adds the specified item to the <see cref="Cache"/> object with dependencies.
+        /// </summary>
+        /// <param name="key">The cache key used to reference the item.</param>
+        /// <param name="obj">The item to be added to the cache.</param>
+        /// <param name="dep">The file or cache key dependencies for the item. When any dependencie changes, the
+        /// object becomes invalid and is removed from the cache. If there are no dependencies, this parameter
+        /// contains a null reference.</param>
         public static void Add(string key, object obj, CacheDependency dep) {
-            Add(key, obj, dep, MinuteFactor * 3);
+            Add(key, obj, MinuteFactor * 3, dep);
         }
 
+        /// <summary>
+        /// Adds the specified item to the <see cref="Cache"/> object with expiration and priority policies.
+        /// </summary>
+        /// <param name="key">The cache key used to reference the item.</param>
+        /// <param name="obj">The item to be added to the cache.</param>
+        /// <param name="seconds">The interval between the time the added object was last accessed and the time
+        /// at which that object expires. If this value is the equivalent of 20 minutes, the object expires
+        /// and is removed from the cache 20 minutes after it is last accessed.</param>
+        /// <param name="priority">The relative cost of the object, as expressed by the <see cref="CacheItemPriority"/>
+        /// enumeration. The cache uses this value when it evicts objects; objects with a lower cost are removed from the
+        /// cache before objects with a higher cost.</param>
         public static void Add(string key, object obj, int seconds, CacheItemPriority priority) {
-            Add(key, obj, null, seconds, priority);
+            Add(key, obj, seconds, priority, null);
         }
 
-        public static void Add(string key, object obj, CacheDependency dep, int seconds) {
-            Add(key, obj, dep, seconds, CacheItemPriority.Normal);
+        /// <summary>
+        /// Adds the specified item to the <see cref="Cache"/> object with dependencies and expiration policy.
+        /// </summary>
+        /// <param name="key">The cache key used to reference the item.</param>
+        /// <param name="obj">The item to be added to the cache.</param>
+        /// <param name="seconds">The interval between the time the added object was last accessed and the time
+        /// at which that object expires. If this value is the equivalent of 20 minutes, the object expires
+        /// and is removed from the cache 20 minutes after it is last accessed.</param>
+        /// <param name="dep">The file or cache key dependencies for the item. When any dependencie changes, the
+        /// object becomes invalid and is removed from the cache. If there are no dependencies, this parameter
+        /// contains a null reference.</param>
+        public static void Add(string key, object obj, int seconds, CacheDependency dep) {
+            Add(key, obj, seconds, CacheItemPriority.Normal, dep);
         }
 
-        public static void Add(string key, object obj, CacheDependency dep, int seconds, CacheItemPriority priority) {
-            Add(key, obj, dep, seconds, priority, null);
+        /// <summary>
+        /// Adds the specified item to the <see cref="Cache"/> object with dependencies and expiration and priority
+        /// policies.
+        /// </summary>
+        /// <param name="key">The cache key used to reference the item.</param>
+        /// <param name="obj">The item to be added to the cache.</param>
+        /// <param name="seconds">The interval between the time the added object was last accessed and the time
+        /// at which that object expires. If this value is the equivalent of 20 minutes, the object expires
+        /// and is removed from the cache 20 minutes after it is last accessed.</param>
+        /// <param name="priority">The relative cost of the object, as expressed by the <see cref="CacheItemPriority"/>
+        /// enumeration. The cache uses this value when it evicts objects; objects with a lower cost are removed from the
+        /// cache before objects with a higher cost.</param>
+        /// <param name="dep">The file or cache key dependencies for the item. When any dependencie changes, the
+        /// object becomes invalid and is removed from the cache. If there are no dependencies, this parameter
+        /// contains a null reference.</param>
+        public static void Add(string key, object obj, int seconds, CacheItemPriority priority, CacheDependency dep) {
+            Add(key, obj, seconds, priority, dep);
         }
 
-        public static void Add(string key, object obj, CacheDependency dep, int seconds, CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback) {
+        /// <summary>
+        /// Adds the specified object to the <see cref="Cache"/> object with dependencies, expiration and priority
+        /// policies, and a delegate you can use to notify your application when the inserteditem is removed from
+        /// the cache.
+        /// </summary>
+        /// <param name="key">The cache key used to reference the item.</param>
+        /// <param name="obj">The item to be added to the cache.</param>
+        /// <param name="seconds">The interval(in seconds) between the time the added object was last accessed and the time at which
+        /// that object expires. If this value is the equivalent of 20 minutes, the object expires and is removed from
+        /// the cache 20 minutes after it is last accessed.</param>
+        /// <param name="dep">The file of cache key dependencies for the item. When any dependency changes, the object
+        /// becomes invalid and is removed from the cache. If there are no dependencies, this parameter contains null.</param>
+        /// <param name="priority">The relative cost of the object, as expressed by the <see cref="CacheItemPriority"/>
+        /// enumeration. The cache uses this value when it evicts objects; objects with a lower cost are removed from the
+        /// cache before objects with a higher cost.</param>
+        /// <param name="onRemoveCallback">A delegate that, if provided, is called when an object is removed from the cache. You
+        /// can use this to notify applications when their objects are deleted from the cache.</param>
+        public static void Add(string key, object obj, int seconds, CacheItemPriority priority, CacheDependency dep, CacheItemRemovedCallback onRemoveCallback) {
             if (obj != null) {
-                _cache.Add(key, obj, dep, Cache.NoAbsoluteExpiration, TimeSpan.FromTicks(DateTime.Now.AddSeconds((double)(Factor * seconds)).Ticks), priority, onRemoveCallback);
+                cache_.Add(key, obj, dep, Cache.NoAbsoluteExpiration, TimeSpan.FromTicks(DateTime.Now.AddSeconds(seconds).Ticks), priority, onRemoveCallback);
             }
         }
         #endregion
@@ -131,7 +208,7 @@ namespace Nohros.Net
 
         public static void Insert(string key, object obj, CacheDependency dep, DateTime absolute_expiration, CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback) {
             if (obj != null) {
-                _cache.Insert(key, obj, dep, absolute_expiration, TimeSpan.Zero, priority, onRemoveCallback);
+                cache_.Insert(key, obj, dep, absolute_expiration, TimeSpan.Zero, priority, onRemoveCallback);
             }
         }
         #endregion
@@ -150,9 +227,9 @@ namespace Nohros.Net
             try {
                 obj2 = cacheLoader();
             } catch (Exception exception) {
-                if (_cacheLoaderErrorDelegate != null) {
+                if (cache_loader_error_delegate_ != null) {
                     try {
-                        _cacheLoaderErrorDelegate(key, exception);
+                        cache_loader_error_delegate_(key, exception);
                     }
                     catch { }
                 }
@@ -166,16 +243,15 @@ namespace Nohros.Net
 
         internal static void ItemRemovedCallback(string key, object value, CacheItemRemovedReason reason)
         {
-            if (reason == CacheItemRemovedReason.Expired)
-            {
+            if (reason == CacheItemRemovedReason.Expired) {
                 CacheEntry cacheEntry = CacheLockbox.GetCacheEntry(key);
                 
                 // If the sliding expirarion was not reached...
                 if(cacheEntry.LastUse.Add(cacheEntry.SlidingExpiration) > DateTime.Now) {
                     //... the object will be temporary inserted in cache...
-                    _cache.Insert(key, value, null, DateTime.Now.Add(TimeSpan.FromSeconds(30.0)), TimeSpan.Zero, CacheItemPriority.Low, null);
+                    cache_.Insert(key, value, null, DateTime.Now.Add(TimeSpan.FromSeconds(30.0)), TimeSpan.Zero, CacheItemPriority.Low, null);
 
-                    //...reloaded, and reinserted in cache again.
+                    //...reload and reinsert the item into the cache again.
                     ThreadPool.QueueUserWorkItem(delegate(object o) {
                         string s = o.ToString();
                         lock(CacheLockbox.GetInternalLock(s)) {
@@ -192,13 +268,13 @@ namespace Nohros.Net
 
         public static void Max(string key, object obj, CacheDependency dep) {
             if (obj != null) {
-                _cache.Insert(key, obj, dep, DateTime.MaxValue, TimeSpan.Zero, CacheItemPriority.AboveNormal, null);
+                cache_.Insert(key, obj, dep, DateTime.MaxValue, TimeSpan.Zero, CacheItemPriority.AboveNormal, null);
             }
         }
 
         public static void MicroInsert(string key, object obj, int secondFactor) {
             if (obj != null) {
-                _cache.Insert(key, obj, null, DateTime.Now.AddSeconds((double)(Factor * secondFactor)), TimeSpan.Zero);
+                cache_.Insert(key, obj, null, DateTime.Now.AddSeconds((double)(Factor * secondFactor)), TimeSpan.Zero);
             }
         }
 
@@ -209,13 +285,13 @@ namespace Nohros.Net
         public static void Permanent(string key, object obj, CacheDependency dep)
         {
             if (obj != null) {
-                _cache.Insert(key, obj, dep, DateTime.MaxValue, TimeSpan.Zero, CacheItemPriority.NotRemovable, null);
+                cache_.Insert(key, obj, dep, DateTime.MaxValue, TimeSpan.Zero, CacheItemPriority.NotRemovable, null);
             }
         }
 
         public static void Remove(string key)
         {
-            _cache.Remove(key);
+            cache_.Remove(key);
         }
 
         public static void ReSetFactor(int cacheFactor) {
@@ -227,13 +303,12 @@ namespace Nohros.Net
             return Convert.ToInt32(Math.Round((double)(seconds * SecondFactor)));
         }
 
-        public static void SetCacheLoaderErrorHandler(CacheLoaderErrorDelegate handler)
-        {
-            if (_cacheLoaderErrorDelegate != null)
-                throw new Exception("The CacheLoaderDelegate should only be set once whitin an app");
+        public static void SetCacheLoaderErrorHandler(CacheLoaderErrorDelegate handler) {
+            if (cache_loader_error_delegate_ != null)
+                throw new Exception("The CacheLoaderDelegate should only be set once whitin an application");
 
             if (handler != null)
-                _cacheLoaderErrorDelegate = handler;
+                cache_loader_error_delegate_ = handler;
         }
 
         public static bool Update(string key)
@@ -265,7 +340,7 @@ namespace Nohros.Net
 
         public static int CacheFactor
         {
-            get { return Factor; }
+            get { return factor_; }
         }
     }
 

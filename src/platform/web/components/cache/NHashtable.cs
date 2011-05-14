@@ -275,7 +275,7 @@ namespace Nohros.Net
                 if (CacheLockbox.TryGetCacheEntry(cacheKey, out cacheEntry))
                 {
                     if (cacheEntry.LastUse.Add(cacheEntry.SlidingExpiration) > DateTime.Now) {
-                        NCache._cache.Insert(cacheKey, value, null, DateTime.Now.Add(TimeSpan.FromSeconds(30.0)), TimeSpan.Zero, CacheItemPriority.Low, null);
+                        NCache.cache_.Insert(cacheKey, value, null, DateTime.Now.Add(TimeSpan.FromSeconds(30.0)), TimeSpan.Zero, CacheItemPriority.Low, null);
                         ThreadPool.QueueUserWorkItem(delegate(object o)
                         {
                             string k = o.ToString();
