@@ -40,8 +40,8 @@ namespace Nohros.Security.Auth
     /// equality between permission objects and classes that implements this interface should provide
     /// a way to guarantee that the value returned from the GetHashCode method is unique for different
     /// permissions. The msdn also said that the implementation of the GetHashCode method provided by
-    /// the <see cref="String"/> class always returns identical hash codes for identical string value. A
-    /// good way to provide uniqueness is to use at least one of the instance fields as input.
+    /// the <see cref="String"/> class always returns identical hash codes for identical permission
+    /// values. A good way to provide uniqueness is to use at least one of the instance fields as input.
     /// Implementers of the <see cref="IPermission"/> interface could use a combination  of the full name
     /// of the class and the string representation of the mask property as a hash input. For example,
     /// a permission whose name is "MyCompany.MyLibrary.MyPermission" could use the code above to your
@@ -54,6 +54,11 @@ namespace Nohros.Security.Auth
     ///         return string.Concat("MyCompany.MyLibrary.MyPermission", mask_.ToString()).GetHashCode();
     ///     }
     /// </code>
+    /// </para>
+    /// <para>
+    /// Accordingly to the msdn documentation, classes that overrides GetHashCode must also override
+    /// Equals to guarantee that two objects considered equal have the same hash code. Otherwise, the
+    /// classes taht rely on the behavior of the GetHashCode method might not work corretcly.
     /// </para>
     /// <para>
     /// Permission objects are similar to <see cref="String"/> objects in that they are immutable once
@@ -83,5 +88,50 @@ namespace Nohros.Security.Auth
         /// Gets the actions bitmask that tells the actions that are permited for the object.
         /// </summary>
         long Mask { get; }
+
+        /// <summary>
+        /// Determines whether this instance of <see cref="IPermission"/> and a specified object, which
+        /// must also be a <see cref="IPermission"/> object, refers to the same permission.
+        /// </summary>
+        /// <param name="obj">An object.</param>
+        /// <returns>true if <paramref name="obj"/> is a <see cref="IPermission"/> and its value is
+        /// the same as this instance; otherwise, false.</returns>
+        /// <remarks>
+        /// This methods should not throw any exception, even if the specified object is null.
+        /// </remarks>
+        bool Equals(object obj);
+
+        /// <summary>
+        /// Determines whether this instance of <see cref="IPermission"/> and another specified
+        /// <see cref="IPermission"/> refers to the same permission.
+        /// </summary>
+        /// <param name="perm">A <see cref="IPermission"/> object.</param>
+        /// <returns>true if the value of the <paramref name="perm"/> parameter is the same as this
+        /// instance; otherwise, false.</returns>
+        /// <remarks>
+        /// This methods should not throw any exception, even if the specified permission is null.
+        /// </remarks>
+        bool Equals(IPermission perm);
+
+        /// <summary>
+        /// Gets the hash code value for this permission object.
+        /// </summary>
+        /// <returns>The hash code for this permission object.</returns>
+        /// <remarks>
+        /// The required hash code behavior for permission objects is the followig:
+        /// <list type="bullet">
+        /// <item>Whenever it is invoked on the same permission object more than once during an execution
+        /// of a application, the GetHashCode methos must consistently return the same integer. This
+        /// integer does not remain consistent from one execution of an application to another execution
+        /// to another execution of the same application</item>
+        /// <item>
+        /// If two permission objects are equal according to the equals method, then calling the
+        /// GetHashCode method on each of the two permission obhects must produce the same integer result.
+        /// </item>
+        /// </list>
+        /// </remarks>
+        /// <seealso cref="Object.GetHashCode()"/>
+        /// <see cref="Object.Equals(System.Object)"/>
+        int GetHashCode();
     }
 }
