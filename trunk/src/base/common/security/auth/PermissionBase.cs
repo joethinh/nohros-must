@@ -72,6 +72,45 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
+        /// Determines whether this instance of <see cref="IPermission"/> and a specified object, which
+        /// must also be a <see cref="IPermission"/> object, refers to the same permission.
+        /// </summary>
+        /// <param name="obj">An object.</param>
+        /// <returns>true if the specified object is an <see cref="IPermission"/> and its name and action
+        /// mask value are the same as this instance; otherwise, false.</returns>
+        /// <remarks>
+        /// <para>
+        /// This class uses the permission name and its action mask when comparing permissions. This
+        /// method performs an ordinal(case-insensitive and culture-insensitive) comparison.
+        /// </para>
+        /// This methods does not throw any exception, even if the specified permission is null.
+        /// </remarks>
+        public override bool Equals(object obj) {
+            IPermission permission = obj as IPermission;
+            return Equals(permission);
+        }
+
+        /// <summary>
+        /// Determines whether this instance of <see cref="IPermission"/> and another specified
+        /// <see cref="IPermission"/> refers to the same permission.
+        /// </summary>
+        /// <param name="perm">A <see cref="IPermission"/> object.</param>
+        /// <returns>true if the name and action mask value of the <paramref name="perm"/> parameter is
+        /// the same as this instance; otherwise, false.</returns>
+        /// <remarks>
+        /// <para>
+        /// This class uses the permission name and its action mask when comparing permissions. This
+        /// method performs an ordinal(case-insensitive and culture-insensitive) comparison.
+        /// </para>
+        /// This methods does not throw any exception, even if the specified permission is null.
+        /// </remarks>
+        public bool Equals(IPermission perm) {
+            if (perm == null)
+                return false;
+            return (string.Compare(perm.Name, this.name_) == 0 && perm.Mask == mask_);
+        }
+
+        /// <summary>
         /// Gets the name of this permission.
         /// </summary>
         public string Name {
