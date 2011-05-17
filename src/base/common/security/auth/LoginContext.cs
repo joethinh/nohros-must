@@ -98,8 +98,7 @@ namespace Nohros.Security.Auth
         /// <summary>
         /// Initialize a new instance of the <see cref="LoginContext"/> class.
         /// </summary>
-        public LoginContext()
-        {
+        public LoginContext() {
             provided_subject_ = false;
             subject_ = new Subject();
             state_ = new Dictionary<string, object>();

@@ -10,45 +10,30 @@ namespace Nohros.Security.Auth
 {
     /// <summary>
     /// A <see cref="Subject"/> represents a grouping of related information for a single entity, such as
-    /// a person. Such information includes the subject's permissions as well as its security-related
-    /// attributes(passwords and cryptographic keys, for example).
+    /// a person or service. Such information includes the subject's permissions as well as its
+    /// security-related attributes(passwords and cryptographic keys, for example).
     /// <para>
     /// Subjects may potentially have multiple permissions. Each permission represented as a
     /// <see cref="IPermission"/> object within the subject.
     /// </para>
     /// <para>
-    /// A subject may also own security-related attributes, which are referred to as credentials.
-    /// Sensitive credentials that require special protection, such as private cryptographic keys, are
-    /// stored within a private credential list. Credentials intended to be shared, such as public key
-    /// certificates or Kerberos server tickets are stored within a public credential.
-    /// </para>
-    /// <para>
     /// To retrieve all the permissions associated with a subject, get the value of the
-    /// <see cref="Subject.Permissions"/> property. To retrieve all the public or private credentials
-    /// beloging to a subject, get the value of the <see cref="Subject.PublicCredentials"/> property or
-    /// <see cref="Subject.PrivateCredentials"/> property, respectively. To modify the returned
-    /// collection of permissions and credentials, use methods defined in the <see cref="IPermissionSet"/>
-    /// class. For example:
+    /// <see cref="Subject.Permissions"/> property. To modify the returned collection of permissions, use
+    /// methods defined in the <see cref="PermissionSet"/> class. For example:
     /// <example>
     ///     <code>
     ///         Subject subject;
     ///         IPermission permission;
-    ///         Object credential;
     ///         
     ///         // add a permission and credential to the subject.
     ///         subject.Permissions.Add(permission);
-    ///         subject.PublicCredentials().Add(credetial);
     ///     </code>
     /// </example>
     /// </para>
     /// </summary>
     public partial class Subject
     {
-#if NET20
-        IList<IPermission> permissions_;
-#else
-        HashSet<IPermission> permissions_;
-#endif
+        PermissionSet permissions_;
         string _id;
 
         #region .ctor
@@ -56,23 +41,25 @@ namespace Nohros.Security.Auth
         /// Initializes a new instance of the Subject class with an empty set of permissions and
         /// credentials.
         /// </summary>
-        public Subject()
-        {
-            permissions_ = new List<IPermission>();
+        public Subject() {
+            permissions_ = new PermissionSet();
         }
 
         /// <summary>
-        /// Create an instance of a Subject with Permissions and SubjectLoader delegate.
+        /// Create an instance of a Subject with permissions
         /// </summary>
         /// <param name="permissions">The subject's permissions arrray.</param>
         /// <exception cref="ArgumentNullException">permissions is null.</exception>
-        public Subject(IPermission[] permissions) {
+        public Subject(PermissionSet permissions) {
             if (permissions == null)
                 throw new ArgumentNullException("permissions");
 
-            for (int i = 0, j = permissions.Length; i < j; i++) {
-                permissions_.Add(permissions[i]);
-            }
+            permissions_ = permissions;
+        }
+
+        public Subject(IEnumerable<IPermission> permissions) {
+            if (permissions == null)
+                throw new ArgumentNullException();
         }
         #endregion
 
