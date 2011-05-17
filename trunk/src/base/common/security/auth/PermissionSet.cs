@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,7 +8,7 @@ namespace Nohros.Security.Auth
     /// <summary>
     /// Represent a set of permissions.
     /// </summary>
-    public class PermissionSet
+    public class PermissionSet : IEnumerable<IPermission>, IEnumerable
     {
         Dictionary<int, IPermission> permissions_;
 
@@ -90,7 +91,44 @@ namespace Nohros.Security.Auth
             return permissions_.Remove(permission.GetHashCode());
         }
 
-        public void Implies() {
+        /// <summary>
+        /// Checks to see if the specified permission is implied by the collection of
+        /// <see cref="IPermission"/> objects held in this set.
+        /// </summary>
+        /// <param name="permission">The <see cref="IPermission"/> object to compare.</param>
+        /// <returns>true if the <paramref name="permission"/> is implied by the permissions in the set;
+        /// otherwise, false.</returns>
+        /// <remarks>
+        /// This method returns true if one of the <see cref="IPermission"/> objects in the set implies
+        /// the specified permission.
+        /// </remarks>
+        public bool Implies(IPermission permission) {
+            foreach (IPermission permission_in_set in this) {
+                if (permission_in_set.Implies(permission)) {
+                    return true;
+                }
+            }
+            return false;
         }
+
+        #region IEnumerable && IEnumerable<T>
+        /// <summary>
+        /// Gets an enumerator that iterates through the <see cref="PermissionSet"/>.
+        /// </summary>
+        /// <returns>A enumerator for the set.</returns>
+        public IEnumerator<IPermission> GetEnumerator() {
+            foreach (KeyValuePair<int, IPermission> permission_set_key in permissions_) {
+                yield return permission_set_key.Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets an enumerator that iterates through the <see cref="PermissionSet"/>.
+        /// </summary>
+        /// <returns>A enumerator for the set.</returns>
+        IEnumerator IEnumerable.GetEnumerator() {
+            return GetEnumerator();
+        }
+        #endregion
     }
 }
