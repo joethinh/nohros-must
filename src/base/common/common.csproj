@@ -117,17 +117,19 @@
     <Compile Include="security\auth\IAuthCallbackHandler.cs" />
     <Compile Include="security\auth\ILoginConfiguration.cs" />
     <Compile Include="security\auth\IPermission.cs" />
+    <Compile Include="security\auth\IPrincipal.cs" />
     <Compile Include="security\auth\LoginConfiguration.cs" />
     <Compile Include="security\auth\LoginException.cs" />
     <Compile Include="security\auth\LoginModuleControlFlag.cs" />
     <Compile Include="security\auth\ILoginModuleEntry.cs" />
     <Compile Include="security\auth\PermissionBase.cs" />
     <Compile Include="security\auth\NasUser.cs" />
-    <Compile Include="security\auth\PermissionSet.cs" />
+    <Compile Include="security\auth\sets\PermissionSet.cs" />
     <Compile Include="security\auth\SecurityContextBase.cs" />
     <Compile Include="security\auth\LoginContext.cs" />
     <Compile Include="security\auth\ILoginModule.cs" />
     <Compile Include="security\auth\ModuleActivator.cs" />
+    <Compile Include="security\auth\sets\PrincipalSet.cs" />
     <Compile Include="security\auth\SQLite.cs" />
     <Compile Include="security\auth\Subject.cs" />
     <Compile Include="security\auth\SubjectCaching.cs" />
@@ -164,7 +166,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

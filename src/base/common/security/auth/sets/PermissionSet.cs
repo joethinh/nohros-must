@@ -81,10 +81,10 @@ namespace Nohros.Security.Auth
         /// <param name="permission">The element to remove.</param>
         /// <returns>true if the element is successfully found and removed; otherwise, false. This method
         /// returns false if <paramref name="permission"/> is not found in the <see cref="PermissionSet"/>
-        /// object. Note that the default equality comparer is used when comparing values in the set.
-        /// So, if two permissions with the same value coexists in the set, this method, depending if
-        /// the <paramref name="permission"/> object overrides the <see cref="Object.Equals"/> method,
-        /// could remove only one of them.</returns>
+        /// object. Note that the value returned from the GetHashCode() method of the permissions objects
+        /// is used when comparing values in the set. So, if two permissions with the same value coexists
+        /// in the set, this method, depending if the <paramref name="permission"/> object overrides the
+        /// <see cref="Object.Equals"/> method, could remove only one of them.</returns>
         public bool Remove(IPermission permission) {
             if (permission == null)
                 throw new ArgumentNullException("permission");
