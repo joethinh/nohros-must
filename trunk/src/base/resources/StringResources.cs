@@ -396,6 +396,13 @@ namespace Nohros.Resources
         }
 
         /// <summary>
+        /// Looks up a localized string similar to [The specified collection is a null reference].
+        /// </summary>
+        public static string Collection_null {
+            get { return GetString("Collection_null"); }
+        }
+
+        /// <summary>
         /// Looks up a localized string similar to [Instance of the requested type could not be created.
         /// Check the constructor implied by the {0}.].
         /// </summary>
