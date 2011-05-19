@@ -8,16 +8,16 @@ namespace Nohros.Security.Auth
     /// <summary>
     /// Represent a set of permissions.
     /// </summary>
-    public class PermissionSet : IEnumerable<IPermission>, IEnumerable
+    public class PermissionSet : ISecureSet<IPermission>, IEnumerable<IPermission>, IEnumerable
     {
-        Dictionary<int, IPermission> permissions_;
+        SecureSet<IPermission> permissions_;
 
         #region .ctor
         /// <summary>
         /// Initializes a new instance of the <see cref="PermissionSet"/> class that is empty.
         /// </summary>
         public PermissionSet() {
-            permissions_ = new Dictionary<int,IPermission>();
+            permissions_ = new SecureSet<IPermission>();
         }
 
         /// <summary>
@@ -44,14 +44,32 @@ namespace Nohros.Security.Auth
         /// </para>
         /// </remarks>
         public PermissionSet(IEnumerable<IPermission> permissions) {
-            if (permissions == null)
-                throw new ArgumentNullException("permissions");
+            permissions_ = new SecureSet<IPermission>(permissions);
+        }
 
-            foreach(IPermission permission_to_add in permissions) {
-                if(permission_to_add != null) {
-                    permissions_[permission_to_add.GetHashCode()] = permission_to_add;
-                }
-            }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PermissionSet"/> class that is empty
+        /// and has the specified initial capacity.
+        /// </summary>
+        /// <param name="capacity">The initial number of elements that this set can contain.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="capacity"/> is less than zero.</exception>
+        /// <remarks>
+        /// The capacity of a <see cref="PermissionSet"/> object is the number of elements that object can
+        /// hold before resizing is necessary. A <see cref="PermissionSet"/> object's capacity automatically
+        /// increases as elements are added to the object.
+        /// <para>
+        /// If the size of the collection can be estimated, specifying the initial capacity eliminates
+        /// the need to perform a number of resizing operations while adding elements to the
+        /// <see cref="PermissionSet"/>
+        /// </para>
+        /// <para>Note that the value returned from the <see cref="IPermission.GetHashCode()"/> method of
+        /// the permissions objects is used when comparing values in the set.
+        /// </para>
+        /// </remarks>
+        public PermissionSet(int capacity) {
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException("capacity");
+            permissions_ = new SecureSet<IPermission>(capacity);
         }
         #endregion
 
@@ -66,13 +84,7 @@ namespace Nohros.Security.Auth
         public bool Add(IPermission permission) {
             if (permission == null)
                 throw new ArgumentNullException("permission");
-
-            int hash_code = permission.GetHashCode();
-            if (permissions_.ContainsKey(hash_code)) {
-                permissions_[hash_code] = permission;
-                return false;
-            }
-            return true;
+            return permissions_.Add(permission);
         }
 
         /// <summary>
@@ -84,11 +96,58 @@ namespace Nohros.Security.Auth
         /// object. Note that the value returned from the GetHashCode() method of the permissions objects
         /// is used when comparing values in the set. So, if two permissions with the same value coexists
         /// in the set, this method, depending if the <paramref name="permission"/> object overrides the
-        /// <see cref="Object.Equals"/> method, could remove only one of them.</returns>
+        /// <see cref="object.Equals(object)"/> method, could remove only one of them.</returns>
         public bool Remove(IPermission permission) {
             if (permission == null)
                 throw new ArgumentNullException("permission");
-            return permissions_.Remove(permission.GetHashCode());
+            return permissions_.Remove(permission);
+        }
+
+        /// <summary>
+        /// Determines whether the <see cref="PermissionSet"/> contains the specified element.
+        /// </summary>
+        /// <param name="permission">The principal to locate in the <see cref="PermissionSet"/>.</param>
+        /// <returns>true if the item is found in the collection; otherwise, false.</returns>
+        /// <remarks>
+        /// This method is a O(1) operation.
+        /// </remarks>
+        public bool Contains(IPermission permission) {
+            return permissions_.Contains(permission);
+        }
+
+        /// <summary>
+        /// Gets the number of elements that are contained in the set.
+        /// </summary>
+        /// <value>The number of elements contained in the <see cref="PermissionSet"/></value>
+        /// <remarks>
+        /// The capacity of a <see cref="PermissionSet"/> object is the number of elements that the
+        /// object can hold. A <see cref="PermissionSet"/> object's capacity automatically increases
+        /// as elements are added to the object.
+        /// <para>
+        /// The capacity is always greather than or equal to <see cref="Count"/>. If count exceeds the
+        /// capacity while adding elements, the capacity is increased by automatically reallocating the
+        /// internal storage before copying the old elements and adding the new elements.
+        /// </para>
+        /// <para>
+        /// Getting the value of this property is an O(1) operation.
+        /// </para>
+        /// </remarks>
+        public int Count {
+            get { return permissions_.Count; }
+        }
+
+        /// <summary>
+        /// Removes all items from the <see cref="PermissionSet"/>
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Count"/> is set to zero, and references to other objects from elements of the
+        /// collection are also released. The capacity remains unchanged.
+        /// <para>
+        /// This method is an O(n) operation, where n is the capacity of the set.
+        /// </para>
+        /// </remarks>
+        public void Clear() {
+            permissions_.Clear();
         }
 
         /// <summary>
@@ -117,9 +176,7 @@ namespace Nohros.Security.Auth
         /// </summary>
         /// <returns>A enumerator for the set.</returns>
         public IEnumerator<IPermission> GetEnumerator() {
-            foreach (KeyValuePair<int, IPermission> permission_set_key in permissions_) {
-                yield return permission_set_key.Value;
-            }
+            return permissions_.GetEnumerator();
         }
 
         /// <summary>
@@ -127,7 +184,7 @@ namespace Nohros.Security.Auth
         /// </summary>
         /// <returns>A enumerator for the set.</returns>
         IEnumerator IEnumerable.GetEnumerator() {
-            return GetEnumerator();
+            return permissions_.GetEnumerator();
         }
         #endregion
     }
