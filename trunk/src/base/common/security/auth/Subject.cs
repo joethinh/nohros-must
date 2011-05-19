@@ -46,7 +46,7 @@ namespace Nohros.Security.Auth
     public partial class Subject
     {
         PermissionSet permissions_;
-        string _id;
+        PrincipalSet principals_;
 
         #region .ctor
         /// <summary>
@@ -59,9 +59,10 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Create an instance of a Subject with the specified permissions.
+        /// Creates an instance of a <see cref="Subject"/> class with the specified permissions and a
+        /// empty set of princiapals.
         /// </summary>
-        /// <param name="permissions">The subject's permissions arrray.</param>
+        /// <param name="permissions">The subject's permissions collection.</param>
         /// <exception cref="ArgumentNullException">permissions is null.</exception>
         public Subject(PermissionSet permissions) {
             if (permissions == null)
@@ -71,6 +72,12 @@ namespace Nohros.Security.Auth
             principals_ = new PrincipalSet();
         }
 
+        /// <summary>
+        /// Creates an instance of a <see cref="Subject"/> class with the specified principals and a
+        /// empty set of permissions.
+        /// </summary>
+        /// <param name="principals">The subject's principals collection.</param>
+        /// <exception cref="ArgumentNullException">principals is null.</exception>
         public Subject(PrincipalSet principals) {
             if (principals == null)
                 throw new ArgumentNullException("principals");
@@ -79,7 +86,20 @@ namespace Nohros.Security.Auth
             principals_ = principals;
         }
 
-        public 
+        /// <summary>
+        /// Creates an instance of a <see cref="Subject"/> class with the specified principals set and
+        /// permissions set.
+        /// </summary>
+        /// <param name="permissions">The subject's principals collection.</param>
+        /// <param name="principals">The subject's principals collection.</param>
+        /// <exception cref="ArgumentNullException">principals is null or permissions is null.</exception>
+        public Subject(PermissionSet permissions, PrincipalSet principals) {
+            if (permissions == null || principals == null)
+                throw new ArgumentNullException((permissions == null) ? "permissions" : "principals");
+
+            permissions_ = permissions;
+            principals_ = principals;
+        }
         #endregion
 
         /// <summary>
@@ -98,16 +118,29 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Gets a set of permissions associated with this subject. Each <see cref="IPermission"/> represents an access to a system resource.
+        /// Gets a set of permissions associated with this subject. Each <see cref="IPermission"/>
+        /// represents an access to a system resource.
         /// </summary>
         /// <remarks>
-        /// The returned <see cref="Dictionary&lt;TKey, TValue&gt;"/> is backed by this Subject's internal
-        /// <see cref="IPermission"/> <see cref="Dictionary&lt;TKey, TValue&gt;"/>. Any modification to the
-        /// returned <see cref="Dictionary&lt;TKey, TValue&gt;"/> affects the internal <see cref="IPermission"/>
-        /// <see cref="Dictionary&alt;TKey, TValue&gt;"/> as well.
+        /// The returned <see cref="PemissionSet"/> is backed by this subject's internal permisssion set.
+        /// Any modification to the returned set <see cref="PermissionSet"/> object affects the internal
+        /// permission set as well.
         /// </remarks>
         public PermissionSet Permissions {
             get { return permissions_; }
+        }
+
+        /// <summary>
+        /// Gets a set of principals associated with this subject. Each <see cref="IPrincipal"/>
+        /// represents an identity for this subject.
+        /// </summary>
+        /// <remarks>
+        /// The returned <see cref="PrincipalSet"/> is backed by this subject's internal principal set.
+        /// Any modification to the returned set <see cref="PrincipalSet"/> object affects the internal
+        /// principal set as well.
+        /// </remarks>
+        public PrincipalSet Principals {
+            get { return principals_; }
         }
 
         /// <summary>
