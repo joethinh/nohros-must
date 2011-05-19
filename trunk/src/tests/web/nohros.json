@@ -1,0 +1,21 @@
+{
+	"paths" : {
+		"plugins": "plugins",
+		"css": "css",
+		"js": "js"
+	},
+	
+	"plugins": {
+		"jquery": "$plugins$/jquery.js",
+		"jqueryui": "$plugins$/jqueryui.js"
+	},
+	
+	"groups": {
+		"nohros": {
+			"files":["nohros.css", "nohros.js", "plugin.js"]
+		},
+		"wan": {
+			"files":["wan.css", "wan.js", "wan.js"]
+		}
+	}
+}

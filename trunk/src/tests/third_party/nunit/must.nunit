@@ -1,0 +1,9 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Debug" />
+  <Config name="Debug" appbase="..\..\..\bin\debug" configfile="nohros.test.desktop.exe.config" binpathtype="Auto" runtimeFramework="any">
+    <assembly path="nohros.test.desktop.exe" />
+  </Config>
+  <Config name="Release" appbase="..\..\..\bin\release" configfile="nohros.test.desktop.exe.config" binpathtype="Auto" runtimeFramework="any">
+    <assembly path="nohros.test.desktop.exe" />
+  </Config>
+</NUnitProject>
