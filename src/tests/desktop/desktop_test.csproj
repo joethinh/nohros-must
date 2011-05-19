@@ -1,0 +1,116 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4B87B8C8-6B0C-437D-9435-F44BB20F2CE3}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Nohros.Test.Desktop</RootNamespace>
+    <AssemblyName>nohros.test.desktop</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(SolutionDir)bin\debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(SolutionDir)bin\release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\third_party\log4net\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.5.5.10112, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\third_party\nunit\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CommandLine_.cs" />
+    <Compile Include="configuration\NohrosConfiguration_.cs" />
+    <Compile Include="toolkit\messaging\Messenger_.cs" />
+    <Compile Include="configuration\StringLoginModule.cs" />
+    <Compile Include="data\type\collections\trees\AndersonTree_.cs" />
+    <Compile Include="configuration\IConfiguration_.cs" />
+    <Compile Include="data\type\collections\values\DictionaryValueT_.cs" />
+    <Compile Include="data\type\collections\values\DictionaryValue_.cs" />
+    <Compile Include="data\type\collections\values\Value_.cs" />
+    <Compile Include="data\type\collections\ParameterizedStringPartCollection_.cs" />
+    <Compile Include="data\type\ParameterizedStringPart_.cs" />
+    <Compile Include="data\type\ParameterizedString_.cs" />
+    <Compile Include="data\type\Pointer_.cs" />
+    <Compile Include="security\auth\LoginContext_.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Thrower_.cs" />
+    <Compile Include="data\dto\TransferQueue_.cs" />
+    <Compile Include="data\json\JSONReader_.cs" />
+    <Compile Include="toolkit\CorrectBehavior.cs" />
+    <Compile Include="toolkit\Exceptions_.cs" />
+    <Compile Include="logging\FileLogger_.cs" />
+    <Compile Include="toolkit\mailchecker\MailChecker_.cs" />
+    <Compile Include="toolkit\mailchecker\SmtpReply_.cs" />
+    <Compile Include="toolkit\messaging\MessengerChain_.cs" />
+    <Compile Include="toolkit\messaging\SimpleMessenger.cs" />
+    <Compile Include="toolkit\messaging\SmtpMessenger_.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\base\common\common.csproj">
+      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
+      <Name>common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\platform\desktop\desktop.csproj">
+      <Project>{7B7DCA88-945A-4FA9-985C-5F3CB667C2BC}</Project>
+      <Name>desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\platform\toolkit\toolkit.csproj">
+      <Project>{2AAB1652-4EBB-4917-AED8-7F157F884E3B}</Project>
+      <Name>toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\platform\web\web.csproj">
+      <Project>{ABF8260D-F80B-453C-8016-44AA75670DA3}</Project>
+      <Name>web</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+    </None>
+    <Content Include="desktop.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
