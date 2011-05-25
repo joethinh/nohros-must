@@ -97,9 +97,13 @@ namespace Nohros.Security.Auth
         /// is used when comparing values in the set. So, if two permissions with the same value coexists
         /// in the set, this method, depending if the <paramref name="permission"/> object overrides the
         /// <see cref="object.Equals(object)"/> method, could remove only one of them.</returns>
+        /// <remarks>
+        /// If <paramref name="permission"/> is null a exception will not be throw and this method simple
+        /// returns false.
+        /// </remarks>
         public bool Remove(IPermission permission) {
             if (permission == null)
-                throw new ArgumentNullException("permission");
+                return false;
             return permissions_.Remove(permission);
         }
 
@@ -168,6 +172,62 @@ namespace Nohros.Security.Auth
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Compares the specified set object with this set for equality.
+        /// </summary>
+        /// <param name="obj">The set to be compared for equality with this instance.</param>
+        /// <returns>true if the given object is also a <see cref="PermissionSet"/> and two instances are
+        /// equivalent.</returns>
+        /// <remarks>
+        /// The hash code of a set is compute by using your elements. So if two set objects has
+        /// the same collection of elements them they are equals.
+        /// </remarks>
+        public override bool Equals(object obj) {
+            PermissionSet set = obj as PermissionSet;
+            return Equals(set);
+        }
+
+        /// <summary>
+        /// Compares the specified set object with this set for equality.
+        /// </summary>
+        /// <param name="set">The set to be compared for equality with this instance.</param>
+        /// <returns>true if the given object is also a <see cref="PermissionSet"/> and two instances are
+        /// equivalent.</returns>
+        /// <remarks>
+        /// The hash code of a set is compute by using your elements. So if two set objects has
+        /// the same collection of elements them they are equals.
+        /// </remarks>
+        public bool Equals(PrincipalSet set) {
+            return (set.Count == Count && set.GetHashCode() == GetHashCode());
+        }
+
+        /// <summary>
+        /// Gets the hash code value for this set.
+        /// </summary>
+        /// <returns>The hash code for this set object.</returns>
+        /// <remarks>
+        /// The required hash code behavior for set objects is the followig:
+        /// <list type="bullet">
+        /// <item>Whenever it is invoked on the same set object more than once during an execution
+        /// of a application, the GetHashCode methos must consistently return the same integer. This
+        /// integer does not remain consistent from one execution of an application to another execution
+        /// to another execution of the same application</item>
+        /// <item>
+        /// If two secure set objects are equal according to the equals method, then calling the
+        /// GetHashCode method on each of the two principal objects must produce the same integer result.
+        /// </item>
+        /// </list>
+        /// </remarks>
+        /// <seealso cref="Object.GetHashCode()"/>
+        /// <see cref="Object.Equals(System.Object)"/>
+        public override int GetHashCode() {
+            int i = 0;
+            foreach (IPermission permission in permissions_) {
+                i ^= permission.GetHashCode();
+            }
+            return i;
         }
 
         #region IEnumerable && IEnumerable<T>
