@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
            InternalsVisibleTo("Nohros.Test.Common"),
            InternalsVisibleTo("Nohros.Test.Data"),
            InternalsVisibleTo("Nohros.Test.Configuration"),
+           InternalsVisibleTo("Nohros.Common.Tests"),
            InternalsVisibleTo("Nohros.Net"),
            InternalsVisibleTo("Nohros.Desktop"),
            InternalsVisibleTo("Nohros.Toolkit")]
@@ -39,6 +40,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("0.5.6.249")]
-[assembly: AssemblyFileVersion("0.5.6.249")]
+[assembly: AssemblyVersion("0.5.6.494")]
+[assembly: AssemblyFileVersion("0.5.6.494")]
 
