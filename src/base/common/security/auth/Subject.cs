@@ -103,18 +103,13 @@ namespace Nohros.Security.Auth
         #endregion
 
         /// <summary>
-        /// Determines whether the access request indicated by the specified permission should be allowed
-        /// or denied, based on the current security context.
+        /// Determines whether the access request indicated by the specified permission should be granted
+        /// or denied for the underlying subject.
         /// </summary>
-        /// <param name="permission">The requested permission</param>
+        /// <param name="permission">The requested permission.</param>
         /// <returns>true if the access request is permitted; otherwise false</returns>
-        public bool CheckPermission(IPermission permission)
-        {
-            for(int i=0, j=permissions_.Count;i<j;i++) {
-                if (permissions_[i].Implies(permission))
-                    return true;
-            }
-            return false;
+        public bool CheckPermission(IPermission permission) {
+            return (permissions_.Implies(permission));
         }
 
         /// <summary>
@@ -122,7 +117,7 @@ namespace Nohros.Security.Auth
         /// represents an access to a system resource.
         /// </summary>
         /// <remarks>
-        /// The returned <see cref="PemissionSet"/> is backed by this subject's internal permisssion set.
+        /// The returned <see cref="PermissionSet"/> is backed by this subject's internal permisssion set.
         /// Any modification to the returned set <see cref="PermissionSet"/> object affects the internal
         /// permission set as well.
         /// </remarks>
@@ -146,17 +141,15 @@ namespace Nohros.Security.Auth
         /// <summary>
         /// Compares the specified object with this subject for for equality.
         /// </summary>
-        /// <param name="obj">Object to be compared for equality with this subject.</param>
+        /// <param name="obj">The object to be compared for equality with this subject.</param>
         /// <returns>true if the given object is also a <see cref="Subject"/> and two instances are
         /// equivalent.</returns>
         /// <remarks>
-        /// Two <see cref="Subject"/> instances are equal if their <see cref="IPermission"/> set are
-        /// equal.
+        /// The hash code of a subject is compute by using your principals. So if two subject objects has
+        /// the same collection of principals them they are equals.
         /// </remarks>
         public override bool Equals(object obj) {
             Subject subject = obj as Subject;
-            if (obj == null)
-                return false;
             return Equals(subject);
         }
 
@@ -164,14 +157,20 @@ namespace Nohros.Security.Auth
         /// Compares the specified subject with this subject for for equality.
         /// </summary>
         /// <param name="subject">The subject to be compared for equality with this instance.</param>
-        /// <returns>true if the given obhecr is also a <see cref="Subject"/> and two instabces are
+        /// <returns>true if the given object is also a <see cref="Subject"/> and two instances are
         /// equivalent.</returns>
         /// <remarks>
-        /// Two <see cref="Subject"/> instances are equal if their <see cref="IPermission"/> set are
-        /// equal.
+        /// The hash code of a subject is compute by using your principals. So if two subject objects has
+        /// the same collection of principals them they are equals.
         /// </remarks>
         public bool Equals(Subject subject) {
-            return (subject.permissions_ == permissions_);
+            if (subject == null)
+                return false;
+
+            if (!principals_.Equals(subject.Principals))
+                return false;
+
+            return permissions_.Equals(subject.Permissions);
         }
 
         /// <summary>
@@ -182,6 +181,9 @@ namespace Nohros.Security.Auth
             int i=0;
             foreach(IPermission permission in permissions_) {
                 i ^= permission.GetHashCode();
+            }
+            foreach (IPrincipal principal in principals_) {
+                i ^= principal.GetHashCode();
             }
             return i;
         }
