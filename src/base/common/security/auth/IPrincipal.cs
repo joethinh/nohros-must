@@ -18,7 +18,7 @@ namespace Nohros.Security.Auth
 
         /// <summary>
         /// Determines whether this instance of <see cref="IPrincipal"/> and a specified object, which
-        /// must also be a <see cref="IPrincipal"/> object, refers to the same permission.
+        /// must also be a <see cref="IPrincipal"/> object, refers to the same princiapal.
         /// </summary>
         /// <param name="obj">An object.</param>
         /// <returns>true if <paramref name="obj"/> is a <see cref="IPrincipal"/> and its value is
@@ -30,30 +30,30 @@ namespace Nohros.Security.Auth
 
         /// <summary>
         /// Determines whether this instance of <see cref="IPrincipal"/> and another specified
-        /// <see cref="IPrincipal"/> refers to the same permission.
+        /// <see cref="IPrincipal"/> refers to the same principal.
         /// </summary>
         /// <param name="principal">A <see cref="IPrincipal"/> object.</param>
         /// <returns>true if the value of the <paramref name="perm"/> parameter is the same as this
         /// instance; otherwise, false.</returns>
         /// <remarks>
-        /// This methods should not throw any exception, even if the specified permission is null.
+        /// This methods should not throw any exception, even if the specified principal is null.
         /// </remarks>
         bool Equals(IPrincipal principal);
 
         /// <summary>
-        /// Gets the hash code value for this permission object.
+        /// Gets the hash code value for this principal object.
         /// </summary>
-        /// <returns>The hash code for this permission object.</returns>
+        /// <returns>The hash code for this principal object.</returns>
         /// <remarks>
-        /// The required hash code behavior for permission objects is the followig:
+        /// The required hash code behavior for principal objects is the followig:
         /// <list type="bullet">
-        /// <item>Whenever it is invoked on the same permission object more than once during an execution
+        /// <item>Whenever it is invoked on the same principal object more than once during an execution
         /// of a application, the GetHashCode methos must consistently return the same integer. This
         /// integer does not remain consistent from one execution of an application to another execution
         /// to another execution of the same application</item>
         /// <item>
-        /// If two permission objects are equal according to the equals method, then calling the
-        /// GetHashCode method on each of the two permission obhects must produce the same integer result.
+        /// If two principal objects are equal according to the equals method, then calling the
+        /// GetHashCode method on each of the two principal objects must produce the same integer result.
         /// </item>
         /// </list>
         /// </remarks>
