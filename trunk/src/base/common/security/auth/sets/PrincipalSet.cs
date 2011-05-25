@@ -95,7 +95,7 @@ namespace Nohros.Security.Auth
         /// <param name="principal">The element to remove.</param>
         /// <returns>true if the element is successfully found and removed; otherwise, false. This method
         /// returns false if <paramref name="principal"/> is not found in the <see cref="PrincipalSet"/>
-        /// object. Note that the principal name is used when comparing values in the set.</returns>
+        /// object.</returns>
         /// <remarks>
         /// If <paramref name="principal"/> is null a exception will not be throw and this method simple
         /// returns false.
@@ -154,19 +154,60 @@ namespace Nohros.Security.Auth
         }
 
         /// <summary>
-        /// Removes the a principal whose name is <paramref name="name"/> from a <see cref="PrincpalSet"/>.
+        /// Compares the specified set object with this set for equality.
         /// </summary>
-        /// <param name="name">The name of the principal to remove.</param>
-        /// <returns>true if the element is successfully found and removed; otherwise, false. This method
-        /// returns false if a principal whose name is <paramref name="name"/> is not found in the
-        /// <see cref="PrincipalSet"/> object. Note that the value returned from the GetHashCode() is
-        /// used when comparing values in the set.</returns>
+        /// <param name="obj">The set to be compared for equality with this instance.</param>
+        /// <returns>true if the given object is also a <see cref="PermissionSet"/> and two instances are
+        /// equivalent.</returns>
         /// <remarks>
-        /// If <paramref name="principal"/> is null a exception will not be throw and this method simple
-        /// returns false.
+        /// The hash code of a set is compute by using your elements. So if two set objects has
+        /// the same collection of elements them they are equals.
         /// </remarks>
-        //public bool Remove(string name) {
-        //}
+        public override bool Equals(object obj) {
+            PermissionSet set = obj as PermissionSet;
+            return Equals(set);
+        }
+
+        /// <summary>
+        /// Compares the specified set object with this set for equality.
+        /// </summary>
+        /// <param name="set">The set to be compared for equality with this instance.</param>
+        /// <returns>true if the given object is also a <see cref="PrincipalSet"/> and two instances are
+        /// equivalent.</returns>
+        /// <remarks>
+        /// The hash code of a set is compute by using your elements. So if two set objects has
+        /// the same collection of elements them they are equals.
+        /// </remarks>
+        public bool Equals(PrincipalSet set) {
+            return (set.Count == Count && set.GetHashCode() == GetHashCode());
+        }
+
+        /// <summary>
+        /// Gets the hash code value for this set.
+        /// </summary>
+        /// <returns>The hash code for this set object.</returns>
+        /// <remarks>
+        /// The required hash code behavior for set objects is the followig:
+        /// <list type="bullet">
+        /// <item>Whenever it is invoked on the same set object more than once during an execution
+        /// of a application, the GetHashCode methos must consistently return the same integer. This
+        /// integer does not remain consistent from one execution of an application to another execution
+        /// to another execution of the same application</item>
+        /// <item>
+        /// If two secure set objects are equal according to the equals method, then calling the
+        /// GetHashCode method on each of the two principal objects must produce the same integer result.
+        /// </item>
+        /// </list>
+        /// </remarks>
+        /// <seealso cref="Object.GetHashCode()"/>
+        /// <see cref="Object.Equals(System.Object)"/>
+        public override int GetHashCode() {
+            int i = 0;
+            foreach (IPrincipal principal in principals_) {
+                i ^= principal.GetHashCode();
+            }
+            return i;
+        }
 
         #region IEnumerable && IEnumerable<T>
         /// <summary>

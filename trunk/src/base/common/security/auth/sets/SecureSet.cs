@@ -59,7 +59,7 @@ namespace Nohros.Security.Auth
         /// This method perfors a O(n) operation where n is the size of <paramref name="elements"/>.
         /// </para>
         /// </remarks>
-        public SecureSet(IEnumerable<T> elements) {
+        public SecureSet(IEnumerable<T> elements): this() {
 #if DEBUG
             if (elements == null)
                 throw new ArgumentNullException("elements");
@@ -117,11 +117,11 @@ namespace Nohros.Security.Auth
             // if the element is already in list. This causes a small performence decration, because the
             // element must be check if it is in the list two times, in ContainsKey and in Item[]=element.
             int hash_code = element.GetHashCode();
-            if (elements_.ContainsKey(hash_code)) {
+            if (!elements_.ContainsKey(hash_code)) {
                 elements_[hash_code] = element;
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Nohros.Security.Auth
         /// object. Note that the value returned from the GetHashCode() method of the element object
         /// is used when comparing values in the set. So, if two elements with the same value coexists
         /// in the set, this method, depending if the <paramref name="element"/> object overrides the
-        /// <see cref="Object.Equals"/> method, could remove only one of them.</returns>
+        /// <see cref="Object.Equals(object)"/> method, could remove only one of them.</returns>
         public bool Remove(T element) {
             return elements_.Remove(element.GetHashCode());
         }
@@ -147,7 +147,7 @@ namespace Nohros.Security.Auth
         /// This method is a O(1) operation.
         /// </remarks>
         public bool Contains(T element) {
-            return elements_.Remove(element);
+            return elements_.ContainsKey(element.GetHashCode());
         }
 
         /// <summary>
@@ -183,6 +183,20 @@ namespace Nohros.Security.Auth
         /// </remarks>
         public void Clear() {
             elements_.Clear();
+        }
+        
+        /// <summary>
+        /// Gets the value associated with the specified hashcode.
+        /// </summary>
+        /// <param name="hashcode">The hashcode of the value to get.</param>
+        /// <returns>The value associated with the specified hashcode; otherwise, null.</returns>
+        public T this[int hashcode] {
+            get {
+                T element;
+                if (elements_.TryGetValue(hashcode, out element))
+                    return element;
+                return default(T);
+            }
         }
 
         #region IEnumerable && IEnumerable<T>
