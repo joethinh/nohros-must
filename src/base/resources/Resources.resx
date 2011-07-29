@@ -169,6 +169,9 @@
   <data name="Collection_elm_AddingDuplicate" xml:space="preserve">
     <value>The element {0} is already in collection.</value>
   </data>
+  <data name="Collection_null" xml:space="preserve">
+    <value>The specified collection is a null reference.</value>
+  </data>
   <data name="Config_ArgOutOfRange" xml:space="preserve">
     <value>{0} is not a valid value for {1}.</value>
   </data>
@@ -192,6 +195,9 @@
   </data>
   <data name="Config_MissingAt" xml:space="preserve">
     <value>Missing configuration information for {0} at {1}.</value>
+  </data>
+  <data name="Config_path_is_not_rooted" xml:space="preserve">
+    <value>The path {0} is not rooted.</value>
   </data>
   <data name="Config_PathIsRooted" xml:space="preserve">
     <value>The "{0}" path must be relative to the application base directory.</value>

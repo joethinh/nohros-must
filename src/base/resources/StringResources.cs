@@ -340,6 +340,13 @@ namespace Nohros.Resources
         }
 
         /// <summary>
+        /// Looks up a localized string similar to [The "{0}" path is not rooted.]
+        /// </summary>
+        public static string Config_path_is_not_rooted {
+            get { return GetString("Config_path_is_not_rooted"); }
+        }
+
+        /// <summary>
         /// Looks up a localized string similar to [The specified configuration object is not valid.]
         /// </summary>
         public static string Config_InvalidObject {
