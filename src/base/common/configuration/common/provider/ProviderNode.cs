@@ -7,6 +7,7 @@ using System.IO;
 using System.Configuration;
 
 using Nohros.Resources;
+using Nohros.Data.Collections;
 
 namespace Nohros.Configuration
 {
@@ -39,6 +40,7 @@ namespace Nohros.Configuration
                 throw new ArgumentNullException("type");
             type_ = type;
             options_ = null;
+            assembly_location_ = AppDomain.CurrentDomain.BaseDirectory;
         }
         #endregion
 
@@ -46,10 +48,21 @@ namespace Nohros.Configuration
         /// Parse data that are common to all providers.
         /// </summary>
         /// <param name="node">The XML node to parse.</param>
-        /// <param name="config">The <see cref="NohrosConfiguration"/> object related with the provider.</param>
+        /// <param name="base_path">The path to by used as base path for the location of the provider.
+        /// </param>
         /// <exception cref="ConfigurationErrorsException">The <paramref name="node"/> is not a valid
         /// representation of a data provider.</exception>
-        internal void InternalParse(XmlNode node, NohrosConfiguration config) {
+        /// <exception cref="ArgumentException">The <see cref="base_path"/> is not rooted.</exception>
+        /// <remarks>
+        /// The location attribute of a provider could be absolute or relative. When it is relative we
+        /// it will be resolved by using the specified <paramref name="base_path"/> path. An empty
+        /// location will be resolved to the specified <paramref name="base_path"/> path.
+        /// </remarks>
+        internal void InternalParse(XmlNode node, string base_path) {
+            if (Path.IsPathRooted(base_path))
+                throw new ArgumentException(string.Format(StringResources.Config_path_is_not_rooted,
+                    base_path));
+
             string location = null;
 
             if (GetTrimmedAttributeValue(node, kAssemblyLocationKey, out location)) {
@@ -57,7 +70,7 @@ namespace Nohros.Configuration
                 // using the configuration file location. An empty string will be resolved to the
                 // configuration file location.
                 if (location != null && !Path.IsPathRooted(location))
-                    location = Path.Combine(config.Location, location);
+                    location = Path.Combine(base_path, location);
                 assembly_location_ = location;
             }
 
@@ -71,10 +84,18 @@ namespace Nohros.Configuration
         /// <returns>A <see cref="IDictionary&lt;TKey, TValue&gt;"/> containing the options configured for a provider.</returns>
         IDictionary<string, string> GetOptions(XmlNode node) {
             Dictionary<string, string> options = new Dictionary<string, string>();
+
             foreach (XmlNode n in node.ChildNodes) {
                 string name, value;
                 if (!(GetAttributeValue(n, kNameAttribute, out name) && GetAttributeValue(n, kValueAttribute, out value)))
-                    throw new ConfigurationErrorsException(string.Format(StringResources.Provider_Attributes, "name", NohrosConfiguration.kProvidersNodeTree + "." + name_ + ".option"));
+                    throw new ConfigurationErrorsException(
+                        string.Format(
+                            StringResources.Provider_Attributes, "name",
+                            string.Concat(
+                                NohrosConfiguration.kProvidersNodeTree,
+                                ".",
+                                name,
+                                ".option")));
                 options[name] = value;
             }
             return options;
@@ -84,11 +105,12 @@ namespace Nohros.Configuration
         /// Parses a XML node that contains information about a provider.
         /// </summary>
         /// <param name="node">The XML node to parse.</param>
-        /// <param name="config">A <see cref="NohrosConfiguration"/> object containing the provider configuration
-        /// informations.</param>
+        /// <param name="nodes">A dictionary where the parsed provider could be stored.</param>
+        /// <param name="base_path">A string representing the base path of the provider physical
+        /// location.</param>
         /// <exception cref="ConfigurationErrorsException">The <paramref name="node"/> is not a
         /// valid representation of a provider.</exception>
-        public override abstract void Parse(XmlNode node, NohrosConfiguration config);
+        public abstract void Parse(XmlNode node, string base_path);
 
         /// <summary>
         /// Gets the assembly-qualified name of the provider type.
@@ -100,14 +122,18 @@ namespace Nohros.Configuration
         }
 
         /// <summary>
-        /// Gets a string representing the fully qualified path to the directory where
-        /// the assembly associated with the provider is located.
+        /// Gets a string representing the fully qualified path to the directory where the assembly
+        /// associated with the provider is located.
         /// </summary>
         /// <value>
         /// The fully qualified path to the folder where the provider assembly is stored.
         /// </value>
         /// <remarks>
         /// The assembly location must be an absolute path or a path relative to the configuration file.
+        /// <para>
+        /// If the <see cref="Parse(XmlNode, base_path)"/> was not called attempt to get the value of
+        /// this property will return the path of the application base directory.
+        /// </para>
         /// </remarks>
         public string AssemblyLocation {
             get { return assembly_location_; }

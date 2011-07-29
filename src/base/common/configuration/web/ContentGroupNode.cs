@@ -5,6 +5,7 @@ using System.Xml;
 using System.IO;
 using System.Configuration;
 
+using Nohros.Data.Collections;
 using Nohros.Resources;
 
 namespace Nohros.Configuration
@@ -44,14 +45,19 @@ namespace Nohros.Configuration
         /// <param name="node">The XML node to parse.</param>
         /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
         /// valid representation of a content group.</exception>
-        public override void Parse(XmlNode node, NohrosConfiguration config) {
+        public void Parse(XmlNode node, DictionaryValue<RepositoryNode> repositories) {
             string name = null, build = null, mime_type = null, path_ref = null;
             if (!(GetAttributeValue(node, kNameAttributeName, out name) &&
                     GetAttributeValue(node, kBuildAttributeName, out build) &&
                     GetAttributeValue(node, kMimeTypeAttributeName, out mime_type) &&
                     GetAttributeValue(node, kPathRefAttributeName, out path_ref)
                 )) {
-                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt, "a required attribute", NohrosConfiguration.kContentGroupNodeTree + ".any"), "[Parse   Nohros.Configuration.ContentGroupNode]");
+                Thrower.ThrowConfigurationException(string.Format(StringResources.Config_MissingAt
+                            ,"a required attribute"
+                            ,NohrosConfiguration.kContentGroupNodeTree + ".any"
+                        )
+                        ,"[Parse   Nohros.Configuration.ContentGroupNode]"
+                    );
             }
 
             // sanity check the build type
@@ -60,7 +66,7 @@ namespace Nohros.Configuration
 
             // resolve the base path
             RepositoryNode str;
-            str = config.Repositories[path_ref] as RepositoryNode;
+            str = repositories[path_ref] as RepositoryNode;
 
             if (str == null)
                 Thrower.ThrowConfigurationException(string.Format(StringResources.Config_ArgOutOfRange, path_ref, NohrosConfiguration.kContentGroupNodeTree + "." + name + "." + kPathRefAttributeName), "[Parse   Nohros.Configuration.ContentGroupNode]");

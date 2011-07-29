@@ -27,7 +27,7 @@ namespace Nohros.Configuration
         /// <param name="config">The configuration object which this node belongs to.</param>
         /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
         /// valid representation of a chain.</exception>
-        public override void Parse(XmlNode node, NohrosConfiguration config) {
+        public void Parse(XmlNode node) {
             List<string> nodes = new List<string>();
             foreach (XmlNode n in node.ChildNodes) {
                 if (string.Compare(n.Name, "node", StringComparison.OrdinalIgnoreCase) == 0) {

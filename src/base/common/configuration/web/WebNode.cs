@@ -22,17 +22,6 @@ namespace Nohros.Configuration
         public WebNode() : base(NohrosConfiguration.kWebNodeName) { }
         #endregion
 
-        /// <summary>
-        /// Instantiate a new instane of the <see cref="WebNode"/> class and parses the specified node.
-        /// </summary>
-        /// <param name="node">A XML node that contains the configuration data.</param>
-        /// <returns></returns>
-        public static WebNode FromXmlNode(XmlNode node, NohrosConfiguration config) {
-            WebNode web_node = new WebNode();
-            web_node.Parse(node, config);
-            return web_node;
-        }
-
         string ContentGroupKey(string name, string build, string mime_type) {
             return string.Concat(name, ".", build, ".", mime_type);
         }
@@ -41,24 +30,39 @@ namespace Nohros.Configuration
         /// Parses a XML node that contains information about a web node.
         /// </summary>
         /// <param name="node">A XML node containing the data to parse.</param>
-        /// <param name="config">The configuration object which this node belongs to.</param>
-        public override void Parse(XmlNode node, NohrosConfiguration config) {
-            XmlNode data_node = IConfiguration.SelectNode(node, NohrosConfiguration.kContentGroupsNodeName);
-            if (data_node == null)
-                return; // content-group nodes are not mandatory
+        /// <param name="nodes">A <see cref="DictionaryValue"/> containing the collection of
+        /// configuration nodes.</param>
+        /// <remarks>
+        /// The <paramref name="nodes"/> is used to store the nodes that is parsed by this class.
+        /// </remarks>
+        public void Parse(XmlNode node, DictionaryValue nodes) {
+            XmlNode xml_web_node;
+            DictionaryValue<ContentGroupNode> content_groups;
 
-            foreach (XmlNode n in data_node.ChildNodes) {
-                DictionaryValue<ContentGroupNode> content_groups = new DictionaryValue<ContentGroupNode>();
-                config.Nodes[NohrosConfiguration.kContentGroupNodeTree] = content_groups;
+            if (GetNode<ContentGroupNode>(NohrosConfiguration.kContentGroupsNodeName
+                    ,NohrosConfiguration.kContentGroupNodeTree
+                    ,nodes
+                    ,node
+                    ,out xml_web_node
+                    ,out content_groups)) {
 
-                if (string.Compare(n.Name, "group", StringComparison.OrdinalIgnoreCase) == 0) {
-                    string name;
-                    if (!GetAttributeValue(n, "name", out name))
-                        Thrower.ThrowConfigurationException("[Parse   Nohros.Configuration.WebNode]", string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kContentGroupNodeTree));
+                DictionaryValue<RepositoryNode> repositories =
+                    (DictionaryValue <RepositoryNode>)nodes[NohrosConfiguration.kRepositoryNodeTree];
 
-                    ContentGroupNode content_group = new ContentGroupNode(name);
-                    content_group.Parse(n, config);
-                    content_groups[ContentGroupKey(content_group.Name, (content_group.BuildType == BuildType.Release) ? "release" : "build", content_group.MimeType)] = content_group;
+                foreach (XmlNode n in xml_web_node.ChildNodes) {
+                    if (string.Compare(n.Name, "group", StringComparison.OrdinalIgnoreCase) == 0) {
+                        string name;
+                        if (!GetAttributeValue(n, "name", out name))
+                            Thrower.ThrowConfigurationException("[Parse   Nohros.Configuration.WebNode]",
+                                string.Format(StringResources.Config_MissingAt, "name",
+                                NohrosConfiguration.kContentGroupNodeTree));
+
+                        ContentGroupNode content_group = new ContentGroupNode(name);
+                        content_group.Parse(n, repositories);
+                        content_groups[ContentGroupKey(content_group.Name,
+                            (content_group.BuildType == BuildType.Release) ?
+                                "release" : "build", content_group.MimeType)] = content_group;
+                    }
                 }
             }
         }

@@ -5,6 +5,7 @@ using System.Xml;
 using System.IO;
 using System.Configuration;
 
+using Nohros.Data.Collections;
 using Nohros.Resources;
 
 namespace Nohros.Configuration
@@ -17,9 +18,12 @@ namespace Nohros.Configuration
         /// <summary>
         /// Initializes a new instance of the RepositoryNode class by using the specified repository name.
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">The name of the repository.</param>
+        /// <remarks>
+        /// The path of the repository will be set to the application base directory.
+        /// </remarks>
         public RepositoryNode(string name): base(name) {
-            path_ = null;
+            path_ = AppDomain.CurrentDomain.BaseDirectory;
         }
 
         /// <summary>
@@ -27,8 +31,14 @@ namespace Nohros.Configuration
         /// </summary>
         /// <param name="name">A string that identifies the repository.</param>
         /// <param name="path">The application relative path of the repository.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="name"/> or <paramref name="path"/> is
+        /// a null reference.</exception>
+        /// <remarks>The existence of the physical path is not checked.
+        /// </remarks>
         public RepositoryNode(string name, string path):base(name) {
-            name_ = name;
+            if (path == null)
+                throw new ArgumentNullException("path");
+            path_ = path;
         }
         #endregion
 
@@ -36,10 +46,9 @@ namespace Nohros.Configuration
         /// Parses a XML node that contains information about a repository.
         /// </summary>
         /// <param name="node">A XML node containing the data to parse.</param>
-        /// <param name="config">The configuration object which this node belongs to.</param>
         /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
-        /// valid representation of a data provider.</exception>
-        public override void Parse(XmlNode node, NohrosConfiguration config) {
+        /// valid representation of a data provider or the repository node contains an rooted path.</exception>
+        public void Parse(XmlNode node) {
             string relative_path = null;
             if (!GetAttributeValue(node, "relative-path", out relative_path))
                 throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, "attribute name", NohrosConfiguration.kRepositoryNodeTree + "." + name_));
@@ -58,8 +67,8 @@ namespace Nohros.Configuration
         public string Path {
             get { return path_; }
             set {
-                // sanity check if the path is rooted. It must be relative to the application
-                // base directory.
+                // sanity check if the path is rooted. It must be relative to the application base
+                // directory.
                 if (System.IO.Path.IsPathRooted(value))
                     throw new ConfigurationErrorsException(string.Format(StringResources.Config_PathIsRooted, value));
 
