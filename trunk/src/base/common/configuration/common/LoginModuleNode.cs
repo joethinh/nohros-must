@@ -32,10 +32,9 @@ namespace Nohros.Configuration
         /// Parses a XML node that contains information about a login module.
         /// </summary>
         /// <param name="node">A XML node containing the data to parse.</param>
-        /// <param name="config">The configuration object which this node belongs to.</param>
         /// <exception cref="ConfigurationErrosException">The <paramref name="node"/> is not a
         /// valid representation of a login module.</exception>
-        public override void Parse(XmlNode node, NohrosConfiguration config) {
+        public void Parse(XmlNode node) {
             string type, flag;
             if (!GetAttributeValue(node, kTypeAttributeName, out type))
                 throw new ConfigurationErrorsException(StringResources.Auth_Config_Missing_LoginModuleType);

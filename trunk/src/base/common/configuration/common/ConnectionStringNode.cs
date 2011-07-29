@@ -27,13 +27,19 @@ namespace Nohros.Configuration
         /// <param name="node">A XML node containing the data to parse.</param>
         /// <param name="config">The configuration object which this node belongs to.</param>
         /// <remarks>
-        /// This method will try to extract the database owner and connection string from the specified XML node.
-        /// If the data could not be retrieved attempt to get the database owner or connection string returns a null
-        /// reference.
+        /// This method will try to extract the database owner and connection string from the specified
+        /// XML node. If the data could not be retrieved attempt to get the value of the
+        /// <see cref="DatabaseOwner"/> property or <see cref="ConnectionString"/> property will returns
+        /// a empty string.
         /// </remarks>
-        public override void Parse(XmlNode node, NohrosConfiguration config) {
-            GetAttributeValue(node, kDataBaseOwnerAttributeName, out database_owner_);
-            GetAttributeValue(node, kConnectionStringAttributeName, out connection_string_);
+        public void Parse(XmlNode node) {
+            if (!GetAttributeValue(node, kDataBaseOwnerAttributeName, out database_owner_)) {
+                database_owner_ = string.Empty;
+            }
+
+            if (!GetAttributeValue(node, kConnectionStringAttributeName, out connection_string_)) {
+                connection_string_ = string.Empty;
+            }
         }
 
         /// <summary>
