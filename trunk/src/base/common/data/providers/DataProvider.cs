@@ -120,7 +120,7 @@ namespace Nohros.Data.Providers
             if (common == null)
                 throw new ProviderException(StringResources.Config_InvalidObject);
 
-            DataProviderNode provider = config.DataProviders[provider_name] as DataProviderNode;
+            DataProviderNode provider = config.DataProviderNodes[provider_name] as DataProviderNode;
             if (provider == null)
                 throw new ProviderException(StringResources.Config_InvalidObject);
 

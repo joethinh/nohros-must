@@ -32,9 +32,36 @@ namespace Nohros.Configuration
         /// </summary>
         protected string location_;
 
+        internal const string kDefaultRootNodeName = "appconfig";
+
         DateTime version_;
+        
+        /// <summary>
+        /// The collection of all defined events for this class.
+        /// </summary>
+        protected System.ComponentModel.EventHandlerList events_;
+
+        #region events keys
+        /// <summary>
+        /// Key for the PreLoad event
+        /// </summary>
+        protected static readonly object EventPreLoad;
+
+        /// <summary>
+        /// Key for the LoadComplete object.
+        /// </summary>
+        protected static readonly object EventLoadComplete;
+        #endregion
 
         #region .ctor
+        /// <summary>
+        /// Initialize the static event keys.
+        /// </summary>
+        static IConfiguration() {
+            EventPreLoad = new object();
+            EventLoadComplete = new object();
+        }
+
         /// <summary>
         /// Initializezs a new instance of the <see cref="IConfiguration"/> class.
         /// </summary>
@@ -42,6 +69,7 @@ namespace Nohros.Configuration
             element_ = null;
             location_ = AppDomain.CurrentDomain.BaseDirectory;
             version_ = DateTime.Now;
+            events_ = new System.ComponentModel.EventHandlerList();
         }
         #endregion
 
@@ -60,7 +88,7 @@ namespace Nohros.Configuration
         /// <seealso cref="Load(string)"/>
         /// <seealso cref="Load(XmlElement)"/>
         public virtual void Load() {
-            Load("appconfig");
+            Load(kDefaultRootNodeName);
         }
 
         /// <summary>
@@ -180,7 +208,9 @@ namespace Nohros.Configuration
 
             root_node_name = root_node_name.Trim();
             if (root_node_name == string.Empty)
-                throw new ArgumentException(string.Format(StringResources.Config_KeyNotFound, root_node_name));
+                throw new ArgumentException(
+                    string.Format(
+                        StringResources.Config_KeyNotFound, root_node_name));
 
             // have to use File.Exists() rather than config_file_info.Exists()
             // because config_file_info.Exists() caches the value, not what we want.
@@ -243,6 +273,8 @@ namespace Nohros.Configuration
         /// parse.</param>
         /// <exception cref="ArgumentNullException">element is a null reference.</exception>
         public virtual void Load(XmlElement element) {
+            OnPreLoad(EventArgs.Empty);
+
             // This is the main Load() method. This method is called by all the others Load() methods
             // overloads. The null check is done only by this method.
             if (element == null)
@@ -252,6 +284,8 @@ namespace Nohros.Configuration
             element_ = element;
 
             Parse(element);
+
+            OnLoadComplete(EventArgs.Empty);
         }
 
         /// <summary>
@@ -442,6 +476,63 @@ namespace Nohros.Configuration
                 Load(config_file_, element_.Name);
             }
             version_ = DateTime.Now;
+        }
+        #endregion
+
+        #region Events
+        /// <summary>
+        /// Occurs when the configuration file load beguns.
+        /// </summary>
+        public event EventHandler PreLoad {
+            add {
+                events_.AddHandler(EventPreLoad, value);
+            }
+            remove {
+                events_.RemoveHandler(EventPreLoad, value);
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="PreLoad"/> event.
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnPreLoad(EventArgs e) {
+            EventHandler handler = events_[EventPreLoad] as EventHandler;
+            if (handler != null) {
+                handler(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Occurs when the configuration load finish.
+        /// </summary>
+        /// <remarks>
+        /// <para></para>
+        /// This event is raised only if the configuration file is loaded succesfully.
+        /// </para>
+        /// <para>
+        /// Note that if a error occurs while the configuration file is parsed, this event will not be
+        /// raised.
+        /// </para>
+        /// </remarks>
+        public event EventHandler LoadComplete {
+            add {
+                events_.AddHandler(EventLoadComplete, value);
+            }
+            remove {
+                events_.RemoveHandler(EventLoadComplete, value);
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="LoadComplete()"/> event.
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnLoadComplete(EventArgs e) {
+            EventHandler handler = events_[EventLoadComplete] as EventHandler;
+            if (handler != null) {
+                handler(this, e);
+            }
         }
         #endregion
 

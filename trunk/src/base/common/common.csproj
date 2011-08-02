@@ -60,7 +60,7 @@
     <Compile Include="configuration\common\ChainNode.cs" />
     <Compile Include="configuration\common\CommonNode.cs" />
     <Compile Include="configuration\ConfigurationNode.cs" />
-    <Compile Include="configuration\common\provider\ConnectionStringNode.cs" />
+    <Compile Include="configuration\common\ConnectionStringNode.cs" />
     <Compile Include="configuration\web\ContentGroupNode.cs" />
     <Compile Include="configuration\common\provider\IProviderNode.cs" />
     <Compile Include="configuration\common\LoginModuleNode.cs" />
@@ -94,7 +94,7 @@
     <Compile Include="data\type\ParameterizedString.cs" />
     <Compile Include="data\providers\ProviderHelper.cs" />
     <Compile Include="data\type\collections\values\DictionaryValue.cs" />
-    <Compile Include="data\type\collections\values\GenericDictionaryValue.cs" />
+    <Compile Include="data\type\collections\values\DictionaryValueT.cs" />
     <Compile Include="data\type\values\FundamentalValue.cs" />
     <Compile Include="data\type\GenericValue.cs" />
     <Compile Include="data\type\collections\values\IDictionaryValue.cs" />
@@ -120,19 +120,22 @@
     <Compile Include="security\auth\IPrincipal.cs" />
     <Compile Include="security\auth\LoginConfiguration.cs" />
     <Compile Include="security\auth\LoginException.cs" />
+    <Compile Include="security\auth\LoginFactory.cs" />
     <Compile Include="security\auth\LoginModuleControlFlag.cs" />
     <Compile Include="security\auth\ILoginModuleEntry.cs" />
     <Compile Include="security\auth\PermissionBase.cs" />
     <Compile Include="security\auth\NasUser.cs" />
+    <Compile Include="security\auth\Principal.cs" />
+    <Compile Include="security\auth\sets\ISecureSet.cs" />
     <Compile Include="security\auth\sets\PermissionSet.cs" />
     <Compile Include="security\auth\SecurityContextBase.cs" />
     <Compile Include="security\auth\LoginContext.cs" />
     <Compile Include="security\auth\ILoginModule.cs" />
     <Compile Include="security\auth\ModuleActivator.cs" />
     <Compile Include="security\auth\sets\PrincipalSet.cs" />
+    <Compile Include="security\auth\sets\SecureSet.cs" />
     <Compile Include="security\auth\SQLite.cs" />
     <Compile Include="security\auth\Subject.cs" />
-    <Compile Include="security\auth\SubjectCaching.cs" />
     <Compile Include="NSecurity.cs" />
     <Compile Include="Thrower.cs" />
   </ItemGroup>
@@ -166,7 +169,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

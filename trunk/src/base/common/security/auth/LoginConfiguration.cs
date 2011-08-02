@@ -2,8 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Xml;
-using System.IO;
 
 using Nohros.Data;
 using Nohros.Data.Collections;
@@ -12,81 +10,64 @@ using Nohros.Configuration;
 namespace Nohros.Security.Auth
 {
     /// <summary>
-    /// A LoginConfigur
+    /// The default implmentation of the <see cref="ILoginConfiguration"/>. This class provides a basic
+    /// configuration object that can be used to parse the login configuration file. It extends the
+    /// <see cref="NohrosConfiguration"/> class and relies on the functionality of that class to parse
+    /// the configuration file.
     /// </summary>
+    /// <seealso cref="NohrosConfiguration"/>
     public class LoginConfiguration : NohrosConfiguration, ILoginConfiguration
     {
-        static LoginConfiguration instance_;
-
-        LoginModuleNode[] modules_;
+        ILoginModuleEntry[] modules_;
 
         #region .ctor
         /// <summary>
-        /// Initializes a new instance_ of the LoginConfiguration class.
+        /// Initializes a new instance of the <see cref="LoginConfiguration"/> class that have no modules
+        /// configured.
         /// </summary>
-        public LoginConfiguration()
-        {
-            modules_ = null;
-        }
-
-        /// <summary>
-        /// Singleton initializer.
-        /// </summary>
-        static LoginConfiguration()
-        {
-            instance_ = new LoginConfiguration();
-            instance_.Load();
-
-            // we need to store a reference to all nodes configured for a specific application.
-            // this will be stored into a array for faster retrieval.
-            if (instance_.CommonNode != null) {
-                List<ConfigurationNode> nodes = instance_.CommonNode.ChildNodes;
-                if (nodes != null && nodes.Count > 0) {
-                    List<LoginModuleNode> modules = new List<LoginModuleNode>(nodes.Count);
-                    foreach (LoginModuleNode module in modules) {
-                        modules.Add(module);
-                    }
-                    instance_.modules_ = modules.ToArray();
-                }
-            }
+        public LoginConfiguration() {
+            modules_ = new ILoginModuleEntry[0];
+            LoadComplete += OnConfigLoadComplete;
         }
         #endregion
 
         /// <summary>
-        /// Gets or sets the single instance of the ILoginConfiguration class.
+        /// The base <see cref="NohrosConfiguration"/> class has five Load method, so instead of to
+        /// override all that methods we will subuscribe to the <see cref="IConfiguration.LoadComplete"/>.
         /// </summary>
-        /// <returns>A instance of the ILoginConfiguration class</returns>
-        /// <remarks>
-        /// The default LoginConfiguration implementation can be changed by setting the value of the
-        /// LoginConfigurationProvider key of the AppSettings node of the application configuration file
-        /// to the fully qualified name of the desired ILoginConfiguration subclass implementation
-        /// </remarks>
-        public static ILoginConfiguration Instance
-        {
-            get { return instance_; }
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OnConfigLoadComplete(object sender, EventArgs e) {
+            // store the login modules into a array to speed up the LoginModules property access.
+            LoginModuleNode[] nodes = LoginModuleNodes.ToArray();
+            modules_ = new ILoginModuleEntry[nodes.Length];
+            for (int i = 0; i < modules_.Length; i++) {
+                modules_[i] = nodes[i] as ILoginModuleEntry;
+            }
         }
 
         /// <summary>
-        /// Retrieve the LoginModuleEntry for the specified name
+        /// Retrieve the <see cref="ILoginModuleEntry"/> object for the specified module name.
         /// </summary>
-        /// <param name="name">the name used to index the module</param>
-        /// <returns>A LoginModuleEntry for the spcified <paramref name="name"/>, or null if there are no
-        /// entry for the specified <paramref name="name"/></returns>
-        public ILoginModuleEntry GetLoginModuleEntry(string name)
-        {
-            return base.LoginModules[name] as ILoginModuleEntry;
+        /// <param name="name">The name used to index the module.</param>
+        /// <returns>A <see cref="ILoginModuleEntry"/> for the spcified <paramref name="name"/>, or null
+        /// if there are no entry for the specified <paramref name="name"/></returns>
+        public ILoginModuleEntry GetLoginModuleEntry(string name) {
+            // a login module node is a login module entry too.
+            return base.LoginModuleNodes[name] as ILoginModuleEntry;
         }
 
         /// <summary>
         /// Gets all the login modules configured for the application.
         /// </summary>
-        /// <returns>An array of LoginModuleEntry containg all the login
-        /// modules configured for the application</returns>
-        public new ILoginModuleEntry[] LoginModules
-        {
+        /// <returns>An array of LoginModuleEntry containg all the login modules configured for the
+        /// application.</returns>
+        /// <remarks>
+        /// Retrieving the value of this property is an O(1) operation.
+        /// </remarks>
+        public ILoginModuleEntry[] LoginModules {
             get {
-                DictionaryValue<LoginModuleNode> modules = base.LoginModules;
-                return modules.ToArray();
+                return modules_;
             }
         }
     }
