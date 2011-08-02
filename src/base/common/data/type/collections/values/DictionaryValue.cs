@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -23,7 +24,7 @@ namespace Nohros.Data.Collections
     /// the SetString() method would create the missing elements and attach them
     /// to root before attaching the homepage value.
     /// </summary>
-    public class DictionaryValue : Value, IDictionaryValue
+    public class DictionaryValue : Value, IDictionaryValue, IEnumerable
     {
         Dictionary<string, IValue> dictionary_;
 
@@ -513,6 +514,20 @@ namespace Nohros.Data.Collections
 
             return end_array;
         }
+
+        #region IEnumerable
+        public IEnumerator GetEnumerator() {
+            Dictionary<string, IValue>.ValueCollection values = dictionary_.Values;
+
+            // filtering the elements of the type T.
+            foreach (IValue value in values) {
+                // all the elements must be an instance of T.
+                if (value.ValueType == ValueType.TYPE_GENERIC_DICTIONARY)
+                    continue;
+                yield return value;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Gets the number of elements in this dictionary.

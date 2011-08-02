@@ -236,37 +236,37 @@ namespace Nohros.Configuration
         /// <summary>
         /// Gets all the data providers configured for this application.
         /// </summary>
-        /// <remarks>DataProviders will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// <remarks>DataProviderNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
         /// will contain zero elements if configuration contains no data providers.</remarks>
-        public DictionaryValue<DataProviderNode> DataProviders {
+        public DictionaryValue<DataProviderNode> DataProviderNodes {
             get { return GetDictionary<DataProviderNode>(kDataProviderNodeTree); }
         }
 
         /// <summary>
         /// Gets all the messenger providers configured for this application.
         /// </summary>
-        /// <remarks>MessengerProviders will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// <remarks>MessengerProviderNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
         /// will contain zero elements if configuration contains no messenger providers.</remarks>
-        public DictionaryValue<MessengerProviderNode> MessengerProviders {
+        public DictionaryValue<MessengerProviderNode> MessengerProviderNodes {
             get { return GetDictionary<MessengerProviderNode>(kMessengerProviderNodeTree); }
         }
 
         /// <summary>
         /// Gets all the connection strings nodes in configuration.
         /// </summary>
-        /// <remarks>ConnectionStrings will never return a null reference; however, the returned
+        /// <remarks>ConnectionStringNodes will never return a null reference; however, the returned
         /// <see cref="DictionaryValue&lt;ConnectionStringNode&gt;"/> will contain zero elements if configuration
         /// contains no connections string nodes.</remarks>
-        public DictionaryValue<ConnectionStringNode> ConnectionStrings {
+        public DictionaryValue<ConnectionStringNode> ConnectionStringNodes {
             get { return GetDictionary<ConnectionStringNode>(kConnectionStringNodeTree); }
         }
 
         /// <summary>
         /// Gets a collection of all the login modules in configuration.
         /// </summary>
-        /// <remarks>LoginModules will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// <remarks>LoginModuleNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
         /// will contain zero elements if configuration contains no login modules.</remarks>
-        public DictionaryValue<LoginModuleNode> LoginModules {
+        public DictionaryValue<LoginModuleNode> LoginModuleNodes {
             get { return GetDictionary<LoginModuleNode>(kLoginModuleNodeTree); }
         }
 
@@ -274,27 +274,27 @@ namespace Nohros.Configuration
         /// Gets a collection of all the repositories in configuration.
         /// </summary>
         /// <remarks>
-        /// Repositories will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// RepositoryNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
         /// will contain zero elements if configuration contains no repositories.</remarks>
-        public DictionaryValue<RepositoryNode> Repositories {
+        public DictionaryValue<RepositoryNode> RepositoryNodes {
             get { return GetDictionary<RepositoryNode>(kRepositoryNodeTree); }
         }
 
         /// <summary>
         /// Gets a collection of all the chains in configuration.
         /// </summary>
-        /// </remarks>Chains will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// </remarks>ChainNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
         /// will contain zero elements if configuration contains no chains.</remarks>
-        public DictionaryValue<ChainNode> Chains {
+        public DictionaryValue<ChainNode> ChainNodes {
             get { return GetDictionary<ChainNode>(kChainNodeTree); }
         }
 
         /// <summary>
         /// Gets a collection of all the chains in configuration.
         /// </summary>
-        /// </remarks>ContentGroups will never return a null reference; however, the returned <see cref="DictionaryValue"/>
+        /// </remarks>ContentGroupNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
         /// will contain zero elements if configuration contains no content groups.</remarks>
-        public DictionaryValue<ContentGroupNode> ContentGroups {
+        public DictionaryValue<ContentGroupNode> ContentGroupNodes {
             get { return GetDictionary<ContentGroupNode>(kContentGroupNodeTree); }
         }
 

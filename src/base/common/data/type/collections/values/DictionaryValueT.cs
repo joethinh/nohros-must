@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -22,8 +23,9 @@ namespace Nohros.Data.Collections
     /// is a string setting.  If some elements of the path didn't exist yet,
     /// the SetString() method would create the missing elements and attach them
     /// to root before attaching the homepage value.
+    /// </remarks>
     /// </summary>
-    public class DictionaryValue<T> : Value, IDictionaryValue where T: class, IValue
+    public class DictionaryValue<T> : Value, IEnumerable, IEnumerable<T>, IDictionaryValue where T : class, IValue
     {
         Dictionary<string, IValue> dictionary_;
 
@@ -327,6 +329,28 @@ namespace Nohros.Data.Collections
         IValue IDictionaryValue.this[string path] {
             get { return null; }
             set { }
+        }
+        #endregion
+
+        #region IEnumerable
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="DictionaryValue&lt;T&gt;"/>
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator IEnumerable.GetEnumerator() {
+            Dictionary<string, IValue>.ValueCollection values = dictionary_.Values;
+
+            // filtering the elements of the type T.
+            foreach (T value in values) {
+                // all the elements must be an instance of T.
+                if (value.ValueType == ValueType.TYPE_GENERIC_DICTIONARY)
+                    continue;
+                yield return value;
+            }
+        }
+
+        public IEnumerator<T> GetEnumerator() {
+            return GetEnumerator();
         }
         #endregion
 
