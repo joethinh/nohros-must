@@ -16,12 +16,12 @@ using log4net.Repository.Hierarchy;
 namespace Nohros.Logging
 {
     /// <summary>
-    /// A generic logger that uses the third party log4net logging library.
+    /// A generic logger that logs messages to a text file.
     /// </summary>
     /// <remarks>
-    /// This is a generic logger that loads automatically and configures itself through the code. The messages
-    /// are logged to a file that resides on the same folder of the caller application base directory.The name of
-    /// the file is nohros-logger.log.
+    /// This is a generic logger that loads automatically and configures itself through the code.
+    /// The messages are logged to a file that resides on the same folder of the caller application base
+    /// directory.The name of the file is "nohros-logger.log".
     /// <para>
     /// The pattern used to log message are:
     ///     . "[%date %-5level/%thread] %message%newline %exception".
@@ -52,7 +52,7 @@ namespace Nohros.Logging
         /// Gets the current process logger.
         /// </summary>
         public static ILogger ForCurrentProcess {
-            get { return (ILogger)current_process_logger_; }
+            get { return current_process_logger_; }
         }
     }
 }

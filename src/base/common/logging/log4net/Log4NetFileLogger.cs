@@ -36,24 +36,24 @@ namespace Nohros.Logging
         const string kLogCommonMessagePattern = "[%date %-5level/%thread] %message%newline";
         const string kFileName = "nohros-logger.log";
 
-        static Log4NetFileLogger current_process_logger_;
-
+        string log_file_path_;
+        
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the Logger class.
+        /// Initializes a new instance of the Logger class by using the specified string as the path
+        /// to the log file.
         /// </summary>
         /// <remarks>
-        /// The logger is not configured here you need to call the <see cref="Configure"/> method to
-        /// configure the logger.
+        /// The logger is not functional at this point, you need to call the <see cref="Configure"/>
+        /// method to in order to make the logger usable.
         /// </remarks>
-        public Log4NetFileLogger() { }
-
-        /// <summary>
-        /// Initializes the singleton process's logger instance.
-        /// </summary>
-        static Log4NetFileLogger() {
-            current_process_logger_ = new Log4NetFileLogger();
-            current_process_logger_.Configure();
+        public Log4NetFileLogger(string log_file_path) {
+#if DEBUG
+            if (log_file_path == null || log_file_path.Length == 0) {
+                throw new ArgumentException("log_file_path is null or empty");
+            }
+#endif
+            log_file_path_ = log_file_path;
         }
         #endregion
 
@@ -74,7 +74,7 @@ namespace Nohros.Logging
             // create the appender for error messages
             FileAppender error_appender = new FileAppender();
             error_appender.Name = "NohrosErrorFileAppender";
-            error_appender.File = kFileName;
+            error_appender.File = log_file_path_;
             error_appender.AppendToFile = true;
             error_appender.LockingModel = new FileAppender.MinimalLock();
             error_appender.Layout = layout;
@@ -88,7 +88,7 @@ namespace Nohros.Logging
 
             FileAppender common_appender = new FileAppender();
             common_appender.Name = "NohrosCommonFileAppender";
-            common_appender.File = kFileName;
+            common_appender.File = log_file_path_;
             common_appender.AppendToFile = true;
             common_appender.LockingModel = new FileAppender.MinimalLock();
             common_appender.Layout = common_layout;
@@ -99,75 +99,6 @@ namespace Nohros.Logging
             nohros_file_logger.AddAppender(common_appender);
 
             logger_ = LogManager.GetLogger("NohrosFileLogger");
-        }
-
-        /// <summary>
-        /// Gets the current process logger.
-        /// </summary>
-        public static Log4NetFileLogger ForCurrentProcess {
-            get { return current_process_logger_; }
-        }
-
-        /// <summary>
-        /// Gets or sets the threshold level of the logger repository.
-        /// </summary>
-        internal LogLevel LogLevel {
-            get {
-                Level level = logger_.Logger.Repository.Threshold;
-                if (level == Level.All) {
-                    return LogLevel.All;
-                } else if (level == Level.Debug) {
-                    return LogLevel.Debug;
-                } else if (level == Level.Error) {
-                    return LogLevel.Error;
-                } else if (level == Level.Fatal) {
-                    return LogLevel.Fatal;
-                } else if (level == Level.Info) {
-                    return LogLevel.Info;
-                } else if (level == Level.Off) {
-                    return LogLevel.Off;
-                } else if (level == Level.Warn) {
-                    return LogLevel.Warn;
-                } else {
-                    return LogLevel.Off;
-                }
-            }
-            set {
-                ILoggerRepository repository = logger_.Logger.Repository;
-                switch (value) {
-                    case LogLevel.All:
-                        repository.Threshold = Level.All;
-                        break;
-
-                    case LogLevel.Debug:
-                        repository.Threshold = Level.Debug;
-                        break;
-
-                    case LogLevel.Error:
-                        repository.Threshold = Level.Error;
-                        break;
-
-                    case LogLevel.Fatal:
-                        repository.Threshold = Level.Fatal;
-                        break;
-
-                    case LogLevel.Info:
-                        repository.Threshold = Level.Info;
-                        break;
-
-                    case LogLevel.Off:
-                        repository.Threshold = Level.Off;
-                        break;
-
-                    case LogLevel.Trace:
-                        repository.Threshold = Level.Trace;
-                        break;
-
-                    case LogLevel.Warn:
-                        repository.Threshold = Level.Warn;
-                        break;
-                }
-            }
         }
     }
 }

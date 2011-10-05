@@ -4,6 +4,10 @@ using System.Text;
 
 namespace Nohros.Security.Auth
 {
+    /// <summary>
+    /// A collection that contains no duplicates elements
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface ISecureSet<T>
     {
         /// <summary>

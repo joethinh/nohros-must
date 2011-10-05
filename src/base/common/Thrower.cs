@@ -192,7 +192,7 @@ namespace Nohros
         /// The exception is logged by using the <see cref="FileLogger"/> class.
         /// </remarks>
         internal static void ThrowConfigurationException(string message, string source) {
-            FileLogger.ForCurrentProcess.Logger.Error(source + "   " + message);
+            FileLogger.ForCurrentProcess.Error(source + "   " + message);
             throw new ConfigurationErrorsException(message);
         }
 
