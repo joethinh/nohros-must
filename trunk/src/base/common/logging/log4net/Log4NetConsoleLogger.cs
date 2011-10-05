@@ -28,27 +28,16 @@ namespace Nohros.Logging
     /// The default threshold level is INFO and could be overloaded on the nohros configuration file.
     /// </para>
     /// </remarks>
-    public class ConsoleLogger
+    internal class Log4NetConsoleLogger : Log4NetLogger
     {
         const string kErrorLogMessagePattern = "[%date %-5level/%thread] %message%newline %exception";
         const string kCommonLogMessagePattern = "[%date %-5level/%thread] %message%newline";
-
-        ILog logger_;
-        static ConsoleLogger current_process_logger_;
 
         #region .ctor
         /// <summary>
         /// Initializes a new instance of the ConsoleLogger class.
         /// </summary>
-        public ConsoleLogger() { }
-
-        /// <summary>
-        /// Initializes the singleton process's logger instance.
-        /// </summary>
-        static ConsoleLogger() {
-            current_process_logger_ = new ConsoleLogger();
-            current_process_logger_.Configure();
-        }
+        public Log4NetConsoleLogger() { }
         #endregion
 
         /// <summary>
@@ -89,31 +78,6 @@ namespace Nohros.Logging
             nohros_console_logger.AddAppender(common_appender);
 
             logger_ = LogManager.GetLogger("NohrosConsoleAppender");
-        }
-
-        /// <summary>
-        /// Gets the current process logger.
-        /// </summary>
-        public static ConsoleLogger ForCurrentProcess {
-            get { return current_process_logger_; }
-        }
-
-        /// <summary>
-        /// Gets or sets the threshold level of the logger repository.
-        /// </summary>
-        internal Level Threshold {
-            get { return logger_.Logger.Repository.Threshold; }
-            set { logger_.Logger.Repository.Threshold = value; }
-        }
-
-        /// <summary>
-        /// Gets the <see cref="ILog"/> object used by application to log messages.
-        /// </summary>
-        /// <remarks>
-        /// Attempt to get the value of this property returns null if the logger was not previously configured.
-        /// </remarks>
-        public ILog Logger {
-            get { return logger_; }
         }
     }
 }
