@@ -1,0 +1,21 @@
+<VSTemplate Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
+  <TemplateData>
+    <DefaultName>Logger.cs</DefaultName>
+    <Name>Must Logger</Name>
+    <Description>Templates for the ILogger class of the must framework.</Description>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>10</SortOrder>
+		<Icon Package="{FAE04EC1-301F-11d3-BF4B-00C04F79EFBC}" ID="4515" />
+		<RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+		<NumberOfParentCategoriesToRollUp>2</NumberOfParentCategoriesToRollUp>
+  </TemplateData>
+  <TemplateContent>
+    <ProjectItem
+			TargetFileName="I$fileinputname$.cs"
+			ReplaceParameters="true">ILoggerTemplate.cs</ProjectItem>
+		
+		<ProjectItem
+			TargetFileName="$fileinputname$.cs"
+			ReplaceParameters="true">LoggerTemplate.cs</ProjectItem>
+  </TemplateContent>
+</VSTemplate>
