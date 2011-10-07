@@ -72,6 +72,8 @@ namespace Nohros.Configuration
       location_ = AppDomain.CurrentDomain.BaseDirectory;
       version_ = DateTime.Now;
       events_ = new System.ComponentModel.EventHandlerList();
+      use_dynamic_property_assignment_ = true;
+      remove_hyphen_from_attribute_names_ = true;
     }
     #endregion
 
@@ -583,11 +585,13 @@ namespace Nohros.Configuration
 
       // loop for each attribute defined in the given element and attempt to
       // set the value of a property whose name is equals to the element name.
-      // If a match could ot be found try to remove the "-" character from the
-      // attribute name and do the match again.
       foreach (XmlAttribute att in attributes) {
         string property_name = att.Name;
         string property_value = att.Value;
+
+        // If desired remove the "-" character from the attribute name.
+        if (remove_hyphen_from_attribute_names_)
+          property_name = property_name.Replace("-", "");
 
         PropertyInfo property;
         if (TryGetProperty(properties, property_name, out property)
