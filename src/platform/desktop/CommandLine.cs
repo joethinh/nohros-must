@@ -509,7 +509,7 @@ namespace Nohros.Desktop
     /// <summary>
     /// Copies a set of switches (and any values) from another command line
     /// </summary>
-    /// <param name="source">A <see cref="CommandLine"/> object, where
+    /// <param name="source">A <see cref="CommandLine"/> object, which
     /// the switches will be copied from.</param>
     /// <param name="switches">A list of switches that should be copied
     /// from the <paramref name="source"/> command line.</param>
@@ -528,6 +528,19 @@ namespace Nohros.Desktop
           AppendSwitchWithValue(sw, kDefaultSwitchPrefix,
             source.GetSwitchValue(sw), kDefaultSwitchValueSeparator);
         }
+      }
+    }
+
+    /// <summary>
+    /// Copies all the of switches (and any values) from another command line.
+    /// </summary>
+    /// <param name="source">A <see cref="CommandLine"/> object, which the
+    /// switches will be copied from.</param>
+    public void CopySwitchesFrom(CommandLine source) {
+      foreach (KeyValuePair<string, string> sw in source.Switches) {
+        AppendSwitchWithValue(
+          sw.Key, kDefaultSwitchPrefix, sw.Value, kDefaultSwitchValueSeparator
+        );
       }
     }
 
