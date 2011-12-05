@@ -35,6 +35,9 @@ namespace Nohros.Desktop
   /// </remarks>
   public class CommandLine
   {
+    const string kDefaultSwitchPrefix = "--";
+    const char kDefaultSwitchValueSeparator = ':';
+
     #region TokenType
     class Token
     {
@@ -504,6 +507,31 @@ namespace Nohros.Desktop
     }
 
     /// <summary>
+    /// Copies a set of switches (and any values) from another command line
+    /// </summary>
+    /// <param name="source">A <see cref="CommandLine"/> object, where
+    /// the switches will be copied from.</param>
+    /// <param name="switches">A list of switches that should be copied
+    /// from the <paramref name="source"/> command line.</param>
+    /// <remarks>
+    /// This method is commonly used when launching a subprocess.
+    /// <para>
+    /// If a specified switche does not exists in the source, nothing will be
+    /// copied and no exception will be throwed.
+    /// </para>
+    /// </remarks>
+    public void CopySwitchesFrom(CommandLine source, params string[] switches) {
+      int switch_count = switches.Length;
+      for (int i = 0, j = switch_count; i < j; i++) {
+        string sw = switches[i];
+        if (source.HasSwitch(sw)) {
+          AppendSwitchWithValue(sw, kDefaultSwitchPrefix,
+            source.GetSwitchValue(sw), kDefaultSwitchValueSeparator);
+        }
+      }
+    }
+
+    /// <summary>
     /// Gets the program part of the command line string (the first item).
     /// </summary>
     public string Program {
@@ -523,6 +551,14 @@ namespace Nohros.Desktop
     /// </summary>
     public int SwitchCount {
       get { return switches_.Count; }
+    }
+
+    /// <summary>
+    /// Get a copy of all switches, along with their values.
+    /// </summary>
+    /// <returns></returns>
+    public IDictionary<string, string> Switches {
+      get { return switches_; }
     }
 
     /// <summary>
