@@ -538,9 +538,13 @@ namespace Nohros.Desktop
     /// switches will be copied from.</param>
     public void CopySwitchesFrom(CommandLine source) {
       foreach (KeyValuePair<string, string> sw in source.Switches) {
-        AppendSwitchWithValue(
-          sw.Key, kDefaultSwitchPrefix, sw.Value, kDefaultSwitchValueSeparator
-        );
+        if (sw.Value == string.Empty) {
+          AppendSwitch(sw.Key, sw.Value);
+        } else {
+          AppendSwitchWithValue(
+            sw.Key, kDefaultSwitchPrefix, sw.Value,
+            kDefaultSwitchValueSeparator);
+        }
       }
     }
 
