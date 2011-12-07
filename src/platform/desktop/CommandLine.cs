@@ -32,6 +32,10 @@ namespace Nohros.Desktop
   /// There is a singleton read-only CommandLine that represents the command
   /// line that the current process was started with.
   /// </para>
+  /// <para>
+  /// Loose parameters is useful for subprocess creation, when a subprocess
+  /// needs to receive only a subset of the parent command line.
+  /// </para>
   /// </remarks>
   public class CommandLine
   {
@@ -227,6 +231,18 @@ namespace Nohros.Desktop
     public void AppendLooseValue(string value) {
       command_line_string_ += string.Concat(' ', QuoteIfNeed(value));
       loose_values_.Add(value);
+    }
+
+    /// <summary>
+    /// Appends a switch parsing stop prefix to the command line.
+    /// </summary>
+    /// <remarks>
+    /// The "--" sign followed by a space causes the parsing to stop its
+    /// processing and to consider any strings that comes after that as
+    /// "loose parameters".
+    /// </remarks>
+    public void AppendSwitchParsingStopPrefix() {
+      command_line_string_ += "--";
     }
 
     /// <summary>
