@@ -12,7 +12,7 @@ namespace Nohros.Logging
   /// A basic implementation of the <see cref="ILogger"/> that uses the
   /// log4net library as the underlying library.
   /// </summary>
-  internal abstract class Log4NetLogger: ILogger
+  public abstract class Log4NetLogger: ILogger
   {
     protected ILog logger_;
 

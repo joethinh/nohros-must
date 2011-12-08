@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
@@ -15,31 +15,35 @@ using log4net.Repository.Hierarchy;
 namespace Nohros.Logging
 {
   /// <summary>
-  /// A generic logger that uses the third party log4net logging library.
+  /// A generic logger that uses the third party log4net logging library and
+  /// logs messages to the system console.
   /// </summary>
   /// <remarks>
-  /// This is a generic logger that loads automatically and configures itself
-  /// through the code. The messages are logged to the console window.
-  /// <para>
-  /// The pattern used to log message are:
-  ///   . "[%date %-5level/%thread] %message%newline %exception" for the
-  ///   non-debug messages.
-  /// </para>
+  /// <see cref="Log4NetColoredConsoleLogger"/> appends log events to the
+  /// standard output stream ot the error output stream using layout defined
+  /// by the user. It also allows the color of a specific type of message to
+  /// be set.
   /// <para>
   /// The default threshold level is INFO and could be overloaded on the
   /// nohros configuration file.
   /// </para>
   /// </remarks>
-  public class Log4NetConsoleLogger: Log4NetLogger
+  public class Log4NetColoredConsoleLogger: Log4NetLogger
   {
-    const string kLogMessagePattern =
-      "[%-5level %date] %message%newline%exception";
+    string layout_pattern_;
+    ColoredConsoleAppender.LevelColors level_colors_;
 
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the ConsoleLogger class.
     /// </summary>
-    public Log4NetConsoleLogger() { }
+    public Log4NetColoredConsoleLogger(string layout_pattern) {
+      layout_pattern_ = layout_pattern;
+
+      level_colors_ = new ColoredConsoleAppender.LevelColors();
+      level_colors_.Level = Level.Error;
+      level_colors_.ForeColor = ColoredConsoleAppender.Colors.Red;
+    }
     #endregion
 
     /// <summary>
@@ -56,22 +60,39 @@ namespace Nohros.Logging
 
       // create the layout and appender for on error messages.
       PatternLayout layout = new PatternLayout();
-      layout.ConversionPattern = kLogMessagePattern;
+      layout.ConversionPattern = layout_pattern_;
       layout.ActivateOptions();
 
       // create the appender
-      ConsoleAppender appender = new ConsoleAppender();
+      ColoredConsoleAppender appender = new ColoredConsoleAppender();
       appender.Name = "NohrosCommonConsoleAppender";
       appender.Layout = layout;
       appender.Target = "Console.Out";
       appender.Threshold = Level.All;
       appender.ActivateOptions();
 
+      level_colors_.ActivateOptions();
+      // create the default colot mapping or add the user supplied
+      // to the appender.
+      appender.AddMapping(level_colors_);
+
       nohros_console_logger.Parent.AddAppender(appender);
 
       root_repository.Configured = true;
 
       logger_ = LogManager.GetLogger("NohrosConsoleLogger");
+    }
+
+    /// <summary>
+    /// Gets the mappings between the level that a logging call is made at
+    /// and the color it should be displayed as.
+    /// </summary>
+    /// <remarks>
+    /// The default level color used the default console color for all
+    /// levels except for ERROR that uses the red color as foreground color.
+    /// </remarks>
+    public ColoredConsoleAppender.LevelColors LevelColors {
+      get { return level_colors_; }
     }
   }
 }

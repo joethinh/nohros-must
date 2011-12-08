@@ -30,7 +30,7 @@ namespace Nohros.Logging
   /// nohros configuration file.
   /// </para>
   /// </remarks>
-  internal class Log4NetConsoleFileLogger: Log4NetLogger
+  public class Log4NetConsoleFileLogger: Log4NetLogger
   {
     const string kLogMessagePattern =
       "[%-5level %date] %message%newline%exception";
