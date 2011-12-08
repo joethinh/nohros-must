@@ -31,7 +31,7 @@ namespace Nohros.Logging
   public class Log4NetColoredConsoleLogger: Log4NetLogger
   {
     string layout_pattern_;
-    ColoredConsoleAppender.LevelColors level_colors_;
+    ColoredConsoleAppender.LevelColors[] level_colors_;
 
     #region .ctor
     /// <summary>
@@ -39,10 +39,6 @@ namespace Nohros.Logging
     /// </summary>
     public Log4NetColoredConsoleLogger(string layout_pattern) {
       layout_pattern_ = layout_pattern;
-
-      level_colors_ = new ColoredConsoleAppender.LevelColors();
-      level_colors_.Level = Level.Error;
-      level_colors_.ForeColor = ColoredConsoleAppender.Colors.Red;
     }
     #endregion
 
@@ -69,18 +65,63 @@ namespace Nohros.Logging
       appender.Layout = layout;
       appender.Target = "Console.Out";
       appender.Threshold = Level.All;
-      appender.ActivateOptions();
 
-      level_colors_.ActivateOptions();
-      // create the default colot mapping or add the user supplied
-      // to the appender.
-      appender.AddMapping(level_colors_);
+      if (level_colors_ == null) {
+        level_colors_ = GetDefaultLevelsColors();
+      }
+
+      for (int i = 0, j = level_colors_.Length; i < j; i++) {
+        // activate the level colors options and add it to the appender.
+        ColoredConsoleAppender.LevelColors level_colors = level_colors_[i];
+        if (level_colors != null) {
+          level_colors.ActivateOptions();
+          appender.AddMapping(level_colors);
+        }
+      }
+
+      appender.ActivateOptions();
 
       nohros_console_logger.Parent.AddAppender(appender);
 
       root_repository.Configured = true;
 
       logger_ = LogManager.GetLogger("NohrosConsoleLogger");
+    }
+
+    ColoredConsoleAppender.LevelColors[] GetDefaultLevelsColors() {
+      // Define the default color mapping for the levels that have lower
+      // priority than the the ERROR log. The level color mapping that will
+      // be used to log a message will be the nearest mapping value for the
+      // level that is equal to os less than the level of the message. So, in
+      // order to log all messages to a specific color scheme we only need to
+      // set the level of the lowest level in logger level hierarchy, that is
+      // the lower that the level that is explicit specified, that is the
+      // level of [ERROR].
+      Level[] levels = new Level[] {
+        Level.Warn, Level.Notice, Level.Info, Level.Debug, Level.Fine,
+        Level.Trace, Level.Finer, Level.Verbose, Level.Finest, Level.All
+      };
+
+      int levels_length = levels.Length;
+      ColoredConsoleAppender.LevelColors[] levels_colors =
+        new ColoredConsoleAppender.LevelColors[levels_length + 1];
+
+      for (int i = 0; i < levels_length; i++) {
+        ColoredConsoleAppender.LevelColors level_colors =
+          new ColoredConsoleAppender.LevelColors();
+
+        level_colors.ForeColor = ColoredConsoleAppender.Colors.Green;
+        level_colors.Level = levels[i];
+        levels_colors[i] = level_colors;
+      }
+
+      // define the default color mapping for the ERROR level.
+      levels_colors[levels_length] = new ColoredConsoleAppender.LevelColors();
+      levels_colors[levels_length].Level = Level.Error;
+      levels_colors[levels_length].ForeColor =
+        ColoredConsoleAppender.Colors.Red;
+
+      return levels_colors;
     }
 
     /// <summary>
@@ -91,8 +132,12 @@ namespace Nohros.Logging
     /// The default level color used the default console color for all
     /// levels except for ERROR that uses the red color as foreground color.
     /// </remarks>
-    public ColoredConsoleAppender.LevelColors LevelColors {
+    public ColoredConsoleAppender.LevelColors[] LevelColors {
       get { return level_colors_; }
+      set {
+        if (value == null)
+          throw new ArgumentNullException("value");
+      }
     }
   }
 }
