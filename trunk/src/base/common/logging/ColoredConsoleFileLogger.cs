@@ -6,7 +6,8 @@ using System.Reflection;
 namespace Nohros.Logging
 {
   /// <summary>
-  /// A generic logger that logs messages to the system console.
+  /// A generic logger that logs messages to both the system console and
+  /// a text file.
   /// </summary>
   /// <remarks>
   /// <see cref="ColoredConsoleLogger"/> appends log events to the
@@ -15,16 +16,21 @@ namespace Nohros.Logging
   /// <para>
   ///   "[%date %-5level/%thread] %message%newline %exception"
   /// </para>
+  /// <para>
+  /// The name of the file is "nohros-logger.log".
+  /// </para>
   /// It also allows the color of a specific type of message to be set.
   /// <para>
   /// The default threshold level is INFO and could be overloaded on the
   /// nohros configuration file.
   /// </para>
   /// </remarks>
-  public sealed class ColoredConsoleLogger : Log4NetLogger
+  public sealed class ColoredConsoleFileLogger : Log4NetLogger
   {
     const string kLogMessagePattern =
       "[%-5level %date] %message%newline%exception";
+
+    const string kFileName = "nohros-logger.log";
 
     static ILogger current_process_logger_;
 
@@ -32,9 +38,9 @@ namespace Nohros.Logging
     /// <summary>
     /// Initializes the singleton process's logger instance.
     /// </summary>
-    static ColoredConsoleLogger() {
-      Log4NetColoredConsoleLogger logger =
-        new Log4NetColoredConsoleLogger(kLogMessagePattern);
+    static ColoredConsoleFileLogger() {
+      Log4NetColoredConsoleFileLogger logger =
+        new Log4NetColoredConsoleFileLogger(kLogMessagePattern, kFileName);
 
       logger.Configure();
 

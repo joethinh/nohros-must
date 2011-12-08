@@ -28,17 +28,21 @@ namespace Nohros.Logging
   /// nohros configuration file.
   /// </para>
   /// </remarks>
-  public class Log4NetColoredConsoleLogger: Log4NetLogger
+  public class Log4NetColoredConsoleFileLogger: Log4NetLogger
   {
     string layout_pattern_;
+    string log_file_path_;
     ColoredConsoleAppender.LevelColors level_colors_;
 
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the ConsoleLogger class.
     /// </summary>
-    public Log4NetColoredConsoleLogger(string layout_pattern) {
+    public Log4NetColoredConsoleFileLogger(string layout_pattern,
+      string log_file_path) {
+
       layout_pattern_ = layout_pattern;
+      log_file_path_ = log_file_path;
 
       level_colors_ = new ColoredConsoleAppender.LevelColors();
       level_colors_.Level = Level.Error;
@@ -63,20 +67,30 @@ namespace Nohros.Logging
       layout.ConversionPattern = layout_pattern_;
       layout.ActivateOptions();
 
-      // create the appender
-      ColoredConsoleAppender appender = new ColoredConsoleAppender();
-      appender.Name = "NohrosCommonConsoleAppender";
-      appender.Layout = layout;
-      appender.Target = "Console.Out";
-      appender.Threshold = Level.All;
-      appender.ActivateOptions();
+      // create the console appender
+      ColoredConsoleAppender console_appender = new ColoredConsoleAppender();
+      console_appender.Name = "NohrosCommonConsoleAppender";
+      console_appender.Layout = layout;
+      console_appender.Target = "Console.Out";
+      console_appender.Threshold = Level.All;
+      console_appender.ActivateOptions();
 
       level_colors_.ActivateOptions();
       // create the default colot mapping or add the user supplied
       // to the appender.
-      appender.AddMapping(level_colors_);
+      console_appender.AddMapping(level_colors_);
 
-      nohros_console_logger.Parent.AddAppender(appender);
+      // create the file appender
+      FileAppender file_appender = new FileAppender();
+      file_appender.Name = "NohrosCommonFileAppender";
+      file_appender.File = log_file_path_;
+      file_appender.AppendToFile = true;
+      file_appender.Layout = layout;
+      file_appender.Threshold = Level.All;
+      file_appender.ActivateOptions();
+
+      nohros_console_logger.Parent.AddAppender(console_appender);
+      nohros_console_logger.Parent.AddAppender(file_appender);
 
       root_repository.Configured = true;
 
