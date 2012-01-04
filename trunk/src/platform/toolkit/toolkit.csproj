@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>$(SolutionDir)..\nohros.toolkit.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -56,6 +57,21 @@
     <Compile Include="dnslookup\resourcerecord.cs" />
     <Compile Include="dnslookup\response.cs" />
     <Compile Include="dnslookup\returncode.cs" />
+    <Compile Include="google\visualization\cells\VizBooleanCell.cs" />
+    <Compile Include="google\visualization\cells\VizDataCell.cs" />
+    <Compile Include="google\visualization\cells\VizDateCell.cs" />
+    <Compile Include="google\visualization\cells\VizDateTimeCell.cs" />
+    <Compile Include="google\visualization\cells\VizIntegerCell.cs" />
+    <Compile Include="google\visualization\cells\VizLongCell.cs" />
+    <Compile Include="google\visualization\cells\VizStringCell.cs" />
+    <Compile Include="google\visualization\cells\VizTimeOfDayCell.cs" />
+    <Compile Include="google\visualization\IVizDataCell.cs" />
+    <Compile Include="google\visualization\VizDataColumn.cs" />
+    <Compile Include="google\visualization\VizDataRow.cs" />
+    <Compile Include="google\visualization\VizDataRowNewCellEventArgs.cs" />
+    <Compile Include="google\visualization\VizDataRowNewCellEventHandler.cs" />
+    <Compile Include="google\visualization\VizDataTable.cs" />
+    <Compile Include="google\visualization\VizDataType.cs" />
     <Compile Include="mailchecker\invalidreplyexception.cs" />
     <Compile Include="mailchecker\mailchecker.cs" />
     <Compile Include="dnslookup\mxrecord.cs" />
@@ -65,6 +81,7 @@
     <Compile Include="dnslookup\resolver.cs" />
     <Compile Include="mailchecker\smtpreply.cs" />
     <Compile Include="mailchecker\smtpclient.cs" />
+    <Compile Include="messaging\IMessengerFactory.cs" />
     <Compile Include="messaging\messages\IMessage.cs" />
     <Compile Include="messaging\IMessenger.cs" />
     <Compile Include="messaging\messages\EmailMessage.cs" />
@@ -72,10 +89,10 @@
     <Compile Include="messaging\messages\ResponseMessageType.cs" />
     <Compile Include="messaging\agents\EmailAgent.cs" />
     <Compile Include="messaging\agents\IAgent.cs" />
+    <Compile Include="messaging\MessagingFactory.cs" />
     <Compile Include="messaging\Messenger.cs" />
     <Compile Include="messaging\MessengerChain.cs" />
     <Compile Include="messaging\agents\Agent.cs" />
-    <Compile Include="messaging\RecipientType.cs" />
     <Compile Include="messaging\messages\ResponseMessage.cs" />
     <Compile Include="messaging\messages\SmsMessage.cs" />
     <Compile Include="messaging\SmtpMessenger.cs" />
@@ -97,13 +114,14 @@
   <ItemGroup>
     <ProjectReference Include="..\..\base\common\common.csproj">
       <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
-      <Name>common</Name>
+      <Name>common %28%28base%29\common%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\base\resources\resources.csproj">
       <Project>{A0341EAF-743E-4191-9012-87F9A7ACCBF3}</Project>
       <Name>resources</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -75,7 +75,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\base\common\common.csproj">
       <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
-      <Name>common</Name>
+      <Name>common %28%28base%29\common%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\base\resources\resources.csproj">
       <Project>{A0341EAF-743E-4191-9012-87F9A7ACCBF3}</Project>
@@ -92,7 +92,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

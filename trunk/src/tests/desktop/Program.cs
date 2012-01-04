@@ -12,6 +12,7 @@ using Nohros.Data;
 using Nohros.Configuration;
 //using Nohros.Desktop.Security;
 using Nohros.Security.Auth;
+using Nohros.Toolkit.Messaging;
 
 namespace desktdd
 {
@@ -139,12 +140,33 @@ namespace desktdd
             Console.ReadLine();*/
         }
 
-        static void Main(string[] args)
-        {
-            string[] args_ = args;
-            string[] new_node_values = new string[args.Length];
-            for (int i = 0; i < args_.Length; i++)
-                new_node_values[i] = args[i];
+        static void SendHtml() {
+            EmailMessage message = new EmailMessage("somemessage");
+            message.Sender = new EmailAgent("comunicacao@somedomain.com", "Comunicacao Acao");
+            message.Subject = "Pesquisa Perfil";
+            message.IsBodyHtml = true;
+            message.Message =
+@"<html>
+	<head>
+		<title>Pesquisa Perfil Acao</title>
+	</head>
+	<body>
+		<a href=""$link$"">
+			<img alt=""Pesquisa Perfil Acao"" src=""http://192.168.203.8:8080/images/pesquisa_adm.jpg""/>
+		</a>
+	</body>
+</html>";
+            message.AddRecipient(new EmailAgent("comunicacao@acaoassessoria.com.br", "Comunicacao"));
+
+            Dictionary<string, string> options = new Dictionary<string, string>();
+            options["smtp-host"] = "smtp.acao.net.br";
+            options["smtp-port"] = "25";
+            SmtpMessenger messenger = new SmtpMessenger("somename", options);
+            ResponseMessage response = messenger.Send(message);
+        }
+
+        static void Main(string[] args) {
+            SendHtml();
         }
     }
 }

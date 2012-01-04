@@ -106,7 +106,7 @@ namespace Nohros.Test.Configuration
             TestingConfiguration config = new TestingConfiguration();
             config.Load("repository-node");
 
-            RepositoryNode node = config.Repositories["css-path"];
+            RepositoryNode node = config.RepositoryNodes["css-path"];
             Assert.IsNotNull(node);
             Assert.AreEqual(Path.Combine(config.Location, "css"), node.Path);
         }
@@ -116,7 +116,7 @@ namespace Nohros.Test.Configuration
             TestingConfiguration config = new TestingConfiguration();
             config.Load("desktop");
 
-            ConnectionStringNode node = config.ConnectionStrings["nohros"];
+            ConnectionStringNode node = config.ConnectionStringNodes["nohros"];
             Assert.AreEqual("nohros", node.Name);
             Assert.AreEqual("dbo", node.DatabaseOwner);
             Assert.AreEqual("SQLSERVER", node.ConnectionString);
@@ -127,7 +127,7 @@ namespace Nohros.Test.Configuration
             TestingConfiguration config = new TestingConfiguration();
             config.Load("desktop");
 
-            DataProviderNode node = config.DataProviders["NohrosDataProvider"] as DataProviderNode;
+            DataProviderNode node = config.DataProviderNodes["NohrosDataProvider"] as DataProviderNode;
             Assert.AreEqual("NohrosDataProvider", node.Name);
             Assert.AreEqual("Nohros.Data.SqlNohrosDataProvider, nohros.data", node.Type);
             Assert.AreEqual(config.Location, node.AssemblyLocation);
@@ -141,13 +141,13 @@ namespace Nohros.Test.Configuration
             TestingConfiguration config = new TestingConfiguration();
             config.Load("desktop");
 
-            MessengerProviderNode node = config.MessengerProviders["SmsMessenger"] as MessengerProviderNode;
+            MessengerProviderNode node = config.MessengerProviderNodes["SmsMessenger"] as MessengerProviderNode;
             Assert.IsNotNull(node);
             Assert.AreEqual("SmsMessenger", node.Name);
             Assert.AreEqual("Nohros.Test.Toolkit.Messaging.SmsMessenger, nohros.test.desktop", node.Type);
             Assert.AreEqual(null, node.AssemblyLocation);
 
-            node = config.MessengerProviders["SimpleMessenger"] as MessengerProviderNode;
+            node = config.MessengerProviderNodes["SimpleMessenger"] as MessengerProviderNode;
             Assert.IsNotNull(node);
             Assert.AreEqual("SimpleMessenger", node.Name);
             Assert.AreEqual("Nohros.Test.Toolkit.Messaging.SimpleMessenger, nohros.test.desktop", node.Type);
@@ -170,7 +170,7 @@ namespace Nohros.Test.Configuration
         [Test]
         public void ChainNode() {
             NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
-            ChainNode pseudo_chain = config.Chains["pseudo-chain"] as ChainNode;
+            ChainNode pseudo_chain = config.ChainNodes["pseudo-chain"] as ChainNode;
             Assert.IsNotNull(pseudo_chain);
             Assert.AreEqual("SmsMessenger", pseudo_chain.Nodes[0]);
             Assert.AreEqual("EmailMessenger", pseudo_chain.Nodes[1]);
@@ -188,7 +188,7 @@ namespace Nohros.Test.Configuration
             NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
             config.Load("login-module-node");
 
-            LoginModuleNode node = config.LoginModules["auth-login-module"];
+            LoginModuleNode node = config.LoginModuleNodes["auth-login-module"];
             Assert.IsNotNull(node);
             Assert.AreEqual(LoginModuleControlFlag.SUFFICIENT, node.ControlFlag);
             Assert.AreEqual("auth-login-module", node.Name);

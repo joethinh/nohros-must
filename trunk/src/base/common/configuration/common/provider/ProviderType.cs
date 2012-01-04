@@ -4,24 +4,19 @@ using System.Text;
 
 namespace Nohros.Configuration
 {
+  /// <summary>
+  /// An enumeration used on the providers parsing.
+  /// </summary>
+  internal enum ProviderType
+  {
     /// <summary>
-    /// An enumeration used on the providers parsing.
+    /// A data provider.
     /// </summary>
-    internal enum ProviderType
-    {
-        /// <summary>
-        /// A data provider.
-        /// </summary>
-        Data = 0,
+    Data = 0,
 
-        /// <summary>
-        /// A messenger provider.
-        /// </summary>
-        Messenger = 1,
-
-        /// <summary>
-        /// A cache provider.
-        /// </summary>
-        Cache = 2
-    }
+    /// <summary>
+    /// A simple provider.
+    /// </summary>
+    Simple = 3
+  }
 }

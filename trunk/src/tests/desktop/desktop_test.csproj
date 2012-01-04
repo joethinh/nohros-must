@@ -80,7 +80,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\base\common\common.csproj">
       <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
-      <Name>common</Name>
+      <Name>common %28%28base%29\common%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\platform\desktop\desktop.csproj">
       <Project>{7B7DCA88-945A-4FA9-985C-5F3CB667C2BC}</Project>
@@ -88,7 +88,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\platform\toolkit\toolkit.csproj">
       <Project>{2AAB1652-4EBB-4917-AED8-7F157F884E3B}</Project>
-      <Name>toolkit</Name>
+      <Name>toolkit %28%28plataform%29\toolkit%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\platform\web\web.csproj">
       <Project>{ABF8260D-F80B-453C-8016-44AA75670DA3}</Project>

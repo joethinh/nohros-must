@@ -12,30 +12,30 @@ namespace Nohros.Test.Toolkit.MailChecker
     {
         [Test]
         public void SmtpReplyParseByteArray() {
-            byte[] message = Encoding.ASCII.GetBytes("205 Smtp Reply Message");
+            byte[] message = Encoding.ASCII.GetBytes("205 Smtp Reply BaseMessage");
             SmtpReply smtp = new SmtpReply(message, 0, message.Length);
             Assert.AreEqual(205, smtp.Code);
-            Assert.AreEqual(smtp.Message, "Smtp Reply Message");
+            Assert.AreEqual(smtp.Message, "Smtp Reply BaseMessage");
         }
 
         [Test]
         [ExpectedException(typeof(InvalidReplyException))]
         public void InvalidReplyException() {
-            byte[] message = Encoding.ASCII.GetBytes("Smtp Reply Message Without Code");
+            byte[] message = Encoding.ASCII.GetBytes("Smtp Reply BaseMessage Without Code");
             SmtpReply smtp = new SmtpReply(message, 0, message.Length);
         }
 
         [Test]
         [ExpectedException(typeof(IndexOutOfRangeException))]
         public void MessageWithNegativeOffset() {
-            byte[] message = Encoding.ASCII.GetBytes("205 Smtp Reply Message Without Code");
+            byte[] message = Encoding.ASCII.GetBytes("205 Smtp Reply BaseMessage Without Code");
             SmtpReply smtp = new SmtpReply(message, -1, message.Length);
         }
 
         [Test]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void MessageWithBoundsOverload() {
-            byte[] message = Encoding.ASCII.GetBytes("205 Smtp Reply Message Without Code");
+            byte[] message = Encoding.ASCII.GetBytes("205 Smtp Reply BaseMessage Without Code");
             SmtpReply smtp = new SmtpReply(message, 0, message.Length + 10);
         }
 

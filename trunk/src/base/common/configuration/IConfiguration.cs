@@ -228,36 +228,41 @@ namespace Nohros.Configuration
           location_ = Path.GetDirectoryName(config_file_info.FullName);
 
           // for backward compatibility this method allows the root_node_name
-          // to be null and when its happen we need to select the first
-          // valid XML element. If a the root_node is explicit bounded to a schema
-          // the XmlDocument.SelectSIngleNode(string) will not return the node correctly.
-          // If this happen we will traverse down the XML trying to match a node name
-          // with the specified root_node_name.
-          XmlNode node = (root_node_name == null) ? null : doc.SelectSingleNode(root_node_name);
-          if (node == null) {
-            if (root_node_name != null) {
-              // if the root_node_name was specified and the node was not found
-              // we need to throw an exception. The first valid Xml element must be
-              // used only when root_node_name is a null reference.
-              node = SelectNode(node, root_node_name);
-              if (node == null)
-                throw new ArgumentException(string.Format(StringResources.Config_KeyNotFound, root_node_name));
-            } else {
-              // If root_node_name is  null reference we need to used the first valid
-              // Xml element.
-              foreach (XmlNode n in doc.ChildNodes) {
-                if (n.NodeType == XmlNodeType.Element) {
-                  node = n;
-                  break;
-                }
-              }
-
-              // sanity check the node again. Its unusual but a Xml could have no
-              // valid elements. Ex. a xml that contains only the line above:
-              //      <?xml version="1.0" encoding="utf-8"?>
-              if (node == null)
-                throw new ArgumentException(string.Format(StringResources.Config_KeyNotFound, root_node_name));
+          // to be null and when its happen we need to select the first valid
+          // XML element.
+          XmlNode node = null;
+          if (root_node_name != null) {
+            // If a the root_node is explicit bounded to a schema
+            // the XmlDocument.SelectSingleNode(string) will not return the
+            // node correctly. To avoid this we will traverse down the XML
+            // document trying to match a node with name equals to the
+            // specified |root_node_name|, when the SelectSingleNode
+            // node return null.
+            node = doc.SelectSingleNode(root_node_name);
+            if (node == null) {
+              node = SelectNode(doc.FirstChild, root_node_name);
             }
+
+            // if the |root_node_name| was specified and the node was not found
+            // we need to throw an exception. The first valid Xml element
+            // must be used only when |root_node_name| is a null reference.
+            if (node == null)
+              throw new ArgumentException(string.Format(StringResources.Config_KeyNotFound, root_node_name));
+          } else {
+            // If |root_node_name| is  null reference we need to use the
+            // first valid Xml element of the document.
+            foreach (XmlNode n in doc.ChildNodes) {
+              if (n.NodeType == XmlNodeType.Element) {
+                node = n;
+                break;
+              }
+            }
+
+            // sanity check the node again. Its unusual but a Xml could have no
+            // valid elements. Ex. a xml that contains only the line above:
+            //      <?xml version="1.0" encoding="utf-8"?>
+            if (node == null)
+              throw new ArgumentException(string.Format(StringResources.Config_KeyNotFound, root_node_name));
           }
 
           Load((XmlElement)node);

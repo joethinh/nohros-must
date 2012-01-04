@@ -6,91 +6,106 @@ using System.Text;
 
 namespace Nohros.Security.Auth
 {
+  /// <summary>
+  /// The <see cref="ILoginModule"/> interface describes the methods and
+  /// properties that should be implemented by authentication technology
+  /// providers. <see cref="ILoginModule"/> objects are plugged in under
+  /// applications to provide a particular type of authentication.
+  /// <para>
+  /// While applications write to the <see cref="LoginContext"/> API,
+  /// authentication technology providers implements the
+  /// <see cref="ILoginModule"/> interface. A configuration file specifies the
+  /// login module(s) to be used with a particular login application. Therefore
+  /// different login modules can be plugged in under the application without
+  /// requiring any modifications to the application itself.
+  /// </para>
+  /// <para>
+  /// The <see cref="ILoginConfiguration"/> is responsible for reading and
+  /// instantiating the appropriate <see cref="ILoginModules"/>.
+  /// </para>
+  /// <para>
+  /// The calling application sees the authentication process as a single
+  /// operation. However, the authentication process whitin the login module
+  /// proceeds in two distinct phases. In the first phase, the login module's
+  /// <see cref="ILoginModule.Login()"/> method gets invoked by the
+  /// LoginContext's <see cref="LoginContext.Login()"/> method. The login
+  /// method for the login module's then performs the actual authentication
+  /// and saves its authentication status as private state information. Once
+  /// finished, the login module's either returns true(if it succeeded) or
+  /// false(if it failed). In the failure case, the login module's must not
+  /// retry the authentication or introduce delays. The responsability of such
+  /// tasks belongs to the application. If the application attempts to retry
+  /// the authentication, the login module's login method will be called
+  /// again.
+  /// </para>
+  /// <para>
+  /// In the second phase, if the LoginContext's overall authentication
+  /// succeeded(the relevant REQUIRED, REQUISITE, SUFFICIENT and OPTIONAL
+  /// <see cref="ILoginModule"/> succeeded), then the
+  /// <see cref="ILoginModule.Commit"/> method for the
+  /// <see cref="ILoginModule"/> gets invoked. The commit method for a
+  /// <see cref="ILoginModule"/> checks its privately saved state to see if
+  /// its own authentication succeeded. If the overall
+  /// <see cref="LoginContext"/> authentication succeeded and the login
+  /// module's own authentication succeeded, then the commit method
+  /// associates the relevant Credentials(authentication data) with the
+  /// <see cref="Subject"/> located within the login module.
+  /// </para>
+  /// <para>
+  /// If the <see cref="LoginContext's"/> overall authentication failed(the
+  /// relevant REQUIRED, REQUISITE, SUFFIIENT and OPTIONAL
+  /// <see cref="ILoginModule"/> did not succeeded), then the
+  /// <see cref="ILoginModule.Abort()"/> method for each login module gets
+  /// invoked. In this case, the login module removes/destroy any
+  /// authentication state originally saved.
+  /// </para>
+  /// <para>
+  /// Log out involves only one phase. The <see cref="LoginContext"/> invokes
+  /// the <see cref="ILoginModule.Logout()"/> method. The logout method for the
+  /// login module then performs the logout procedures, such as logging session
+  /// information.
+  /// </para>
+  /// </summary>
+  public interface ILoginModule
+  {
     /// <summary>
-    /// ILoginModule describes the interface implemented by authentication
-    /// technology providers. ILoginModule are pluggable in under the application
-    /// to provide a particular type of authentication.
-    /// <para>
-    /// While applications write to <see cref="LoginContext"/> API, authentication technology
-    /// providers implements the ILoginModule interface. A configuration file
-    /// specifies the LoginModule(s) to be used with a particular login application.
-    /// Therefore different login modules can be plugged in under the application
-    /// without requiring any modifications to the application itself.
-    /// </para>
-    /// <para>
-    /// The <see cref="ILoginConfiguration"/> is responsible for reading and instantiating the
-    /// appropriate ILoginModules.
-    /// </para>
-    /// <para>
-    /// The calling application sees the authentication process as a single operation. However,
-    /// the authentication process whitin the login module proceeds in two distinct phases.
-    /// In the first phase, the login module's <see cref="ILoginModule.Login()"/> method gets
-    /// invoked by the LoginContext's <see cref="LoginContext.Login()"/> method. The login method
-    /// for the login module's then performs the actual authentication and saves its authentication
-    /// status as private state information. Once finished, the login module's either returns
-    /// true(if it succeeded) or false(if it failed). In the failure case, the login module's
-    /// must not retry the authentication or introduce delays. The responsability of such tasks
-    /// belongs to the application. If the application attempts to retry the authentication, the
-    /// login module's login method will be called again.
-    /// </para>
-    /// <para>
-    /// In the second phase, if the LoginContext's overall authentication succeeded( the relevant
-    /// REQUIRED, REQUISITE, SUFFIIENT and OPTIONAL ILoginModule succeeded), then
-    /// the <see cref="ILoginModule.Commit"/> method for the ILoginModule gets invoked.
-    /// The commit method for a ILoginModule checks its privately saved state to see if its
-    /// own authentication succeeded. If the overall LoginContext authentication succeeded and
-    /// the login module's own authentication succeeded, then the commit method associates the
-    /// relevant Credentials(authentication data) with the IIdentity located within the login module.
-    /// </para>
-    /// <para>
-    /// If the LoginContext's overall authentication failed(the relevant REQUIRED, REQUISITE,
-    /// SUFFIIENT and OPTIONAL ILoginModule did not succeeded), then the <see cref="ILoginModule.Abort()"/>
-    /// method for each login module gets invoked.In this case, the login module removes/destroy any
-    /// authentication state originally saved.
-    /// </para>
-    /// <para>
-    /// Log out involves only one phase. The LoginContext invokes the <see cref="ILoginModule.Logout()"/>
-    /// method. The logout method for the login module then performs the logout procedures, such as
-    /// logging session information.
-    /// </para>
-    /// <para>
-    /// A ILoginModule implementation must have a constructor with no arguments. This allows classes
-    /// which load the ILoginModule to instantiate it.
-    /// </para>
+    /// Method to abort the authentication process - phase 2.
     /// </summary>
-    public interface ILoginModule
-    {
-        /// <summary>
-        /// Method to abort the authentication process - phase 2.
-        /// </summary>
-        /// <returns></returns>
-        bool Abort();
+    /// <returns></returns>
+    bool Abort();
 
-        /// <summary>
-        /// Method to commit the authentication process - phase 2.
-        /// </summary>
-        /// <returns></returns>
-        bool Commit();
+    /// <summary>
+    /// Method to commit the authentication process - phase 2.
+    /// </summary>
+    /// <returns></returns>
+    bool Commit();
 
-        /// <summary>
-        /// Initializes this ILoginModule
-        /// </summary>
-        /// <param name="subject">The <see cref="Subject"/> to be authenticated</param>
-        /// <param name="callback">A <see cref="IAuthCallbackHandler"/> for communicating with the end user</param>
-        /// <param name="sharedState">State shared with other configured ILoginModule</param>
-        /// <param name="options">Options specified in the <see cref="ILoginConfiguration"/> for this particular ILoginModule</param>
-        void Init(Subject subject, IAuthCallbackHandler callback, IDictionary<string, object> sharedState, IDictionary<string, object> options);
+    /// <summary>
+    /// Initializes this <see cref="ILoginModule"/>.
+    /// </summary>
+    /// <param name="subject">The <see cref="Subject"/> to be
+    /// authenticated.</param>
+    /// <param name="callback">A <see cref="IAuthCallbackHandler"/> for
+    /// communicating with the end user.</param>
+    /// <param name="sharedState">State shared with other configured
+    /// <see cref="ILoginModule"/>.</param>
+    /// <param name="options">Options specified in the
+    /// <see cref="ILoginConfiguration"/> for this particular
+    /// <see cref="ILoginModule"/></param>
+    void Init(Subject subject,
+      IAuthCallbackHandler callback, IDictionary<string, object> sharedState,
+      IDictionary<string, object> options);
 
-        /// <summary>
-        /// Method to authenticate a user - phase 1.
-        /// </summary>
-        /// <returns></returns>
-        bool Login();
+    /// <summary>
+    /// Method to authenticate a user - phase 1.
+    /// </summary>
+    /// <returns></returns>
+    bool Login();
 
-        /// <summary>
-        /// Method which logs out a user.
-        /// </summary>
-        /// <returns></returns>
-        bool Logout();
-    }
+    /// <summary>
+    /// Method which logs out a user.
+    /// </summary>
+    /// <returns></returns>
+    bool Logout();
+  }
 }
