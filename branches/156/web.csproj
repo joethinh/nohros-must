@@ -48,26 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="common_wraper\Security.cs" />
-    <Compile Include="components\cache\CacheErrorEventArgs.cs" />
-    <Compile Include="components\cache\CacheErrorEventHandler.cs" />
-    <Compile Include="components\cache\CacheErrorState.cs" />
-    <Compile Include="components\cache\CacheItemLoaderDelegate.cs" />
-    <Compile Include="components\cache\cachelock\CacheEntry.cs" />
-    <Compile Include="components\cache\cachelock\CacheLockBox.cs" />
-    <Compile Include="components\cache\cachelock\HashCacheEntry.cs" />
-    <Compile Include="components\cache\HttpRuntimeCacheProvider.cs" />
-    <Compile Include="components\cache\ICacheProvider.cs" />
-    <Compile Include="components\cache\ITemporaryObject.cs" />
-    <Compile Include="components\cache\TemporaryObject.cs" />
-    <Compile Include="components\cache\NHashtable.cs" />
-    <Compile Include="components\cache\NCache.cs" />
     <Compile Include="components\LongRunningTask.cs" />
     <Compile Include="components\Sevens.cs" />
+    <Compile Include="HttpCacheProvider.cs" />
     <Compile Include="MergeHttpHandler.cs" />
     <Compile Include="security\auth\callback\WebCallbackHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="security\auth\NasHttpModule.cs" />
     <Compile Include="security\auth\SecurityContext.cs" />
     <Compile Include="settings\MIMEType.cs" />
     <Compile Include="Utility.cs" />
@@ -92,7 +78,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
