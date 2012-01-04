@@ -8,80 +8,97 @@ using Nohros.Resources;
 
 namespace Nohros.Toolkit.Messaging
 {
+  /// <summary>
+  /// A set of usefull methods for implementors of the <see cref="IMessenger"/>
+  /// interface.
+  /// </summary>
+  public sealed class Messenger
+  {
     /// <summary>
-    /// Serves as the base class for custom <see cref="IMessenger"/>.
+    /// Creates an instance of the <see cref="IMessenger"/> class by using the
+    /// factory class that was defined in the specified configuration node.
     /// </summary>
-    public sealed class Messenger
-    {
-        /// <summary>
-        /// Creates an instance of the type designated by the specified generic type parameter using the
-        /// constructor implied by the <see cref="IMessenger"/> interface.
-        /// </summary>
-        /// <param name="provider">A <see cref="MessengerProviderNode"/> object containing informations
-        /// that will be used to create the designated type.</param>
-        /// <returns>A reference to the newly created object.</returns>
-        /// <remarks>
-        /// The <typeparamref name="T"/> parameter must be a class that implements or derive from a class
-        /// that implements the <see cref="IMessenger"/> interface.
-        /// <para>
-        /// The type T must have a constructor that accepts a string and a <see cref="IDictionary&lt;TKey, TValue&gt;"/>
-        /// object, where TKey and TValue are both strings. The string parameter represents the name of the provider and
-        /// the dictionary parameter represents the options configured for the provider. Note that the options parameter
-        /// could be a null reference, but the name parameter could not. If the name parameter is null the constructor
-        /// should throw an <see cref="ArgumentNullException"/> exception.</para>
-        /// <para>
-        /// If the constructor of the type beign instantiated throws an exception it won't be propagated to the caller.
-        /// The CreateInstance method will pack the exception into a <see cref="ProviderException"/> and rethrow it.
-        /// exception and throw it.
-        /// </para>
-        /// <para>If the Location property of the specified provider is null this method will try
-        /// to load the assembly associated with the provider type from the application base directory.</para>
-        /// </remarks>
-        /// <exception cref="ArgumentNullException"><paramref name="provider"/> is null</exception>
-        /// <exception cref="ProviderException">The type could not be created.</exception>
-        /// <exception cref="ProviderException"><paramref name="provider"/> is invalid.</exception>
-        public static IMessenger CreateInstance(MessengerProviderNode provider) {
-            if (provider == null)
-                throw new ArgumentNullException("provider");
+    /// <param name="provider">A <see cref="MessengerProviderNode"/> object
+    /// containing informations that will be used to create the designated
+    /// type.</param>
+    /// <returns>A reference to the newly created object.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="provider"/>
+    /// is null.</exception>
+    /// <exception cref="ProviderException">A valid instance of the factory
+    /// could not be created -or - a exception was throwed by the factory.
+    /// </exception>
+    /// <remarks>
+    /// <para>
+    /// If the factory could not be instantiated or if it throws an exception
+    /// it won't be propagated to the caller. This method packs the exception
+    /// into a <see cref="ProviderException"/> and throw it.
+    /// </para>
+    /// </remarks>
+    public static IMessenger CreateInstance(MessengerProviderNode provider) {
+      if (provider == null)
+        throw new ArgumentNullException("provider");
 
-            Exception exception = null;
-
-            IMessenger new_object = null;
-            Type type = ProviderHelper.GetTypeFromProviderNode(provider);
-            if (type != null)
-                try {
-                    new_object = Activator.CreateInstance(type, provider.Name, provider.Options) as IMessenger;
-                } catch (Exception e) { exception = e; }
-
-            if (new_object == null || exception != null)
-                throw new ProviderException(string.Format(StringResources.Type_CreateInstanceOf, "IMessenger"), exception);
-
-            return new_object;
+      IMessengerFactory factory;
+      Type type = ProviderHelper.GetTypeFromProviderNode(provider);
+      if (type == null) {
+        throw new ProviderException(string.Format(
+          StringResources.Type_CreateInstanceOf, "IMessengerFactory"));
+      }
+      
+      try {
+        factory = Activator.CreateInstance(type) as IMessengerFactory;
+        if (factory == null) {
+          throw new ProviderException(string.Format(
+            StringResources.Type_CreateInstanceOf, "IMessengerFactory"));
         }
 
-        /// <summary>
-        /// Searchs for an option with name <paramref name="option"/> into the the specified options collection and
-        /// retrieve it's value.
-        /// </summary>
-        /// <param name="option">The name of the option to get.</param>
-        /// <param name="options">A <see cref="IDictionary&lt;string,string&gt;"/> that represents the
-        /// options collection.</param>
-        /// <returns>An string that is the value of the option with name <paramref name="option"/>.</returns>
-        /// <remarks>
-        /// If an option with name <paramref name="option"/> is not found within the <paramref name="options"/>
-        /// collection, this method throws an <see cref="ArgumentException"/> exception.
-        /// </remarks>
-        /// <exception cref="ArgumentException">An option with name <paramref name="option"/> is not found
-        /// within the <paramref name="options"/> collection.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="options"/> is null.</exception>
-        public static string GetRequiredOption(string option, IDictionary<string, string> options) {
-            if (options == null)
-                throw new ArgumentNullException("options");
+        IMessenger messenger =
+          factory.CreateMessenger(provider.Name, provider.Options);
 
-            string value;
-            if (!options.TryGetValue(option, out value))
-                throw new ArgumentException(string.Format(StringResources.Provider_Option_MissingAt, option));
-            return value;
+        // Sanitu check for nulls. By default messenger factories should not
+        // return nulls, but we can trust on others code.
+        if (messenger == null) {
+            throw new ProviderException(string.Format(
+              StringResources.Type_CreateInstanceOf, "IMessengerFactory"));
         }
+        return messenger;
+      } catch (Exception e) {
+        // pack the throwed exception and rethrow it.
+        throw new ProviderException(string.Format(
+          StringResources.Type_CreateInstanceOf, "IMessenger"), e);
+      }
     }
+
+    /// <summary>
+    /// Searchs for an option with name <paramref name="option"/> into the the
+    /// specified options collection and retrieve it's value.
+    /// </summary>
+    /// <param name="option">The name of the option to get.</param>
+    /// <param name="options">A <see cref="IDictionary&lt;string,string&gt;"/>
+    /// that represents the options collection.</param>
+    /// <returns>An string that is the value of the option with name
+    /// <paramref name="option"/>.</returns>
+    /// <exception cref="ArgumentException">An option with name
+    /// <paramref name="option"/> is not found within the
+    /// <paramref name="options"/> collection.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="options"/> is null.</exception>
+    /// <remarks>
+    /// Required options are options that must exists to a messenger work
+    /// properly. If an option with name <paramref name="option"/> is not
+    /// found within the <paramref name="options"/> collection, this method
+    /// throws an <see cref="ArgumentException"/> exception.
+    /// </remarks>
+    public static string GetRequiredOption(string option,
+      IDictionary<string, string> options) {
+      if (options == null)
+        throw new ArgumentNullException("options");
+
+      string value;
+      if (!options.TryGetValue(option, out value))
+        throw new ArgumentException(
+          string.Format(StringResources.Provider_Option_MissingAt, option));
+      return value;
+    }
+  }
 }

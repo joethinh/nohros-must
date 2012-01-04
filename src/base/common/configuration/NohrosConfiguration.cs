@@ -30,8 +30,7 @@ namespace Nohros.Configuration
     internal const string kConnectionStringsNodeName = "connection-strings";
     internal const string kProvidersNodeName = "providers";
     internal const string kDataProviderNodeName = "data";
-    internal const string kMessengerProviderNodeName = "messenger";
-    internal const string kCacheProviderNodeName = "cache";
+    internal const string kSimpleProviderNodeName = "simple";
     internal const string kProviderNodeName = "provider";
     internal const string kLoginModulesNodeName = "login-modules";
     internal const string kModuleNodeName = "module";
@@ -51,8 +50,7 @@ namespace Nohros.Configuration
     // providers node trees
     internal const string kProvidersNodeTree = kCommonNodeTree + "." + kProvidersNodeName;
     internal const string kDataProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kDataProviderNodeName;
-    internal const string kMessengerProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kMessengerProviderNodeName;
-    internal const string kCacheProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kCacheProviderNodeName;
+    internal const string kSimpleProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kSimpleProviderNodeName;
 
     // web related nodes
     internal const string kWebNodeTree = kWebNodeName;
@@ -98,7 +96,7 @@ namespace Nohros.Configuration
     /// </para>
     /// </remarks>
     public override void Load() {
-      Load((string)null);
+      Load((string)"nohros");
     }
 
     /// <summary>
@@ -244,19 +242,26 @@ namespace Nohros.Configuration
     /// <summary>
     /// Gets all the data providers configured for this application.
     /// </summary>
-    /// <remarks>DataProviderNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
-    /// will contain zero elements if configuration contains no data providers.</remarks>
+    /// <remarks>DataProviderNodes will never return a null reference;
+    /// however, the returned <see cref="DictionaryValue"/> will contain zero
+    /// elements if configuration contains no data providers.</remarks>
     public DictionaryValue<DataProviderNode> DataProviderNodes {
-      get { return GetDictionary<DataProviderNode>(kDataProviderNodeTree); }
+      get {
+        return GetDictionary<DataProviderNode>(kDataProviderNodeTree);
+      }
     }
 
     /// <summary>
-    /// Gets all the messenger providers configured for this application.
+    /// Gets all the simple providers configured for this application.
     /// </summary>
-    /// <remarks>MessengerProviderNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
-    /// will contain zero elements if configuration contains no messenger providers.</remarks>
-    public DictionaryValue<MessengerProviderNode> MessengerProviderNodes {
-      get { return GetDictionary<MessengerProviderNode>(kMessengerProviderNodeTree); }
+    /// <remarks><see cref="SimpleProviderNodes"/> will never return a null
+    /// reference; however, the returned <see cref="DictionaryValue"/> will
+    /// contain zero elements if configuration contains no cache providers.
+    /// </remarks>
+    public DictionaryValue<DictionaryValue<SimpleProviderNode>> SimpleProviderNodes {
+      get {
+        return GetDictionary<DictionaryValue<SimpleProviderNode>>(kSimpleProviderNodeTree);
+      }
     }
 
     /// <summary>

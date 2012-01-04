@@ -67,7 +67,7 @@ namespace Nohros.Test.Toolkit.Messaging
             message.Sender = new EmailAgent("somename@somedomain.com", "somename");
             message.Subject = "somesubject";
             message.IsBodyHtml = false;
-            message.Body = "sometext";
+            message.Message = "sometext";
             message.AddRecipient(new EmailAgent("neylor@acaoassessoria.com.br", "Neylor Ohmaly"));
 
             Dictionary<string, string> options = new Dictionary<string, string>();
@@ -84,7 +84,7 @@ namespace Nohros.Test.Toolkit.Messaging
             message.Sender = new EmailAgent("somename@somedomain.com", "somename");
             message.Subject = "somesubject";
             message.IsBodyHtml = false;
-            message.Body = "<html><title>Text as HTML</title><body>sometext</body></html>";
+            message.Message = "<html><title>Text as HTML</title><body>sometext</body></html>";
             message.AddRecipient(new EmailAgent("neylor@acaoassessoria.com.br", "Neylor Ohmaly"));
 
             Dictionary<string, string> options = new Dictionary<string, string>();
@@ -101,7 +101,7 @@ namespace Nohros.Test.Toolkit.Messaging
             message.Sender = new EmailAgent("somename@somedomain.com", "somename");
             message.Subject = "somesubject";
             message.IsBodyHtml = true;
-            message.Body = "<html><title>HTML mail</title><body>sometext</body></html>";
+            message.Message = "<html><title>HTML mail</title><body>sometext</body></html>";
             message.AddRecipient(new EmailAgent("neylor@acaoassessoria.com.br", "Neylor Ohmaly"));
 
             Dictionary<string, string> options = new Dictionary<string, string>();

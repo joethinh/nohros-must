@@ -108,7 +108,8 @@ namespace Nohros.Net
         /// <remarks>
         /// If the specified key is not found, a new lock entry will be created for it.
         /// </remarks>
-        public static object GetLock(string key, TimeSpan refreshInterval, TimeSpan slidingExpiration, NCache.CacheLoaderDelegate cacheLoader)
+        public static object GetLock(string key, TimeSpan refreshInterval, TimeSpan slidingExpiration,
+            NCache.CacheLoaderDelegate cacheLoader)
         {
             // lock the CacheLockBox for read
             lock (_readLock)

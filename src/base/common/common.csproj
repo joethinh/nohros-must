@@ -71,10 +71,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="configuration\common\provider\CacheProviderNode.cs" />
-    <Compile Include="configuration\common\provider\MessengerProviderNode.cs" />
+    <Compile Include="providers\cache\CacheProvider.cs" />
+    <Compile Include="providers\cache\RemovalCause.cs" />
     <Compile Include="configuration\common\provider\ProviderNode.cs" />
     <Compile Include="configuration\common\provider\ProviderType.cs" />
+    <Compile Include="configuration\common\provider\SimpleProviderNode.cs" />
     <Compile Include="configuration\common\RepositoryNode.cs" />
     <Compile Include="configuration\web\BuildType.cs" />
     <Compile Include="configuration\common\ChainNode.cs" />
@@ -84,9 +85,11 @@
     <Compile Include="configuration\web\ContentGroupNode.cs" />
     <Compile Include="configuration\common\provider\IProviderNode.cs" />
     <Compile Include="configuration\common\LoginModuleNode.cs" />
+    <Compile Include="providers\cache\ICacheProvider.cs" />
+    <Compile Include="providers\data\IDataProviderFactory.cs" />
     <Compile Include="data\type\ParameterizedStringPart.cs" />
     <Compile Include="data\type\collections\ParameterizedStringPartCollection.cs" />
-    <Compile Include="data\providers\DataSourceType.cs" />
+    <Compile Include="providers\data\DataSourceType.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\IConfigurationNode.cs" />
     <Compile Include="configuration\NohrosConfiguration.cs" />
@@ -109,10 +112,10 @@
     <Compile Include="data\transferobjects\DataTransferObjects.cs" />
     <Compile Include="data\transferobjects\IDataTransferObject.cs" />
     <Compile Include="data\transferobjects\StringTransferObject.cs" />
-    <Compile Include="data\providers\DataProvider.cs" />
-    <Compile Include="data\providers\IDataProvider.cs" />
+    <Compile Include="providers\data\DataProvider.cs" />
+    <Compile Include="providers\data\IDataProvider.cs" />
     <Compile Include="data\type\ParameterizedString.cs" />
-    <Compile Include="data\providers\ProviderHelper.cs" />
+    <Compile Include="providers\ProviderHelper.cs" />
     <Compile Include="data\type\collections\values\DictionaryValue.cs" />
     <Compile Include="data\type\collections\values\DictionaryValueT.cs" />
     <Compile Include="data\type\values\FundamentalValue.cs" />
@@ -127,14 +130,25 @@
     <Compile Include="data\type\IPointer.cs" />
     <Compile Include="data\type\collections\IVisitor.cs" />
     <Compile Include="data\type\Pointer.cs" />
+    <Compile Include="logging\ColoredConsoleLogger.cs" />
+    <Compile Include="logging\ConsoleFileLogger.cs" />
     <Compile Include="logging\ConsoleLogger.cs" />
     <Compile Include="logging\FileLogger.cs" />
+    <Compile Include="logging\ColoredConsoleFileLogger.cs" />
+    <Compile Include="logging\log4net\Log4NetColoredConsoleFileLogger.cs" />
+    <Compile Include="logging\log4net\Log4NetColoredConsoleLogger.cs" />
+    <Compile Include="logging\log4net\Log4NetConsoleFileLogger.cs" />
     <Compile Include="logging\log4net\Log4NetConsoleLogger.cs" />
     <Compile Include="logging\log4net\Log4NetFileLogger.cs" />
     <Compile Include="logging\ILogger.cs" />
     <Compile Include="logging\log4net\Log4NetLogger.cs" />
     <Compile Include="logging\LogLevel.cs" />
     <Compile Include="logging\NOPLogger.cs" />
+    <Compile Include="mq\IMessageMiddlewareFactoryG.cs" />
+    <Compile Include="mq\IMessageMiddlewareG.cs" />
+    <Compile Include="mq\IOperationData.cs" />
+    <Compile Include="mq\IMessage.cs" />
+    <Compile Include="mq\IMessageMiddleware.cs" />
     <Compile Include="ProviderException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="security\auth\BasicPermission.cs" />
@@ -213,7 +227,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

@@ -242,7 +242,7 @@ namespace Nohros.Desktop
     /// "loose parameters".
     /// </remarks>
     public void AppendSwitchParsingStopPrefix() {
-      command_line_string_ += "--";
+      command_line_string_ += " --";
     }
 
     /// <summary>
