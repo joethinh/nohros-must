@@ -465,5 +465,14 @@ namespace Nohros.Resources {
                 return ResourceManager.GetString("Type_CreateInstanceOf", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type &quot;{0}&quot; could not be loaded..
+        /// </summary>
+        internal static string Type_Load {
+            get {
+                return ResourceManager.GetString("Type_Load", resourceCulture);
+            }
+        }
     }
 }
