@@ -13,7 +13,13 @@ namespace Nohros.Data
   /// <remarks></remarks>
   public class ParameterizedString
   {
-    string flat_string_;
+    const string kDefaultDelimiter = "$";
+
+    /// <summary>
+    /// The original version parameterized string.
+    /// </summary>
+    protected string flat_string_;
+
     string delimiter_;
 
     Queue<ParameterizedStringPart> parts_;
@@ -24,7 +30,16 @@ namespace Nohros.Data
     /// Initializes a new instance of the <see cref="ParameterizedString"/>
     /// class.
     /// </summary>
-    public ParameterizedString() : this(string.Empty, string.Empty) { }
+    /// <remarks>
+    /// Implementors should initialize the <see cref="flat_string_"/> member.
+    /// </remarks>
+    protected ParameterizedString() { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterizedString"/>
+    /// class.
+    /// </summary>
+    public ParameterizedString(string str) : this(str, kDefaultDelimiter) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterizedString"/>
