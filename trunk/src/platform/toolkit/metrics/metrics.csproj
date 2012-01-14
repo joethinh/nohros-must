@@ -8,10 +8,11 @@
     <ProjectGuid>{EE140ABF-C917-44D7-B89F-D6946332F507}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>metrics</RootNamespace>
-    <AssemblyName>metrics</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>Nohros.Toolkit.Metrics</RootNamespace>
+    <AssemblyName>nohros.toolkit.metrics</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,6 +41,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="core\AtomicLong.cs" />
+    <Compile Include="core\AtomicReference.cs" />
+    <Compile Include="core\Clock.cs" />
+    <Compile Include="core\Counter.cs" />
+    <Compile Include="core\ExponentialWeightedMovingAverage.cs" />
+    <Compile Include="core\Gauge.cs" />
+    <Compile Include="core\Histogram.cs" />
+    <Compile Include="core\IMetric.cs" />
+    <Compile Include="core\ISample.cs" />
+    <Compile Include="core\ISampling.cs" />
+    <Compile Include="core\IStoppable.cs" />
+    <Compile Include="core\Meter.cs" />
+    <Compile Include="core\IMetered.cs" />
+    <Compile Include="core\Snapshot.cs" />
+    <Compile Include="core\ISummarizable.cs" />
+    <Compile Include="core\TimeUnit.cs" />
+    <Compile Include="core\UserTimeClock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
