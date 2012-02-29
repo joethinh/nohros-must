@@ -458,6 +458,78 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An attempt was made to copy the value elements of a SkipList to an array that is too small..
+        /// </summary>
+        internal static string SkipList_BadArrayCopyTo {
+            get {
+                return ResourceManager.GetString("SkipList_BadArrayCopyTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An attempt was made to access a SkipListEnumerator that is positioned before the first element of a SkipList or after the last element..
+        /// </summary>
+        internal static string SkipList_BadEnumAccess {
+            get {
+                return ResourceManager.GetString("SkipList_BadEnumAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An attempt was made to pass an out of range index to the CopyTo method of a SkipList..
+        /// </summary>
+        internal static string SkipList_BadIndexCopyTo {
+            get {
+                return ResourceManager.GetString("SkipList_BadIndexCopyTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The SkipList was set to use the IComparable interface and an attempt was made to add a key that does not support this interface..
+        /// </summary>
+        internal static string SkipList_ComparableError {
+            get {
+                return ResourceManager.GetString("SkipList_ComparableError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SkipListEnumerator is no longer valid. The SkipList has been modified since the creation of this enumerator..
+        /// </summary>
+        internal static string SkipList_InvalidEnum {
+            get {
+                return ResourceManager.GetString("SkipList_InvalidEnum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An attempt was made to add an element in which the key of the element already exists in the SkipList..
+        /// </summary>
+        internal static string SkipList_KeyExistsAdd {
+            get {
+                return ResourceManager.GetString("SkipList_KeyExistsAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An attempt was made to pass a null array to the CopyTo method of a SkipList..
+        /// </summary>
+        internal static string SkipList_NullArrayCopyTo {
+            get {
+                return ResourceManager.GetString("SkipList_NullArrayCopyTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An attempt was made to pass a null key to a SkipList..
+        /// </summary>
+        internal static string SkipList_NullKey {
+            get {
+                return ResourceManager.GetString("SkipList_NullKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Instance of the requested type could not be created. Check the constructor implied by the {0}..
         /// </summary>
         internal static string Type_CreateInstanceOf {

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+
+using Nohros.Data.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
 {
@@ -24,12 +27,12 @@ namespace Nohros.Toolkit.Metrics
     const int kOneMinute = 1;
     const int kFiveMinutes = 5;
     const int kFifteenMinutes = 15;
-    const double kM1Alpha = 1 - Math.Exp(-kInterval / kMinutesPerSecond / kOneMinute);
-    const double kM5Alpha = 1 - Math.Exp(-kInterval / kMinutesPerSecond / kFiveMinutes);
-    const double kM15Alpha = 1 - Math.Exp(-kInterval / kMinutesPerSecond / kFifteenMinutes);
+    static readonly double kM1Alpha = 1 - Math.Exp(-kInterval / kMinutesPerSecond / kOneMinute);
+    static readonly double kM5Alpha = 1 - Math.Exp(-kInterval / kMinutesPerSecond / kFiveMinutes);
+    static readonly double kM15Alpha = 1 - Math.Exp(-kInterval / kMinutesPerSecond / kFifteenMinutes);
 
     volatile bool initialized_ = false;
-    volatile double rate_ = 0.0;
+    double rate_ = 0.0;
 
     AtomicLong uncounted_;
     readonly double alpha_;
@@ -83,9 +86,10 @@ namespace Nohros.Toolkit.Metrics
       long count = uncounted_.Exchange(0);
       double instant_rate = count / interval_;
       if (initialized_) {
-        rate_ += (alpha_ * (instant_rate - rate_));
+        double volatile_rate = Thread.VolatileRead(ref rate_);
+        Thread.VolatileWrite(ref rate_, volatile_rate + (alpha_ * (instant_rate - volatile_rate)));
       } else {
-        rate_ = instant_rate;
+        Thread.VolatileWrite(ref rate_, instant_rate);
         initialized_ = true;
       }
     }
@@ -94,7 +98,7 @@ namespace Nohros.Toolkit.Metrics
     /// Gets the rate in the given units of time
     /// </summary>
     public double Rate(TimeUnit rate_unit) {
-      return rate_ * (double)TimeUnitHelper.ToNanos(1, rate_unit);
+      return Thread.VolatileRead(ref rate_) * (double)TimeUnitHelper.ToNanos(1, rate_unit);
     }
   }
 }

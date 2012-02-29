@@ -17,8 +17,7 @@ namespace Nohros.Toolkit.RestQL
     /// As <see cref="HttpContext"/> object that provides references to the
     /// intrinsic server objects used to service HTTP requests.
     /// </param>
-    public void ProcessRequest(HttpContext context) {
-    }
+    public void ProcessRequest(HttpContext context) { }
 
     /// <summary>
     /// Gets a value indicationg if this object could be pooled.

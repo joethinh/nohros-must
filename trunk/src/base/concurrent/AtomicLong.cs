@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace Nohros
+namespace Nohros.Data.Concurrent
 {
   /// <summary>
   /// A long value that may be updated atomically.

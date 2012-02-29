@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Timers;
+
+using Nohros.Data.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
 {
@@ -15,7 +18,7 @@ namespace Nohros.Toolkit.Metrics
   /// </remarks>
   public class Meter : IMetered, IStoppable
   {
-    static const long kInterval = 5; // seconds.
+    const long kInterval = 5 * 1000; // 5 seconds in milliseconds
 
     readonly ExponentialWeightedMovingAverage m1Rate;
     readonly ExponentialWeightedMovingAverage m5Rate;
@@ -26,6 +29,7 @@ namespace Nohros.Toolkit.Metrics
     readonly TimeUnit rate_unit_;
     readonly string event_type_;
     readonly Clock clock_;
+    readonly System.Timers.Timer timer_;
 
     /// <summary>
     /// Initializes a new instance of the <see cref=" Meter"/> class by using
@@ -34,11 +38,18 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="rate_unit">The rate unit of the new meter.</param>
     /// <param name="event_type">The plural</param>
     /// <param name="clock"></param>
-    Meter(TimeUnit rate_unit, string event_type, Clock clock) {
+    internal Meter(TimeUnit rate_unit, string event_type, Clock clock) {
       rate_unit_ = rate_unit;
       event_type_ = event_type;
       clock_ = clock;
       start_time_ = clock_.Tick;
+
+      timer_ = new System.Timers.Timer(kInterval);
+      timer_.Elapsed  += new ElapsedEventHandler(
+        delegate(object sender, ElapsedEventArgs e)
+        {
+          Tick();
+        });
     }
 
     /// <inheritdoc/>
@@ -122,8 +133,18 @@ namespace Nohros.Toolkit.Metrics
       return rate_per_ns * (double)TimeUnitHelper.ToNanos(1, rate_unit_);
     }
 
+    /// <summary>
+    /// Start updating the rates.
+    /// </summary>
+    /// <remarks>The rates are updated in a background thread at a regular
+    /// interval(5 seconds), until it is stopped.</remarks>
+    public void Start() {
+      timer_.Start();
+    }
+
     /// <inheritdoc/>
     public void Stop() {
+      timer_.Stop();
     }
   }
 }
