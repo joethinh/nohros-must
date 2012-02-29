@@ -11,21 +11,24 @@ namespace Nohros.Resources
   public sealed class StringResources
   {
     ResourceManager lib_resources_;
-    static StringResources loader;
+    static StringResources loader_;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StringResources"/> class.
     /// </summary>
     internal StringResources() {
-      lib_resources_ = new ResourceManager("Nohros.Resources.Resources", base.GetType().Assembly);
+      lib_resources_ =
+        new ResourceManager(
+          "Nohros.Resources.Resources", base.GetType().Assembly);
     }
 
     static StringResources Loader {
       get {
-        if (loader == null) {
-          Interlocked.CompareExchange<StringResources>(ref loader, new StringResources(), null);
+        if (loader_ == null) {
+          Interlocked.CompareExchange<StringResources>(
+            ref loader_, new StringResources(), null);
         }
-        return loader;
+        return loader_;
       }
     }
 
@@ -33,8 +36,9 @@ namespace Nohros.Resources
     /// Returns the value of the specified <see cref="String"/> resource.
     /// </summary>
     /// <param name="name">The name of the resource to get.</param>
-    /// <returns>The value of the resource localized for the caller's current culture settings.
-    /// If a match is not possible, null is returned.</returns>
+    /// <returns>The value of the resource localized for the caller's current
+    /// culture settings. If a match is not possible, null is returned.
+    /// </returns>
     public static string GetString(string name) {
       StringResources loader = Loader;
       if (loader == null)
@@ -44,17 +48,19 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Returns the value of the specified <see cref="String"/> resource and replaces
-    /// the format item in the requested resource string with a string representation of a corresponding
-    /// object in the specified array.
+    /// Returns the value of the specified <see cref="String"/> resource and
+    /// replaces the format item in the requested resource string with a string
+    /// representation of a corresponding object in the specified array.
     /// </summary>
     /// <param name="name">The name of the resource to get.</param>
-    /// <param name="args">An object array that contains zero or more objects</param>
-    /// <returns>The value of the resource localized for the caller's current culture settings.
-    /// If a match is not possible, null is returned.</returns>
-    /// <remarks>The <see cref="string.Format()"/> method will be used to replace the
-    /// format items in the requested resource value</remarks> and idependant on the behavior of
-    /// that method.
+    /// <param name="args">An object array that contains zero or more
+    /// objects</param>
+    /// <returns>The value of the resource localized for the caller's current
+    /// culture settings. If a match is not possible, null is returned.
+    /// </returns>
+    /// <remarks>The <see cref="string.Format()"/> method will be used to
+    /// replace the format items in the requested resource value and idependant
+    /// on the behavior of that method.</remarks>
     public static string GetString(string name, params object[] args) {
       StringResources loader = Loader;
       if (loader == null)
@@ -73,7 +79,8 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Gets the <see cref="CultureInfo"/> object that represents the culture which resource is localized.
+    /// Gets the <see cref="CultureInfo"/> object that represents the culture
+    /// which resource is localized.
     /// </summary>
     static CultureInfo Culture {
       get {
@@ -85,7 +92,8 @@ namespace Nohros.Resources
     #region Internal library resources
 
     /// <summary>
-    /// Looks up a localized string similar to [An entry with the same key already exists]
+    /// Looks up a localized string similar to [An entry with the same key
+    /// already exists]
     /// </summary>
     internal static string Argument_AddingDuplicate {
       get { return GetString("Argument_AddingDuplicate"); }
@@ -167,8 +175,8 @@ namespace Nohros.Resources
     #endregion
 
     /// <summary>
-    /// Looks up a localized string similar to [absoluteExpiration must be DateTime.MaxValue or slidingExpiration
-    /// must be timeSpan.Zero].
+    /// Looks up a localized string similar to [absoluteExpiration must be
+    /// DateTime.MaxValue or slidingExpiration must be timeSpan.Zero].
     /// </summary>
     internal static string Caching_Invalid_expiration_combination {
       get { return GetString("Caching_Invalid_expiration_combination"); }
@@ -182,7 +190,8 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [The number of specified fields is less than the number of columns.].
+    /// Looks up a localized string similar to [The number of specified fields
+    /// is less than the number of columns.].
     /// </summary>
     internal static string DataHelper_OrdArrInvalidOfLen {
       get { return GetString("DataHelper_OrdArrInvalidOfLen"); }
@@ -190,7 +199,8 @@ namespace Nohros.Resources
 
     #region JSON
     /// <summary>
-    ///   Looks up a localized string similar to [Root value must be an array or object].
+    /// Looks up a localized string similar to [Root value must be an array
+    /// or object].
     /// </summary>
     internal static string JSON_BadRootElementType {
       get { return GetString("JSON_BadRootElementType"); }
@@ -218,51 +228,59 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    ///   Looks up a localized string similar to [Unexpected data after root element].
+    /// Looks up a localized string similar to [Unexpected data after root
+    /// element].
     /// </summary>
     internal static string JSON_UnexpectedDataAfterRoot {
       get { return GetString("JSON_UnexpectedDataAfterRoot"); }
     }
 
     /// <summary>
-    ///   Looks up a localized string similar to [Dictionary keys must be quoted].
+    /// Looks up a localized string similar to [Dictionary keys must be
+    /// quoted].
     /// </summary>
     internal static string JSON_UnquotedDictionaryKey {
       get { return GetString("JSON_UnquotedDictionaryKey"); }
+    }
+
+    internal static string SkipList_ComparableError {
+      get { return GetString("SkipList_ComparableError"); }
     }
     #endregion
 
     #endregion
 
     #region Public lib resources
-
     /// <summary>
-    /// Looks up a localized string similar to [An invalid connection string argument has been supplied,
-    /// or a required connection string argument has not been supplied
+    /// Looks up a localized string similar to [An invalid connection string
+    /// argument has been supplied, or a required connection string argument
+    /// has not been supplied
     /// </summary>
     public static string DataProvider_ConnectionString {
       get { return GetString("DataProvider_ConnectionString"); }
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [An IDbConnection instance could not be created. Verify
-    /// if your connection string and data source type were correctly specified.]
+    /// Looks up a localized string similar to [An IDbConnection instance
+    /// could not be created. Verify if your connection string and data source
+    /// type were correctly specified.]
     /// </summary>
     public static string DataProvider_Connection {
       get { return GetString("DataProvider_Connection"); }
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [Index was out of range. Must be non-negative and less than the
-    /// size of the collection].
+    /// Looks up a localized string similar to [Index was out of range. Must
+    /// be non-negative and less than the size of the collection].
     /// </summary>
     public static string ArgumentOutOfRange_Index {
       get { return GetString("ArgumentOutOfRange_Index"); }
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [Destination array is not long enough to copy all the items in
-    /// the collection. Check array index and length].
+    /// Looks up a localized string similar to [Destination array is not long
+    /// enough to copy all the items in the collection. Check array index and
+    /// length].
     /// </summary>
     public static string Arg_ArrayPlusOffTooSmall {
       get { return GetString("Arg_ArrayPlusOffTooSmall"); }
@@ -276,22 +294,25 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [One of the specified arguments is a null reference].
+    /// Looks up a localized string similar to [One of the specified arguments
+    /// is a null reference].
     /// </summary>
     public static string Argument_any_null {
       get { return GetString("Argument_any_null"); }
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [Offset and length were out of bounds for the array or count is
-    /// greater than the number of elements from index to the end of the source collection].
+    /// Looks up a localized string similar to [Offset and length were out of
+    /// bounds for the array or count is greater than the number of elements
+    /// from index to the end of the source collection].
     /// </summary>
     public static string Argument_InvalidOfLen {
       get { return GetString("Argument_InvalidOfLen"); }
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [index is outside the range of valid indexes for array].
+    /// Looks up a localized string similar to [index is outside the range of
+    /// valid indexes for array].
     /// </summary>
     public static string Arg_IndexOutOfRange {
       get { return GetString("Arg_IndexOutOfRange"); }
@@ -305,14 +326,16 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [The range of valid values are {0} to {1}].
+    /// Looks up a localized string similar to [The range of valid values are
+    /// {0} to {1}].
     /// </summary>
     public static string Arg_RangeNotBetween {
       get { return GetString("Arg_RangeNotBetween"); }
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [Unable to find the specified configuration file].
+    /// Looks up a localized string similar to [Unable to find the specified
+    /// configuration file].
     /// </summary>
     public static string Config_FileNotFound {
       get { return GetString("Config_FileNotFound"); }
@@ -326,14 +349,16 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [The configuration key "{0}" was not found.].
+    /// Looks up a localized string similar to [The configuration key "{0}"
+    /// was not found.].
     /// </summary>
     public static string Config_KeyNotFound {
       get { return GetString("Config_KeyNotFound"); }
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [The "{0}" path must be relative to the application base directory.]
+    /// Looks up a localized string similar to [The "{0}" path must be
+    /// relative to the application base directory.]
     /// </summary>
     public static string Config_PathIsRooted {
       get { return GetString("Config_PathIsRooted"); }
@@ -347,7 +372,8 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [The specified configuration object is not valid.]
+    /// Looks up a localized string similar to [The specified configuration
+    /// object is not valid.]
     /// </summary>
     public static string Config_InvalidObject {
       get { return GetString("Config_InvalidObject"); }
@@ -361,14 +387,16 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [Missing configuration information for {0} at {1}.].
+    /// Looks up a localized string similar to [Missing configuration
+    /// information for {0} at {1}.].
     /// </summary>
     public static string Config_MissingAt {
       get { return GetString("Config_MissingAt"); }
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [{0} is not a valid value for {1}.].
+    /// Looks up a localized string similar to [{0} is not a valid value
+    /// for {1}.].
     /// </summary>
     public static string Config_ArgOutOfRange {
       get { return GetString("Config_ArgOutOfRange"); }
@@ -396,14 +424,16 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [The element {0} is already in collection].
+    /// Looks up a localized string similar to [The element {0} is already
+    /// in collection].
     /// </summary>
     public static string Collection_elm_AddingDuplicate {
       get { return GetString("Collection_elm_AddingDuplicate"); }
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [The specified collection is a null reference].
+    /// Looks up a localized string similar to [The specified collection is a
+    /// null reference].
     /// </summary>
     public static string Collection_null {
       get { return GetString("Collection_null"); }

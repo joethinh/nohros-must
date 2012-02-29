@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
+using Nohros.Data.Concurrent;
+
 namespace Nohros.Toolkit.Metrics
 {
   /// <summary>
@@ -14,10 +16,10 @@ namespace Nohros.Toolkit.Metrics
   ///  http://www.johndcook.com/standard_deviation.html
   /// </para>
   /// </remarks>
-  public class Histogram : ISummarizable, ISampling
+  public partial class Histogram : ISummarizable, ISampling, IMetric
   {
-    const int kDefaultSampleSize = 1028;
-    const double kDefaultAlpha = 0.015;
+    internal const int kDefaultSampleSize = 1028;
+    internal const double kDefaultAlpha = 0.015;
 
     enum SampleType
     {
@@ -56,7 +58,7 @@ namespace Nohros.Toolkit.Metrics
     /// the specified sample data.
     /// </summary>
     /// <param name="sample"></param>
-    Histogram(ISample sample) {
+    public Histogram(ISample sample) {
       sample_ = sample;
       min_ = new AtomicLong();
       max_ = new AtomicLong();

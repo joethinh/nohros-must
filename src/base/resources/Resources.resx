@@ -256,4 +256,28 @@
   <data name="Type_Load" xml:space="preserve">
     <value>The type "{0}" could not be loaded.</value>
   </data>
+  <data name="SkipList_BadArrayCopyTo" xml:space="preserve">
+    <value>An attempt was made to copy the value elements of a SkipList to an array that is too small.</value>
+  </data>
+  <data name="SkipList_BadEnumAccess" xml:space="preserve">
+    <value>An attempt was made to access a SkipListEnumerator that is positioned before the first element of a SkipList or after the last element.</value>
+  </data>
+  <data name="SkipList_BadIndexCopyTo" xml:space="preserve">
+    <value>An attempt was made to pass an out of range index to the CopyTo method of a SkipList.</value>
+  </data>
+  <data name="SkipList_ComparableError" xml:space="preserve">
+    <value>The SkipList was set to use the IComparable interface and an attempt was made to add a key that does not support this interface.</value>
+  </data>
+  <data name="SkipList_InvalidEnum" xml:space="preserve">
+    <value>SkipListEnumerator is no longer valid. The SkipList has been modified since the creation of this enumerator.</value>
+  </data>
+  <data name="SkipList_KeyExistsAdd" xml:space="preserve">
+    <value>An attempt was made to add an element in which the key of the element already exists in the SkipList.</value>
+  </data>
+  <data name="SkipList_NullArrayCopyTo" xml:space="preserve">
+    <value>An attempt was made to pass a null array to the CopyTo method of a SkipList.</value>
+  </data>
+  <data name="SkipList_NullKey" xml:space="preserve">
+    <value>An attempt was made to pass a null key to a SkipList.</value>
+  </data>
 </root>

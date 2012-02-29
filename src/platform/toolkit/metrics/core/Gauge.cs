@@ -16,7 +16,7 @@ namespace Nohros.Toolkit.Metrics
   /// </para>
   /// </summary>
   /// <typeparam name="T">The type of the metric's value.</typeparam>
-  public abstract class Gauge<T>
+  public abstract class Gauge<T> : IMetric
   {
     /// <summary>
     /// Gets the metric's current value.

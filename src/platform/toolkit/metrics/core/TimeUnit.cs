@@ -111,5 +111,32 @@ namespace Nohros
       }
       throw new ArgumentOutOfRangeException("unit");
     }
+
+    // TODO: Implement this.
+    public static long ToSeconds(long duration, TimeUnit unit) {
+      switch (unit) {
+        case TimeUnit.Nanoseconds:
+          return duration;
+
+        case TimeUnit.Microseconds:
+          return x(duration, C1 / C0, MAX / (C1 / C0));
+
+        case TimeUnit.Miliseconds:
+          return x(duration, C2 / C0, MAX / (C2 / C0));
+
+        case TimeUnit.Seconds:
+          return x(duration, C3 / C0, MAX / (C3 / C0));
+
+        case TimeUnit.Minutes:
+          return x(duration, C4 / C0, MAX / (C4 / C0));
+
+        case TimeUnit.Hours:
+          return x(duration, C5 / C0, MAX / (C5 / C0));
+
+        case TimeUnit.Days:
+          return x(duration, C6 / C0, MAX / (C6 / C0));
+      }
+      throw new ArgumentOutOfRangeException("unit");
+    }
   }
 }

@@ -13,7 +13,7 @@ namespace Nohros.Data
   /// <remarks></remarks>
   public class ParameterizedString
   {
-    const string kDefaultDelimiter = "$";
+    protected const string kDefaultDelimiter = "$";
 
     /// <summary>
     /// The original version parameterized string.

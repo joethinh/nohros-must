@@ -78,6 +78,9 @@
     <Compile Include="cache\CacheLoaderDelegate.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="data\concurrent\AtomicLong.cs" />
+    <Compile Include="data\concurrent\AtomicLongArray.cs" />
+    <Compile Include="data\concurrent\AtomicReference.cs" />
     <Compile Include="providers\cache\CacheProvider.cs" />
     <Compile Include="providers\cache\RemovalCause.cs" />
     <Compile Include="configuration\common\provider\ProviderNode.cs" />
@@ -234,7 +237,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

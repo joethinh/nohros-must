@@ -7,7 +7,7 @@ namespace Nohros.Toolkit.Metrics
   /// <summary>
   /// An object which maintains mean and exponentially-weighted rate.
   /// </summary>
-  public class IMetered
+  public interface IMetered
   {
     /// <summary>
     /// Gets the meter's rate unit.

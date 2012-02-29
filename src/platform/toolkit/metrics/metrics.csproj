@@ -32,33 +32,51 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nohros, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\bin\release\nohros.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="core\AtomicLong.cs" />
-    <Compile Include="core\AtomicReference.cs" />
     <Compile Include="core\Clock.cs" />
     <Compile Include="core\Counter.cs" />
     <Compile Include="core\ExponentialWeightedMovingAverage.cs" />
     <Compile Include="core\Gauge.cs" />
     <Compile Include="core\Histogram.cs" />
     <Compile Include="core\IMetric.cs" />
-    <Compile Include="core\ISample.cs" />
-    <Compile Include="core\ISampling.cs" />
+    <Compile Include="core\stats\ExponentiallyDecayingSample.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\stats\ISample.cs" />
+    <Compile Include="core\stats\ISampling.cs" />
     <Compile Include="core\IStoppable.cs" />
     <Compile Include="core\Meter.cs" />
     <Compile Include="core\IMetered.cs" />
-    <Compile Include="core\Snapshot.cs" />
+    <Compile Include="core\MetricName.cs" />
+    <Compile Include="core\MetricsRegistry.cs" />
+    <Compile Include="core\stats\Snapshot.cs" />
     <Compile Include="core\ISummarizable.cs" />
+    <Compile Include="core\TimedEvent.cs" />
+    <Compile Include="core\Timer.cs" />
+    <Compile Include="core\TimerContext.cs" />
     <Compile Include="core\TimeUnit.cs" />
+    <Compile Include="core\stats\UniformSample.cs" />
     <Compile Include="core\UserTimeClock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

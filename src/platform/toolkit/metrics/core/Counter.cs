@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Nohros.Data.Concurrent;
+
 namespace Nohros.Toolkit.Metrics
 {
   /// <summary>
   /// An incrementing and decrementing counter metric.
   /// </summary>
-  public class Counter
+  public class Counter : IMetric
   {
     private readonly AtomicLong count_;
 
@@ -15,7 +17,7 @@ namespace Nohros.Toolkit.Metrics
     /// <summary>
     /// Initializes a new instance of the <see cref="Counter"/> class.
     /// </summary>
-    Counter() {
+    public Counter() {
       this.count_ = new AtomicLong(0);
     }
     #endregion

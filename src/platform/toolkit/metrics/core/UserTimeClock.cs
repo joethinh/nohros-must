@@ -13,7 +13,7 @@ namespace Nohros.Toolkit.Metrics
     /// <inheritdoc/>
     public override long Tick {
       get {
-        return (long)(DateTime.UtcNow.Subtract(epoch_).Ticks);
+        return Clock.NanoTime;
       }
     }
   }
