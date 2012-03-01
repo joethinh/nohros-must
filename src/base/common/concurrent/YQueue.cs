@@ -4,32 +4,32 @@ using System.Collections.Generic;
 namespace Nohros.Concurrent
 {
   /// <summary>
-  /// <see cref="YQueue"/> is an efficient queue implementation ported from the
-  /// zeromq library. <see cref="YQueue"/> allows thread to use
-  /// <see cref="Push"/>/<see cref="Back"/> function and another one to use
-  /// <see cref="Pop"/>/<see cref="Front"/> functions - at the same time
-  /// without locking. However, user must ensure that there's no pop on an
-  /// empty queue and that both threads don't access the same element in
-  /// unsynchronized manner. <typeparam name="T"> is the type of the objects
-  /// in the queue.</typeparam>
+  /// <see cref="YQueue"/> is an efficient queue implementation ported from
+  /// the zeromq library. <see cref="YQueue"/> allows one thread to use the
+  /// <see cref="Enqueue"/> function while another one use the
+  /// <see cref="Dequeue"/> function without locking. <typeparam name="T"> is
+  /// the type of the objects in the queue.</typeparam>
   /// </summary>
   public class YQueue<T>
   {
     #region Chunk
     class Chunk
     {
-      int granularity_;
       T[] values_;
       Chunk previous_;
       Chunk next_;
+      volatile int current_pos_;
 
       #region .ctor
       /// <summary>
-      /// Initializes a new instance of the <see cref="Chunk"/> class.
+      /// Initializes a new instance of the <see cref="Chunk"/> class by using
+      /// the specified capacity.
       /// </summary>
-      public Chunk(int granularity) {
-        granularity_ = granularity;
-        values_ = new T[granularity];
+      /// <param name="capacity">The number of elements that the chunk can
+      /// hold.</param>
+      public Chunk(int capacity) {
+        values_ = new T[capacity];
+        current_pos_ = 0;
         previous_ = null;
         next_ = null;
       }
@@ -61,12 +61,12 @@ namespace Nohros.Concurrent
     #endregion
 
     int granularity_;
-    int head_pos_;
-    int tail_pos_;
-    int end_pos_;
+    volatile int head_current_pos_, tail_current_pos_;
+    volatile int head_end_pos, tail_end_pos_;
     Chunk head_chunk_;
     Chunk tail_chunk_;
-    Chunk end_chunk_;
+
+    static Chunk divider_;
 
     // People are likely to produce and consume at similar rates. In this
     // scenario holding onto the most recently freed chunk saves us from
@@ -74,6 +74,13 @@ namespace Nohros.Concurrent
     AtomicReference<Chunk> spare_chunk_;
 
     #region .ctor
+    /// <summary>
+    /// Initializes the static variables.
+    /// </summary>
+    static YQueue() {
+      divider_ = new Chunk(0);
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="YQueue"/> class by using
     /// the specified granularity.
@@ -83,11 +90,8 @@ namespace Nohros.Concurrent
     /// is required).</param>
     public YQueue(int granularity) {
       granularity_ = granularity;
-      head_chunk_ = new Chunk(granularity);
-      tail_chunk_ = null;
-      end_chunk_ = head_chunk_;
-
-      head_pos_ = tail_pos_ = end_pos_ = 0;
+      head_chunk_ = tail_chunk_ = divider_;
+      head_pos_ = tail_pos_ = 0;
     }
     #endregion
 
@@ -97,34 +101,45 @@ namespace Nohros.Concurrent
     /// <param name="element">The element to be added to the back end of the
     /// queue.</param>
     public void Enqueue(T element) {
-      // add the element to the back end of the current tail chunk and
-      // set the
-      Back = element;
-      tail_chunk_ = end_chunk_;
-      tail_pos_ = end_pos_;
+      int tail_current_pos = tail_current_pos_;
 
-      if (++end_pos_ != granularity_) {
+      if (++tail_current_pos < granularity_) {
+        // Add the element to the back end of the current tail chunk.
+        tail_chunk_.Values[tail_current_pos] = element;
+
+        // "Commit" the newly added item and "publish" it atomically
+        // to the consumer thread.
+        tail_current_pos_ = tail_current_pos;
         return;
       }
 
+      // The tail chunk is full, create a new one.
       Chunk spare_chunk = spare_chunk_.Exchange(null);
-      if (spare_chunk != null) {
-        end_chunk_.Next = spare_chunk;
-        spare_chunk.Previous = end_chunk_;
-      } else {
-        end_chunk_.Next = new Chunk(granularity_);
-        end_chunk_.Next.Previous = end_chunk_;
+      if (spare_chunk == null) {
+        spare_chunk = new Chunk(granularity_);
       }
-      end_chunk_ = end_chunk_.Next;
-      end_pos_ = 0;
+
+      // Append the newly created chunk to the queue chain.
+      //
+      // NOTE: We need to set the previous chunk of the newly created
+      // chunk before set the next chunk of the tail to keep the
+      // queue state consistent for the consumer thread.
+      spare_chunk.Previous = tail_chunk_;
+      tail_chunk_.Next = spare_chunk;
     }
 
     /// <summary>
     /// Removes and returns the object at the beginning of the
-    /// <see cref="YQueue"/>.
+    /// <see cref="YQueue&lt;T&gt;"/>.
     /// </summary>
-    /// <returns></returns>
+    /// <returns><typeparamref name="T"/> The object that is removed from the
+    /// <see cref="YQueue&lt;T&gt;"/></returns>
+    /// <exception cref="InvalidOperationException">The
+    /// <see cref="YQueue&lt;T&gt;"/> is empty.</exception>
     public T Dequeue() {
+      if (divider_ != tail_chunk_) {
+      }
+
       if (++head_pos_ == granularity_) {
         Chunk chunk = head_chunk_;
         head_chunk_ = head_chunk_.Next;
@@ -136,27 +151,6 @@ namespace Nohros.Concurrent
         // spare.
         spare_chunk_.Exchange(chunk);
       }
-    }
-
-    /// <summary>
-    /// Gets the front element from the queue. If the queue is empty an
-    /// <see cref="IndexOutOfBoundException"/> exception is throwed.
-    /// </summary>
-    /// <exception cref="IndexOutOfBoundException">The queue is empty.
-    /// </exception>
-    public T Front {
-      get { return head_chunk_.Values[head_pos_]; }
-    }
-
-    /// <summary>
-    /// Gets the back element from the queue. If the queue is empty an
-    /// <see cref="IndexOutOfBoundException"/> exception is throwed.
-    /// </summary>
-    /// <exception cref="IndexOutOfBoundException">The queue is empty.
-    /// </exception>
-    public T Back {
-      get { return tail_chunk_.Values[tail_pos_]; }
-      private set { tail_chunk_.Values[tail_pos_] = value; }
     }
   }
 }
