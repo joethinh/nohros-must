@@ -113,12 +113,13 @@ namespace Nohros.Concurrent
       while (head_chunk_.head_pos > head_chunk_.tail_pos &&
         head_chunk_ != divider_) {
 
-        head_chunk_ = head_chunk_.next;
-
         // |head_chunk_| has been more recently used than |spare_chunk_|, so
         // for cache reasons we'll get rid of the spare and use |head_chunk_|
         // as the spare.
         spare_chunk_ = head_chunk_;
+
+        // Advance the head chunk to the next used chunk or divider.
+        head_chunk_ = head_chunk_.next;
       }
     }
 
@@ -159,11 +160,13 @@ namespace Nohros.Concurrent
         // unconsumed.
         Chunk current_chunk = divider_.next;
 
-        int head_pos, tail_pos;
-        head_pos = current_chunk.head_pos;
+        // We need to compare the current chunk |tail_pos| with the |head_pos|
+        // and |granularity|. Since, the |tail_pos| can be modified by the
+        // producer thread we need to cache it's value.
+        int tail_pos;
         tail_pos = current_chunk.tail_pos;
         
-        if (head_pos > tail_pos) {
+        if (current_chunk.head_pos > tail_pos) {
           // we have reached the end of the chunk, go to the next.
           if (tail_pos == granularity_) {
             divider_ = current_chunk.next;
@@ -174,7 +177,8 @@ namespace Nohros.Concurrent
             return false;
           }
         } else {
-          // Ensure that we are reading the freshness value.
+          // Ensure that we are reading the freshness value from the chunk
+          // values array.
           Thread.MemoryBarrier();
 
           // Here the |head_pos| is less than or equals to |tail_pos|, get
