@@ -97,7 +97,6 @@
     <Compile Include="configuration\common\provider\IProviderNode.cs" />
     <Compile Include="configuration\common\LoginModuleNode.cs" />
     <Compile Include="providers\cache\ICacheProvider.cs" />
-    <Compile Include="providers\data\IDataProviderFactory.cs" />
     <Compile Include="data\type\ParameterizedStringPart.cs" />
     <Compile Include="data\type\collections\ParameterizedStringPartCollection.cs" />
     <Compile Include="providers\data\DataSourceType.cs" />
