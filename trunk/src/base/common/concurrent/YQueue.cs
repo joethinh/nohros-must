@@ -31,7 +31,7 @@ namespace Nohros.Concurrent
       /// hold.</param>
       public Chunk(int capacity) {
         values = new T[capacity];
-        head_pos = 0;
+        head_pos = -1;
         tail_pos = 0;
         next = null;
       }
@@ -168,8 +168,8 @@ namespace Nohros.Concurrent
         
         if (current_chunk.head_pos > tail_pos) {
           // we have reached the end of the chunk, go to the next.
-          if (tail_pos == granularity_) {
-            divider_ = current_chunk.next;
+          if (tail_pos == granularity_ - 1) {
+            divider_ = current_chunk;
             continue;
           } else {
             // we already consume all the available itens.
