@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-using Nohros.Data.Concurrent;
+using Nohros.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
 {

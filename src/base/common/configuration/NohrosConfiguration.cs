@@ -58,8 +58,14 @@ namespace Nohros.Configuration
     internal const string kContentGroupNodeTree = kWebNodeTree + "." + kContentGroupsNodeName;
     #endregion
 
-    const string kConfigurationFileKey = "NohrosConfigurationFile";
     const string kLogLevel = "log-level";
+
+    /// <summary>
+    /// The name of the key that must exists in the main application
+    /// configuration file and should contains the relative path to the
+    /// nohros configuration file.
+    /// </summary>
+    const string kConfigurationFileKey = "NohrosConfigurationFile";
 
     DictionaryValue properties_;
     DictionaryValue config_nodes_;
@@ -78,65 +84,143 @@ namespace Nohros.Configuration
     #endregion
 
     /// <summary>
-    /// Loads the configuration values based on the application's configuration settings.
+    /// Loads the configuration values based on the application's configuration
+    /// settings.
     /// </summary>
     /// <remarks>
-    /// Each application has a configuration file. This has the same name as the application
-    /// whith ' .config ' appended.
-    /// <para>This file is XML and calling this function prompts the loader to look in that file
-    /// for a key named [NohrosConfigurationFile] that contains the path for the configuration file.
+    /// Each application has a configuration file. This has the same name as
+    /// the application whith ' .config ' appended.
+    /// <para>This file is XML and calling this function prompts the loader to
+    /// look in that file for a key named [NohrosConfigurationFile] that
+    /// contains the path for the configuration file.
     /// </para>
     /// <para>
-    /// The value of the [NohrosConfigurationFile] must be absolute or relative to the application
-    /// base directory.
+    /// The value of the [NohrosConfigurationFile] must be absolute or relative
+    /// to the application base directory.
     /// </para>
     /// <para>
-    /// The xml document must constains at leats one node with name euqlas to "nohros" that is
-    /// descendant of the root node.
+    /// The xml document must constains at leats one node with name euqlas to
+    /// "nohros" that is descendant of the root node.
     /// </para>
     /// </remarks>
     public override void Load() {
-      Load((string)"nohros");
+      InternalLoad((string)"nohros", false);
     }
 
     /// <summary>
-    /// Loads the configuration values based on the application's configuration settings.
+    /// Loads the configuration values based on the application's configuration
+    /// settings and watch it for modifications.
     /// </summary>
     /// <remarks>
-    /// Each application has a configuration file. This has the same name as the application
-    /// whith ' .config ' appended. This file is XML and calling this function prompts the loader to
-    /// look in that file for a key named [NohrosConfigurationFile] that contains the path for the
-    /// configuration file.
-    /// <para>
-    /// The value of the [NohrosConfigurationFile] must be absolute or relative to the application
-    /// base directory.
+    /// Each application has a configuration file. This has the same name as
+    /// the application whith ' .config ' appended.
+    /// <para>This file is XML and calling this function prompts the loader to
+    /// look in that file for a key named [NohrosConfigurationFile] that
+    /// contains the path for the configuration file.
     /// </para>
     /// <para>
-    /// The configuration file must be valid XML. It must contain at least one element called
-    /// <paramref name="root_node_name"/> that contains the configuration data. Note that a element
-    /// with name "nohros" must exists some place on the root nodes tree.
+    /// The value of the [NohrosConfigurationFile] must be absolute or relative
+    /// to the application base directory.
+    /// </para>
+    /// <para>
+    /// The xml document must constains at leats one node with name euqlas to
+    /// "nohros" that is descendant of the root node.
+    /// </para>
+    /// </remarks>
+    /// <para>
+    /// This methods watches the nohros configuration file for modifications
+    /// and when it is modified the configuration values is reloaded.
+    /// </para>
+    public void LoadAndWatch() {
+      InternalLoad((string)"nohros", true);
+    }
+
+    /// <summary>
+    /// Loads the configuration values based on the application's configuration
+    /// settings.
+    /// </summary>
+    /// <remarks>
+    /// Each application has a configuration file. This has the same name as
+    /// the application whith ' .config ' appended. This file is XML and
+    /// calling this function prompts the loader to look in that file for a key
+    /// named [NohrosConfigurationFile] that contains the path for the
+    /// configuration file.
+    /// <para>
+    /// The value of the [NohrosConfigurationFile] must be absolute or relative
+    /// to the application base directory.
+    /// </para>
+    /// <para>
+    /// The configuration file must be valid XML. It must contain at least one
+    /// element called <paramref name="root_node_name"/> that contains the
+    /// configuration data. Note that a element with name "nohros" must
+    /// exists some place on the root nodes tree.
     /// </para>
     /// </remarks>
     public override void Load(string root_node_name) {
-      string config_file_path = ConfigurationManager.AppSettings[kConfigurationFileKey];
+      InternalLoad(root_node_name, false);
+    }
+
+    /// <summary>
+    /// Loads the configuration values based on the application's configuration
+    /// settings and watch it for modifications.
+    /// </summary>
+    /// <remarks>
+    /// Each application has a configuration file. This has the same name as
+    /// the application whith ' .config ' appended. This file is XML and
+    /// calling this function prompts the loader to look in that file for a key
+    /// named [NohrosConfigurationFile] that contains the path for the
+    /// configuration file.
+    /// <para>
+    /// The value of the [NohrosConfigurationFile] must be absolute or relative
+    /// to the application base directory.
+    /// </para>
+    /// <para>
+    /// The configuration file must be valid XML. It must contain at least one
+    /// element called <paramref name="root_node_name"/> that contains the
+    /// configuration data. Note that a element with name "nohros" must
+    /// exists some place on the root nodes tree.
+    /// </para>
+    /// <para>
+    /// This methods watches the nohros configuration file for modifications
+    /// and when it is modified the configuration values is reloaded.
+    /// </para>
+    /// </remarks>
+    public void LoadAndWatch(string root_node_name) {
+      InternalLoad(root_node_name, true);
+    }
+
+    void InternalLoad(string root_node_name, bool watch)
+    {
+      string config_file_path =
+        ConfigurationManager.AppSettings[kConfigurationFileKey];
+
       if (config_file_path == null)
-        throw new ConfigurationErrorsException(string.Format(StringResources.Config_KeyNotFound, kConfigurationFileKey));
+        throw new ConfigurationErrorsException(string.Format(
+          StringResources.Config_KeyNotFound, kConfigurationFileKey));
 
       if (Path.IsPathRooted(config_file_path))
-        throw new ConfigurationErrorsException(string.Format(StringResources.Config_PathIsRooted, config_file_path));
+        throw new ConfigurationErrorsException(string.Format(
+          StringResources.Config_PathIsRooted, config_file_path));
 
       config_file_path = Path.Combine(Location, config_file_path);
 
-      Load(new FileInfo(config_file_path), root_node_name);
+      FileInfo config_file_info = new FileInfo(config_file_path);
+      if (watch) {
+        Load(config_file_info, root_node_name);
+      } else {
+        LoadAndWatch(config_file_info, root_node_name);
+      }
     }
 
     /// <summary>
     /// Parses the configuration node using the nohros schema.
     /// </summary>
-    /// <param name="element">A Xml element representing the configuration root node.</param>
+    /// <param name="element">A Xml element representing the configuration root
+    /// node.</param>
     /// <remarks>
-    /// The <paramref name="element"/> does not need to be the nohros configuration node, but a node
-    /// with name "nohros" must exists on the node hierarchy.
+    /// The <paramref name="element"/> does not need to be the nohros
+    /// configuration node, but a node with name "nohros" must exists on the
+    /// node hierarchy.
     /// </remarks>
     internal override void Parse(XmlElement element) {
       base.Parse(element);
@@ -155,12 +239,14 @@ namespace Nohros.Configuration
       }
 
       if (root_node == null)
-        throw new ConfigurationErrorsException(string.Format(StringResources.Config_KeyNotFound,
-            NohrosConfiguration.kNohrosNodeName));
+        throw new ConfigurationErrorsException(string.Format(
+          StringResources.Config_KeyNotFound,
+          NohrosConfiguration.kNohrosNodeName));
 
       // the logger is used by some methods above and the level threshold of it
-      // could be overloaded by a configuration key. So, we need to do the first logger
-      // instantiation here and adjust the threshold level if needed.
+      // could be overloaded by a configuration key. So, we need to do the
+      // first logger instantiation here and adjust the threshold level if
+      // needed.
       log_level_ = LogLevel.Info;
       XmlAttribute attribute = root_node.Attributes[kLogLevel];
       if (attribute != null) {
@@ -260,16 +346,19 @@ namespace Nohros.Configuration
     /// </remarks>
     public DictionaryValue<DictionaryValue<SimpleProviderNode>> SimpleProviderNodes {
       get {
-        return GetDictionary<DictionaryValue<SimpleProviderNode>>(kSimpleProviderNodeTree);
+        return GetDictionary<DictionaryValue<SimpleProviderNode>>(
+          kSimpleProviderNodeTree);
       }
     }
 
     /// <summary>
     /// Gets all the connection strings nodes in configuration.
     /// </summary>
-    /// <remarks>ConnectionStringNodes will never return a null reference; however, the returned
-    /// <see cref="DictionaryValue&lt;ConnectionStringNode&gt;"/> will contain zero elements if configuration
-    /// contains no connections string nodes.</remarks>
+    /// <remarks>ConnectionStringNodes will never return a null reference;
+    /// however, the returned
+    /// <see cref="DictionaryValue&lt;ConnectionStringNode&gt;"/> will
+    /// contain zero elements if configuration contains no connections
+    /// string nodes.</remarks>
     public DictionaryValue<ConnectionStringNode> ConnectionStringNodes {
       get { return GetDictionary<ConnectionStringNode>(kConnectionStringNodeTree); }
     }
@@ -277,8 +366,9 @@ namespace Nohros.Configuration
     /// <summary>
     /// Gets a collection of all the login modules in configuration.
     /// </summary>
-    /// <remarks>LoginModuleNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
-    /// will contain zero elements if configuration contains no login modules.</remarks>
+    /// <remarks>LoginModuleNodes will never return a null reference; however,
+    /// the returned <see cref="DictionaryValue"/> will contain zero elements
+    /// if configuration contains no login modules.</remarks>
     public DictionaryValue<LoginModuleNode> LoginModuleNodes {
       get { return GetDictionary<LoginModuleNode>(kLoginModuleNodeTree); }
     }
@@ -287,8 +377,9 @@ namespace Nohros.Configuration
     /// Gets a collection of all the repositories in configuration.
     /// </summary>
     /// <remarks>
-    /// RepositoryNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
-    /// will contain zero elements if configuration contains no repositories.</remarks>
+    /// RepositoryNodes will never return a null reference; however, the
+    /// returned <see cref="DictionaryValue"/> will contain zero elements if
+    /// configuration contains no repositories.</remarks>
     public DictionaryValue<RepositoryNode> RepositoryNodes {
       get { return GetDictionary<RepositoryNode>(kRepositoryNodeTree); }
     }
@@ -296,8 +387,9 @@ namespace Nohros.Configuration
     /// <summary>
     /// Gets a collection of all the chains in configuration.
     /// </summary>
-    /// </remarks>ChainNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
-    /// will contain zero elements if configuration contains no chains.</remarks>
+    /// <remarks>ChainNodes will never return a null reference; however,
+    /// the returned <see cref="DictionaryValue"/> will contain zero elements
+    /// if configuration contains no chains.</remarks>
     public DictionaryValue<ChainNode> ChainNodes {
       get { return GetDictionary<ChainNode>(kChainNodeTree); }
     }
@@ -305,8 +397,9 @@ namespace Nohros.Configuration
     /// <summary>
     /// Gets a collection of all the chains in configuration.
     /// </summary>
-    /// </remarks>ContentGroupNodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
-    /// will contain zero elements if configuration contains no content groups.</remarks>
+    /// <remarks>ContentGroupNodes will never return a null reference;
+    /// however, the returned <see cref="DictionaryValue"/> will contain zero
+    /// elements if configuration contains no content groups.</remarks>
     public DictionaryValue<ContentGroupNode> ContentGroupNodes {
       get { return GetDictionary<ContentGroupNode>(kContentGroupNodeTree); }
     }
@@ -314,8 +407,9 @@ namespace Nohros.Configuration
     /// <summary>
     /// Gets a collection of all the child nodes in the configuration.
     /// </summary>
-    /// <remarks>Nodes will never return a null reference; however, the returned <see cref="DictionaryValue"/>
-    /// will contain zero elements if configuration contains no child nodes.</remarks>
+    /// <remarks>Nodes will never return a null reference; however,
+    /// the returned <see cref="DictionaryValue"/> will contain zero elements
+    /// if configuration contains no child nodes.</remarks>
     internal DictionaryValue Nodes {
       get { return config_nodes_; }
     }
@@ -323,8 +417,10 @@ namespace Nohros.Configuration
     /// <summary>
     /// Gets a node in the configuration.
     /// </summary>
-    /// <remarks>This method will never return a null reference; however, the returned <see cref="DictionaryValue&lt;T&gt;"/>
-    /// will contain zero elements if configuration contains no node with the specified <paramref name="path"/>.</remarks>
+    /// <remarks>This method will never return a null reference; however,
+    /// the returned <see cref="DictionaryValue&lt;T&gt;"/> will contain zero
+    /// elements if configuration contains no node with the specified
+    /// <paramref name="path"/>.</remarks>
     DictionaryValue<T> GetDictionary<T>(string path) where T : class, IValue {
       DictionaryValue<T> node = config_nodes_[path] as DictionaryValue<T>;
       if (node == null)

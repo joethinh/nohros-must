@@ -9,9 +9,6 @@ namespace Nohros.Toolkit.RestQL
   /// </summary>
   public class QueryProcessor
   {
-    QueryInfo query_;
-    string query_key_;
-
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="QueryProcessor"/> class

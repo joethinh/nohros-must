@@ -33,15 +33,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IQueryProcessor.cs" />
+    <Compile Include="IQueryProcessorFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="provider\CommonDataProvider.cs" />
     <Compile Include="Query.cs" />
     <Compile Include="QueryProcessor.cs" />
     <Compile Include="RestQLHttpHandler.cs" />
+    <Compile Include="RestQLSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\base\common\common.csproj">
