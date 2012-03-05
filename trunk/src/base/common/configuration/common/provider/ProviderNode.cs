@@ -7,7 +7,7 @@ using System.IO;
 using System.Configuration;
 
 using Nohros.Resources;
-using Nohros.Data.Collections;
+using Nohros.Collections;
 
 namespace Nohros.Configuration
 {

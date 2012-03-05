@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using Nohros.Data;
-using Nohros.Data.Collections;
+using Nohros.Collections;
 using Nohros.Configuration;
 
 namespace Nohros.Security.Auth

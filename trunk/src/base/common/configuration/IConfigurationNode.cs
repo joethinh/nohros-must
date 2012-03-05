@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-using Nohros.Data.Collections;
+using Nohros.Collections;
 
 namespace Nohros.Configuration
 {

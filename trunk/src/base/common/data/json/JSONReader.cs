@@ -5,9 +5,9 @@ using System.Text;
 
 using Nohros.Resources;
 
-using Nohros.Data.Collections;
+using Nohros.Collections;
 
-namespace Nohros.Data
+namespace Nohros
 {
     /// <summary>
     /// A JSON parser. Converts strings of JSON into a

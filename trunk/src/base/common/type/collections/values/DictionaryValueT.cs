@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Data.Collections
+namespace Nohros.Collections
 {
   /// <summary>
   /// A recursive data storage class optimized for the namely storing a hierarchical

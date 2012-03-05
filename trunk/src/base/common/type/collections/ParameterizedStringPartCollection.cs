@@ -5,7 +5,7 @@ using System.Text;
 
 using Nohros.Resources;
 
-namespace Nohros.Data.Collections
+namespace Nohros.Collections
 {
   /// <summary>
   /// Represents a collections of parameters associated with a <see cref="ParameterizedString"/>. The elements added

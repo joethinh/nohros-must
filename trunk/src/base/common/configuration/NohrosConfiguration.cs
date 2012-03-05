@@ -7,7 +7,7 @@ using System.Configuration;
 
 using Nohros.Logging;
 using Nohros.Data;
-using Nohros.Data.Collections;
+using Nohros.Collections;
 using Nohros.Resources;
 
 namespace Nohros.Configuration

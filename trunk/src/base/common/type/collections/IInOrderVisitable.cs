@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Data.Collections
+namespace Nohros.Collections
 {
     /// <summary>
     /// Defines methods and properties that allows a <see cref="IVisitor&gt;T&lt;"/> to visit, in order, every

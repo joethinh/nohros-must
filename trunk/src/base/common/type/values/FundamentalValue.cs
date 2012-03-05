@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Nohros.Data
+namespace Nohros
 {
     /// <summary>
     /// Represents the simple fundamental types of values.
