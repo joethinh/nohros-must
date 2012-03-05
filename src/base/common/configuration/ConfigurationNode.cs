@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 
 using Nohros.Data;
-using Nohros.Data.Collections;
+using Nohros.Collections;
 
 namespace Nohros.Configuration
 {
@@ -27,7 +27,7 @@ namespace Nohros.Configuration
     /// </summary>
     /// <param name="name">The name of the node.</param>
     public ConfigurationNode(string name)
-      : base(Nohros.Data.ValueType.TYPE_CLASS) {
+      : base(Nohros.ValueType.TYPE_CLASS) {
       name_ = name;
       child_nodes_ = new Dictionary<string, ConfigurationNode>(
         StringComparer.OrdinalIgnoreCase);

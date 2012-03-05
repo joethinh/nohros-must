@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace Nohros.Data.Collections
+namespace Nohros.Collections
 {
   internal delegate bool TreeWalkAction<TKey, TValue>(
     AndersonTreeNode<TKey, TValue> node);

@@ -9,7 +9,7 @@ using System.IO;
 using Nohros.Resources;
 using Nohros.Data.TransferObjects;
 
-namespace Nohros.Data
+namespace Nohros
 {
   /// <summary>
   /// Collection of helper methods used by data manipulation.

@@ -9,7 +9,7 @@ using System.Configuration;
 using Nohros.Resources;
 using Nohros.Data;
 using Nohros.Data.Providers;
-using Nohros.Data.Collections;
+using Nohros.Collections;
 
 namespace Nohros.Configuration
 {

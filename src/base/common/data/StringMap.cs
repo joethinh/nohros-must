@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Data
+namespace Nohros
 {
     /// <summary>
     /// Implements a <see cref="IDictionary&lt;TKey,TValue&gt;"/> with the key and the value strongly typed

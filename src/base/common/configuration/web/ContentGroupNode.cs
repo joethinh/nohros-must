@@ -5,7 +5,7 @@ using System.Xml;
 using System.IO;
 using System.Configuration;
 
-using Nohros.Data.Collections;
+using Nohros.Collections;
 using Nohros.Resources;
 
 namespace Nohros.Configuration

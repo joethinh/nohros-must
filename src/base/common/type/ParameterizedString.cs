@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 
-using Nohros.Data.Collections;
-namespace Nohros.Data
+using Nohros.Collections;
+namespace Nohros
 {
   /// <summary>
   /// Represents a string that has embedded parameters.

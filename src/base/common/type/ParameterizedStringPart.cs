@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Data
+namespace Nohros
 {
   /// <summary>
   /// Represents an embedded parameter in a <see cref="ParameterizedString"/> object.

@@ -4,7 +4,7 @@ using System.Text;
 
 using Nohros.Resources;
 
-namespace Nohros.Data
+namespace Nohros
 {
     /// <summary>
     /// Logical representation of a pointer, but in fact a byte array reference and a position in it. This
