@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Nohros.Data;
+﻿using Nohros.Data;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -15,14 +11,15 @@ namespace Nohros.Toolkit.RestQL
   /// A parameter is a sequence of characters with no spaces delimited by
   /// anohther string. The default parameter delimiter is the string "$".
   /// <para>
-  /// Each query has a type that should be set by the user. The default query
-  /// type is <see cref="QeuryType.AdHoc"/>.
+  /// Each query should have a unique name.
   /// </para>
   /// </remarks>
   public class Query : ParameterizedString
   {
+    const string kDefaultDelimiter = "$";
+
     string name_;
-    string executor_factory_;
+    string processor_factory_type_;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Query"/> class by using
@@ -30,13 +27,16 @@ namespace Nohros.Toolkit.RestQL
     /// </summary>
     /// <param name="name">A string that uniquely identifies the query within
     /// the main data store.</param>
+    /// <param name="processor_factory_type">The fully qualified assembly's
+    /// name of the class fatory that is used to create instances of the class
+    /// that is able to process the query.</param>
     /// <param name="query">A string that represents the query.
-    /// <param name="executor_factory">The assembly's fully qualified
+    /// <param name="processor_factory_type">The assembly's fully qualified
     /// name of the factory class that is responsible to create instances
     /// of the class that can execute the query.</param>
     /// </param>
-    public Query(string name, string executor_factory, string query)
-      : this(name, query, executor_factory, kDefaultDelimiter) { }
+    public Query(string name, string processor_factory_type, string query)
+      : this(name, query, processor_factory_type, kDefaultDelimiter) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Query"/> class by using
@@ -47,17 +47,16 @@ namespace Nohros.Toolkit.RestQL
     /// <param name="query">A string that represents the query.</param>
     /// <param name="delimiter">A string that is used to delimit the query
     /// parameters.</param>
-    /// <param name="executor_factory">The assembly's fully qualified
+    /// <param name="processor_factory_type">The assembly's fully qualified
     /// name of the factory class that is responsible to create instances
     /// of the class that can execute the query.</param>
-    /// </param>
     /// <remarks>
     /// A parameter is a sequence of characters without spaces
     /// enclosed by the <paramref name="delimiter"/>.
     /// </remarks>
-    public Query(string name, string query, string executor_factory,
+    public Query(string name, string query, string processor_factory_type,
       string delimiter) : base(query, delimiter) {
-      executor_factory_ = executor_factory;
+      processor_factory_type_ = processor_factory_type;
       name_ = name;
     }
 
@@ -72,8 +71,11 @@ namespace Nohros.Toolkit.RestQL
     /// Gets the assembly's fully qualified name of the factory class that can
     /// create instances of the class that can execute the query.
     /// </summary>
-    public string ExecutorFactory {
-      get { return executor_factory_; }
+    /// <value>The assembly's fully qualified name of the factory class that
+    /// can create instances of the class that is able to process the query.
+    /// </value>
+    public string ProcessorFactoryType {
+      get { return processor_factory_type_; }
     }
   }
 }
