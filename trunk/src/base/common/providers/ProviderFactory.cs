@@ -9,10 +9,34 @@ using Nohros.Configuration;
 namespace Nohros.Providers
 {
   /// <summary>
-  /// Defines helper methods used by providers.
+  /// A class used to instantiate others factories using information defined
+  /// on a <see cref="ProviderNode"/> object.
   /// </summary>
-  public sealed class ProviderHelper
+  /// <remarks>
+  /// The <typeparam name="T"> is usually a interface or an abstract class that
+  /// the factory should implement or derive from.</typeparam>
+  /// <para>
+  /// The type that is instantiated should be defined in the
+  /// <see cref="ProviderNode"/> object and should have a constructor with no
+  /// parameters.
+  /// </para>
+  /// </remarks>
+  public sealed class ProviderFactory<T> where T : class
   {
+    ProviderNode provider_node_;
+
+    #region .ctor
+    /// <summary>
+    /// Instantiates a new instance of the <see cref="ProviderFctory"/> class
+    /// by using the specified <see cref="ProviderNode"/> object.
+    /// </summary>
+    /// <param name="node">A <see cref="ProviderNode"/> object that contains
+    /// information about the type <typeparamref name="T"/></param>
+    public ProviderFactory(ProviderNode node) {
+      provider_node_ = node;
+    }
+    #endregion
+
     /// <summary>
     /// Gets the <see cref="Type"/> of a provider, using the specified provider
     /// node.
@@ -27,8 +51,8 @@ namespace Nohros.Providers
     /// this location and them get he type from the loaded assembly. The name
     /// of the assembly will be extracted from the provider type property.
     /// </remarks>
-    public static Type GetTypeFromProviderNode(ProviderNode provider) {
-      if (provider == null)
+    public Type GetType() {
+      if (provider_node_ == null)
         throw new ArgumentNullException("provider");
 
       Type type = null;
@@ -36,14 +60,14 @@ namespace Nohros.Providers
       // assemlby is specified we need to load the assembly and try to get the
       // type from the loaded assembly. The name of the assembly will be
       // extracted from the provider type.
-      if (provider.AssemblyLocation != null) {
-        string assembly_name = provider.Type;
+      if (provider_node_.AssemblyLocation != null) {
+        string assembly_name = provider_node_.Type;
         int num = assembly_name.IndexOf(',');
         if (num == -1)
           throw new ProviderException(
             string.Format(
               StringResources.Provider_LoadAssembly,
-              provider.AssemblyLocation));
+              provider_node_.AssemblyLocation));
 
         assembly_name = assembly_name.Substring(num + 1).Trim();
         int num2 = assembly_name.IndexOfAny(new char[] { ' ', ',' });
@@ -54,7 +78,7 @@ namespace Nohros.Providers
           assembly_name = assembly_name + ".dll";
 
         string assembly_path =
-          Path.Combine(provider.AssemblyLocation, assembly_name);
+          Path.Combine(provider_node_.AssemblyLocation, assembly_name);
 
         if (!File.Exists(assembly_path))
           throw new ProviderException(
@@ -63,14 +87,14 @@ namespace Nohros.Providers
 
         try {
           Assembly assembly = Assembly.LoadFrom(assembly_path);
-          type = assembly.GetType(provider.Type.Substring(0, num));
+          type = assembly.GetType(provider_node_.Type.Substring(0, num));
         } catch (Exception ex) {
           throw new ProviderException(
             string.Format(
               StringResources.Provider_LoadAssembly, assembly_path), ex);
         }
       } else
-        type = Type.GetType(provider.Type);
+        type = Type.GetType(provider_node_.Type);
 
       return type;
     }
@@ -92,24 +116,18 @@ namespace Nohros.Providers
     /// a class of the type <typeparamref name="T"/> could not be created.
     /// <para>
     /// A exception is never raised by this method. If a exception is raised
-    /// by the object constrictor it will be catched and <c>null</c> will be
-    /// returned. If you need to know about the exception used the method
+    /// by the object constructor it will be catched and <c>null</c> will be
+    /// returned. If you need to know about the exception use the method
     /// <see cref="CreateFromProviderNode"/>.
     /// </para>
     /// </remarks>
     /// <seealso cref="CreateFromProviderNode"/>
     /// <seealso cref="ProviderNode"/>
-    public static T CreateFromProviderNodeNoException<T>(ProviderNode provider,
-      params object[] args)
-      where T: class {
-
-      Exception inner_exception = null;
-
-      // a try/catch block is used here because this method should throw only
-      // a ProviderException, any other exception throwed should be packed
-      // into a ProviderException.
+    public T CreateNoException(params object[] args) {
+      // A try/catch block is used here because this method should not throw
+      // any exception.
       try {
-        Type type = ProviderHelper.GetTypeFromProviderNode(provider);
+        Type type = GetType();
         if (type != null) {
 
           // create a new object instance using a public or non-public
@@ -123,18 +141,8 @@ namespace Nohros.Providers
             return newObj;
           }
         }
-      } catch (ProviderException) {
-        throw;
-      } catch (Exception ex) {
-        // minimizing code duplication.
-        inner_exception = ex;
-      }
-
-      // the provider could not be created and we need to pack the exception
-      // into a new ProviderException exception.
-      throw new ProviderException(
-        string.Format(
-          StringResources.Type_CreateInstanceOf, typeof(T), inner_exception));
+      } catch { }
+      return null;
     }
 
     /// <summary>
@@ -154,17 +162,14 @@ namespace Nohros.Providers
     /// type could not be created.</exception>
     /// <remarks>An instance of the <typeparamref name="T"/> class.
     /// </remarks>
-    public static T CreateFromProviderNode<T>(ProviderNode provider,
-      params object[] args)
-      where T: class {
-      
+    public T Create(params object[] args) {
       Exception inner_exception = null;
 
       // a try/catch block is used here because this method should throw only
       // a ProviderException, any other exception throwed should be packed
       // into a ProviderException.
       try {
-        Type type = ProviderHelper.GetTypeFromProviderNode(provider);
+        Type type = GetType();
         if (type != null) {
 
           // create a new object instance using a public or non-public
@@ -190,6 +195,29 @@ namespace Nohros.Providers
       throw new ProviderException(
         string.Format(
           StringResources.Type_CreateInstanceOf, typeof(T), inner_exception));
+    }
+
+    /// <summary>
+    /// Explicit converts a <see cref="ProviderFactory"/> to the type
+    /// <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="provider_factory"></param>
+    /// <returns></returns>
+    public static explicit operator T(ProviderFactory<T> provider_factory) {
+      return provider_factory.Create();
+    }
+
+    /// <summary>
+    /// Implicit converts a <see cref="ProviderFactory"/> to the type
+    /// <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="provider_factory"></param>
+    /// <returns></returns>
+    /// <remarks>This conversion does not throws exceptions and when the
+    /// conversion could not be made a null reference will be returned.
+    /// </remarks>
+    public implicit operator T(ProviderFactory<T> provider_factory) {
+      return provider_factory.CreateNoException();
     }
   }
 }

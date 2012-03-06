@@ -41,6 +41,8 @@
   <ItemGroup>
     <Compile Include="IQueryProcessor.cs" />
     <Compile Include="IQueryProcessorFactory.cs" />
+    <Compile Include="ITokenPrincipalMapper.cs" />
+    <Compile Include="ITokenPrincipalMapperFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="provider\CommonDataProvider.cs" />
     <Compile Include="Query.cs" />
