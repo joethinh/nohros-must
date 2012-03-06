@@ -9,27 +9,31 @@ using Nohros.Data;
 namespace Nohros.Security.Auth
 {
   /// <summary>
-  /// A <see cref="Subject"/> represents a grouping of related information for a single entity, such as
-  /// a person or service. Such information includes the subject's permissions as well as its
-  /// security-related attributes(passwords and cryptographic keys, for example).
-  /// <para>
-  /// Subjects may potentially have multiple permissions. Each permission represented as a
-  /// <see cref="IPermission"/> object within the subject.
+  /// A <see cref="Subject"/> represents a grouping of related information for
+  /// a single entity, such as a person or service. Such information includes
+  /// the subject's permissions as well as its security-related attributes (
+  /// passwords and cryptographic keys, for example).<para>
+  /// Subjects may potentially have multiple permissions. Each permission
+  /// represented as a <see cref="IPermission"/> object within the subject.
   /// </para>
   /// <para>
-  /// Subjects may also have multiple identities. Each identity is represented as a
-  /// <see cref="IPrincipal"/> within the subject. Principals simply bind names to a subject. For
-  /// example, a subject that happens to be a person, Daniela, might have two Principals: one which
-  /// binds "Daniela Bar", the name of her driver license, to the subject, and other which binds,
-  /// "999-99-9999", the number on her student identification card, to the subject. Both principals
-  /// refer to the same subject even through each has a different name.
+  /// Subjects may also have multiple identities. Each identity is represented
+  /// as a <see cref="IPrincipal"/> within the subject. Principals simply bind
+  /// names to a subject. For example, a subject that happens to be a person,
+  /// Daniela, might have two Principals: one which binds "Daniela Bar", the
+  /// name of her driver license, to the subject, and other which binds,
+  /// "999-99-9999", the number on her student identification card, to the
+  /// subject. Both principals refer to the same subject even through each has
+  /// a different name.
   /// </para>
   /// <para>
-  /// To retrieve all the principals associated with a subject, get the value of the
-  /// <see cref="Subject.Principals"/> property. To retrieve all the permissions associated with a
-  /// subject, get the value of the <see cref="Subject.Permissions"/> property. To modify the returned
+  /// To retrieve all the principals associated with a subject, get the value
+  /// of the <see cref="Subject.Principals"/> property. To retrieve all the
+  /// permissions associated with a subject, get the value of the
+  /// <see cref="Subject.Permissions"/> property. To modify the returned
   /// collection of permissions or principals, use methods defined in the
-  /// <see cref="PermissionSet"/> and <see cref="PrincipalSet"/> classes, respectively. For example:
+  /// <see cref="PermissionSet"/> and <see cref="PrincipalSet"/> classes,
+  /// respectively. For example:
   /// <example>
   ///     <code>
   ///         Subject subject;
@@ -103,36 +107,41 @@ namespace Nohros.Security.Auth
     #endregion
 
     /// <summary>
-    /// Determines whether the access request indicated by the specified permission should be granted
-    /// or denied for the underlying subject.
+    /// Determines whether the access request indicated by the specified
+    /// permission should be granted or denied for the underlying subject.
     /// </summary>
     /// <param name="permission">The requested permission.</param>
-    /// <returns>true if the access request is permitted; otherwise false</returns>
+    /// <returns>true if the access request is permitted; otherwise
+    /// <c>false</c>.
+    /// </returns>
     public bool CheckPermission(IPermission permission) {
       return (permissions_.Implies(permission));
     }
 
     /// <summary>
-    /// Gets a set of permissions associated with this subject. Each <see cref="IPermission"/>
-    /// represents an access to a system resource.
+    /// Gets a set of permissions associated with this subject.
+    /// Each <see cref="IPermission"/> represents an access to a system
+    /// resource.
     /// </summary>
     /// <remarks>
-    /// The returned <see cref="PermissionSet"/> is backed by this subject's internal permisssion set.
-    /// Any modification to the returned set <see cref="PermissionSet"/> object affects the internal
-    /// permission set as well.
+    /// The returned <see cref="PermissionSet"/> is backed by this subject's
+    /// internal permisssion set. Any modification to the returned set
+    /// <see cref="PermissionSet"/> object affects the internal permission set
+    /// as well.
     /// </remarks>
     public PermissionSet Permissions {
       get { return permissions_; }
     }
 
     /// <summary>
-    /// Gets a set of principals associated with this subject. Each <see cref="IPrincipal"/>
-    /// represents an identity for this subject.
+    /// Gets a set of principals associated with this subject.
+    /// Each <see cref="IPrincipal"/> represents an identity for this subject.
     /// </summary>
     /// <remarks>
-    /// The returned <see cref="PrincipalSet"/> is backed by this subject's internal principal set.
-    /// Any modification to the returned set <see cref="PrincipalSet"/> object affects the internal
-    /// principal set as well.
+    /// The returned <see cref="PrincipalSet"/> is backed by this subject's
+    /// internal principal set. Any modification to the returned set
+    /// <see cref="PrincipalSet"/> object affects the internal principal set
+    /// as well.
     /// </remarks>
     public PrincipalSet Principals {
       get { return principals_; }
@@ -141,12 +150,14 @@ namespace Nohros.Security.Auth
     /// <summary>
     /// Compares the specified object with this subject for for equality.
     /// </summary>
-    /// <param name="obj">The object to be compared for equality with this subject.</param>
-    /// <returns>true if the given object is also a <see cref="Subject"/> and two instances are
-    /// equivalent.</returns>
+    /// <param name="obj">The object to be compared for equality with this
+    /// subject.</param>
+    /// <returns><c>true</c> if the given object is also a
+    /// <see cref="Subject"/> and two instances are equivalent.</returns>
     /// <remarks>
-    /// The hash code of a subject is compute by using your principals. So if two subject objects has
-    /// the same collection of principals them they are equals.
+    /// The hash code of a subject is compute by using your principals. So if
+    /// two subject objects has the same collection of principals them
+    /// they are equals.
     /// </remarks>
     public override bool Equals(object obj) {
       Subject subject = obj as Subject;
@@ -156,12 +167,14 @@ namespace Nohros.Security.Auth
     /// <summary>
     /// Compares the specified subject with this subject for for equality.
     /// </summary>
-    /// <param name="subject">The subject to be compared for equality with this instance.</param>
-    /// <returns>true if the given object is also a <see cref="Subject"/> and two instances are
-    /// equivalent.</returns>
+    /// <param name="subject">The subject to be compared for equality with
+    /// this instance.</param>
+    /// <returns>true if the given object is also a <see cref="Subject"/> and
+    /// two instances are equivalent.</returns>
     /// <remarks>
-    /// The hash code of a subject is compute by using your principals. So if two subject objects has
-    /// the same collection of principals them they are equals.
+    /// The hash code of a subject is compute by using your principals. So if
+    /// two subject objects has the same collection of principals them they are
+    /// equals.
     /// </remarks>
     public bool Equals(Subject subject) {
       if (subject == null)
