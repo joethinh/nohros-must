@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Nohros.Configuration;
 namespace Nohros.Toolkit.RestQL
 {
   /// <summary>
@@ -13,10 +14,10 @@ namespace Nohros.Toolkit.RestQL
   {
     /// <summary>
     /// Creates a <see cref="ITokenPrincipalMapper"/> object using the
-    /// specified settings object.
+    /// specified mapper options.
     /// </summary>
     /// <returns>A <see cref="ITokenPrincipalMapper"/> object.</returns>
-    /// <exception cref=""
-    ITokenPrincipalMapper CreateTokenPrincipalMapper(RestQLSettings settings);
+    ITokenPrincipalMapper CreateTokenPrincipalMapper(
+      IDictionary<string, string> options);
   }
 }
