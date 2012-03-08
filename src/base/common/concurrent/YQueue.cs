@@ -88,8 +88,7 @@ namespace Nohros.Concurrent
 
       // Create a new chunk if a cached one does not exists yet and links it
       // to the current last node.
-      Chunk chunk = (spare_chunk_ == null) ?
-        new Chunk(granularity_) : spare_chunk_;
+      Chunk chunk = spare_chunk_ ?? new Chunk(granularity_);
       tail_chunk_.next = chunk;
 
       // Reset the chunk and append the specified element to the first slot.
