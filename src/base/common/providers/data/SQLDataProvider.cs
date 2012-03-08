@@ -1,16 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Data;
-using System.Data.SqlClient;
-using System.Data.OleDb;
-using System.Data.Odbc;
-using System.Reflection;
-using System.IO;
 
-using Nohros.Resources;
 using Nohros.Configuration;
-using Nohros.Providers;
 
 namespace Nohros.Data.Providers
 {
@@ -18,7 +8,7 @@ namespace Nohros.Data.Providers
   /// An generic abstract implementation of the <see cref="IDataProvider"/>
   /// interface.
   /// </summary>
-  public class DataProvider: IDataProvider
+  public abstract class SQLDataProvider: DataProvider, ISQLDataProvider
   {
     /// <summary>
     /// The name of the data base owner.
@@ -31,24 +21,19 @@ namespace Nohros.Data.Providers
     protected string connection_string_;
 
     /// <summary>
-    /// The type of the underlying data source provider.
+    /// Initializes a new instance of the <see cref="SQLDataProvider"/> class.
     /// </summary>
-    protected DataSourceType data_source_type_;
+    protected SQLDataProvider() { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DataProvider"/> class.
-    /// </summary>
-    protected DataProvider() { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DataProvider"/> class
+    /// Initializes a new instance of the <see cref="SQLDataProvider"/> class
     /// by using the specified connection string and database owner.
     /// </summary>
     /// <param name="database_owner">The name of the database owner.</param>
     /// <param name="connection_string">A string tthat can be used to open a
     /// connection to the database.
     /// </param>
-    protected DataProvider(string database_owner, string connection_string) {
+    protected SQLDataProvider(string database_owner, string connection_string) {
       database_owner_ = database_owner;
       connection_string_ = connection_string;
     }

@@ -42,8 +42,8 @@ namespace Nohros.Caching.Providers
     /// <returns>A reference to the newly created object.</returns>
     public static ICacheProvider CreateCacheProvider(
       ProviderNode provider, params object[] args) {
-      return ProviderHelper.CreateFromProviderNode<ICacheProvider>(provider,
-        args);
+      return ProviderFactory<ICacheProvider>.CreateProviderFactory(
+        provider, args);
     }
 
     /// <summary>

@@ -1,29 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Data;
-
 namespace Nohros.Data.Providers
 {
   /// <summary>
-  /// Allows an object to implements a DataProvider, and represents a set of
-  /// methods and properties used to query database.
+  /// Allows an object to implements a SQLDataProvider, and represents a set of
+  /// methods and properties used to query a data store.
   /// </summary>
   public interface IDataProvider
   {
     /// <summary>
-    /// Gets the string used to open the connection.
+    /// Gets the name of the data provider.
+    /// </summary>
+    string Name { get; }
+
+    /// <summary>
+    /// Gets the string tha can be used to make a connection to the data
+    /// provider.
     /// </summary>
     string ConnectionString { get; }
-
-    /// <summary>
-    /// Gets the name of the owner of the database.
-    /// </summary>
-    string DatabaseOwner { get; }
-
-    /// <summary>
-    /// Gets the data source type. ex. mssql, oracle, oledb...
-    /// </summary>
-    DataSourceType DataSourceType { get; set; }
   }
 }
