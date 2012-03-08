@@ -16,8 +16,8 @@ namespace Nohros.Concurrent
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="AtomicReference"/> class
-    /// by using the specified initial value.
+    /// Initializes a new instance of the <see cref="AtomicReference{T}"/>
+    /// class by using the specified initial value.
     /// </summary>
     public AtomicReference(T value) {
       value_ = value;
