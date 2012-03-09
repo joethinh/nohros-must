@@ -4,6 +4,8 @@ using System.Text;
 
 namespace Nohros
 {
+  // TODO: Add a description to the interface, fix the column length and
+  // add a InvalidCastException to the methods that does not return bools
   public interface IValue
   {
     /// <summary>

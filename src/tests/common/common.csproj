@@ -55,6 +55,7 @@
     <Compile Include="security\auth\PrincipalTest.cs" />
     <Compile Include="security\auth\sets\PermissionSetTest.cs" />
     <Compile Include="security\auth\sets\PrincipalSetTest.cs" />
+    <Compile Include="type\json\JSONReaderTests.cs" />
     <Compile Include="type\suppliers\ExpiringMemoizingSupplier.cs" />
     <Compile Include="type\suppliers\MemoizingSupplierTests.cs" />
     <Compile Include="type\suppliers\Mocks.cs" />
