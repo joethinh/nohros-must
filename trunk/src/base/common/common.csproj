@@ -108,7 +108,7 @@
     <Compile Include="configuration\IConfigurationNode.cs" />
     <Compile Include="configuration\NohrosConfiguration.cs" />
     <Compile Include="configuration\common\provider\DataProviderNode.cs" />
-    <Compile Include="data\StringMap.cs" />
+    <Compile Include="type\StringMap.cs" />
     <Compile Include="configuration\web\WebNode.cs" />
     <Compile Include="type\CacheEntry.cs" />
     <Compile Include="type\collections\IInOrderVisitable.cs" />
@@ -120,7 +120,7 @@
     <Compile Include="data\transferobjects\TableTransferObject.cs" />
     <Compile Include="data\transferobjects\TableTransferObjectEnumerator.cs" />
     <Compile Include="type\IValidator.cs" />
-    <Compile Include="data\json\JSONReader.cs" />
+    <Compile Include="type\json\JSONReader.cs" />
     <Compile Include="data\transferobjects\TransferQueue.cs" />
     <Compile Include="data\transferobjects\DataTransferObject.cs" />
     <Compile Include="data\transferobjects\DataTransferObjects.cs" />
@@ -243,7 +243,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
