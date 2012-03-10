@@ -2,8 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Nohros.Resources;
+
 namespace Nohros
 {
+  /// <summary>
+  /// The <see cref="Value"/> class is the base of class for values. A
+  /// <see cref="IValue"/> can be instantiated via Create*Value factory methods,
+  /// or by directly creating instances of the subclasses.
+  /// </summary>
+  /// <seealso cref="IValue"/>
   public class Value: IValue
   {
     ValueType type_;
@@ -25,206 +33,171 @@ namespace Nohros
     #endregion
 
     /// <summary>
-    /// Convenience method for creating Value of type TYPE_NULL without thinking
-    /// about which class implements it.
+    /// Convenience method for creating a <see cref="IValue"/> object of type
+    /// <see cref="ValueType.TYPE_NULL"/> without thinking about which class
+    /// implements it.
     /// </summary>
-    /// <returns>A Value object which ValueType is equals to TYPE_NULL</returns>
-    public static Value CreateNullValue() {
-      return new Value(ValueType.TYPE_NULL);
+    /// <returns>A <see cref="IValue"/> object which <see cref="ValueType"/> is
+    /// equals to <see cref="ValueType.TYPE_NULL"/></returns>
+    public static IValue CreateNullValue() {
+      return new Value(ValueType.NullValue);
     }
 
     /// <summary>
-    /// Convenience method for creating Value of type TYPE_BOLEAN without thinking
-    /// about which class implements it.
+    /// Convenience method for creating a <see cref="IValue"/> object of type
+    /// <see cref="ValueType.TYPE_BOOLEAN"/> without thinking about which class
+    /// implements it.
     /// </summary>
-    /// <param name="in_value">The underlying bool value</param>
-    /// <returns>A Value object which ValueType is equals to TYPE_BOLEAN</returns>
-    public static Value CreateBooleanValue(bool in_value) {
+    /// <returns>A <see cref="IValue"/> object which <see cref="ValueType"/> is
+    /// equals to <see cref="ValueType.TYPE_BOOLEAN"/></returns>
+    public static IValue CreateBooleanValue(bool in_value) {
       return new FundamentalValue(in_value);
     }
 
     /// <summary>
-    /// Convenience method for creating Value of type TYPE_INTEGER without thinking
-    /// about which class implements it.
+    /// Convenience method for creating a <see cref="IValue"/> object of type
+    /// <see cref="ValueType.TYPE_INTEGER"/> without thinking about which class
+    /// implements it.
     /// </summary>
-    /// <param name="in_value">The underlying integer value</param>
-    /// <returns>A Value object which ValueType is equals to TYPE_INTEGER</returns>
-    public static Value CreateIntegerValue(int in_value) {
-      return new FundamentalValue(in_value);
-    }
-    /// <summary>
-    /// Convenience method for creating Value of type TYPE_REAL without thinking
-    /// about which class implements it.
-    /// </summary>
-    /// <param name="in_value">The underlying double value</param>
-    /// <returns>A Value object which ValueType is equals to TYPE_REAL</returns>
-    public static Value CreateRealValue(double in_value) {
+    /// <returns>A <see cref="IValue"/> object which <see cref="ValueType"/> is
+    /// equals to <see cref="ValueType.TYPE_INTEGER"/></returns>
+    public static IValue CreateIntegerValue(int in_value) {
       return new FundamentalValue(in_value);
     }
 
     /// <summary>
-    /// Convenience method for creating Value of type TYPE_STRING without thinking
-    /// about which class implements it.
+    /// Convenience method for creating a <see cref="IValue"/> object of type
+    /// <see cref="ValueType.TYPE_REAL"/> without thinking about which class
+    /// implements it.
     /// </summary>
-    /// <param name="in_value">The underlying string value</param>
-    /// <returns>A Value object which ValueType is equals to TYPE_STRING</returns>
-    public static Value CreateStringValue(string in_value) {
+    /// <returns>A <see cref="IValue"/> object which <see cref="ValueType"/> is
+    /// equals to <see cref="ValueType.TYPE_REAL"/></returns>
+    public static IValue CreateRealValue(double in_value) {
+      return new FundamentalValue(in_value);
+    }
+
+    /// <summary>
+    /// Convenience method for creating <see cref="IValue"/> of type
+    /// <see cref="ValueType.TYPE_STRING"/> without thinking about which class
+    /// implements it.
+    /// </summary>
+    /// <returns>A <see cref="IValue"/> object which <see cref="ValueType"/> is
+    /// equals to <see cref="ValueType.TYPE_STRING"/></returns>
+    public static IValue CreateStringValue(string in_value) {
       return new StringValue(in_value);
     }
 
     /// <summary>
-    /// Convenience method for creating Valut of type TYPE_GENERIC without thinking
-    /// about which class implements it.
+    /// Convenience method for creating <see cref="IValue"/> of type
+    /// <see cref="ValueType.TYPE_GENERIC"/> without thinking about which
+    /// class implements it.
     /// </summary>
-    /// <typeparam name="T">The type of the <paramref name="in_value"/> parameter</typeparam>
-    /// <param name="in_value">The underlying <typeparamref name="T"/>value<</param>
-    /// <returns></returns>
-    public static Value CreateGenericValue<T>(T in_value) where T: class {
+    /// <typeparam name="T">The type of the <paramref name="in_value"/>
+    /// parameter.</typeparam>
+    /// <param name="in_value">The underlying <typeparamref name="T"/>value.
+    /// </param>
+    /// <returns>A <see cref="IValue"/> object which <see cref="ValueType"/> is
+    /// equals to <see cref="ValueType.TYPE_GENERIC"/>.</returns>
+    public static IValue CreateGenericValue<T>(T in_value) where T: class {
       return new GenericValue<T>(in_value);
     }
 
     #region bool GetAs[...](out ...) methods
-    /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a boolean type, the value is returned
-    /// through the <paramref="out_value"> parameter; otherwise a default bool value
-    /// is returned through the <paramref="out_value">.
-    /// </summary>
-    /// <returns>true if the current setting object can be converted into a boolean type;
-    /// otherwise, false.</returns>
+    /// <inheritdoc/>
     public virtual bool GetAsBoolean(out bool out_value) {
       out_value = default(bool);
       return false;
     }
 
-    /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a integer type, the value is returned
-    /// through the <paramref="out_value"> parameter; otherwise a default int value
-    /// is returned through the <paramref="out_value">.
-    /// </summary>
-    /// <returns>true if the current setting object can be converted into a integer type;
-    /// otherwise, false.</returns>
+    /// <inheritdoc/>
     public virtual bool GetAsInteger(out int out_value) {
       out_value = default(int);
       return false;
     }
 
-    /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a double type, the value is returned
-    /// through the <paramref="out_value">parameter; otherwise a default double value
-    /// is returned through the <paramref="out_value">.
-    /// </summary>
-    /// <returns>true if the current setting object can be converted into a double type;
-    /// otherwise, false.</returns>
+    /// <inheritdoc/>
     public virtual bool GetAsReal(out double out_value) {
       out_value = default(double);
       return false;
     }
 
-    /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a string type, the value is returned
-    /// through the <paramref="out_value">parameter; otherwise a null is returned
-    /// through the <paramref="out_value">.
-    /// </summary>
-    /// <returns>true if the current setting object can be converted into a string type;
-    /// otherwise, false.</returns>
+    /// <inheritdoc/>
     public virtual bool GetAsString(out string out_value) {
       out_value = default(string);
       return false;
     }
     #endregion
 
-    #region [ValueType] GetAs[...]() methods
-    /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a boolean type, the value is returned
-    /// through the <paramref="out_value"> parameter; otherwise a default bool value
-    /// is returned through the <paramref="out_value">.
-    /// </summary>
-    /// <returns>true if the current setting object can be converted into a boolean type;
-    /// otherwise, false.</returns>
+    #region [T] GetAs[...]() methods
+    /// <inheritdoc/>
     public virtual bool GetAsBoolean() {
-      return default(bool);
+      Thrower.ThrowInvalidCastException("Value", "boolean");
+      return false;
     }
 
-    /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a integer type, the value is returned
-    /// through the <paramref="out_value"> parameter; otherwise a default int value
-    /// is returned through the <paramref="out_value">.
-    /// </summary>
-    /// <returns>true if the current setting object can be converted into a integer type;
-    /// otherwise, false.</returns>
+    /// <inheritdoc/>
     public virtual int GetAsInteger() {
-      return default(int);
+      Thrower.ThrowInvalidCastException("Value", "int");
+      return 0;
     }
 
-    /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a double type, the value is returned
-    /// through the <paramref="out_value">parameter; otherwise a default double value
-    /// is returned through the <paramref="out_value">.
-    /// </summary>
-    /// <returns>true if the current setting object can be converted into a double type;
-    /// otherwise, false.</returns>
+    /// <inheritdoc/>
     public virtual double GetAsReal() {
-      return default(double);
+      Thrower.ThrowInvalidCastException("Value", "real");
+      return 0.0;
     }
 
-    /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a string type, the value is returned
-    /// through the <paramref="out_value">parameter; otherwise a null is returned
-    /// through the <paramref="out_value">.
-    /// </summary>
-    /// <returns>true if the current setting object can be converted into a string type;
-    /// otherwise, false.</returns>
+    /// <inheritdoc/>
     public virtual string GetAsString() {
-      return default(string);
+      throw new InvalidCastException(string.Format(StringResources.Type_InvalidCastException, "Value", "string"));
     }
     #endregion
 
     /// <summary>
-    /// Creates a deep copy of the entire Value tree.
+    /// Creates a deep copy of the entire <see cref="Value"/> tree.
     /// </summary>
     /// <returns>A deep copy of the entire value tree.</returns>
-    /// <remarks>This method should only be getting called for null Values-- all
+    /// <remarks>This method should only be getting called for value whose
+    /// type is <see cref="ValueType.TYPE_NULL"/>; all
     /// subclasses need to provide their own implementation.</remarks>
     public virtual IValue DeepCopy() {
-      if (IsType(ValueType.TYPE_NULL))
+      if (IsType(ValueType.NullValue))
         return CreateNullValue();
       throw new NotImplementedException();
     }
 
     /// <summary>
-    /// Compares if two Value objects have equal contents.
+    /// Compares if two <see cref="Value"/> objects have equal contents.
     /// </summary>
-    /// <returns>true if this instance_ have equals contents of other.</returns>
-    /// <remarks>This method should only be getting called for null values-- all
+    /// <returns><c>true</c> if this instance have equals contents of
+    /// <paramref name="other"/>.</returns>
+    /// <remarks>This method should only be getting called for values
+    /// whose type is <see cref="ValueType.TYPE_NULL"/>; all
     /// subclasses need to provide their own implementation.</remarks>
     public virtual bool Equals(IValue other) {
-      if (IsType(ValueType.TYPE_NULL))
-        return other.IsType(ValueType.TYPE_NULL);
+      if (IsType(ValueType.NullValue))
+        return other.IsType(ValueType.NullValue);
       throw new NotImplementedException();
     }
 
     /// <summary>
-    /// Gets a value indicating whether the current object represents a given type or not.
+    /// Gets a value indicating whether the current object represents a given
+    /// type or not.
     /// </summary>
-    /// <returns>true if the current object represents a given type</returns>
+    /// <returns><c>true</c> if the current object represents a given type.
+    /// </returns>
     public bool IsType(ValueType type) {
       return type_ == type;
     }
 
     /// <summary>
-    /// Gets the type of the value stored by the current Value object.
-    /// Each type will be implemented by only one subclass of Value, so it's
-    /// safe to use the ValueType to determine whether you can cast from
-    /// Value to (Implementating Class)[*]. Also, A Value object never changes
-    /// its type after construction.
+    /// Gets the type of the value stored by the current <see cref="Value"/>
+    /// object. Each type will be implemented by only one subclass of
+    /// <see cref="Value"/> Value, so it's safe to use the
+    /// <see cref="ValueType"/> to determine whether you can cast from
+    /// <see cref="Value"/> to (Implementating Class)[*]. Also, a
+    /// <see cref="Value"/> Value object never changes its type after
+    /// construction.
     /// </summary>
     public ValueType ValueType {
       get { return type_; }
