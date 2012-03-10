@@ -165,27 +165,7 @@ namespace Nohros.Configuration
       set { assembly_location_ = value; }
     }
 
-    /// <summary>
-    /// Gets a collection of key/value pairs containing the options configured
-    /// for a provider.
-    /// </summary>
-    /// <value>
-    /// A collection of key/value pairs representing the options configured for
-    /// the provider.
-    /// </value>
-    /// <remarks>The <see cref="Options"/> property represents the options
-    /// configured for a provider by a user in the configuration repository.
-    /// The options are defined by the provider itself and control the behavior
-    /// within it. For example a provider may define options to support
-    /// debugging/testinz capabilities. Options are defined using a key-value
-    /// syntax such as <c>debug=true</debug></c>. The provider stores the
-    /// options as a <see cref="IDictionary&lt;TKey, TValue&gt;"/> so that the
-    /// values may be retrieved using the key.
-    /// <para>
-    /// NOTE: There is no limit to the number of options a provider chooses to
-    /// define.
-    /// </para>
-    /// </remarks>
+    /// <inheritdoc/>
     public IDictionary<string, string> Options {
       get { return options_; }
       set { options_ = value; }
