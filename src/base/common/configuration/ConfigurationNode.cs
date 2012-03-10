@@ -27,7 +27,7 @@ namespace Nohros.Configuration
     /// </summary>
     /// <param name="name">The name of the node.</param>
     public ConfigurationNode(string name)
-      : base(Nohros.ValueType.TYPE_CLASS) {
+      : base(Nohros.ValueType.Class) {
       name_ = name;
       child_nodes_ = new Dictionary<string, ConfigurationNode>(
         StringComparer.OrdinalIgnoreCase);

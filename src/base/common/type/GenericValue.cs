@@ -17,7 +17,7 @@ namespace Nohros
     /// </summary>
     /// <param name="in_value">The underlying generic value. </param>
     public GenericValue(T in_value)
-      : base(ValueType.TYPE_GENERIC) {
+      : base(ValueType.Generic) {
       value_ = in_value;
     }
     #endregion

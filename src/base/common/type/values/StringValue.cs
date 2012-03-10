@@ -14,7 +14,7 @@ namespace Nohros
         /// <summary>
         /// Initializes a new instance_ of the StringValue class.
         /// </summary>
-        public StringValue(string in_value): base(ValueType.TYPE_STRING)
+        public StringValue(string in_value): base(ValueType.String)
         {
             value_ = in_value;
         }

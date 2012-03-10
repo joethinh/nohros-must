@@ -33,7 +33,7 @@ namespace Nohros.Collections
     /// Initializes a new instance_ of the DictionaryValue class.
     /// </summary>
     public DictionaryValue()
-      : base(ValueType.TYPE_DICTIONARY) {
+      : base(ValueType.Dictionary) {
       dictionary_ = new Dictionary<string, IValue>();
     }
 
@@ -149,7 +149,7 @@ namespace Nohros.Collections
         if (delimiter_position == -1)
           return entry;
 
-        if (entry.ValueType == ValueType.TYPE_DICTIONARY) {
+        if (entry.ValueType == ValueType.Dictionary) {
           DictionaryValue dictionary = entry as DictionaryValue;
           return dictionary[path.Substring(delimiter_position + 1)];
         }
@@ -171,7 +171,7 @@ namespace Nohros.Collections
         // Assume we're are indexing into a dictionary.
         IValue dict;
         DictionaryValue entry = null;
-        if (dictionary_.TryGetValue(key, out dict) && dict.ValueType == ValueType.TYPE_DICTIONARY) {
+        if (dictionary_.TryGetValue(key, out dict) && dict.ValueType == ValueType.Dictionary) {
           entry = dict as DictionaryValue;
         } else {
           entry = new DictionaryValue();
@@ -299,7 +299,7 @@ namespace Nohros.Collections
       IValue value;
 
       out_value = null;
-      if (!Get(path, out value) || !value.IsType(ValueType.TYPE_DICTIONARY))
+      if (!Get(path, out value) || !value.IsType(ValueType.Dictionary))
         return false;
 
       out_value = value as DictionaryValue;
@@ -322,7 +322,7 @@ namespace Nohros.Collections
       IValue value;
 
       out_value = null;
-      if (!Get(path, out value) || !value.IsType(ValueType.TYPE_LIST))
+      if (!Get(path, out value) || !value.IsType(ValueType.List))
         return false;
 
       out_value = value as ListValue;
@@ -353,7 +353,7 @@ namespace Nohros.Collections
     /// specified path or null if the specified path is not found.</returns>
     public DictionaryValue GetDictionary(string path) {
       IValue value;
-      if (!Get(path, out value) || !value.IsType(ValueType.TYPE_DICTIONARY))
+      if (!Get(path, out value) || !value.IsType(ValueType.Dictionary))
         return null;
 
       return value as DictionaryValue;
@@ -370,7 +370,7 @@ namespace Nohros.Collections
     /// specified path or null if the specified path is not found.</returns>
     public ListValue GetList(string path) {
       IValue value;
-      if (!Get(path, out value) || !value.IsType(ValueType.TYPE_LIST))
+      if (!Get(path, out value) || !value.IsType(ValueType.List))
         return null;
 
       return value as ListValue;
@@ -417,7 +417,7 @@ namespace Nohros.Collections
         return entry;
       }
 
-      if (entry.IsType(ValueType.TYPE_DICTIONARY)) {
+      if (entry.IsType(ValueType.Dictionary)) {
         return ((DictionaryValue)entry).Remove(path.Substring(delimiter_position + 1));
       }
 
@@ -499,7 +499,7 @@ namespace Nohros.Collections
       // filtering the elements of the type T.
       foreach (IValue value in values) {
         // all the elements must be an instance of T.
-        if (value.ValueType == ValueType.TYPE_GENERIC_DICTIONARY)
+        if (value.ValueType == ValueType.GenericDictionary)
           continue;
         yield return value;
       }

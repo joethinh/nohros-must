@@ -34,7 +34,7 @@ namespace Nohros.Collections
     /// Initializes a new instance of the DictionaryValue class.
     /// </summary>
     public DictionaryValue()
-      : base(ValueType.TYPE_GENERIC_DICTIONARY) {
+      : base(ValueType.GenericDictionary) {
       dictionary_ = new Dictionary<string, IValue>();
     }
     #endregion
@@ -85,7 +85,7 @@ namespace Nohros.Collections
       if (delimiter_position == -1)
         return entry;
 
-      if (entry.ValueType == ValueType.TYPE_GENERIC_DICTIONARY) {
+      if (entry.ValueType == ValueType.GenericDictionary) {
         DictionaryValue<T> dictionary = entry as DictionaryValue<T>;
         return dictionary.GetValue(path.Substring(delimiter_position + 1));
       }
@@ -138,7 +138,7 @@ namespace Nohros.Collections
       // Assume we're are indexing into a dictionary.
       IValue dict;
       DictionaryValue<T> entry = null;
-      if (dictionary_.TryGetValue(key, out dict) && dict.ValueType == ValueType.TYPE_GENERIC_DICTIONARY) {
+      if (dictionary_.TryGetValue(key, out dict) && dict.ValueType == ValueType.GenericDictionary) {
         entry = dict as DictionaryValue<T>;
       } else {
         entry = new DictionaryValue<T>();
@@ -239,7 +239,7 @@ namespace Nohros.Collections
         return null;
       }
 
-      if (entry.IsType(ValueType.TYPE_GENERIC_DICTIONARY)) {
+      if (entry.IsType(ValueType.GenericDictionary)) {
         return ((DictionaryValue<T>)entry).Remove(path.Substring(delimiter_position + 1));
       }
 
@@ -298,7 +298,7 @@ namespace Nohros.Collections
       // filtering the elements of the type T.
       foreach (T value in values) {
         // all the elements must be an instance of T.
-        if (value.ValueType == ValueType.TYPE_GENERIC_DICTIONARY)
+        if (value.ValueType == ValueType.GenericDictionary)
           return new T[0];
 
         destination_array[pos++] = value;
@@ -346,7 +346,7 @@ namespace Nohros.Collections
       // filtering the elements of the type T.
       foreach (T value in values) {
         // all the elements must be an instance of T.
-        if (value.ValueType == ValueType.TYPE_GENERIC_DICTIONARY)
+        if (value.ValueType == ValueType.GenericDictionary)
           continue;
         yield return value;
       }

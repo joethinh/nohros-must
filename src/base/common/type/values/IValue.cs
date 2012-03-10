@@ -1,98 +1,102 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros
 {
-  // TODO: Add a description to the interface, fix the column length and
-  // add a InvalidCastException to the methods that does not return bools
+  /// <summary>
+  /// Speficies a recursive data storage intended to storing settings and
+  /// other persistentable data. The concet of <see cref="IValue"/> was ported
+  /// from the Google Chromium library.
+  /// </summary>
   public interface IValue
   {
     /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a boolean type, the value is returned
-    /// through the <paramref="out_value"> parameter; otherwise a default bool value
-    /// is returned through the <paramref="out_value">.
+    /// This method allow the convenient retrieval of configurations. If the
+    /// current configuration object can be converted into a boolean type, the
+    /// value is returned through the <paramref="out_value"> parameter;
+    /// otherwise a default bool value is returned through the
+    /// <paramref="out_value"> variable.
     /// </summary>
-    /// <returns>true if the current setting object can be converted into a boolean type;
-    /// otherwise, false.</returns>
+    /// <returns><c>true</c> if the current configuration object can be
+    /// converted into a boolean type; otherwise, <c>false</c>.</returns>
     bool GetAsBoolean(out bool out_value);
 
     /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a integer type, the value is returned
-    /// through the <paramref="out_value"> parameter; otherwise a default int value
-    /// is returned through the <paramref="out_value">.
+    /// This method allow the convenient retrieval of configurations. If the
+    /// current configuration object can be converted into a integer type, the
+    /// value is returned through the <paramref="out_value"> parameter;
+    /// otherwise a default <c>int</c> value is returned through the
+    /// <paramref="out_value"> variable.
     /// </summary>
-    /// <returns>true if the current setting object can be converted into a integer type;
-    /// otherwise, false.</returns>
+    /// <returns><c>true</c> if the current configuration object can be
+    /// converted into a integer type; otherwise, false.</returns>
     bool GetAsInteger(out int out_value);
 
     /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a double type, the value is returned
-    /// through the <paramref="out_value">parameter; otherwise a default double value
-    /// is returned through the <paramref="out_value">.
+    /// This method allow the convenient retrieval of configurations. If the
+    /// current configuration object can be converted into a <c>double</c> type,
+    /// the value is returned through the <paramref="out_value"> parameter;
+    /// otherwise a default <c>double</c> value is returned through the
+    /// <paramref="out_value"> variable.
     /// </summary>
-    /// <returns>true if the current setting object can be converted into a double type;
-    /// otherwise, false.</returns>
+    /// <returns><c>true</c> if the current configuration object can be
+    /// converted into a <c>double</c> type; otherwise, false.</returns>
     bool GetAsReal(out double out_value);
 
     /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a string type, the value is returned
-    /// through the <paramref="out_value">parameter; otherwise a null is returned
-    /// through the <paramref="out_value">.
+    /// This method allow the convenient retrieval of configurations. If the
+    /// current configuration object can be converted into a <c>string</c> type,
+    /// the value is returned through the <paramref="out_value">parameter;
+    /// otherwise a <c>null</c> is returned through the <paramref="out_value">
+    /// variable.
     /// </summary>
-    /// <returns>true if the current setting object can be converted into a string type;
-    /// otherwise, false.</returns>
+    /// <returns><c>true</c> if the current configuration object can be
+    /// converted into a <c>string</c> type; otherwise, <c>false</c>.</returns>
     bool GetAsString(out string out_value);
 
     /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a boolean type, the value is returned
-    /// through the <paramref="out_value"> parameter; otherwise a default bool value
-    /// is returned through the <paramref="out_value">.
+    /// This method allow the convenient retrieval of configurations. If the
+    /// current configuration object can be converted into a boolean type, the
+    /// value is returned as a boolean; otherwise this method throws an
+    /// <see cref=" InvalidCastException"/>.
     /// </summary>
-    /// <returns>true if the current setting object can be converted into a boolean type;
-    /// otherwise, false.</returns>
+    /// <returns>The current <see cref="Value"/> instance as a boolean.
+    /// </returns>
     bool GetAsBoolean();
 
     /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a integer type, the value is returned
-    /// through the <paramref="out_value"> parameter; otherwise a default int value
-    /// is returned through the <paramref="out_value">.
+    /// This method allow the convenient retrieval of configurations. If the
+    /// current configuration object can be converted into a integer type, the
+    /// value is returned as a integer; otherwise this method throws an
+    /// <see cref=" InvalidCastException"/>.
     /// </summary>
-    /// <returns>true if the current setting object can be converted into a integer type;
-    /// otherwise, false.</returns>
+    /// <returns>The current <see cref="Value"/> instance as a integer.
+    /// </returns>
     int GetAsInteger();
 
     /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a double type, the value is returned
-    /// through the <paramref="out_value">parameter; otherwise a default double value
-    /// is returned through the <paramref="out_value">.
+    /// This method allow the convenient retrieval of configurations. If the
+    /// current configuration object can be converted into a real/decimal type,
+    /// the value is returned as a real/decimal; otherwise this method throws
+    /// an <see cref=" InvalidCastException"/>.
     /// </summary>
-    /// <returns>true if the current setting object can be converted into a double type;
-    /// otherwise, false.</returns>
+    /// <returns>The current <see cref="Value"/> instance as a real.
+    /// </returns>
     double GetAsReal();
 
     /// <summary>
-    /// This method allow the convenient retrieval of settings. If the current
-    /// setting object can be converted into a string type, the value is returned
-    /// through the <paramref="out_value">parameter; otherwise a null is returned
-    /// through the <paramref="out_value">.
+    /// This method allow the convenient retrieval of configurations. If the
+    /// current configuration object can be converted into a string type, the
+    /// value is returned as a string; otherwise this method throws an
+    /// <see cref=" InvalidCastException"/>.
     /// </summary>
-    /// <returns>true if the current setting object can be converted into a string type;
-    /// otherwise, false.</returns>
+    /// <returns>The current <see cref="Value"/> instance as a string.
+    /// </returns>
     string GetAsString();
 
     /// <summary>
     /// Creates a deep copy of the entire Value tree.
     /// </summary>
     /// <returns>A deep copy of the entire value tree.</returns>
-    /// <remarks>This method should only be getting called for null Values-- all
+    /// <remarks>This method should only be getting called for null Values; all
     /// subclasses need to provide their own implementation.</remarks>
     IValue DeepCopy();
 
@@ -100,15 +104,16 @@ namespace Nohros
     /// Compares if two Value objects have equal contents.
     /// </summary>
     /// <returns>true if this instance_ have equals contents of other.</returns>
-    /// <remarks>This method should only be getting called for null values-- all
+    /// <remarks>This method should only be getting called for null values; all
     /// subclasses need to provide their own implementation.</remarks>
     bool Equals(IValue other);
 
     /// <summary>
-    /// Gets a value indicating whether the current object represents a given type or not.
+    /// Gets a value indicating whether the current object represents a given
+    /// type or not.
     /// </summary>
-    /// <returns>true if the current object represents a given type</returns>
-    bool IsType(Nohros.ValueType type);
+    /// <returns><c>true</c> if the current object represents a given type.</returns>
+    bool IsType(ValueType type);
 
     /// <summary>
     /// Gets the type of the value stored by the current Value object.
@@ -117,6 +122,6 @@ namespace Nohros
     /// Value to (Implementating Class)[*]. Also, A Value object never changes
     /// its type after construction.
     /// </summary>
-    Nohros.ValueType ValueType { get; }
+    ValueType ValueType { get; }
   }
 }
