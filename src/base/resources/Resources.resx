@@ -280,4 +280,7 @@
   <data name="SkipList_NullKey" xml:space="preserve">
     <value>An attempt was made to pass a null key to a SkipList.</value>
   </data>
+  <data name="Type_InvalidCastException" xml:space="preserve">
+    <value>Unable to cast object of type {0} to type {1}.</value>
+  </data>
 </root>
