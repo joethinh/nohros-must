@@ -9,7 +9,7 @@ namespace Nohros.Collections
         List<IValue> list_;
 
         #region .ctor
-        public ListValue():base(ValueType.TYPE_LIST)
+        public ListValue():base(ValueType.List)
         {
             list_ = new List<IValue>();
         }
@@ -149,7 +149,7 @@ namespace Nohros.Collections
             IValue value;
 
             out_value = null;
-            if (!Get(index, out value) || value.IsType(ValueType.TYPE_DICTIONARY))
+            if (!Get(index, out value) || value.IsType(ValueType.Dictionary))
                 return false;
 
             out_value = value as DictionaryValue;
@@ -168,7 +168,7 @@ namespace Nohros.Collections
             IValue value;
 
             out_value = null;
-            if (!Get(index, out value) || value.IsType(ValueType.TYPE_LIST))
+            if (!Get(index, out value) || value.IsType(ValueType.List))
                 return false;
 
             out_value = value as ListValue;

@@ -29,7 +29,7 @@ namespace Nohros
     /// </summary>
     /// <param name="in_value">The underlying value</param>
     public FundamentalValue(bool in_value)
-      : base(ValueType.TYPE_BOOLEAN) {
+      : base(ValueType.Boolean) {
       in_value_ = new FundamentalValue_();
       in_value_.boolean_value_ = in_value;
     }
@@ -39,7 +39,7 @@ namespace Nohros
     /// </summary>
     /// <param name="in_value">The underlying value</param>
     public FundamentalValue(int in_value)
-      : base(ValueType.TYPE_INTEGER) {
+      : base(ValueType.Integer) {
       in_value_ = new FundamentalValue_();
       in_value_.integer_value_ = in_value;
     }
@@ -49,7 +49,7 @@ namespace Nohros
     /// </summary>
     /// <param name="in_value">The underlying value</param>
     public FundamentalValue(double in_value)
-      : base(ValueType.TYPE_REAL) {
+      : base(ValueType.Real) {
       in_value_ = new FundamentalValue_();
       in_value_.real_value_ = in_value;
     }
@@ -57,32 +57,32 @@ namespace Nohros
 
     /// <inheritdoc/>
     public override bool GetAsBoolean(out bool out_value) {
-      if (IsType(ValueType.TYPE_BOOLEAN))
+      if (IsType(ValueType.Boolean))
         out_value = in_value_.boolean_value_;
       else
         out_value = default(bool);
 
-      return IsType(ValueType.TYPE_BOOLEAN);
+      return IsType(ValueType.Boolean);
     }
 
     /// <inheritdoc/>
     public override bool GetAsInteger(out int out_value) {
-      if (IsType(ValueType.TYPE_INTEGER))
+      if (IsType(ValueType.Integer))
         out_value = in_value_.integer_value_;
       else
         out_value = default(int);
 
-      return IsType(ValueType.TYPE_INTEGER);
+      return IsType(ValueType.Integer);
     }
 
     /// <inheritdoc/>
     public override bool GetAsReal(out double out_value) {
-      if (IsType(ValueType.TYPE_REAL))
+      if (IsType(ValueType.Real))
         out_value = in_value_.real_value_;
       else
         out_value = default(double);
 
-      return IsType(ValueType.TYPE_REAL);
+      return IsType(ValueType.Real);
     }
 
     /// <inheritdoc/>
@@ -117,13 +117,13 @@ namespace Nohros
 
     public override IValue DeepCopy() {
       switch (ValueType) {
-        case ValueType.TYPE_BOOLEAN:
+        case ValueType.Boolean:
           return CreateBooleanValue(in_value_.boolean_value_);
 
-        case ValueType.TYPE_INTEGER:
+        case ValueType.Integer:
           return CreateIntegerValue(in_value_.integer_value_);
 
-        case ValueType.TYPE_REAL:
+        case ValueType.Real:
           return CreateRealValue(in_value_.real_value_);
 
         default:
@@ -136,17 +136,17 @@ namespace Nohros
         return false;
 
       switch (ValueType) {
-        case ValueType.TYPE_BOOLEAN: {
+        case ValueType.Boolean: {
             bool lhs, rhs;
             return GetAsBoolean(out lhs) && other.GetAsBoolean(out rhs) && lhs == rhs;
           }
 
-        case ValueType.TYPE_INTEGER: {
+        case ValueType.Integer: {
             int lhs, rhs;
             return GetAsInteger(out lhs) && other.GetAsInteger(out rhs) && lhs == rhs;
           }
 
-        case ValueType.TYPE_REAL: {
+        case ValueType.Real: {
             double lhs, rhs;
             return GetAsReal(out lhs) && other.GetAsReal(out rhs) && lhs == rhs;
           }
