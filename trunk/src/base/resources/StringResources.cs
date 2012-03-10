@@ -454,6 +454,14 @@ namespace Nohros.Resources
     public static string Type_Load {
       get { return GetString("Type_Load"); }
     }
+
+    /// <summary>
+    /// Looks up a localized string similar to [Unable to cast object of type
+    /// {0} to type {1}.].
+    /// </summary>
+    public static string Type_InvalidCastException {
+      get { return GetString("Type_InvalidCastException"); }
+    }
     #endregion
   }
 }
