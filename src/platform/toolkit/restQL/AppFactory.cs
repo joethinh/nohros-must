@@ -32,7 +32,7 @@ namespace Nohros.Toolkit.RestQL
     /// </returns>
     /// <remarks></remarks>
     public ITokenPrincipalMapper CreateTokenPrincipalMapper(
-      SimpleProviderNode node) {
+      IProviderNode node) {
       ITokenPrincipalMapperFactory factory =
         ProviderFactory<ITokenPrincipalMapperFactory>.CreateProviderFactory(
         node);
