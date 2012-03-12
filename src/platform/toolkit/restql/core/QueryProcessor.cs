@@ -9,17 +9,13 @@ namespace Nohros.Toolkit.RestQL
   /// </summary>
   public class QueryProcessor
   {
+    
+
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="QueryProcessor"/> class
-    /// by using the specified query string.
+    /// Initializes a new instance of the <see cref="QueryProcessor"/>.
     /// </summary>
-    /// <param name="query_key">A string that uniquely identifies a query
-    /// within the main data store.</param>
-    /// <param name="query_string">A <see cref="IDictionary"/> object
-    /// containing the parameters that will be used by the query associated
-    /// with the given <paramref name="query_key"/>.</param>
-    public QueryProcessor(QueryInfo query) {
+    public QueryProcessor() {
     }
     #endregion
 
