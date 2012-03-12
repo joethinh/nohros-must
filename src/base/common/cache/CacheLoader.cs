@@ -4,6 +4,12 @@ using System.Text;
 
 namespace Nohros.Caching
 {
+  /// <summary>
+  /// Computes an retrieve values, based on a key, for use in populating a
+  /// <see cref="Cache{T}"/>
+  /// </summary>
+  /// <typeparam name="T">The type of the objects that is stored loaded.
+  /// </typeparam>
   public abstract partial class CacheLoader<T>
   {
     /// <summary>
@@ -19,7 +25,8 @@ namespace Nohros.Caching
     }
 
     /// <summary>
-    /// Computes or retrieves the value correspnoding to <paramref name="key"/>.
+    /// Computes or retrieves the value correspnoding to
+    /// <paramref name="key"/>.
     /// </summary>
     /// <param name="key">The key whose value should be loaded; will never
     /// be null.</param>
