@@ -79,11 +79,14 @@
     <Compile Include="cache\CacheLoaderDelegate.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="cache\CacheLoaderDelegateToCacheLoader.cs" />
+    <Compile Include="cache\SimpleCache.cs" />
     <Compile Include="concurrent\AtomicLong.cs" />
     <Compile Include="concurrent\AtomicLongArray.cs" />
     <Compile Include="concurrent\AtomicReference.cs" />
     <Compile Include="concurrent\YQueue.cs" />
     <Compile Include="providers\cache\CacheProvider.cs" />
+    <Compile Include="providers\cache\ICacheProviderFactory.cs" />
     <Compile Include="providers\cache\RemovalCause.cs" />
     <Compile Include="configuration\common\provider\ProviderNode.cs" />
     <Compile Include="configuration\common\provider\ProviderType.cs" />
@@ -244,7 +247,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
