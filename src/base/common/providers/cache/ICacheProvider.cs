@@ -64,15 +64,15 @@ namespace Nohros.Caching.Providers
     /// Calls to this method should throws a exception if an item with the same
     /// <paramref name="key"/> parameter is already stored in the cache. To
     /// overwrite an existing cache item using the same <paramref name="key"/>
-    /// parameter, use the <see cref="Set(K, V)"/> method.
+    /// parameter, use the <see cref="Set(string, object)"/> method.
     /// <para>
     /// The item added to the cache should never expires(although it may be
     /// deleted from the cache to make place or other items, depending on the
     /// cache provider implementation).
     /// </para>
     /// </remarks>
-    /// <seealso cref="Set(K, V)"/>
-    /// <seealso cref="Add(string key, object value)"/>
+    /// <seealso cref="Set(string, object)"/>
+    /// <seealso cref="Add(string, object)"/>
     void Add(string key, object value);
 
     /// <summary>
@@ -97,13 +97,13 @@ namespace Nohros.Caching.Providers
     /// Calls to this method should throws a exception if an item with the same
     /// <paramref name="key"/> parameter is already stored in the cache. To
     /// overwrite an existing cache item using the same <paramref name="key"/>
-    /// parameter, use the <see cref="Set(K, V, TimeSpan)"/> method.
+    /// parameter, use the <see cref="Set(string, object, TimeSpan)"/> method.
     /// </remarks>
     void Add(string key, object value, TimeSpan expiry);
 
     /// <summary>
     /// Discards any cached value for key <paramref name="key"/>, so that a
-    /// future invocation of <see cref="Get(K)"/> will result in a cache miss
+    /// future invocation of <see cref="Get(T)"/> will result in a cache miss
     /// and reload.
     /// </summary>
     void Remove(string key);
