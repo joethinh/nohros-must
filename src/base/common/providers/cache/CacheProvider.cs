@@ -29,10 +29,6 @@ namespace Nohros.Caching.Providers
     /// <param name="provider">A <see cref="ProviderNode"/>
     /// object that contains information about the class that should be
     /// instantiated.</param>
-    /// <param name="args">An array of arguments that match in number, order,
-    /// and type the parameters of the constructor to invoke. If args is an
-    /// empty array or null, the constructor that takes no parameters(the
-    /// default constructor) is invoked.</param>
     /// <remarks>
     /// <para>The value of the <see cref="ProviderNode.AssemblyLocation"/>
     /// property will be used as a search location for assemblies that need to
@@ -40,10 +36,10 @@ namespace Nohros.Caching.Providers
     /// </para>
     /// </remarks>
     /// <returns>A reference to the newly created object.</returns>
-    public static ICacheProvider CreateCacheProvider(
-      ProviderNode provider, params object[] args) {
-      return ProviderFactory<ICacheProvider>.CreateProviderFactory(
-        provider, args);
+    public static ICacheProvider CreateCacheProvider(IProviderNode provider) {
+      ICacheProviderFactory factory = ProviderFactory<ICacheProviderFactory>.
+        CreateProviderFactory(provider);
+      return factory.CreateCacheProvider(provider.Options);
     }
 
     /// <summary>
@@ -77,7 +73,7 @@ namespace Nohros.Caching.Providers
     }
 
     /// <inheritdoc/>
-    public abstract V Get<V>(string key);
+    public abstract T Get<T>(string key);
 
     /// <inheritdoc/>
     public abstract void Set(string key, object value);
