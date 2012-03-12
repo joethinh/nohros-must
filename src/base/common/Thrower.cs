@@ -112,6 +112,10 @@ namespace Nohros
           argumentName = "capacity";
           break;
 
+        case ExceptionArgument.loader:
+          argumentName = "loader";
+          break;
+
         default:
           Debug.Assert(false, "The enum value is not defined, please checked ExceptionArgumentName Enum");
           return string.Empty;
@@ -253,7 +257,8 @@ namespace Nohros
     value,
     collection,
     any,
-    capacity
+    capacity,
+    loader
   }
 
   /// <summary>
