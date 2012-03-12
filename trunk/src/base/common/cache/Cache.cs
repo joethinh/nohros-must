@@ -6,31 +6,24 @@ using Nohros.Caching.Providers;
 namespace Nohros.Caching
 {
   /// <summary>
-  /// A semi-persistent mapping from keys to values that uses the pluggable
-  /// cache mechanism provided by the <see cref="ICacheProvider"/> interface.
+  /// This class provides a skeletal implementation of the
+  /// <see cref="ICache{T}"/> interface to minimize the effort required to
+  /// implement this interface.
   /// </summary>
-  /// <remarks>
-  /// Values are automatically loaded by the cache, and are stored in the
-  /// cache until either evicted or manually invalidated.
-  /// </remarks>
-  public class Cache<T>
+  internal class Cache<T>
   {
     readonly ICacheProvider cache_;
-    readonly CacheLoader<T> loader_;
     readonly string cache_guid_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="Cache&lt;V&gt;"/> class
+    /// Initializes a new instance of the <see cref="Cache{T}"/> class
     /// by using the specified cache provider and item loader.
     /// </summary>
     /// <param name="cache">A <see cref="ICacheProvider"/> object that is
     /// used to store(cache) the items.</param>
-    /// <param name="loader">The cache item loader used to obtain new values.
-    /// </param>
-    public Cache(ICacheProvider cache, CacheLoader<T> loader) {
+    public Cache(ICacheProvider cache) {
       cache_ = cache;
-      loader_ = loader;
 
       // this value is used to distinghuish the items added through this
       // class from the others items in the cache. Since the cache could
@@ -61,7 +54,7 @@ namespace Nohros.Caching
     /// <paramref name="expiry"/> to less than <c>TimeSpan.Zero</c> or to a
     /// value that exceeds the maximum system date time.</exception>
     /// <returns></returns>
-    protected DateTime GetExpiryDateTime(TimeSpan expiry) {
+    DateTime GetExpiryDateTime(TimeSpan expiry) {
       // store the current date time as soon as possible.
       DateTime now = DateTime.Now;
 
@@ -81,38 +74,74 @@ namespace Nohros.Caching
     }
 
     /// <summary>
-    /// Gets the value associated with the given key, creating or retrieving
-    /// that value if necessary.
+    /// Gets the value associated with the <paramref name="key"/> in cache, or
+    /// the default value of type <typeparamref name="T"/> if there is no
+    /// cached value for <paramref name="key"/>.
     /// </summary>
-    /// <param name="key">The identifier for the cache item to retrive.</param>
-    /// <param name="expiry">The date and time at which the added object
-    /// expires and is removed from the cache.</param>
-    /// <returns></returns>
-    /// <exception cref="TypeLoadException">A failure occur while loading
-    /// the item using the specified loader delegate.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="key"/> is
-    /// <c>null</c></exception>
-    protected T Get(string key, DateTime expiry) {
-      string cache_key = CacheKey(key);
-      T value = cache_.Get<T>(cache_key);
-
-      if (value == null) {
-        try {
-          value = loader_.Load(key);
-        } catch (Exception e) {
-          throw new TypeLoadException(StringResources.Type_Load, e);
-        }
-      }
-
-      return value;
+    /// <param name="key">The identifier for the cache item to retrieve.
+    /// </param>
+    /// <returns>The value associated with the <paramref name="key"/> in cache,
+    /// or the default value of type <typeparamref name="T"/> if there is no
+    /// cached value for <paramref name="key"/>
+    /// </returns>
+    public T Get(string key) {
+      return cache_.Get<T>(CacheKey(key));
     }
 
+    /// <summary>
+    /// Associates <paramref name="value"/> with <paramref name="key"/> in this
+    /// cache. If the cache previously contained a value associated with
+    /// <paramref name="key"/>, the old values is replaced by
+    /// <paramref name="value"/>.
+    /// </summary>
+    /// <param name="key">The identifier for the cache item to retrieve.
+    /// </param>
+    /// <param name="value">The value to be associated with the
+    /// <paramref name="key"/> in the cache.</param>
+    public void Add(string key, T value) {
+      Add(key, value, DateTime.MaxValue);
+    }
+
+    /// <summary>
+    /// Associates <paramref name="value"/> with <paramref name="key"/> in this
+    /// cache. If the cache previously contained a value associated with
+    /// <paramref name="key"/>, the old values is replaced by
+    /// <paramref name="value"/>.
+    /// </summary>
+    /// <param name="key">The identifier for the cache item to retrieve.
+    /// </param>
+    /// <param name="value">The value to be associated with the
+    /// <paramref name="key"/> in the cache.</param>
+    /// <param name="expiry">The date and time at which the added object
+    /// expires and is removed from the cache.</param>
+    public void Add(string key, T value, DateTime expiry) {
+      Add(key, value, expiry.Subtract(DateTime.Now));
+    }
+
+    /// <summary>
+    /// Associates <paramref name="value"/> with <paramref name="key"/> in this
+    /// cache. If the cache previously contained a value associated with
+    /// <paramref name="key"/>, the old values is replaced by
+    /// <paramref name="value"/>.
+    /// </summary>
+    /// <param name="key">The identifier for the cache item to retrieve.
+    /// </param>
+    /// <param name="value">The value to be associated with the
+    /// <paramref name="key"/> in the cache.</param>
+    /// <param name="expiry">The time at which the object expires from now and
+    /// is removed from the cache.
+    /// </param>
+    public void Add(string key, T value, TimeSpan expiry) {
+      cache_.Set(key, value, expiry);
+    }
     /// <summary>
     /// Gets the value associated with the given key, creating or retrieving
     /// that value if necessary.
     /// </summary>
     /// <param name="key">The identifier for the cache item to retrieve.
     /// </param>
+    /// <param name="loader">A <see cref="CacheLoader{T}"/> object that could
+    /// be used to create the value if it is not present in the cache.</param>
     /// <remarks>
     /// No state associated with this cache is modified until loading is
     /// complete.
@@ -121,11 +150,29 @@ namespace Nohros.Caching
     /// the item using the specified loader delegate.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="key"/> is
     /// <c>null</c></exception>
-    public T Get(string key) {
+    public T Get(string key, CacheLoader<T> loader) {
       if (key == null)
-        throw new ArgumentNullException("key");
+        Thrower.ThrowArgumentNullException(ExceptionArgument.key);
 
-      return Get(key, DateTime.MaxValue);
+      return Get(key, loader, DateTime.MaxValue);
+    }
+
+    /// <summary>
+    /// Gets the value associated with the given key, creating or retrieving
+    /// that value if necessary.
+    /// </summary>
+    /// <param name="key">The identifier for the cache item to retrive.</param>
+    /// <param name="loader">A <see cref="CacheLoader{T}"/> object that could
+    /// be used to create the value if it is not present in the cache.</param>
+    /// <param name="expiry">The date and time at which the added object
+    /// expires and is removed from the cache.</param>
+    /// <returns></returns>
+    /// <exception cref="TypeLoadException">A failure occur while loading
+    /// the item using the specified loader delegate.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="key"/> is
+    /// <c>null</c></exception>
+    public T Get(string key, CacheLoader<T> loader, DateTime expiry) {
+      return Get(key, loader, expiry.Subtract(DateTime.Now));
     }
 
     /// <summary>
@@ -134,6 +181,8 @@ namespace Nohros.Caching
     /// </summary>
     /// <param name="key">The identifier for the cache item to retrieve.
     /// </param>
+    /// <param name="loader">A <see cref="CacheLoader{T}"/> object that could
+    /// be used to create the value if it is not present in the cache.</param>
     /// <param name="expiry">The time at which the object expires from now and
     /// is removed from the cache.
     /// </param>
@@ -146,12 +195,27 @@ namespace Nohros.Caching
     /// </exception>
     /// <exception cref="TypeLoadException">A failure occur while loading
     /// the item using the specified loader delegate.</exception>
-    public T Get(string key, TimeSpan expiry) {
-      if (key == null) {
-        throw new ArgumentNullException("key");
+    public T Get(string key, CacheLoader<T> loader, TimeSpan expiry) {
+      if (key == null || loader == null) {
+        Thrower.ThrowArgumentNullException(key == null
+                                             ? ExceptionArgument.key
+                                             : ExceptionArgument.loader);
       }
 
-      return Get(key, GetExpiryDateTime(expiry));
+      string cache_key = CacheKey(key);
+      T value = cache_.Get<T>(cache_key);
+
+      // If the value is not present in cache, create, cache and return it.
+      if (value == null) {
+        try {
+          value = loader.Load(key);
+          cache_.Add(cache_key, value, expiry);
+        } catch (Exception e) {
+          throw new TypeLoadException(StringResources.Type_Load, e);
+        }
+      }
+
+      return value;
     }
 
     /// <summary>
