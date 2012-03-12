@@ -51,6 +51,7 @@
     <Compile Include="concurrent\AtomicLongArrayTests.cs" />
     <Compile Include="concurrent\AtomicLongTests.cs" />
     <Compile Include="concurrent\AtomicReferenceTests.cs" />
+    <Compile Include="concurrent\MailboxTests.cs" />
     <Compile Include="concurrent\YQueueTests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
