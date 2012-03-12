@@ -10,14 +10,14 @@ namespace Nohros.Providers
 {
   /// <summary>
   /// A class used to instantiate others factories using information defined
-  /// on a <see cref="ProviderNode"/> object.
+  /// on a <see cref="IProviderNode"/> object.
   /// </summary>
   /// <remarks>
   /// The <typeparam name="T"> is usually a interface or an abstract class that
   /// the factory should implement or derive from.</typeparam>
   /// <para>
   /// The type that is instantiated should be defined in the
-  /// <see cref="ProviderNode"/> object and should have a constructor with no
+  /// <see cref="IProviderNode"/> object and should have a constructor with no
   /// parameters.
   /// </para>
   /// </remarks>
@@ -27,7 +27,7 @@ namespace Nohros.Providers
     /// Gets the <see cref="Type"/> of a provider, using the specified provider
     /// node.
     /// </summary>
-    /// <param name="node">A <see cref="ProviderNode"/> object that contains
+    /// <param name="node">A <see cref="IProviderNode"/> object that contains
     /// information about the type <typeparamref name="T"/></param>
     /// <returns>The type instance that represents the exact runtime type of
     /// the specified provider or null if the type could not be loaded.
@@ -39,7 +39,7 @@ namespace Nohros.Providers
     /// we will try load the assembly using this location and them get the type
     /// from the loaded assembly.
     /// </remarks>
-    public static Type GetProviderFactoryType(ProviderNode node) {
+    public static Type GetProviderFactoryType(IProviderNode node) {
       if (node == null)
         throw new ArgumentNullException("node");
 
@@ -91,7 +91,7 @@ namespace Nohros.Providers
     /// Creates a new instance of the <typeparamref name="T"/> class by using
     /// the type that is defined on the configuration node.
     /// </summary>
-    /// <param name="node">A <see cref="ProviderNode"/> object that contains
+    /// <param name="node">A <see cref="IProviderNode"/> object that contains
     /// information about the type <typeparamref name="T"/></param>
     /// <param name="args">An array of arguments that match in number, order,
     /// and type the parameters of the constructor to invoke. If args is an
@@ -107,8 +107,8 @@ namespace Nohros.Providers
     /// <see cref="CreateProviderFactory"/>.
     /// </remarks>
     /// <seealso cref="CreateProviderFactory"/>
-    /// <seealso cref="ProviderNode"/>
-    public static T CreateProviderFactoryNoException(ProviderNode node,
+    /// <seealso cref="IProviderNode"/>
+    public static T CreateProviderFactoryNoException(IProviderNode node,
       params object[] args) {
       // A try/catch block is used here because this method should not throw
       // any exception.
@@ -124,7 +124,7 @@ namespace Nohros.Providers
     /// Creates a new instance of the <typeparamref name="T"/> class by using
     /// the type that is defined on the configuration node.
     /// </summary>
-    /// <param name="node">A <see cref="ProviderNode"/> object that contains
+    /// <param name="node">A <see cref="IProviderNode"/> object that contains
     /// information about the type <typeparamref name="T"/></param>
     /// <param name="args">An array of arguments that match in number, order,
     /// and type the parameters of the constructor to invoke. If args is an
@@ -133,7 +133,7 @@ namespace Nohros.Providers
     /// <returns>An instance of the <typeparamref name="T"/> class.</returns>
     /// <exception cref="ProviderException">A instance of the specified
     /// type could not be created.</exception>
-    public static T CreateProviderFactory(ProviderNode node,
+    public static T CreateProviderFactory(IProviderNode node,
       params object[] args) {
       Exception inner_exception = null;
 
