@@ -17,7 +17,7 @@ namespace Nohros.Caching.Providers
     /// <param name="key">The identifier for the cache item to retrieve.
     /// </param>
     /// <returns>A value associated with the given key.</returns>
-    V Get<V>(string key);
+    T Get<T>(string key);
 
     /// <summary>
     /// Adds or replace the specified item to the cache.
