@@ -37,10 +37,10 @@ namespace Nohros.Concurrent
 
     // True if the underlying queue is active, ie. when we are allowed to
     // read command from it.
-    bool active_;
+    volatile bool active_;
 
     // Signaler to pass signals from writer thread to reader thread.
-    ManualResetEvent signaler_;
+    AutoResetEvent signaler_;
  
     #region .ctor
     /// <summary>
@@ -48,8 +48,13 @@ namespace Nohros.Concurrent
     /// </summary>
     public Mailbox() {
       mutex_ = new object();
-      signaler_ = new ManualResetEvent(false);
-      message_queue_ = new YQueue<T>(0);
+      message_queue_ = new YQueue<T>(16);
+
+      // Get the pipe into passive state. That way, if the user starts by
+      // polling on the associated queue it, it will be woken up when
+      // new message is posted.
+      signaler_ = new AutoResetEvent(false);
+      active_ = false;
     }
     #endregion
 
@@ -61,14 +66,38 @@ namespace Nohros.Concurrent
       lock(mutex_) {
         message_queue_.Enqueue(message);
       }
+
+      // wake-up the reader thread.
+      if (!active_) {
+        signaler_.Set();
+      }
+    }
+
+
+    /// <summary>
+    /// Receives messages from the mailbox.
+    /// </summary>
+    /// <remarks>If no incoming message is available at the mailbox, the
+    /// <see cref="Receive()"/> call blocks and waits for message to arrive.
+    /// </remarks>
+    public T Receive() {
+      T t;
+      bool ok = Receive(out t, Timeout.Infinite);
+      return t;
     }
 
     /// <summary>
-    /// Receives a command from the mailbox.
+    /// Receives messages from the mailbox, using a 32-bit signed integer to
+    /// specify the maxi wait time interval.
     /// </summary>
     /// <param name="message">The message that was received.</param>
-    /// <param name="timeout_ms">A timeout </param>
-    /// <returns></returns>
+    /// <param name="timeout_ms">The number of milliseconds to wait for a
+    /// message, ot Timeoit.Infinite(-1) to wait indefinitely.</param>
+    /// <returns><c>true</c> if the a message was received from the mailbox;
+    /// otherwise, <c>false</c>.</returns>
+    /// <remarks>If no incoming message is available at the mailbox, the
+    /// <see cref="Receive"/> call blocks and waits for message to arrive.
+    /// </remarks>
     public bool Receive(out T message, int timeout_ms) {
       bool ok;
       // try to get command straight away.
