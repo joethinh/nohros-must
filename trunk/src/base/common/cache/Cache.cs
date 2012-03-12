@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 using Nohros.Resources;
 using Nohros.Caching.Providers;
@@ -15,12 +13,11 @@ namespace Nohros.Caching
   /// Values are automatically loaded by the cache, and are stored in the
   /// cache until either evicted or manually invalidated.
   /// </remarks>
-  public class Cache<V> where V : class
+  public class Cache<T>
   {
-    ICacheProvider cache_;
-    CacheLoader<V> loader_;
-
-    string cache_guid_;
+    readonly ICacheProvider cache_;
+    readonly CacheLoader<T> loader_;
+    readonly string cache_guid_;
 
     #region .ctor
     /// <summary>
@@ -31,13 +28,13 @@ namespace Nohros.Caching
     /// used to store(cache) the items.</param>
     /// <param name="loader">The cache item loader used to obtain new values.
     /// </param>
-    public Cache(ICacheProvider cache, CacheLoader<V> loader) {
+    public Cache(ICacheProvider cache, CacheLoader<T> loader) {
       cache_ = cache;
       loader_ = loader;
 
       // this value is used to distinghuish the items added through this
       // class from the others items in the cache. Since the cache could
-      // be used for more than one application we canno use the GetHashCode()
+      // be used for more than one application we cannot use the GetHashCode()
       // method as key, because it is unique only within the running
       // application.
       cache_guid_ = Guid.NewGuid().ToString("N");
@@ -95,9 +92,9 @@ namespace Nohros.Caching
     /// the item using the specified loader delegate.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="key"/> is
     /// <c>null</c></exception>
-    protected V Get(string key, DateTime expiry) {
+    protected T Get(string key, DateTime expiry) {
       string cache_key = CacheKey(key);
-      V value = cache_.Get<V>(cache_key);
+      T value = cache_.Get<T>(cache_key);
 
       if (value == null) {
         try {
@@ -124,7 +121,7 @@ namespace Nohros.Caching
     /// the item using the specified loader delegate.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="key"/> is
     /// <c>null</c></exception>
-    public V Get(string key) {
+    public T Get(string key) {
       if (key == null)
         throw new ArgumentNullException("key");
 
@@ -149,7 +146,7 @@ namespace Nohros.Caching
     /// </exception>
     /// <exception cref="TypeLoadException">A failure occur while loading
     /// the item using the specified loader delegate.</exception>
-    public V Get(string key, TimeSpan expiry) {
+    public T Get(string key, TimeSpan expiry) {
       if (key == null) {
         throw new ArgumentNullException("key");
       }
