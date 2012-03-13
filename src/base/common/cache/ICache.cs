@@ -13,6 +13,9 @@ namespace Nohros.Caching
   /// <see cref="Get(string, CacheLoader{T}"/> or
   /// <see cref="Add(string, T)"/> and are stored in the cache
   /// until either evicted or manually invalidated.
+  /// <para>Implementations of this interface are expected to the
+  /// thread-safe, and can be safely accessed by multiple concurrent threads.
+  /// </para>
   /// </remarks>
   public interface ICache<T>
   {

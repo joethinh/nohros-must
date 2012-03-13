@@ -73,7 +73,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cache\Cache.cs" />
+    <Compile Include="cache\AbstractCache.cs" />
+    <Compile Include="cache\CacheBuilder.cs" />
     <Compile Include="cache\CacheLoader.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -82,12 +83,17 @@
     </Compile>
     <Compile Include="cache\CacheLoaderDelegateToCacheLoader.cs" />
     <Compile Include="cache\ICache.cs" />
+    <Compile Include="cache\ILoadingCache.cs" />
+    <Compile Include="cache\LoadingValueReference.cs" />
     <Compile Include="cache\LocalManualCache.cs" />
+    <Compile Include="cache\IValueReference.cs" />
+    <Compile Include="cache\ValueReference.cs" />
     <Compile Include="concurrent\AtomicLong.cs" />
     <Compile Include="concurrent\AtomicLongArray.cs" />
     <Compile Include="concurrent\AtomicReference.cs" />
     <Compile Include="concurrent\Mailbox.cs" />
     <Compile Include="concurrent\YQueue.cs" />
+    <Compile Include="cache\CacheEntry.cs" />
     <Compile Include="providers\cache\CacheProvider.cs" />
     <Compile Include="providers\cache\ICacheProviderFactory.cs" />
     <Compile Include="providers\cache\RemovalCause.cs" />
@@ -250,7 +256,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
