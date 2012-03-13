@@ -20,7 +20,8 @@ namespace Nohros.Caching.Providers
     /// </summary>
     /// <param name="options">A <see cref="IDictionary{TKey,TValue}"/>
     /// containing a collection options configured for the provider.</param>
-    /// <returns></returns>
+    /// <returns>An instance of the <see cref="ICacheProvider"/> class.
+    /// </returns>
     ICacheProvider CreateCacheProvider(IDictionary<string, string> options);
   }
 }
