@@ -95,19 +95,25 @@ namespace Nohros.Caching
       string cache_key = CacheKey(key);
       CacheEntry<T> entry;
 
-      // the cache provider should provide the thread safeness behavior.
-      bool ok = cache_provider_.Get(cache_key, out entry);
-      if (!ok) {
-        long now = Clock.NanoTime;
-        T value;
-        if(GetLiveValue(entry, now, out value)) {
-          RecordRead(entry);
-          return ScheduleRefresh(entry, key, value, now, loader);
+      try {
+        // the cache provider should provide the thread safeness behavior.
+        bool ok = cache_provider_.Get(cache_key, out entry);
+        if (!ok) {
+          long now = Clock.NanoTime;
+          T value;
+          if (GetLiveValue(entry, now, out value)) {
+            RecordRead(entry, now);
+            return ScheduleRefresh(entry, key, value, now, loader);
+          }
+          IValueReference<T> value_reference = entry.ValueReference;
+          if (value_reference.IsLoading) {
+            return WaitForLoadingValue(entry, key, value_reference);
+          }
         }
 
-        if(entry.IsLoading) {
-          return WaitForLoadingValue(entry, key);
-        }
+        // at this point entry does not exists or is expired.
+      } catch {
+        // TODO: We should log this.
       }
     }
 
@@ -142,12 +148,42 @@ namespace Nohros.Caching
     }
 
     T ScheduleRefresh(CacheEntry<T> entry, string key, T old_value, long now, CacheLoader<T> loader) {
-      if(Refreshes && (now - entry.WriteTime > RefreshNanos)) {
+      if(Refreshes && (now - entry.WriteTime > refresh_nanos_)) {
+        T new_value;
         if(Refresh(key, loader, out new_value)) {
           return new_value;
         }
       }
       return old_value;
+    }
+
+    /// <summary>
+    /// Refreshes the value associated with <paramref name="key"/>, unless
+    /// another thread is already doing so.
+    /// </summary>
+    /// <param name="key">The key associated with the value to refresh.</param>
+    /// <param name="loader">A <see cref="CacheLoader{T}"/> that is used to
+    /// refresh the value.</param>
+    /// <param name="value">The newly refreshed value associated with
+    /// <paramref name="key"/> if the value was refreshed inline, or the
+    /// default value of <typeparamref name="T"/> if another thread is
+    /// performing the refresh, or if a error occurs during refresh.</param>
+    /// <returns><c>true</c> if the value was refreshed inline, or <c>false</c>
+    /// value for <typeparamref name="T"/> if another thread is performing
+    /// the refresh, or if a error occurs during refresh.</returns>
+    bool Refresh(string key, CacheLoader<T> loader , out T value) {
+      LoadingValueReference<T> loading_value_reference =
+        InsertLoadingValueReference(key);
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="LoadingValueReference{T}"/> and inserts it on
+    /// the cache by using the <paramref name="key"/>.
+    /// </summary>
+    /// <param name="key">The key that will be associated with the newly
+    /// created <see cref="LoadingValueReference{T}"/>.</param>
+    /// <returns></returns>
+    LoadingValueReference<T> InsertLoadingValueReference(string key) {
     }
 
     T WaitForLoadingValue(CacheEntry<T> entry, string key, IValueReference<T> value_reference) {
