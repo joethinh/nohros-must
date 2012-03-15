@@ -91,10 +91,12 @@
     <Compile Include="concurrent\AtomicLong.cs" />
     <Compile Include="concurrent\AtomicLongArray.cs" />
     <Compile Include="concurrent\AtomicReference.cs" />
-    <Compile Include="concurrent\IListanableAsync.cs" />
+    <Compile Include="concurrent\ExecutionList.cs" />
+    <Compile Include="concurrent\IFuture.cs" />
     <Compile Include="concurrent\Mailbox.cs" />
     <Compile Include="concurrent\YQueue.cs" />
     <Compile Include="cache\CacheEntry.cs" />
+    <Compile Include="ExecutionException.cs" />
     <Compile Include="providers\cache\CacheProvider.cs" />
     <Compile Include="providers\cache\ICacheProviderFactory.cs" />
     <Compile Include="providers\cache\RemovalCause.cs" />
@@ -257,7 +259,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
