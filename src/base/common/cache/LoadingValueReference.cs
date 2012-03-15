@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Nohros.Concurrent;
 
 namespace Nohros.Caching
 {
@@ -35,6 +36,11 @@ namespace Nohros.Caching
     public T WaitForValue() {
       // TODO: Check this.
       throw new NotImplementedException();
+    }
+
+    public IFuture<T> LoadFuture(string key, CacheLoader<T> loader) {
+      long start = Clock.NanoTime;
+      T previous_value = old_value_.Value;
     }
 
     /// <inheritdoc/>

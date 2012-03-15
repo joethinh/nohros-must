@@ -91,6 +91,7 @@
     <Compile Include="concurrent\AtomicLong.cs" />
     <Compile Include="concurrent\AtomicLongArray.cs" />
     <Compile Include="concurrent\AtomicReference.cs" />
+    <Compile Include="concurrent\IListanableAsync.cs" />
     <Compile Include="concurrent\Mailbox.cs" />
     <Compile Include="concurrent\YQueue.cs" />
     <Compile Include="cache\CacheEntry.cs" />
@@ -256,7 +257,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

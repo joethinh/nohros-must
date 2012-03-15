@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Nohros.Caching.Providers;
 
 namespace Nohros.Caching
@@ -74,5 +73,10 @@ namespace Nohros.Caching
     /// <param name="key">The identifier for the cache item to retrieve.
     /// </param>
     void Remove(string key);
+
+    /// <summary>
+    /// Gets the approximate number of entries in this cache.
+    /// </summary>
+    long Size { get; }
   }
 }

@@ -56,64 +56,68 @@ namespace Nohros
     /// <returns></returns>
     internal static string GetArgumentName(ExceptionArgument argument)
     {
-      string argumentName = null;
+      string argument_name = null;
 
       switch (argument)
       {
         case ExceptionArgument.index:
-          argumentName = "index";
+          argument_name = "index";
           break;
 
         case ExceptionArgument.key:
-          argumentName = "key";
+          argument_name = "key";
           break;
 
         case ExceptionArgument.obj:
-          argumentName = "obj";
+          argument_name = "obj";
           break;
 
         case ExceptionArgument.arrayIndex:
-          argumentName = "arrayIndex";
+          argument_name = "arrayIndex";
           break;
 
         case ExceptionArgument.comparer:
-          argumentName = "comparer";
+          argument_name = "comparer";
           break;
 
         case ExceptionArgument.array:
-          argumentName = "array";
+          argument_name = "array";
           break;
 
         case ExceptionArgument.name:
-          argumentName = "name";
+          argument_name = "name";
           break;
 
         case ExceptionArgument.provider:
-          argumentName = "provider";
+          argument_name = "provider";
           break;
 
         case ExceptionArgument.type:
-          argumentName = "type";
+          argument_name = "type";
           break;
 
         case ExceptionArgument.value:
-          argumentName = "type";
+          argument_name = "type";
           break;
 
         case ExceptionArgument.collection:
-          argumentName = "collection";
+          argument_name = "collection";
           break;
 
         case ExceptionArgument.any:
-          argumentName = "any variable";
+          argument_name = "any variable";
           break;
 
         case ExceptionArgument.capacity:
-          argumentName = "capacity";
+          argument_name = "capacity";
           break;
 
         case ExceptionArgument.loader:
-          argumentName = "loader";
+          argument_name = "loader";
+          break;
+
+        case ExceptionArgument.duration:
+          argument_name = "duration";
           break;
 
         default:
@@ -121,7 +125,7 @@ namespace Nohros
           return string.Empty;
       }
 
-      return argumentName;
+      return argument_name;
     }
 
     /// <summary>
@@ -258,7 +262,8 @@ namespace Nohros
     collection,
     any,
     capacity,
-    loader
+    loader,
+    duration
   }
 
   /// <summary>
