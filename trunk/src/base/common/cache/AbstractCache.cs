@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Nohros.Concurrent;
 using Nohros.Resources;
 using Nohros.Caching.Providers;
 
@@ -19,10 +19,17 @@ namespace Nohros.Caching
     protected readonly long expire_after_write_nanos_;
 
     /// <summary>
-    /// Hoe long after the last write to an entry in the cache will retain
+    /// How long after the last write to an entry in the cache will retain
     /// that entry.
     /// </summary>
     protected readonly long expire_after_access_nanos_;
+
+    /// <summary>
+    /// How long after the last write an entry becomes a candidate for refresh.
+    /// </summary>
+    protected readonly long refresh_nanos_;
+
+    readonly object mutex_;
 
     readonly ICacheProvider cache_provider_;
 
@@ -47,6 +54,8 @@ namespace Nohros.Caching
       cache_guid_ = Guid.NewGuid().ToString("N");
       expire_after_access_nanos_ = builder.ExpiryAfterAccessNanos;
       expire_after_write_nanos_ = builder.ExpiryAfterWriteNanos;
+      refresh_nanos_ = builder.RefreshNanos;
+      mutex_ = new object();
     }
     #endregion
 
@@ -93,14 +102,15 @@ namespace Nohros.Caching
       }
 
       string cache_key = CacheKey(key);
-      CacheEntry<T> entry;
-
       try {
-        // the cache provider should provide the thread safeness behavior.
+        T value;
+        CacheEntry<T> entry;
+
+        // the cache provider should provide the thread safeness behavior for
+        // the reading operation.
         bool ok = cache_provider_.Get(cache_key, out entry);
         if (!ok) {
           long now = Clock.NanoTime;
-          T value;
           if (GetLiveValue(entry, now, out value)) {
             RecordRead(entry, now);
             return ScheduleRefresh(entry, key, value, now, loader);
@@ -111,9 +121,71 @@ namespace Nohros.Caching
           }
         }
 
-        // at this point entry does not exists or is expired.
+        // at this point entry does not exists or is expired, so lets load
+        // the value.
+        if(!LockedGetOrLoad(key, loader, out value)) {
+        }
+        return value;
       } catch {
         // TODO: We should log this.
+      }
+    }
+
+    bool LockedGetOrLoad(string key, CacheLoader<T> loader, out T value) {
+      CacheEntry<T> entry;
+      IValueReference<T> value_reference = null;
+      LoadingValueReference<T> loading_value_reference = null;
+      bool create_new_entry = true;
+
+      lock(mutex_) {
+        // re-read the time once inside the lock
+        long now = Clock.NanoTime;
+        if (cache_provider_.Get(key, out entry)) {
+          value_reference = entry.ValueReference;
+          if(value_reference.IsLoading) {
+            create_new_entry = false;
+          } else {
+            value = value_reference.Value;
+            if(IsExpired(entry, now)) {
+              // TODO: Notificate the caller about the expiration(Reason: EXPIRED)
+            } else {
+              RecordLockedRead(entry, now);
+              return value;
+            }
+
+            // TODO: update the cache count.
+          }
+        }
+
+        // at this point an entry was not found or it is expired.
+        if(create_new_entry) {
+          loading_value_reference = new LoadingValueReference<T>();
+          if(entry == null) {
+            entry = new CacheEntry<T>(key);
+            entry.ValueReference = loading_value_reference;
+            cache_provider_.Set(key, entry);
+          } else {
+            // entry exists but is expired, lets update it with a new
+            // loadng value.
+            entry.ValueReference = loading_value_reference;
+          }
+        }
+      }
+
+      // at this point an entry associated with the specified key exists
+      // in cache, but it is loading the value.
+      if(create_new_entry) {
+        try {
+          value = LoadSync(key, loading_value_reference, loader);
+          return true;
+        } finally {
+          // TODO: Add stats
+        }
+      } else {
+        // the entry already exists and the loading process is already
+        // started. Waiting for loading.
+        value = WaitForLoadingValue(entry, key, value_reference);
+        return true;
       }
     }
 
@@ -147,6 +219,19 @@ namespace Nohros.Caching
       }
     }
 
+    /// <summary>
+    /// Schedule a refresh for an entry.
+    /// </summary>
+    /// <param name="entry">The entry to be refreshed.</param>
+    /// <param name="key">The key associated with the entry to be refreshed.
+    /// </param>
+    /// <param name="old_value">The old value of the entry.</param>
+    /// <param name="now">The current time, it is used to check if the
+    /// entry needs a refresh.</param>
+    /// <param name="loader">A <see cref="CacheLoader{T}"/> object that is
+    /// used to load the new value fro the entry.</param>
+    /// <returns>The refreshed value if a refresh was performed; otherwise,
+    /// the old value.</returns>
     T ScheduleRefresh(CacheEntry<T> entry, string key, T old_value, long now, CacheLoader<T> loader) {
       if(Refreshes && (now - entry.WriteTime > refresh_nanos_)) {
         T new_value;
@@ -174,6 +259,22 @@ namespace Nohros.Caching
     bool Refresh(string key, CacheLoader<T> loader , out T value) {
       LoadingValueReference<T> loading_value_reference =
         InsertLoadingValueReference(key);
+      if(loading_value_reference == null) {
+        value = default(T);
+        return false;
+      }
+
+      IFuture<T> result = LoadAsync(key, loading_value_reference, loader);
+      if(result.IsDone) {
+        try {
+          result.Get(out value);
+          return true;
+        } catch(Exception e) {
+          // don't let refresh exceptions propagate; error was already logged.
+        }
+      }
+      value = default(T);
+      return false;
     }
 
     /// <summary>
@@ -182,8 +283,37 @@ namespace Nohros.Caching
     /// </summary>
     /// <param name="key">The key that will be associated with the newly
     /// created <see cref="LoadingValueReference{T}"/>.</param>
-    /// <returns></returns>
+    /// <returns>The newly inserted <see cref="LoadingValueReference{T}"/>, or
+    /// null if the live value reference is already loading.</returns>
     LoadingValueReference<T> InsertLoadingValueReference(string key) {
+      lock(mutex_) {
+        long now = Clock.NanoTime;
+
+        LoadingValueReference<T> loading_value_reference;
+
+        // look for an existing entry
+        CacheEntry<T> entry;
+        if(cache_provider_.Get(key, out entry)) {
+          IValueReference<T> value_reference = entry.ValueReference;
+          if(value_reference.IsLoading) {
+            // refresh is a no-op if loading is pending.
+            return null;
+          }
+
+          // continue returning old value while loading
+          loading_value_reference = new LoadingValueReference<T>(value_reference);
+          entry.ValueReference = loading_value_reference;
+          return loading_value_reference;
+        }
+
+        loading_value_reference = new LoadingValueReference<T>();
+        entry = new CacheEntry<T>(key);
+        entry.ValueReference = loading_value_reference;
+
+        // send the entry to the cache provider.
+        cache_provider_.Set(key, entry);
+        return loading_value_reference;
+      }
     }
 
     T WaitForLoadingValue(CacheEntry<T> entry, string key, IValueReference<T> value_reference) {
@@ -196,6 +326,20 @@ namespace Nohros.Caching
       } catch {
         // TODO: We should log it.
         throw;
+      }
+    }
+
+    // at most one of LoadSync/LoadAsync may be called for any given
+    // LoadingValueReference.
+
+    T LoadSync(string key, IValueReference<T> loading_value_reference, CacheLoader<T> loader) {
+      IFuture<T> loading_future = loading_value_reference.LoadFuture(key, loader);
+      // TODO: record stats.
+
+      T value;
+      try {
+        // gets the future value uninterruptibly
+        value = loading_future.Get();
       }
     }
 
