@@ -32,7 +32,7 @@ namespace Nohros.Logging
 
     const string kFileName = "nohros-logger.log";
 
-    static ILogger current_process_logger_;
+    readonly static ILogger current_process_logger_;
 
     #region .ctor
     /// <summary>

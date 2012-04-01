@@ -23,7 +23,7 @@ namespace Nohros.Logging
   /// </remarks>
   public sealed class ConsoleLogger
   {
-    static ILogger current_process_logger_;
+    readonly static ILogger current_process_logger_;
 
     #region .ctor
     /// <summary>

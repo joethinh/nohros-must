@@ -54,6 +54,7 @@
     <Compile Include="concurrent\MailboxTests.cs" />
     <Compile Include="concurrent\YQueueTests.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgramTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="security\auth\PrincipalTest.cs" />
     <Compile Include="security\auth\sets\PermissionSetTest.cs" />

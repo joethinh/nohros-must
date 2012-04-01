@@ -120,6 +120,18 @@ namespace Nohros
           argument_name = "duration";
           break;
 
+        case ExceptionArgument.state:
+          argument_name = "state";
+          break;
+
+        case ExceptionArgument.runnable:
+          argument_name = "runnable";
+          break;
+
+        case ExceptionArgument.executor:
+          argument_name = "executor";
+          break;
+
         default:
           Debug.Assert(false, "The enum value is not defined, please checked ExceptionArgumentName Enum");
           return string.Empty;
@@ -263,7 +275,10 @@ namespace Nohros
     any,
     capacity,
     loader,
-    duration
+    duration,
+    state,
+    runnable,
+    executor
   }
 
   /// <summary>

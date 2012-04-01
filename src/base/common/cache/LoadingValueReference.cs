@@ -13,7 +13,7 @@ namespace Nohros.Caching
   /// </typeparam>
   internal class LoadingValueReference<T> : IValueReference<T>
   {
-    readonly volatile IValueReference<T> old_value_;
+    readonly IValueReference<T> old_value_;
 
     #region .ctor
     /// <summary>

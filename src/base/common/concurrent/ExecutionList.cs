@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Nohros.Logging;
 
 namespace Nohros.Concurrent
 {
@@ -23,21 +24,148 @@ namespace Nohros.Concurrent
   /// manually enumerate through the list of subscribers and call them
   /// individually. This class may be used to avoid doing it manually.</para>
   /// <para>
-  /// We just log the exceptions that are throwed by the subscribers.
-  /// TODO: Add more description about the logger mechanism that is used.
+  /// We just log the exceptions that are throwed by the subscribers. The
+  /// <see cref="MustLogger"/> is used to log the exceptions, by default this
+  /// logger logs to nothing, clients should configure the logger that they
+  /// want to use.
   /// </para>
   /// </remarks>
-  public class ExecutionList
+  public class ExecutionList<T> where T : EventArgs
   {
+    #region SerialExecutorDelegatePair
+    class SerialExecutorDelegatePair
+    {
+      readonly IExecutor<T> executor_;
+      readonly SerialExecutorState<T> state_;
+
+      #region .ctor
+      public SerialExecutorDelegatePair(SerialExecutorState<T> state,
+        IExecutor<T> executor) {
+        state_ = state;
+        executor_ = executor;
+      }
+      #endregion
+
+      public void Execute() {
+        try {
+          executor_.Execute(state_.Runnable, state_.State);
+        } catch (Exception e) {
+          // Log it nad keep going. Don't punish the other delegates
+          // if we're given a bad one.
+          ILogger logger = MustLogger.ForCurrentProcess;
+          if (logger.IsErrorEnabled) {
+            logger.Error("Exception while executing delegate "
+              + state_.Runnable.ToString() + " with executor "
+                + executor_.ToString(), e);
+          }
+        }
+      }
+    }
+    #endregion
+
+    readonly Queue<SerialExecutorDelegatePair> runnables_;
     bool executed_;
-    MulticastDelegate multicast_delegate_;
+
+    #region .ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExecutionList{T}"/>.
+    /// </summary>
+    public ExecutionList() {
+      runnables_ = new Queue<SerialExecutorDelegatePair>();
+    }
+    #endregion
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExecutionList"/> using the
-    /// specified <see cref="MulticastDelegate"/>.
+    /// Adds the <see cref="EventHandler{TEventArgs}"/> to the list of
+    /// listeners to execute. If execution has already begun, the listener is
+    /// executed immediately.
     /// </summary>
-    public ExecutionList(MulticastDelegate multicast_delegate) {
-      multicast_delegate_ = multicast_delegate;
+    /// <param name="runnable"></param>
+    /// <param name="executor"></param>
+    /// <exception cref="runnable"> or <paramref name="executor"/> are
+    /// <c>null</c>.</exception>
+    public void Add(ExecutorDelegate<T> runnable, IExecutor<T> executor) {
+      Add(runnable, executor, ExecutorState<T>.no_state_executor_state);
+    }
+
+    /// <summary>
+    /// Adds the <see cref="EventHandler{TEventArgs}"/> to the list of
+    /// listeners to execute. If execution has already begun, the listener is
+    /// executed immediately.
+    /// </summary>
+    /// <param name="runnable"></param>
+    /// <param name="executor"></param>
+    /// <param name="state"></param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="runnable"/>, <paramref name="executor"/> or
+    /// <paramref name="state"/> are <c>null</c>.
+    /// </exception>
+    public void Add(ExecutorDelegate<T> runnable, IExecutor<T> executor,
+      ExecutorState<T> state) {
+      if (state == null || runnable == null || executor == null) {
+        Thrower.ThrowArgumentNullException(
+          (state == null)
+            ? ExceptionArgument.state
+            : (runnable == null)
+              ? ExceptionArgument.runnable
+              : ExceptionArgument.executor);
+      }
+
+      bool execute_immediate = false;
+
+      // Lock while we check state. We must maitain the lock while adding the
+      // new pair so that another thread can't run the list out from under us.
+      // We only add to the list if we have not yet started execution.
+      lock (runnables_) {
+        if (!executed_) {
+          SerialExecutorState<T> serial_state =
+            new SerialExecutorState<T>(runnable, state);
+
+          SerialExecutorDelegatePair pair =
+            new SerialExecutorDelegatePair(serial_state, executor);
+
+          runnables_.Enqueue(pair);
+        } else {
+          execute_immediate = true;
+        }
+      }
+
+      // Execute the runnable immediately. Because of scheduling this may end
+      // up getting called before some of the previously added runnables, but
+      // we're OK with that. If we want to change the contract to guarantee
+      // ordering among runnables we'd have to modify the logic here to allow
+      // it.
+      if (execute_immediate) {
+        new SerialExecutorDelegatePair(
+          new SerialExecutorState<T>(runnable, state), executor
+          ).Execute();
+      }
+    }
+
+    /// <summary>
+    /// Runs this execution list, executing all existing pairs in the order
+    /// they were added.
+    /// </summary>
+    /// <remarks>
+    /// Note that listeners added after this point may be executed before
+    /// those previously added, and note that execution order of all listener
+    ///  is ultimately chosen by the implementations of the supplied executors.
+    /// </remarks>
+    public void Execute() {
+      // lock while we update our state so the add method above will finish
+      // adding listeners before we start to run them.
+      lock (runnables_) {
+        if (executed_) {
+          return;
+        }
+        executed_ = true;
+      }
+
+      // at this point the "runnables_" will never be modified by another
+      // thread, so we are safe using it outside of the lock block.
+      while (runnables_.Count > 0) {
+        runnables_.Dequeue().Execute();
+      }
     }
   }
 }
