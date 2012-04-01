@@ -26,7 +26,7 @@ namespace Nohros.Logging
     const string kLogMessagePattern =
       "[%-5level %date] %message%newline%exception";
 
-    static ILogger current_process_logger_;
+    readonly static ILogger current_process_logger_;
 
     #region .ctor
     /// <summary>

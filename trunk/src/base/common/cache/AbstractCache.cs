@@ -332,7 +332,7 @@ namespace Nohros.Caching
     // at most one of LoadSync/LoadAsync may be called for any given
     // LoadingValueReference.
 
-    T LoadSync(string key, IValueReference<T> loading_value_reference, CacheLoader<T> loader) {
+    T LoadSync(string key, LoadingValueReference<T> loading_value_reference, CacheLoader<T> loader) {
       IFuture<T> loading_future = loading_value_reference.LoadFuture(key, loader);
       // TODO: record stats.
 
