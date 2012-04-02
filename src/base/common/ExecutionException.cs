@@ -41,6 +41,16 @@ namespace Nohros
     /// <see cref="ExecutionException"/>to be throw.</param>
     public ExecutionException(string message, Exception inner_exception)
       : base(message, inner_exception) { }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="ExecutionException"/> class
+    /// using the specified inner exception.
+    /// </summary>
+    /// <param name="inner_exception">A <see cref="Exception"/> that causes
+    /// this exception to be raised.</param>
+    public ExecutionException(Exception inner_exception)
+      : base(string.Empty, inner_exception) { }
+
     #endregion
   }
 }

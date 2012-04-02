@@ -15,8 +15,10 @@ namespace Nohros.Caching
   /// <para>Implementations of this interface are expected to the
   /// thread-safe, and can be safely accessed by multiple concurrent threads.
   /// </para>
+  /// <typeparam name="T">The type of the object that will be stored in cache.
+  /// Only reference types are allowed, since </typeparam>
   /// </remarks>
-  public interface ICache<T>
+  public interface ICache<T> where T: class
   {
     /// <summary>
     /// Gets the value associated with the given key, creating or retrieving
