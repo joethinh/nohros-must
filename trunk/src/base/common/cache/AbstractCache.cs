@@ -1,5 +1,6 @@
 ﻿using System;
 using Nohros.Concurrent;
+using Nohros.Logging;
 using Nohros.Resources;
 using Nohros.Caching.Providers;
 
@@ -11,7 +12,9 @@ namespace Nohros.Caching
   /// implement this interface.
   /// </summary>
   internal abstract partial class AbstractCache<T> : ICache<T>
-  {   
+  {
+    private const string kTypeForLogger = "[Nohros.Caching.AbstractCache.";
+
     /// <summary>
     /// How long after the last access to an entry in the cache will retain
     /// that entry
@@ -91,7 +94,7 @@ namespace Nohros.Caching
     /// No state associated with this cache is modified until loading is
     /// complete.
     /// </remarks>
-    /// <exception cref="TypeLoadException">A failure occur while loading
+    /// <exception cref="ExecutionException">A failure occur while loading
     /// the item using the specified loader delegate.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="key"/> or
     /// <paramref name="loader"/> are <c>null</c>.</exception>
@@ -124,10 +127,12 @@ namespace Nohros.Caching
         // at this point entry does not exists or is expired, so lets load
         // the value.
         if(!LockedGetOrLoad(key, loader, out value)) {
+          // TODO(neylor.silva): continue from here.
         }
         return value;
-      } catch {
-        // TODO: We should log this.
+      } catch(Exception e) {
+        MustLogger.ForCurrentProcess.Error(kTypeForLogger + "Get]", e);
+        throw new ExecutionException(e);
       }
     }
 
@@ -147,13 +152,15 @@ namespace Nohros.Caching
           } else {
             value = value_reference.Value;
             if(IsExpired(entry, now)) {
-              // TODO: Notificate the caller about the expiration(Reason: EXPIRED)
+              // TODO(neylor.silva) Notificate the caller about the
+              // expiration(Reason: EXPIRED).
             } else {
               RecordLockedRead(entry, now);
+              // TODO(neylor.sila): Record hits stats.
               return value;
             }
 
-            // TODO: update the cache count.
+            // TODO(neylor.silva): update the cache count(size).
           }
         }
 
@@ -166,24 +173,25 @@ namespace Nohros.Caching
             cache_provider_.Set(key, entry);
           } else {
             // entry exists but is expired, lets update it with a new
-            // loadng value.
+            // loading value.
             entry.ValueReference = loading_value_reference;
           }
         }
       }
 
       // at this point an entry associated with the specified key exists
-      // in cache, but it is loading the value.
+      // in cache, but it is a loading the value.
       if(create_new_entry) {
         try {
+          // TODO (neylor.silva): Add a mechanism to detect recursive loads.
           value = LoadSync(key, loading_value_reference, loader);
           return true;
         } finally {
-          // TODO: Add stats
+          // TODO (neylor.silva): Record the misses stats.
         }
       } else {
         // the entry already exists and the loading process is already
-        // started. Waiting for loading.
+        // started. Wait for loading.
         value = WaitForLoadingValue(entry, key, value_reference);
         return true;
       }
@@ -338,8 +346,12 @@ namespace Nohros.Caching
 
       T value;
       try {
-        // gets the future value uninterruptibly
+        // TODO(neylor.silva) gets the future value uninterruptibly, makes
+        // sense on c#.
         value = loading_future.Get();
+      } finally {
+        // TODO(neylor.silva):
+        RemoveLoadingValue(key, loading_value_reference);
       }
     }
 
