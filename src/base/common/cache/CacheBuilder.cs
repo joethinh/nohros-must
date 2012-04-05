@@ -13,12 +13,18 @@ namespace Nohros.Caching
     long expiry_after_access_nanos_;
     long expiry_after_write_nanos_;
     long refresh_nanos_;
+    StrengthType value_strench_;
 
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="CacheBuilder{T}"/> using.
     /// </summary>
-    public CacheBuilder() { }
+    public CacheBuilder() {
+      expiry_after_access_nanos_ = 0;
+      expiry_after_write_nanos_ = 0;
+      refresh_nanos_ = 0;
+      value_strench_ = StrengthType.Strong;
+    }
     #endregion
 
     /// <summary>
@@ -112,6 +118,23 @@ namespace Nohros.Caching
     /// </summary>
     public long ExpiryAfterAccessNanos {
       get { return expiry_after_access_nanos_; }
+    }
+
+    /// <summary>
+    /// Specifies that each value (not keys) stored in the cache should be
+    /// strongly referenced.
+    /// </summary>
+    public CacheBuilder<T> StrongValues() {
+      return SetValueStrench(StrengthType.Strong);
+    }
+
+    CacheBuilder<T> SetValueStrench(StrengthType strength_type) {
+      value_strench_ = strength_type;
+      return this;
+    }
+
+    internal StrengthType ValueStrength {
+      get { return value_strench_; }
     }
 
     /// <summary>

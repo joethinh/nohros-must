@@ -13,17 +13,17 @@ namespace Nohros.Caching
   /// </typeparam>
   internal class LocalManualCache<T> : ICache<T>
   {
-    readonly Cache<T> cache_;
+    readonly ICache<T> cache_;
 
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="LocalManualCache{T}"/> by
     /// using the specified cache provider.
     /// </summary>
-    /// <param name="cache">A <see cref="ICacheProvider"/> object that is
-    /// used to store the cached items.</param>
-    public LocalManualCache(ICacheProvider cache) {
-      cache_ = new Cache<T>(cache);
+    /// <param name="cache">A <see cref="ICache"/> object that is used to
+    /// store the cached items.</param>
+    public LocalManualCache(ICache<T> cache) {
+      cache_ = cache;
     }
     #endregion
 
@@ -34,7 +34,7 @@ namespace Nohros.Caching
 
     /// <inheritdoc/>
     public T GetIfPresent(string key) {
-      return cache_.Get(key);
+      return cache_.GetIfPresent(key);
     }
 
     /// <inheritdoc/>
@@ -45,6 +45,11 @@ namespace Nohros.Caching
     /// <inheritdoc/>
     public void Remove(string key) {
       cache_.Remove(key);
+    }
+
+    /// <inheritdoc/>
+    public long Size {
+      get { return cache_.Size; }
     }
   }
 }

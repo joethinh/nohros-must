@@ -26,7 +26,7 @@ namespace Nohros.Caching
     /// </para>
     /// </para>
     /// </remarks>
-    class CacheEntry<T>
+    internal class CacheEntry<T>
     {
       readonly string key_;
       volatile IValueReference<T> value_reference_;
@@ -45,7 +45,7 @@ namespace Nohros.Caching
         long now = TimeUnitHelper.ToNanos(0, TimeUnit.Miliseconds);
         access_time_ = new AtomicLong(now);
         write_time_ = new AtomicLong(now);
-        value_reference_ = (IValueReference<T>) UnsetValueReference.UNSET;
+        value_reference_ = (IValueReference<T>) UnsetValueReference<T>.UNSET;
       }
       #endregion
 

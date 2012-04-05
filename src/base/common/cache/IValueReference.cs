@@ -12,7 +12,7 @@ namespace Nohros.Caching
   internal interface IValueReference<out T>
   {
     /// <summary>
-    /// Gets the value
+    /// Gets the referenced value.
     /// </summary>
     /// <remarks>This property should not block ot throw exceptions.</remarks>
     T Value { get; }
@@ -33,5 +33,16 @@ namespace Nohros.Caching
     /// <see cref="IValueReference{T}"/> instance.
     /// </summary>
     bool IsLoading { get; }
+
+    /// <summary>
+    /// Gets a value indicating if this reference contains an active value.
+    /// </summary>
+    /// <remarks>
+    /// An active value is the one that is still considered present in the
+    /// cache. Active values consist of live values, which are returned by
+    /// cache lookups. Non-active values consist strictly of loading values,
+    /// though during refresh a value may be both active and loading.
+    /// </remarks>
+    bool IsActive { get; }
   }
 }
