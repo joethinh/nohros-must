@@ -45,6 +45,7 @@ namespace Nohros.logging
     delegate void LogWithExceptionDelegate(string message, ILogger logger, Exception exeption);
 
     readonly LoggerList logger_chain_;
+    readonly ILogger main_logger_;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ChainedLogger"/> class
@@ -60,6 +61,7 @@ namespace Nohros.logging
     /// </remarks>
     public ChainedLogger(ILogger logger) {
       logger_chain_ = new LoggerList(logger);
+      main_logger_ = logger;
     }
 
     #region IsEnabled
@@ -67,42 +69,42 @@ namespace Nohros.logging
     /// <inherit />
     public bool IsDebugEnabled {
       get {
-        return internal_logger_.IsDebugEnabled;
+        return main_logger_.IsDebugEnabled;
       }
     }
 
     /// <inherit />
     public bool IsErrorEnabled {
       get {
-        return internal_logger_.IsErrorEnabled;
+        return main_logger_.IsErrorEnabled;
       }
     }
 
     /// <inherit />
     public bool IsFatalEnabled {
       get {
-        return internal_logger_.IsFatalEnabled;
+        return main_logger_.IsFatalEnabled;
       }
     }
 
     /// <inherit />
     public bool IsInfoEnabled {
       get {
-        return internal_logger_.IsInfoEnabled;
+        return main_logger_.IsInfoEnabled;
       }
     }
 
     /// <inherit />
     public bool IsWarnEnabled {
       get {
-        return internal_logger_.IsWarnEnabled;
+        return main_logger_.IsWarnEnabled;
       }
     }
 
     /// <inherit />
     public bool IsTraceEnabled {
       get {
-        return internal_logger_.IsTraceEnabled;
+        return main_logger_.IsTraceEnabled;
       }
     }
 

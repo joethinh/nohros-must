@@ -33,9 +33,10 @@ namespace Nohros.Concurrent
   /// <see cref="Get(long, TimeUnit, out T)"/> or <see cref="Get(out T)"/> when
   /// the computation has completed, blocking if necessary until is ready.
   /// Results can also be retrieved through the use of callbacks.
-  /// <see cref="IFuture{T}"/> allows you to register callbacks to be executed
-  /// once the computation is complete, or if the computation is already
-  /// complete, immediately.
+  /// <see cref="IFuture{T}"/> allows you to register callbacks to be
+  /// executed once the computation is complete, or if the computation is
+  /// already complete, immediately. Each callback has an associated executor,
+  /// and it is invoked using this executor.
   /// <para>
   /// Cancellation is performed by the <see cref="Cancel"/> method. Additional
   /// methods are provided to determine if the task completed normally or was
@@ -44,6 +45,9 @@ namespace Nohros.Concurrent
   /// sake or cancellability but not provide a usable result, you can declare
   /// types for <see cref="IFuture{T}"/> and return <c>null</c> as a
   /// result of the underlying task.
+  /// </para>
+  /// <para>
+  /// 
   /// </para>
   /// </remarks>
   /// <typeparamref name="T"/> The result type returned by this future's
@@ -84,30 +88,47 @@ namespace Nohros.Concurrent
     bool IsCancelled { get; }
 
     /// <summary>
-    /// Gets <c>true</c> if this task completed.
-    /// </summary>
-    /// <remarks>
-    /// Completion may be due to normal termination, an exception, or
-    /// cancellation -- in all these cases, this method will return <c>true.
-    /// </c>
-    /// </remarks>
-    /// <value><c>true</c> if this task completed.</value>
-    bool IsDone { get; }
-
-    /// <summary>
     /// Waits if nescessary for the computation to complete and then retrieves
     /// its result.
     /// </summary>
-    /// <param name="result">The completed result, or the default value for
-    /// <typeparamref name="T"/> if the computation was canceled.</param>
-    /// <returns><c>false</c> if the computation was canceled; otherwise,
-    /// <c>true</c>.
+    /// <returns>
+    /// The computed result.
     /// </returns>
-    /// <exception cref="ThreadInterruptedException">If the current thread
-    /// was interrupted while waiting.</exception>
-    /// <exception cref="ExecutionException"> if the computation threw
-    /// an exception.</exception>
-    bool Get(out T result);
+    /// <exception cref="ThreadInterruptedException">
+    /// If the current thread was interrupted while waiting.
+    /// </exception>
+    /// <exception cref="ExecutionException">
+    /// If the computation threw an exception.
+    /// </exception>
+    /// <exception cref="OperationCanceledException">
+    /// If the current thread was interrupted while waiting.
+    /// </exception>
+    T Get();
+
+    /// <summary>
+    /// Waits if necessary for at most the given time for the computation to
+    /// complete, and then retrieves its result, if available.
+    /// </summary>
+    /// <param name="timeout">
+    /// The maximum time to wait.
+    /// </param>
+    /// <param name="unit">
+    /// The time unit of the timeout argument.
+    /// </param>
+    /// <returns>
+    /// The result of the computation.
+    /// </returns>
+    /// <exception cref="ThreadInterruptedException">
+    /// If the current thread was interrupted while waiting.</exception>
+    /// <exception cref="ExecutionException">
+    /// If the computation threw an exception.</exception>
+    /// <exception cref="TimeoutException">
+    /// If the timer expires.
+    /// </exception>
+    /// <exception cref="OperationCanceledException">
+    /// If the current thread was interrupted while waiting.
+    /// </exception>
+    T Get(long timeout, TimeUnit unit);
 
     /// <summary>
     /// Waits if necessary for at most the given time for the computation to
@@ -116,15 +137,21 @@ namespace Nohros.Concurrent
     /// <param name="timeout">The maximum time to wait</param>
     /// <param name="unit">The time unit of the timeout argument.</param>
     /// <param name="result">The result of the computation, or the default
-    /// value for <typeparamref name="T"/> if the wait timed out, or if the
-    /// computation was canceled.</param>
-    /// <returns><c>false</c> if the computation was canceled; otherwise,
-    /// <c>true</c>. computed result.</returns>
-    /// <exception cref="ThreadInterruptedException">If the current thread
-    /// was interrupted while waiting.</exception>
-    /// <exception cref="ExecutionException"> if the computation threw
-    /// an exception.</exception>
-    bool Get(long timeout, TimeUnit unit, out T result);
+    /// value for <typeparamref name="T"/> if the wait timed out.</param>
+    /// <returns>
+    /// <c>false</c> if the timer expires, <c>true</c> if the
+    /// computation has completed succesfully.
+    /// </returns>
+    /// <exception cref="ThreadInterruptedException">
+    /// If the current thread was interrupted while waiting.
+    /// </exception>
+    /// <exception cref="ExecutionException">
+    /// if the computation threw an exception.
+    /// </exception>
+    /// <exception cref="OperationCanceledException">
+    /// If the current thread was interrupted while waiting.
+    /// </exception>
+    bool TryGet(long timeout, TimeUnit unit, out T result);
 
     /// <summary>
     /// Register a listener to be executed on the given executor.
@@ -148,42 +175,10 @@ namespace Nohros.Concurrent
     /// <para>
     /// Exceptions thrown by a listener will be propagated up to the executor.
     /// Any exception thrown during
-    /// <see cref="IExecutor{T}.Execute(ExecutorDelegate{T})"/> will be caught
+    /// <see cref="IExecutor.Execute(RunnableDelegate)"/> will be caught
     /// and logged.
     /// </para>
     /// </remarks>
-    void AddListener(ExecutorDelegate<T> listener, IExecutor<T> executor);
-
-    /// <summary>
-    /// Register a listener to be executed on the given executor.
-    /// </summary>
-    /// <param name="listener">
-    /// The listener to run when computation is complete.</param>
-    /// <param name="executor">
-    /// The executor to run when the listener in.
-    /// </param>
-    /// <param name="state">
-    /// The state associated with the listener.
-    /// </param>
-    /// <exception cref="ArgumentNullException"> if the
-    /// <paramref name="listener"/> or if <paramref name="executor"/>
-    /// was null.</exception>
-    /// <remarks>
-    /// The listener will run when the <see cref="IFuture{T}"/>'s computation
-    /// is complete or, if the computation is already complete, immediately.
-    /// <para>
-    /// There is no guaranteed ordering of execution of listeners, but any
-    /// listener added through this method is guaranteed to be called once the
-    /// computation is complete.
-    /// </para>
-    /// <para>
-    /// Exceptions thrown by a listener will be propagated up to the executor.
-    /// Any exception thrown during
-    /// <see cref="IExecutor{T}.Execute(ExecutorDelegate{T})"/> will be caught
-    /// and logged.
-    /// </para>
-    /// </remarks>
-    void AddListener(ExecutorDelegate<T> listener, ExecutorState<T> state,
-      IExecutor<T> executor);
+    void AddListener(RunnableDelegate listener, IExecutor executor);
   }
 }

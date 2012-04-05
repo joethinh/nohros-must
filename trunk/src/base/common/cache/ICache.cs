@@ -10,15 +10,17 @@ namespace Nohros.Caching
   /// <remarks>
   /// Cache entries are manually added using
   /// <see cref="Get(string, CacheLoader{T}"/> or
-  /// <see cref="Add(string, T)"/> and are stored in the cache
-  /// until either evicted or manually invalidated.
-  /// <para>Implementations of this interface are expected to the
-  /// thread-safe, and can be safely accessed by multiple concurrent threads.
+  /// <see cref="Add(string, T)"/> and are stored in the cache until either
+  /// evicted or manually invalidated.
+  /// <para>
+  /// Implementations of this interface are expected to the thread-safe, and
+  /// can be safely accessed by multiple concurrent threads.
   /// </para>
-  /// <typeparam name="T">The type of the object that will be stored in cache.
-  /// Only reference types are allowed, since </typeparam>
+  /// <typeparam name="T">
+  /// The type of the object that will be stored in cache.
+  /// </typeparam>
   /// </remarks>
-  public interface ICache<T> where T: class
+  public interface ICache<T>
   {
     /// <summary>
     /// Gets the value associated with the given key, creating or retrieving

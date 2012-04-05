@@ -45,7 +45,7 @@ namespace Nohros.Logging
       // previously instantiated logger.
       MustLogger logger = new MustLogger(internal_logger);
 
-      current_process_logger_ = logger as IMustLogger;
+      current_process_logger_ = logger as ILogger;
     }
     #endregion
 

@@ -30,32 +30,32 @@ namespace Nohros.Concurrent
   /// want to use.
   /// </para>
   /// </remarks>
-  public class ExecutionList<T> where T : EventArgs
+  public class ExecutionList
   {
     #region SerialExecutorDelegatePair
     class SerialExecutorDelegatePair
     {
-      readonly IExecutor<T> executor_;
-      readonly SerialExecutorState<T> state_;
+      readonly IExecutor executor_;
+      readonly RunnableDelegate runnable_;
 
       #region .ctor
-      public SerialExecutorDelegatePair(SerialExecutorState<T> state,
-        IExecutor<T> executor) {
-        state_ = state;
+      public SerialExecutorDelegatePair(RunnableDelegate runnable,
+        IExecutor executor) {
+        runnable_ = runnable;
         executor_ = executor;
       }
       #endregion
 
       public void Execute() {
         try {
-          executor_.Execute(state_.Runnable, state_.State);
+          executor_.Execute(runnable_);
         } catch (Exception e) {
           // Log it nad keep going. Don't punish the other delegates
           // if we're given a bad one.
           ILogger logger = MustLogger.ForCurrentProcess;
           if (logger.IsErrorEnabled) {
             logger.Error("Exception while executing delegate "
-              + state_.Runnable.ToString() + " with executor "
+              + runnable_.ToString() + " with executor "
                 + executor_.ToString(), e);
           }
         }
@@ -82,32 +82,15 @@ namespace Nohros.Concurrent
     /// </summary>
     /// <param name="runnable"></param>
     /// <param name="executor"></param>
-    /// <exception cref="runnable"> or <paramref name="executor"/> are
-    /// <c>null</c>.</exception>
-    public void Add(ExecutorDelegate<T> runnable, IExecutor<T> executor) {
-      Add(runnable, executor, ExecutorState<T>.no_state_executor_state);
-    }
-
-    /// <summary>
-    /// Adds the <see cref="EventHandler{TEventArgs}"/> to the list of
-    /// listeners to execute. If execution has already begun, the listener is
-    /// executed immediately.
-    /// </summary>
-    /// <param name="runnable"></param>
-    /// <param name="executor"></param>
-    /// <param name="state"></param>
     /// <exception cref="ArgumentNullException">
-    /// <paramref name="runnable"/>, <paramref name="executor"/> or
-    /// <paramref name="state"/> are <c>null</c>.
+    /// <paramref name="runnable"/> or <paramref name="executor"/> or are
+    /// <c>null</c>.
     /// </exception>
-    public void Add(ExecutorDelegate<T> runnable, IExecutor<T> executor,
-      ExecutorState<T> state) {
-      if (state == null || runnable == null || executor == null) {
+    public void Add(RunnableDelegate runnable, IExecutor executor) {
+      if (runnable == null || executor == null) {
         Thrower.ThrowArgumentNullException(
-          (state == null)
-            ? ExceptionArgument.state
-            : (runnable == null)
-              ? ExceptionArgument.runnable
+          (runnable == null)    
+          ? ExceptionArgument.runnable
               : ExceptionArgument.executor);
       }
 
@@ -118,11 +101,8 @@ namespace Nohros.Concurrent
       // We only add to the list if we have not yet started execution.
       lock (runnables_) {
         if (!executed_) {
-          SerialExecutorState<T> serial_state =
-            new SerialExecutorState<T>(runnable, state);
-
           SerialExecutorDelegatePair pair =
-            new SerialExecutorDelegatePair(serial_state, executor);
+            new SerialExecutorDelegatePair(runnable, executor);
 
           runnables_.Enqueue(pair);
         } else {
@@ -136,9 +116,7 @@ namespace Nohros.Concurrent
       // ordering among runnables we'd have to modify the logic here to allow
       // it.
       if (execute_immediate) {
-        new SerialExecutorDelegatePair(
-          new SerialExecutorState<T>(runnable, state), executor
-          ).Execute();
+        new SerialExecutorDelegatePair(runnable, executor).Execute();
       }
     }
 

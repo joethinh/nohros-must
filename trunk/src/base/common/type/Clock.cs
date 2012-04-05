@@ -7,8 +7,8 @@ namespace Nohros
   /// </summary>
   public abstract class Clock
   {
-    protected static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0,
-                                                            DateTimeKind.Utc);
+    protected static readonly DateTime Epoch =
+      new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
     /// <summary>
     /// Gets the current value of the most precise available system timer, in
