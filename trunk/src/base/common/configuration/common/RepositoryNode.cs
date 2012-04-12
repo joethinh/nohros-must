@@ -10,7 +10,7 @@ using Nohros.Resources;
 
 namespace Nohros.Configuration
 {
-    public class RepositoryNode : ConfigurationNode
+    public class RepositoryNode : AbstractConfigurationNode
     {
         string path_;
 
@@ -51,7 +51,7 @@ namespace Nohros.Configuration
         public void Parse(XmlNode node) {
             string relative_path = null;
             if (!GetAttributeValue(node, "relative-path", out relative_path))
-                throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, "attribute name", NohrosConfiguration.kRepositoryNodeTree + "." + name_));
+                throw new ConfigurationErrorsException(string.Format(StringResources.Config_ErrorAt, "attribute name", NohrosConfiguration.kRepositoryNodeTree + "." + name));
 
             Path = relative_path;
         }

@@ -8,7 +8,7 @@ using Nohros.Resources;
 
 namespace Nohros.Configuration
 {
-    public class ChainNode : ConfigurationNode
+    public class ChainNode : AbstractConfigurationNode
     {
         string[] nodes_;
 
@@ -33,7 +33,7 @@ namespace Nohros.Configuration
                 if (string.Compare(n.Name, "node", StringComparison.OrdinalIgnoreCase) == 0) {
                     string name = null;
                     if (!GetAttributeValue(n, "name", out name))
-                        throw new ConfigurationErrorsException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kChainNodeTree + "." + name_));
+                        throw new ConfigurationErrorsException(string.Format(StringResources.Config_MissingAt, "name", NohrosConfiguration.kChainNodeTree + "." + base.name));
                     nodes.Add(name);
                 }
             }

@@ -10,7 +10,7 @@ using Nohros.Resources;
 
 namespace Nohros.Configuration
 {
-    public class WebNode : ConfigurationNode
+    public class WebNode : AbstractConfigurationNode
     {
         #region .ctor
         /// <summary>
