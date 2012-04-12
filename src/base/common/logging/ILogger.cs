@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Logging
+namespace Nohros
 {
   /// <summary>
-  /// A simple logging interface abstracting logging APIs.
+  /// A simple logging interface for logging APIs abstraction.
   /// </summary>
   /// <remarks>
   /// <para>
