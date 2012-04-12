@@ -112,6 +112,7 @@
     <Compile Include="concurrent\Uninterruptibles.cs" />
     <Compile Include="concurrent\YQueue.cs" />
     <Compile Include="cache\CacheEntry.cs" />
+    <Compile Include="configuration\common\provider\ProviderOptions.cs" />
     <Compile Include="ExecutionException.cs" />
     <Compile Include="logging\ChainedLogger.cs" />
     <Compile Include="logging\MustLogger.cs" />
@@ -124,7 +125,7 @@
     <Compile Include="configuration\web\BuildType.cs" />
     <Compile Include="configuration\common\ChainNode.cs" />
     <Compile Include="configuration\common\CommonNode.cs" />
-    <Compile Include="configuration\ConfigurationNode.cs" />
+    <Compile Include="configuration\AbstractConfigurationNode.cs" />
     <Compile Include="configuration\common\ConnectionStringNode.cs" />
     <Compile Include="configuration\web\ContentGroupNode.cs" />
     <Compile Include="configuration\common\provider\IProviderNode.cs" />
@@ -276,7 +277,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
