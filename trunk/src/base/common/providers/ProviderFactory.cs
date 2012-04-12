@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-
+using Nohros.Logging;
 using Nohros.Resources;
 using Nohros.Configuration;
 
@@ -115,7 +115,8 @@ namespace Nohros.Providers
       try {
         return CreateProviderFactory(node, args);
       } catch(ProviderException) {
-        // TODO: Log the exception.
+        // TODO: Add meaing to the exception.
+        MustLogger.ForCurrentProcess.Error("");
       }
       return null;
     }
@@ -150,7 +151,8 @@ namespace Nohros.Providers
             BindingFlags.CreateInstance | BindingFlags.Public |
             BindingFlags.Instance | BindingFlags.NonPublic;
 
-          T new_obj = Activator.CreateInstance(type, flags, args, null) as T;
+          T new_obj =
+            Activator.CreateInstance(type, flags, null, args, null) as T;
           if (new_obj != null) {
             return new_obj;
           }
