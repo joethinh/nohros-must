@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace Nohros.Configuration
 {
-  public class ConnectionStringNode: ConfigurationNode
+  public class ConnectionStringNode: AbstractConfigurationNode
   {
     const string kDataBaseOwnerAttributeName = "database-owner";
     const string kConnectionStringAttributeName = "connection-string";

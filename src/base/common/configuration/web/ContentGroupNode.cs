@@ -10,7 +10,7 @@ using Nohros.Resources;
 
 namespace Nohros.Configuration
 {
-    public class ContentGroupNode : ConfigurationNode
+    public class ContentGroupNode : AbstractConfigurationNode
     {
         const string kFileNameAttributeName = "file-name";
         const string kNameAttributeName = "name";

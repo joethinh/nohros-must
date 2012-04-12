@@ -14,20 +14,31 @@ namespace Nohros.Configuration
   /// <summary>
   /// Serves as the base class for custom <see cref="IProviderNode"/>.
   /// </summary>
-  public abstract class ProviderNode: ConfigurationNode, IProviderNode
+  public abstract class ProviderNode: AbstractConfigurationNode, IProviderNode
   {
     const string kAssemblyLocationKey = "assembly-location";
     const string kNameAttribute = "name";
     const string kValueAttribute = "value";
     const string kOptionsNodeName = "options";
 
-    string assembly_location_;
-    IDictionary<string, string> options_;
+    /// <summary>
+    /// The path of the providers's assembly.
+    /// </summary>
+    protected string assembly_location;
 
     /// <summary>
-    /// The assembly-qualified name of the provider type.
+    /// The options configured for this provider.
     /// </summary>
-    protected string type_;
+    /// <remarks>
+    /// This should never be a <c>null</c> reference. If a provider does
+    /// not have any configured options this dictionary should be empty.
+    /// </remarks>
+    protected IDictionary<string, string> options;
+
+    /// <summary>
+    /// The provider's assembly-qualified name.
+    /// </summary>
+    protected string type;
 
     #region .ctor
     /// <summary>
@@ -37,13 +48,14 @@ namespace Nohros.Configuration
     /// <param name="name">The name of the provider.</param>
     /// <param name="type">The assembly-qualified name of the provider
     /// type.</param>
-    public ProviderNode(string name, string type)
-      : base(name) {
-      if (type == null)
+    protected ProviderNode(string name, string type): base(name) {
+      if (type == null) {
         throw new ArgumentNullException("type");
-      type_ = type;
-      options_ = null;
-      assembly_location_ = AppDomain.CurrentDomain.BaseDirectory;
+      }
+      this.type = type;
+      options = new Dictionary<string, string>();
+      assembly_location = AppDomain.CurrentDomain.BaseDirectory;
+      options = new Dictionary<string, string>();
     }
     #endregion
 
@@ -87,7 +99,7 @@ namespace Nohros.Configuration
       } else if (location == null || location.Trim().Length == 0) {
         location = base_path;
       }
-      assembly_location_ = location;
+      assembly_location = location;
 
       foreach (XmlNode n in node.ChildNodes) {
         if (string.Compare(n.Name, kOptionsNodeName,
@@ -95,14 +107,11 @@ namespace Nohros.Configuration
 
           // get the options from the attributes of
           // the first child node whose name is "options".
-          options_ = GetOptions(n);
+          options = GetOptions(n);
           break;
         }
       }
-      // If a node with name "options" is not found, set the options
-      // to a empty dictionary.
-      if (options_ == null)
-        options_ = new Dictionary<string, string>();
+
     }
 
     /// <summary>
@@ -139,8 +148,8 @@ namespace Nohros.Configuration
     /// </summary>
     /// <seealso cref="System.Type.AssemblyQualifiedName"/>
     public string Type {
-      get { return type_; }
-      internal set { type_ = value; }
+      get { return type; }
+      protected set { type = value; }
     }
 
     /// <summary>
@@ -161,14 +170,14 @@ namespace Nohros.Configuration
     /// </para>
     /// </remarks>
     public string AssemblyLocation {
-      get { return assembly_location_; }
-      set { assembly_location_ = value; }
+      get { return assembly_location; }
+      set { assembly_location = value; }
     }
 
     /// <inheritdoc/>
     public IDictionary<string, string> Options {
-      get { return options_; }
-      set { options_ = value; }
+      get { return options; }
+      set { options = value; }
     }
   }
 }

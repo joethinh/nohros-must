@@ -11,7 +11,7 @@ using Nohros.Resources;
 
 namespace Nohros.Configuration
 {
-    public class LoginModuleNode : ConfigurationNode, ILoginModuleEntry
+    public class LoginModuleNode : AbstractConfigurationNode, ILoginModuleEntry
     {
         const string kTypeAttributeName = "type";
         const string kFlagAttributeName = "flag";

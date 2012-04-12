@@ -11,7 +11,7 @@ using Nohros.Resources;
 
 namespace Nohros.Configuration
 {
-  public class CommonNode: ConfigurationNode
+  public class CommonNode: AbstractConfigurationNode
   {
     string config_file_location_;
 
