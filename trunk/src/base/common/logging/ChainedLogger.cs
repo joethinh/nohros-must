@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Nohros.Logging;
-
-namespace Nohros.logging
+namespace Nohros.Logging
 {
   /// <summary>
   /// A implementation of the <see cref="IChainedLogger"/> that uses the
