@@ -10,7 +10,7 @@ namespace Nohros.Caching
   /// <remarks>
   /// Cache entries are manually added using
   /// <see cref="Get(string, CacheLoader{T}"/> or
-  /// <see cref="Add(string, T)"/> and are stored in the cache until either
+  /// <see cref="Put"/> and are stored in the cache until either
   /// evicted or manually invalidated.
   /// <para>
   /// Implementations of this interface are expected to the thread-safe, and
@@ -28,17 +28,23 @@ namespace Nohros.Caching
     /// </summary>
     /// <param name="key">The identifier for the cache item to retrieve.
     /// </param>
-    /// <param name="loader">A <see cref="CacheLoader{T}"/> object that could
-    /// be used to create the value if it is not present in the cache.</param>
-    /// <exception cref="TypeLoadException">A failure occur while loading
-    /// the item using the specified loader delegate.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="key"/> is
-    /// <c>null</c></exception>
-    /// <remarks>No observable state associated with the cache is modified
-    /// until loading is complete. This method provides a simple substitute
-    /// for the conventional "if cached, return; otherwise create, cache and
-    /// return" pattern.
-    /// <para>Warning: <paramref name="loader"/> must not return null; it will
+    /// <param name="loader">
+    /// A <see cref="CacheLoader{T}"/> object that could be used to create the
+    /// value if it is not present in the cache.</param>
+    /// <exception cref="ExecutionException">
+    /// A failure occur while loading the item using the specified loader
+    /// delegate.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="key"/> is <c>null</c>.
+    /// </exception>
+    /// <remarks>
+    /// No observable state associated with the cache is modified until loading
+    /// is complete. This method provides a simple substitute for the
+    /// conventional "if cached, return; otherwise create, cache and return"
+    /// pattern.
+    /// <para>
+    /// Warning: <paramref name="loader"/> must not return null; it will
     /// may either return a non-null value or throw an exception.
     /// </para>
     /// </remarks>
@@ -49,13 +55,36 @@ namespace Nohros.Caching
     /// the default value of type <typeparamref name="T"/> if there is no
     /// cached value for <paramref name="key"/>.
     /// </summary>
-    /// <param name="key">The identifier for the cache item to retrieve.
+    /// <param name="key">
+    /// The identifier for the cache item to retrieve.
     /// </param>
-    /// <returns>The value associated with the <paramref name="key"/> in cache,
+    /// <returns>
+    /// The value associated with the <paramref name="key"/> in cache,
     /// or the default value of type <typeparamref name="T"/> if there is no
     /// cached value for <paramref name="key"/>
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="key"/> is <c>null</c>.
+    /// </exception>
     T GetIfPresent(string key);
+
+    /// <summary>
+    /// Gets the value associated with the <paramref name="key"/> in cache if
+    /// the given key exists in cache.
+    /// </summary>
+    /// <param name="key">
+    /// The identifier for the cache item to retrieve.
+    /// </param>
+    /// <param name="value">
+    /// When this method returns contains the value associated with the key
+    /// <paramref name="key"/> if taht key is found; otherwise, the default
+    /// value for <typeparamref name="T"/>.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the given key exists in cache and the value associated
+    /// with it is successfully retrieved, otherwise, false.
+    /// </returns>
+    bool GetIfPresent(string key, out T value);
 
     /// <summary>
     /// Associates <paramref name="value"/> with <paramref name="key"/> in this
@@ -63,19 +92,34 @@ namespace Nohros.Caching
     /// <paramref name="key"/>, the old values is replaced by
     /// <paramref name="value"/>.
     /// </summary>
-    /// <param name="key">The identifier for the cache item to retrieve.
+    /// <param name="key">
+    /// The identifier for the cache item to retrieve.
     /// </param>
-    /// <param name="value">The value to be associated with the
-    /// <paramref name="key"/> in the cache.</param>
-    void Add(string key, T value);
+    /// <param name="value">
+    /// The value to be associated with the <paramref name="key"/> in the
+    /// cache.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="key"/> or <paramref name="value"/> is <c>null</c> (
+    /// for reference exceptions).
+    /// </exception>
+    void Put(string key, T value);
 
     /// <summary>
     /// Discards any cached value for the key <paramref name="key"/>, so that
     /// future invocation of <c>Get(...)</c> will result in a cache miss and
     /// reload.
     /// </summary>
-    /// <param name="key">The identifier for the cache item to retrieve.
+    /// <param name="key">
+    /// The identifier for the cache item to retrieve.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="key"/> is <c>null</c>.
+    /// </exception>
+    /// <remarks>
+    /// If a value with the given key does not exists in cache this method
+    /// fails silently.
+    /// </remarks>
     void Remove(string key);
 
     /// <summary>
