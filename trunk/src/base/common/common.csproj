@@ -58,10 +58,6 @@
     <DocumentationFile>$(SolutionDir)..\docs\nohros.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\third_party\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -86,8 +82,11 @@
     <Compile Include="cache\ILoadingCache.cs" />
     <Compile Include="cache\InvalidCacheLoadException.cs" />
     <Compile Include="cache\LoadingValueReference.cs" />
-    <Compile Include="cache\LocalManualCache.cs" />
     <Compile Include="cache\IValueReference.cs" />
+    <Compile Include="cache\LocalLoadingCache.cs" />
+    <Compile Include="cache\LocalManualCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="cache\Strength.cs" />
     <Compile Include="cache\StrengthType.cs" />
     <Compile Include="cache\StrongValueReference.cs" />
@@ -180,18 +179,7 @@
     <Compile Include="type\IPointer.cs" />
     <Compile Include="type\collections\IVisitor.cs" />
     <Compile Include="type\Pointer.cs" />
-    <Compile Include="logging\ColoredConsoleLogger.cs" />
-    <Compile Include="logging\ConsoleFileLogger.cs" />
-    <Compile Include="logging\ConsoleLogger.cs" />
-    <Compile Include="logging\FileLogger.cs" />
-    <Compile Include="logging\ColoredConsoleFileLogger.cs" />
-    <Compile Include="logging\log4net\Log4NetColoredConsoleFileLogger.cs" />
-    <Compile Include="logging\log4net\Log4NetColoredConsoleLogger.cs" />
-    <Compile Include="logging\log4net\Log4NetConsoleFileLogger.cs" />
-    <Compile Include="logging\log4net\Log4NetConsoleLogger.cs" />
-    <Compile Include="logging\log4net\Log4NetFileLogger.cs" />
     <Compile Include="logging\ILogger.cs" />
-    <Compile Include="logging\log4net\Log4NetLogger.cs" />
     <Compile Include="logging\LogLevel.cs" />
     <Compile Include="logging\NOPLogger.cs" />
     <Compile Include="mq\IMessageMiddlewareFactoryG.cs" />
@@ -248,7 +236,6 @@
     <None Include="nohros.xsx">
       <DependentUpon>nohros.xsd</DependentUpon>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
