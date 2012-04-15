@@ -84,7 +84,7 @@ namespace Nohros.Caching
     /// <remarks>Expired entries may be counted in <see cref="ICache{T}.Size"/>,
     /// but should never be visible to read or write operations.
     /// </remarks>
-    public CacheBuilder<T> ExpireAfterAccessNanos(long duration, TimeUnit unit) {
+    public CacheBuilder<T> ExpireAfterAccess(long duration, TimeUnit unit) {
       if (duration < 0) {
         Thrower.ThrowArgumentNullException(ExceptionArgument.duration);
       }
