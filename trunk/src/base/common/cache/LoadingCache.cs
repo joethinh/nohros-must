@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Nohros.Concurrent;
 using Nohros.Caching.Providers;
 
@@ -10,32 +9,29 @@ namespace Nohros.Caching
   /// that uses the pluggable cache mechanins provided by the
   /// <see cref="ICacheProvider"/> interface.
   /// </summary>
+  /// <seealso cref="ICacheProvider"/>
   public partial class LoadingCache<T> : ILoadingCache<T>
   {
     const string kTypeForLogger = "[Nohros.Caching.AbstractCache.";
-    static readonly IExecutor same_thread_executor_thread_;
+    static readonly IExecutor same_thread_executor_thread;
+
     readonly string cache_guid_;
     readonly ICacheProvider cache_provider_;
+    readonly CacheLoader<T> default_cache_loader_;
 
-    /// <summary>
-    /// How long after the last write to an entry in the cache will retain
-    /// that entry.
-    /// </summary>
-    protected readonly long expire_after_access_nanos_;
+    // How long after the last write to an entry in the cache will retain
+    // that entry.
+    readonly long expire_after_access_nanos_;
 
-    /// <summary>
-    /// How long after the last access to an entry in the cache will retain
-    /// that entry
-    /// </summary>
-    protected readonly long expire_after_write_nanos_;
+    // How long after the last access to an entry in the cache will retain
+    // that entry.
+    readonly long expire_after_write_nanos_;
 
     // synchronization object for thread-safeness.
     readonly object mutex_;
 
-    /// <summary>
-    /// How long after the last write an entry becomes a candidate for refresh.
-    /// </summary>
-    protected readonly long refresh_nanos_;
+    // How long after the last write an entry becomes a candidate for refresh.
+    readonly long refresh_nanos_;
 
     readonly StrengthType strength_type_;
 
@@ -47,36 +43,40 @@ namespace Nohros.Caching
     // the executor used to execute refreshes.
 
     // The default cache loader to use on loading operations.
-    CacheLoader<T> default_cache_loader_;
 
     #region .ctor
-    static AbstractCache() {
-      same_thread_executor_thread_ = Executors.SameThreadExecutor();
+    /// <summary>
+    /// Initializes the static members.
+    /// </summary>
+    static LoadingCache() {
+      same_thread_executor_thread = Executors.SameThreadExecutor();
     }
     #endregion
 
     #region .ctor
-    public LoadingCache(ICacheProvider cache_provider, CacheBuilder<T> builder) {
-    }
-
-    public LoadingCache(ICacheProvider cache_provider, CacheBuilder<T> builder, CacheLoader<T> loader) {
-    }
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="AbstractCache{T}"/> class
-    /// by using the specified cache provider and item loader.
+    /// Initializes a new instance of the <see cref="LoadingCache{T}"/> class
+    /// by using the specified cache provider and builder.
     /// </summary>
-    /// <param name="cache_provider">
-    /// A <see cref="ICacheProvider"/> object that is used to store(cache) the
-    /// items.
+    /// <param name="provider">
+    /// A <see cref="ICacheProvider"/> that is used to cache object.
     /// </param>
     /// <param name="builder">
-    /// A <see cref="CacheBuilder{T}"/> object that contains run-time
-    /// configuration such as expiration polices.
+    /// A <see cref="CacheBuilder{T}"/> object that contains information about
+    /// the cache configuration.
     /// </param>
-    internal LoadingCache(ICacheProvider cache_provider,
-      CacheBuilder<T> builder, CacheLoader<T> loader) {
-      cache_provider_ = cache_provider;
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="provider"/> or <paramref name="builder"/> are
+    /// <c>null</c>.
+    /// </exception>
+    public LoadingCache(ICacheProvider provider, CacheBuilder<T> builder) {
+      if (provider == null || builder == null) {
+        Thrower.ThrowArgumentNullException(provider == null
+          ? ExceptionArgument.provider
+          : ExceptionArgument.builder);
+      }
+
+      cache_provider_ = provider;
       cache_guid_ = Guid.NewGuid().ToString("N");
       expire_after_access_nanos_ = builder.ExpiryAfterAccessNanos;
       expire_after_write_nanos_ = builder.ExpiryAfterWriteNanos;
@@ -84,11 +84,38 @@ namespace Nohros.Caching
       strength_type_ = builder.ValueStrength;
       mutex_ = new object();
       t_is_value_type_ = typeof (T).IsValueType;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LoadingCache{T}"/> using the
+    /// specified cache provider, builder and automatic loader.
+    /// </summary>
+    /// <param name="provider">
+    /// A <see cref="ICacheProvider"/> that is used to cache object.
+    /// </param>
+    /// <param name="builder">
+    /// A <see cref="CacheBuilder{T}"/> object that contains information about
+    /// the cache configuration.
+    /// </param>
+    /// <param name="loader">
+    /// An <see cref="CacheLoader{T}"/> that is used to automatically load new
+    /// items in cache when an item for a given key does not exists or is
+    /// expired.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="provider"/>, <paramref name="builder"/> or
+    /// <paramref name="loader"/> are <c>null</c>.
+    /// </exception>
+    public LoadingCache(ICacheProvider provider, CacheBuilder<T> builder,
+      CacheLoader<T> loader) : this(provider, builder) {
+      if (loader == null) {
+        Thrower.ThrowArgumentNullException(ExceptionArgument.loader);
+      }
       default_cache_loader_ = loader;
     }
     #endregion
 
-    #region ICache<T> Members
+    #region ILoadingCache<T> Members
     /// <inheritdoc/>
     public T GetIfPresent(string key) {
       T value;
@@ -127,7 +154,7 @@ namespace Nohros.Caching
           ? ExceptionArgument.key
           : ExceptionArgument.value);
       }
-      lock(mutex_) {
+      lock (mutex_) {
         long now = Clock.NanoTime;
         CacheEntry<T> entry = cache_provider_.Get<CacheEntry<T>>(key);
         if (entry != null) {
@@ -216,6 +243,12 @@ namespace Nohros.Caching
         throw new NotImplementedException();
       }
     }
+
+    /// <inheritdoc/>
+    public void Refresh(string key) {
+      T value;
+      Refresh(key, default_cache_loader_, out value);
+    }
     #endregion
 
     /// <summary>
@@ -238,10 +271,10 @@ namespace Nohros.Caching
     /// A <see cref="CacheLoader{T}"/> that could be used to load the value
     /// for the key <paramref name="key"/>.
     /// </param>
-    /// <param name="value">
-    /// When this method returns con
-    /// </param>
-    /// <returns></returns>
+    /// <returns>
+    /// A object of type <typeparamref name="T"/> that is associated with the
+    /// key <paramref name="key"/>.
+    /// </returns>
     T LockedGetOrLoad(string key, CacheLoader<T> loader) {
       CacheEntry<T> entry;
       IValueReference<T> value_reference = null;
@@ -411,12 +444,6 @@ namespace Nohros.Caching
       return old_value;
     }
 
-    /// <inheritdoc/>
-    public void Refresh(string key) {
-      T value;
-      Refresh(key, default_cache_loader_, out value);
-    }
-
     /// <summary>
     /// Refreshes the value associated with <paramref name="key"/>, unless
     /// another thread is already doing so.
@@ -552,7 +579,7 @@ namespace Nohros.Caching
           MustLogger.ForCurrentProcess.Warn("Exception thrown during refresh",
             exception);
         }
-      }, same_thread_executor_thread_);
+      }, same_thread_executor_thread);
       return loading_future;
     }
 
