@@ -12,9 +12,8 @@ namespace Nohros.Caching
     /// Creates a <see cref="IValueReference{T}"/> for the specified
     /// value according to the given strength type.
     /// </summary>
-    /// <param name="strength_type">The type of strength</param>
     public static IValueReference<T> ReferenceValue<T>(
-      AbstractCache<T>.CacheEntry<T> entry, T value,
+      LoadingCache<T>.CacheEntry<T> entry, T value,
       StrengthType strength_type) {
 
       switch(strength_type) {
