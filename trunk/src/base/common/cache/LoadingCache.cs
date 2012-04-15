@@ -170,6 +170,11 @@ namespace Nohros.Caching
       }
     }
 
+    /// <inheritdoc/>
+    public T Get(string key) {
+      return Get(key, default_cache_loader_);
+    }
+
     /// <summary>
     /// Gets the value associated with the given key, creating or retrieving
     /// that value if necessary.
