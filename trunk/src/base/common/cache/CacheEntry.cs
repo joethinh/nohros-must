@@ -2,7 +2,7 @@
 
 namespace Nohros.Caching
 {
-  internal abstract partial class AbstractCache<T>
+  public partial class LoadingCache<T>
   {
     #region CacheEntry
     /// <summary>

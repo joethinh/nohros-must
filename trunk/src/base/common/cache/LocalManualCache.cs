@@ -1,55 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
 using Nohros.Caching.Providers;
 
 namespace Nohros.Caching
 {
   /// <summary>
   /// A <see cref="ICache{T}"/> implementation that is populated manually by
-  /// calling one of the Add(...) methods overloads.
+  /// calling one of the Put(...) methods overloads.
   /// </summary>
   /// <typeparam name="T">The type of objects that the cache contains
   /// </typeparam>
-  internal class LocalManualCache<T> : ICache<T>
+  internal class LocalManualCache<T> : LoadingCache<T>
   {
-    readonly ICache<T> cache_;
-
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="LocalManualCache{T}"/> by
-    /// using the specified cache provider.
+    /// using the specified cache provider and builder.
     /// </summary>
-    /// <param name="cache">A <see cref="ICache"/> object that is used to
-    /// store the cached items.</param>
-    public LocalManualCache(ICache<T> cache) {
-      cache_ = cache;
+    /// <param name="provider">
+    /// A <see cref="ICacheProvider"/> object that is used to store the cached
+    /// items.
+    /// </param>
+    /// <param name="builder">
+    /// A <see cref="CacheBuilder{T}"/> containing the configured options for
+    /// this cache.
+    /// </param>
+    internal LocalManualCache(ICacheProvider provider, CacheBuilder<T> builder)
+      : base(provider, builder, null) {
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LocalManualCache{T}"/> by
+    /// using the specified cache provider, builder and automatic loader.
+    /// </summary>
+    /// <param name="provider">
+    /// A <see cref="ICacheProvider"/> object that is used to store the cached
+    /// items.
+    /// </param>
+    /// <param name="builder">
+    /// A <see cref="CacheBuilder{T}"/> containing the configured options for
+    /// this cache.
+    /// </param>
+    /// <param name="loader">
+    /// A <see cref="loader"/> that is used to automatically load values.
+    /// </param>
+    protected LocalManualCache(ICacheProvider provider, CacheBuilder<T> builder,
+      CacheLoader<T> loader) : base(provider, builder, loader) { }
     #endregion
-
-    /// <inheritdoc/>
-    public void Add(string key, T value) {
-      cache_.Add(key, value);
-    }
-
-    /// <inheritdoc/>
-    public T GetIfPresent(string key) {
-      return cache_.GetIfPresent(key);
-    }
-
-    /// <inheritdoc/>
-    public T Get(string key, CacheLoader<T> loader) {
-      return cache_.Get(key, loader);
-    }
-
-    /// <inheritdoc/>
-    public void Remove(string key) {
-      cache_.Remove(key);
-    }
-
-    /// <inheritdoc/>
-    public long Size {
-      get { return cache_.Size; }
-    }
   }
 }
