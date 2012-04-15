@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Nohros.Caching.Providers;
+
 namespace Nohros.Caching
 {
   /// <summary>
-  /// A builder of <see cref="ICache"/> and ILoadingCache
+  /// A builder of <see cref="ICache{T}"/> and <see cref="ILoadingCache{T}"/>.
   /// </summary>
-  /// <typeparam name="T"></typeparam>
+  /// <typeparam name="T">
+  /// The type of the objects that is stored in cache.
+  /// </typeparam>
   public sealed class CacheBuilder<T>
   {
+    internal const int kUnsetInt = -1;
+
     long expiry_after_access_nanos_;
     long expiry_after_write_nanos_;
     long refresh_nanos_;
@@ -20,12 +26,46 @@ namespace Nohros.Caching
     /// Initializes a new instance of the <see cref="CacheBuilder{T}"/> using.
     /// </summary>
     public CacheBuilder() {
-      expiry_after_access_nanos_ = 0;
-      expiry_after_write_nanos_ = 0;
-      refresh_nanos_ = 0;
+      expiry_after_access_nanos_ = kUnsetInt;
+      expiry_after_write_nanos_ = kUnsetInt;
+      refresh_nanos_ = kUnsetInt;
       value_strench_ = StrengthType.Strong;
     }
     #endregion
+
+    /// <summary>
+    /// Builds a cache, which either returns an already-loaded value for a
+    /// given key or atomically computes or retrieves it using the supplied
+    /// <see cref="CacheLoader{T}"/>.
+    /// </summary>
+    /// <param name="loader">
+    /// The cache loader used to obtain new values.
+    /// </param>
+    /// <returns>
+    /// A <see cref="ILoadingCache{T}"/> having the requested features.
+    /// </returns>
+    /// <remarks>
+    /// If another thread is currently loadind the value for the given key,
+    /// the returned cache, simply waits for that thread to finish and returns
+    /// its loaded value. Note that multiple threads can concurrently load
+    /// values for distinct keys.
+    /// <para>
+    /// This method does not alter the state of the
+    /// <see cref="CacheBuilder{T}"/> instance, so it can be invoked again to
+    /// create multiple independent caches.
+    /// </para>
+    /// </remarks>
+    public ILoadingCache<T> Build(ICacheProvider provider, CacheLoader<T> loader) {
+      return new LoadingCache<T>(provider, this, loader);
+    }
+
+    public ICache<T> Build(ICacheProvider provider) {
+      if (refresh_nanos_ == kUnsetInt) {
+        throw new InvalidOperationException(
+          "RefreshAfterWrite requires a ILoadinCache");
+      }
+      return new LocalManualCache<T>(provider, this);
+    }
 
     /// <summary>
     /// Specifies that each entry should be automatically removed from the
@@ -96,7 +136,7 @@ namespace Nohros.Caching
     /// </para>
     /// </para>
     /// </remarks>
-    public CacheBuilder<T>  RefreshAfterWrite(long duration, TimeUnit unit) {
+    public CacheBuilder<T> RefreshAfterWrite(long duration, TimeUnit unit) {
       if(duration < 0) {
         Thrower.ThrowArgumentNullException(ExceptionArgument.duration);
       }
