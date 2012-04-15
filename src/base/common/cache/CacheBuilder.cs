@@ -108,7 +108,7 @@ namespace Nohros.Caching
     /// </remarks>
     public CacheBuilder<T> ExpireAfterAccess(long duration, TimeUnit unit) {
       if (duration < 0) {
-        Thrower.ThrowArgumentNullException(ExceptionArgument.duration);
+        Thrower.ThrowArgumentOutOfRangeException(ExceptionArgument.duration);
       }
       expiry_after_access_nanos_ = TimeUnitHelper.ToNanos(duration, unit);
       return this;
@@ -133,7 +133,7 @@ namespace Nohros.Caching
     /// </remarks>
     public CacheBuilder<T> ExpireAfterWrite(long duration, TimeUnit unit) {
       if (duration < 0) {
-        Thrower.ThrowArgumentNullException(ExceptionArgument.duration);
+        Thrower.ThrowArgumentOutOfRangeException(ExceptionArgument.duration);
       }
       expiry_after_write_nanos_ = TimeUnitHelper.ToNanos(duration, unit);
       return this;
@@ -160,7 +160,7 @@ namespace Nohros.Caching
     /// </remarks>
     public CacheBuilder<T> RefreshAfterWrite(long duration, TimeUnit unit) {
       if(duration < 0) {
-        Thrower.ThrowArgumentNullException(ExceptionArgument.duration);
+        Thrower.ThrowArgumentOutOfRangeException(ExceptionArgument.duration);
       }
       refresh_nanos_ = TimeUnitHelper.ToNanos(duration, unit);
       return this;
