@@ -69,7 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cache\AbstractCache.cs" />
+    <Compile Include="cache\LoadingCache.cs" />
     <Compile Include="cache\CacheBuilder.cs" />
     <Compile Include="cache\CacheLoader.cs">
       <SubType>Code</SubType>
@@ -83,7 +83,6 @@
     <Compile Include="cache\InvalidCacheLoadException.cs" />
     <Compile Include="cache\LoadingValueReference.cs" />
     <Compile Include="cache\IValueReference.cs" />
-    <Compile Include="cache\LocalLoadingCache.cs" />
     <Compile Include="cache\LocalManualCache.cs">
       <SubType>Code</SubType>
     </Compile>
