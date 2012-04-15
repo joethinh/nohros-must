@@ -132,6 +132,10 @@ namespace Nohros
           argument_name = "executor";
           break;
 
+        case ExceptionArgument.builder:
+          argument_name = "builder";
+          break;
+
         default:
           Debug.Assert(false, "The enum value is not defined, please checked ExceptionArgumentName Enum");
           return string.Empty;
@@ -278,7 +282,8 @@ namespace Nohros
     duration,
     state,
     runnable,
-    executor
+    executor,
+    builder
   }
 
   /// <summary>
