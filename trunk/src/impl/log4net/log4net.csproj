@@ -8,8 +8,8 @@
     <ProjectGuid>{04762107-A5DE-4BBF-8CFB-DD42D913276B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>log4net</RootNamespace>
-    <AssemblyName>log4net</AssemblyName>
+    <RootNamespace>Nohros.Logging.Log4Net</RootNamespace>
+    <AssemblyName>nohros.logging.log4net</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -33,15 +33,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Log4NetColoredConsoleFileLogger.cs" />
+    <Compile Include="Log4NetColoredConsoleLogger.cs" />
+    <Compile Include="Log4NetConsoleFileLogger.cs" />
+    <Compile Include="Log4NetConsoleLogger.cs" />
+    <Compile Include="Log4NetFileLogger.cs" />
+    <Compile Include="Log4NetLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\base\common\common.csproj">
+      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
+      <Name>common %28%28base%29\common%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

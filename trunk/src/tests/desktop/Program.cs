@@ -55,7 +55,7 @@ namespace desktdd
                 for (int i = 0; i < k; i++)
                 {
                     Node node = guids[i];
-                    hash.Add(node.Name, node);
+                    hash.Put(node.Name, node);
                 }
 
                 s.Stop();
@@ -96,7 +96,7 @@ namespace desktdd
                 for (int i = 0; i < k; i++)
                 {
                     Node node = guids[i];
-                    dict.Add(node.Name, node);
+                    dict.Put(node.Name, node);
                 }
 
                 s.Stop();
