@@ -91,7 +91,7 @@ namespace Nohros.Configuration
                     try {
                         Interlocked.CompareExchange<ILoginModule>(ref module_, Activator.CreateInstance(type_) as ILoginModule, null);
                     } catch(Exception exception) {
-                        FileLogger.ForCurrentProcess.Error("[Module   Nohros.COnfiguration.LoginModuleNode]", exception);
+                        MustLogger.ForCurrentProcess.Error("[Module   Nohros.COnfiguration.LoginModuleNode]", exception);
                         module_ = null;
                     }
                 }
