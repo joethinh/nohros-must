@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 
 using Nohros.Caching.Providers;
-using Nohros.Logging;
 
 namespace Nohros.Caching
 {
@@ -45,13 +44,18 @@ namespace Nohros.Caching
 
     /// <summary>
     /// Loads a new value for key <see cref="key"/>, possibly asynchronously.
+    /// </summary>
+    /// <param name="key">
+    /// The value associated with the value to get.
+    /// </param>
+    /// <remarks>
     /// While the new value is loading the previous value(if any) will continue
     /// to be returned by <see cref="Get(string)"/> unless it is evicted. If
     /// the new value is loaded successfully it will replace the previous
     /// value in the cache; if an exception is thrown while refreshing the
     /// previous value will remain, and the exception will be logged (using
-    /// <see cref="FileLogger"/>) and swallowed.
-    /// </summary>
+    /// <see cref="MustLogger"/>) and swallowed.
+    /// </remarks>
     void Refresh(string key);
   }
 }
