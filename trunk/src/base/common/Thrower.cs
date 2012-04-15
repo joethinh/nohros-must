@@ -222,7 +222,7 @@ namespace Nohros
     /// </remarks>
     internal static void ThrowConfigurationException(string message, string source)
     {
-      FileLogger.ForCurrentProcess.Error(source + "   " + message);
+      MustLogger.ForCurrentProcess.Error(source + "   " + message);
       throw new ConfigurationErrorsException(message);
     }
 
