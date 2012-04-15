@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 using Nohros.Caching.Providers;
 
@@ -41,8 +39,12 @@ namespace Nohros.Caching
     /// <param name="loader">
     /// The cache loader used to obtain new values.
     /// </param>
+    /// <param name="provider">
+    /// An object that implements the plugabble <see cref="ICacheProvider"/>
+    /// interface and is used to cache the objects.
+    /// </param>
     /// <returns>
-    /// A <see cref="ILoadingCache{T}"/> having the requested features.
+    /// A <see cref="ILoadingCache{T}"/> object having the requested features.
     /// </returns>
     /// <remarks>
     /// If another thread is currently loadind the value for the given key,
@@ -59,6 +61,26 @@ namespace Nohros.Caching
       return new LoadingCache<T>(provider, this, loader);
     }
 
+    /// <summary>
+    /// Builds a cache which does not automatically load values when keys are
+    /// requested.
+    /// </summary>
+    /// <param name="provider">
+    /// An object that implements the plugabble <see cref="ICacheProvider"/>
+    /// interface and is used to cache the objects.
+    /// </param>
+    /// <returns>
+    /// A <see cref="ICache{T}"/> object having the requested features.
+    /// </returns>
+    /// <remarks>
+    /// Consider <see cref="Build(ICacheProvider, CacheLoader{T})"/> instead,
+    /// if it is feasible to implement a <see cref="CacheLoader{T}"/>.
+    /// <para>
+    /// This method does not alter the state of the
+    /// <see cref="CacheBuilder{T}"/> instance, so it can be invoked again to
+    /// create multiple independent caches.
+    /// </para>
+    /// </remarks>
     public ICache<T> Build(ICacheProvider provider) {
       if (refresh_nanos_ == kUnsetInt) {
         throw new InvalidOperationException(
