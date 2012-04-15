@@ -48,8 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cache\AbstractCacheMock.cs" />
-    <Compile Include="cache\AbstractCacheTests.cs" />
+    <Compile Include="cache\CacheBuilderTests.cs" />
+    <Compile Include="cache\CacheLoaders.cs" />
+    <Compile Include="cache\LoadingCacheTests.cs" />
     <Compile Include="cache\CacheProviderMock.cs" />
     <Compile Include="concurrent\AtomicLongArrayTests.cs" />
     <Compile Include="concurrent\AtomicLongTests.cs" />
