@@ -53,13 +53,14 @@ namespace Nohros.Configuration
     /// and return its values.
     /// </summary>
     /// <param name="options">
-    /// A <see cref="IDictionary{TKey,TValue}"/> to check for key existence.
+    /// A <see cref="IDictionary{TKey,TValue}"/> to search for keys.
     /// </param>
     /// <param name="keys">
     /// The options keys to check for existence.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// <paramref name="options"/> is a null reference.
+    /// <paramref name="options"/> or <paramref name="keys"/> is a null
+    /// reference.
     /// </exception>
     /// <returns>
     /// An array of string containing the values for the specified option keys.
@@ -71,12 +72,8 @@ namespace Nohros.Configuration
     /// </remarks>
     public static string[] GetIfExists(IDictionary<string, string> options,
       params string[] keys) {
-      if (options == null) {
-        throw new ArgumentNullException("options");
-      }
-
-      if (keys == null) {
-        return new string[0];
+      if (options == null || keys == null) {
+        throw new ArgumentNullException(options == null ? "options" : "keys");
       }
 
       int j = keys.Length;
@@ -87,6 +84,42 @@ namespace Nohros.Configuration
         }
       }
       return values;
+    }
+
+    /// <summary>
+    /// Checks if the specified option key exists in the options dictionary
+    /// and return its values.
+    /// </summary>
+    /// <param name="options">
+    /// A <see cref="IDictionary{TKey,TValue}"/> to search for
+    /// <paramref name="key"/>.
+    /// </param>
+    /// <param name="key">
+    /// The option key to check for existence.
+    /// </param>
+    /// <param name="def_value">
+    /// The value to be returned if the <paramref name="key"/> is not found.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="options"/> or <paramref name="key"/> is a null
+    /// reference.
+    /// </exception>
+    /// <returns>
+    /// A string containing the value for the specified option key.
+    /// </returns>
+    /// <remarks>
+    /// This method checks the existence of each specified key and if it
+    /// is not found returns <paramref name="def_value"/>.
+    /// </remarks>
+    public static string GetIfExists(IDictionary<string, string> options,
+      string key, string def_value) {
+      if (options == null || key == null) {
+        throw new ArgumentNullException(options == null ? "options" : "key");
+      }
+
+      string option;
+      bool ok = options.TryGetValue(key, out option);
+      return ok ? option : def_value;
     }
 
     /// <summary>
