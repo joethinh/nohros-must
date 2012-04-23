@@ -22,7 +22,8 @@ namespace Nohros.Concurrent
   /// <para>To avoid this problem, so that all subscribers execute
   /// regardless of the behavior of the earlier subscribers, you must
   /// manually enumerate through the list of subscribers and call them
-  /// individually. This class may be used to avoid doing it manually.</para>
+  /// individually. This class may be used to avoid doing it manually.
+  /// </para>
   /// <para>
   /// We just log the exceptions that are throwed by the subscribers. The
   /// <see cref="MustLogger"/> is used to log the exceptions, by default this
