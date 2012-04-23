@@ -364,10 +364,4 @@ namespace Nohros
     }
     #endregion
   }
-
-  /// <summary>
-  /// A collection of helper methos used to
-  /// </summary>
-  public class TypeHelper {
-  }
 }
