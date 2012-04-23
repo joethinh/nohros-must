@@ -16,14 +16,13 @@ namespace Nohros
     protected const string kDefaultDelimiter = "$";
 
     /// <summary>
-    /// The original version parameterized string.
+    /// The original version of parameterized string.
     /// </summary>
     protected string flat_string_;
 
-    string delimiter_;
-
-    Queue<ParameterizedStringPart> parts_;
-    ParameterizedStringPartCollection parameters_;
+    readonly string delimiter_;
+    readonly Queue<ParameterizedStringPart> parts_;
+    readonly ParameterizedStringPartCollection parameters_;
 
     #region .ctor
     /// <summary>
@@ -99,7 +98,7 @@ namespace Nohros
     /// <summary>
     /// Parses a string extracting the paramters and literal parts.
     /// </summary>
-    public void Parse() {
+    public virtual void Parse() {
       int begin, end, length, i = 0;
       length = flat_string_.Length;
 
