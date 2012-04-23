@@ -162,7 +162,7 @@ namespace Nohros.Configuration
           : nodes_tree == null ? "nodes_tree" : "nodes");
       }
 
-      root_node = IConfiguration.SelectNode(node, node_xpath);
+      root_node = AbstractConfiguration.SelectNode(node, node_xpath);
       if (root_node != null) {
         nodes_dictionary = new DictionaryValue<T>();
         nodes[nodes_tree] = (IValue) nodes_dictionary;
