@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Concurrent
+namespace Nohros
 {
   /// <summary>
-  /// Represents a method that will be executed by a
-  /// <see cref="IExecutor{T}"/>.
+  /// Represents a method that returns nothing and receives no parameters.
   /// </summary>
   /// <remarks>
   /// A delegate is a type that defines a signature, that is, the return value
@@ -24,6 +23,5 @@ namespace Nohros.Concurrent
   /// method runner('sender'), which is useless in most cases.
   /// </para>
   /// </remarks>
-  /// <seealso cref="IExecutor"/>
   public delegate void RunnableDelegate();
 }
