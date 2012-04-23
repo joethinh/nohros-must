@@ -7,11 +7,7 @@ namespace Nohros.Data.Providers
   /// <summary>
   /// Provides an interface for getting connection to a data store.
   /// </summary>
-  /// <typeparam name="T">
-  /// The type of connection that is returned by the
-  /// <see cref="CreateConnection"/> method.
-  /// </typeparam>
-  public interface IConnectionProvider<out T> where T: IDbConnection
+  public interface IConnectionProvider
   {
     /// <summary>
     /// Creates an instance of the <see cref="IDbConnection"/> class.
@@ -19,6 +15,24 @@ namespace Nohros.Data.Providers
     /// <returns>
     /// An instance of the <see cref="IDbConnection"/> object.
     /// </returns>
-    T CreateConnection();
+    IDbConnection CreateConnection();
+
+    /// <summary>
+    /// Gets an string that represents the database schema related with the
+    /// provider.
+    /// </summary>
+    /// <remarks>
+    /// A database schema is a logical data structure used to organize the
+    /// objects from a database.
+    /// <para>
+    /// If the database schema is not specified this method should returns the
+    /// default database schema.
+    /// </para>
+    /// <para>
+    /// If the provider does not have the concept of schemas this method should
+    /// returns a empty string.
+    /// </para>
+    /// </remarks>
+    string Schema { get; }
   }
 }

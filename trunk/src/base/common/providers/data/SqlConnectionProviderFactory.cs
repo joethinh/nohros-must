@@ -5,21 +5,20 @@ using Nohros.Configuration;
 
 namespace Nohros.Data.Providers
 {
-  public partial class SqlConnectionProvider :
-    IConnectionProviderFactory<SqlConnection> {
-
+  public partial class SqlConnectionProvider : IConnectionProviderFactory
+  {
     #region .ctor
     /// <summary>
     /// Constructor implied by the interface
-    /// <see cref="IConnectionProviderFactory{T}"/>.
+    /// <see cref="IConnectionProviderFactory"/>.
     /// </summary>
-    SqlConnectionProvider() { }
+    SqlConnectionProvider() {
+    }
     #endregion
 
-    #region IConnectionProviderFactory<SqlConnection> Members
+    #region IConnectionProviderFactory Members
     /// <inheritdoc/>
-    IConnectionProvider<SqlConnection>
-      IConnectionProviderFactory<SqlConnection>.CreateProvider(
+    IConnectionProvider IConnectionProviderFactory.CreateProvider(
       IDictionary<string, string> options) {
       string connection_string;
       SqlConnectionStringBuilder builder;
@@ -33,8 +32,7 @@ namespace Nohros.Data.Providers
         const int kLogin = 1;
         const int kPassword = 2;
 
-        builder = new SqlConnectionStringBuilder
-        {
+        builder = new SqlConnectionStringBuilder {
           DataSource = data[kServer],
           UserID = data[kLogin],
           Password = data[kPassword]
