@@ -13,14 +13,14 @@ using Nohros.Resources;
 namespace Nohros.Configuration
 {
   /// <summary>
-  /// A basic implementation of the <see cref="IConfiguration"/> used to
+  /// A basic implementation of the <see cref="AbstractConfiguration"/> used to
   /// parse the configuration files that follows the nohros schema.
   /// </summary>
   /// <remarks>
   /// The nohros shcema is defined by the
   /// http://nohros.com/schemas/nohros/nohros.xsd file.
   /// </remarks>
-  public class NohrosConfiguration : IConfiguration
+  public class NohrosConfiguration : AbstractConfiguration
   {
     #region configuration consts
     // configuration nodes names
@@ -282,13 +282,13 @@ namespace Nohros.Configuration
       }
 
       // parse the common node
-      XmlNode node = IConfiguration.SelectNode(root_node, kCommonNodeName);
+      XmlNode node = AbstractConfiguration.SelectNode(root_node, kCommonNodeName);
       if (node != null) {
         CommonNode common_node = new CommonNode(Location);
         common_node.Parse(node, Nodes);
 
         // parse the web node
-        node = IConfiguration.SelectNode(root_node, kWebNodeName);
+        node = AbstractConfiguration.SelectNode(root_node, kWebNodeName);
         if (node != null) {
           WebNode web_node = new WebNode();
           web_node.Parse(node, Nodes);
