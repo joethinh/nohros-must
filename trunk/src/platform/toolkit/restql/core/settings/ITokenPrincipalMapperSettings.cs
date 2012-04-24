@@ -8,7 +8,7 @@ namespace Nohros.Toolkit.RestQL
   /// Defines the configuration settings for the classes associated with the
   /// <see cref="ITokenPrincipalMapper"/>.
   /// </summary>
-  public interface ITokenPrincipalMapperSettings: ISettings
+  public interface ITokenPrincipalMapperSettings
   {
     /// <summary>
     /// Gets the token associated with the "anonymous" user.
