@@ -22,7 +22,13 @@ namespace Nohros
     /// <summary>
     /// The original version of parameterized string.
     /// </summary>
-    protected string flat_string_;
+    protected string flat_string;
+
+    /// <summary>
+    /// A value that indicates if spaces should be used to terminate paramter
+    /// parsing.
+    /// </summary>
+    protected bool use_space_as_terminator;
 
     #region .ctor
     /// <summary>
@@ -30,9 +36,9 @@ namespace Nohros
     /// class.
     /// </summary>
     /// <remarks>
-    /// Implementors should initialize the <see cref="flat_string_"/> member.
+    /// Implementors should initialize the <see cref="flat_string"/> member.
     /// </remarks>
-    protected ParameterizedString() {
+    protected ParameterizedString() : this(string.Empty) {
     }
 
     /// <summary>
@@ -59,9 +65,10 @@ namespace Nohros
       }
 
       delimiter_ = delimiter;
-      flat_string_ = str;
+      flat_string = str;
       parts_ = new Queue<ParameterizedStringPart>();
       parameters_ = new ParameterizedStringPartParameterCollection();
+      use_space_as_terminator = false;
     }
     #endregion
 
@@ -74,29 +81,37 @@ namespace Nohros
     /// objects that compose this instance.</param>
     /// <param name="delimiter">The delimiter used to delimits the parameters.
     /// within the string.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="parts"/> or
-    /// <paramref name="delimiter"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="parts"/> or
+    /// <paramref name="delimiter"/> is <c>null</c></exception>
+    /// <exception cref="ArgumentException">
+    /// <paramref name="parts"/> contains one or more <c>null</c> elements.
+    /// </exception>
     public static ParameterizedString FromParameterizedStringPartCollection(
       IEnumerable<ParameterizedStringPart> parts, string delimiter) {
-        if (parts == null || delimiter == null) {
-          throw new ArgumentNullException((parts == null)
-            ? "parts"
-            : "delimiter");
-        }
+      if (parts == null || delimiter == null) {
+        throw new ArgumentNullException((parts == null)
+          ? "parts"
+          : "delimiter");
+      }
 
       ParameterizedString str = new ParameterizedString();
 
       StringBuilder builder = new StringBuilder();
       foreach (ParameterizedStringPart part in parts) {
+        if (part == null) {
+          throw new ArgumentException("part");
+        }
+
         str.parts_.Enqueue(part);
         if (part.IsParameter) {
           builder.Append(delimiter).Append(part.Value).Append(delimiter);
-          str.parameters_.Add((ParameterizedStringPartParameter) part);
+          str.parameters_.AddIfAbsent((ParameterizedStringPartParameter) part);
           continue;
         }
         builder.Append(part.Value);
       }
-      str.flat_string_ = builder.ToString();
+      str.flat_string = builder.ToString();
 
       return str;
     }
@@ -106,48 +121,63 @@ namespace Nohros
     /// </summary>
     public virtual void Parse() {
       int begin, end, length, i = 0;
-      length = flat_string_.Length;
+      length = flat_string.Length;
 
       while (i < length) {
-        begin = NextDelimiterPos(flat_string_, delimiter_, i);
+        // get the paramater begin position, note that spaces could be
+        // only used as parameter terminator.
+        begin = NextDelimiterPos(
+          flat_string, delimiter_, false, i);
 
         // no delimiter was found after position "i", put the last
         // literal into the stack.
         if (begin == -1) {
           parts_.Enqueue(
-            new ParameterizedStringPartLiteral(flat_string_.Substring(i)));
-        } else {
-          // save the literal part that comes before the starting delimiter,
-          // if it exists.
-          if (begin - i > 0)
-            parts_.Enqueue(
-              new ParameterizedStringPartLiteral(
-                flat_string_.Substring(i, begin - i)));
-
-          i = begin + delimiter_.Length; // next character after delimiter
-          end = NextDelimiterPos(flat_string_, delimiter_, i);
-
-          // If the start delimiter is found but the end not, the string part
-          // is a literal. The string part must have at least one character
-          // between delimiters to be considered as a parameter.
-          if (end == -1 || end - begin - delimiter_.Length == 0) {
-            // the delimiters are not part of the parameters, but it is not a
-            // parameter and we need to include the delimiter into it, so the
-            // "i" pointer must be decremented by len(delimiter).
-            parts_.Enqueue(
-              new ParameterizedStringPartLiteral(
-                flat_string_.Substring(i - delimiter_.Length)));
-          } else {
-            i = end + delimiter_.Length; // next character after delimiter
-            ParameterizedStringPartParameter part =
-              new ParameterizedStringPartParameter(
-                flat_string_.Substring(
-                  begin + delimiter_.Length, end - begin - delimiter_.Length),
-                string.Empty);
-            parts_.Enqueue(part);
-            parameters_.Add(part);
-          }
+            new ParameterizedStringPartLiteral(flat_string.Substring(i)));
+          break;
         }
+
+        // save the literal part that comes before the starting delimiter,
+        // if it exists.
+        if (begin - i > 0) {
+          parts_.Enqueue(
+            new ParameterizedStringPartLiteral(
+              flat_string.Substring(i, begin - i)));
+        }
+
+        i = begin + delimiter_.Length; // next character after delimiter
+        end = NextDelimiterPos(
+          flat_string, delimiter_, use_space_as_terminator, i);
+
+        // If the start delimiter is found but the end not, the string part
+        // is a literal. The string part must have at least one character
+        // between delimiters to be considered as a parameter.
+        if (end == -1 || end - begin - delimiter_.Length == 0) {
+          // the delimiters are not part of the parameters, but it is not a
+          // parameter and we need to include the delimiter into it, so the
+          // "i" pointer must be decremented by len(delimiter).
+          parts_.Enqueue(
+            new ParameterizedStringPartLiteral(
+              flat_string.Substring(i - delimiter_.Length)));
+          break;
+        }
+
+        // point "i" to next character after delimiter, not consider
+        // spaces.
+        if (use_space_as_terminator && end < flat_string.Length &&
+          flat_string[end] == ' ') {
+          i = end;
+        } else {
+          i = end + delimiter_.Length;
+        }
+
+        ParameterizedStringPartParameter part =
+          new ParameterizedStringPartParameter(
+            flat_string.Substring(
+              begin + delimiter_.Length, end - begin - delimiter_.Length),
+            string.Empty);
+        parts_.Enqueue(part);
+        parameters_.AddIfAbsent(part);
       }
     }
 
@@ -156,16 +186,29 @@ namespace Nohros
     /// <paramref name="delimiter"/> in the <paramref name="str"/>.The search
     /// starts at a specified character position.
     /// </summary>
-    /// <param name="str">The string to seek.</param>
+    /// <param name="str">
+    /// The string to seek.
+    /// </param>
     /// <param name="delimiter"></param>
-    /// <param name="current_position">The search stating positon.</param>
-    /// <returns>The zero-based index position of the first character of
+    /// <param name="current_position">
+    /// The search starting positon.
+    /// </param>
+    /// <param name="use_space_as_delimiter">
+    /// </param>
+    /// <returns>
+    /// The zero-based index position of the first character of
     /// <paramref name="delimiter"/> if that string is found, or -1 if it is
-    /// not.</returns>
-    int NextDelimiterPos(string str, string delimiter, int current_position) {
+    /// not.
+    /// </returns>
+    int NextDelimiterPos(string str, string delimiter,
+      bool use_space_as_delimiter, int current_position) {
       int i = current_position - 1, k = 0;
 
       while (++i < str.Length) {
+        if (use_space_as_delimiter && str[i] == ' ') {
+          return i;
+        }
+
         if (str[i] == delimiter[0]) {
           if (i + delimiter.Length - 1 < str.Length) {
             while (++k < delimiter.Length) {
@@ -173,22 +216,28 @@ namespace Nohros
                 return -1;
             }
             return i;
-          } else {
-            return -1;
           }
+          return -1;
         }
       }
-      return -1;
+      return (use_space_as_delimiter && str.Length == i) ? i : -1;
     }
 
     /// <summary>
     /// Serializes this instance into a string object.
     /// </summary>
-    /// <returns>A string representation of this instance.</returns>
+    /// <returns>
+    /// A string representation of this instance.
+    /// </returns>
+    /// <remarks>
+    /// If the parameterized string is not parsed yet a empty string will be
+    /// returned.
+    /// </remarks>
     public override string ToString() {
       StringBuilder builder = new StringBuilder();
-      while (parts_.Count > 0)
+      while (parts_.Count != 0) {
         builder.Append(parts_.Dequeue().Value);
+      }
       return builder.ToString();
     }
 
@@ -197,6 +246,27 @@ namespace Nohros
     /// </summary>
     public ParameterizedStringPartParameterCollection Parameters {
       get { return parameters_; }
+    }
+
+    /// <summary>
+    /// Gets a value indicating if the space should be used as the parameter
+    /// terminator in conjuction with the specified delimiter.
+    /// </summary>
+    /// <remarks>
+    /// When this property is set to true a parameter will be identified by
+    /// a string enclosed between two delimiters or a delimiter and a space.
+    /// The "name" and "name_with_space" of the string above is considered
+    /// parameters when this property is true:
+    /// <para>
+    ///   "The $name$ is a parameter and $name_with_space is a a parameter too."
+    /// </para>
+    /// <para>
+    /// Note that the space is used only as parameter terminator delimiter.
+    /// </para>
+    /// </remarks>
+    public bool UseSpaceAsTerminator {
+      get { return use_space_as_terminator; }
+      set { use_space_as_terminator = value; }
     }
   }
 }
