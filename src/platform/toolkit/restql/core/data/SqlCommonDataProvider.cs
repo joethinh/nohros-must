@@ -38,8 +38,8 @@ namespace Nohros.Toolkit.RestQL
         cmd.CommandText = connection_provider_.Schema + kGetQuery;
         cmd.CommandType = CommandType.StoredProcedure;
 
-        DataParameters.CreateParameter(cmd, "name", DbType.String, 260).Value =
-          name;
+        DataParameters.CreateParameter(
+          cmd, "queryname", DbType.String, 260).Value = name;
 
         conn.Open();
 
