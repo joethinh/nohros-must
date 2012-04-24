@@ -16,48 +16,90 @@ namespace Nohros.Toolkit.RestQL
   /// </remarks>
   public class Query : ParameterizedString
   {
-    const string kDefaultDelimiter = "$";
+    static readonly Query empty_query_;
 
-    string name_;
-    string processor_factory_type_;
+    readonly string name_;
+    readonly string type_;
+
+    bool is_parsed_;
+
+    #region .ctor
+    /// <summary>
+    /// Initialize the static members.
+    /// </summary>
+    static Query() {
+      empty_query_ = new Query(string.Empty, string.Empty, string.Empty);
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Query"/> class by using
-    /// the specified query string.
+    /// the specified query string, name and type.
     /// </summary>
-    /// <param name="name">A string that uniquely identifies the query within
-    /// the main data store.</param>
-    /// <param name="processor_factory_type">The fully qualified assembly's
-    /// name of the class fatory that is used to create instances of the class
-    /// that is able to process the query.</param>
-    /// <param name="query">A string that represents the query.
-    /// <param name="processor_factory_type">The assembly's fully qualified
-    /// name of the factory class that is responsible to create instances
-    /// of the class that can execute the query.</param>
+    /// <param name="name">
+    /// A string that uniquely identifies the query within the main data
+    /// store.
     /// </param>
-    public Query(string name, string processor_factory_type, string query)
-      : this(name, query, processor_factory_type, kDefaultDelimiter) { }
+    /// <param name="type">
+    /// A string that identifies the type of the query. This paramter is used
+    /// to locate a query processor that can process the query.
+    /// </param>
+    /// <param name="query">
+    /// A string that represents the query itself.
+    /// </param>
+    /// <remarks>
+    /// The default parameter delimiter "$" will be used when instantiating
+    /// a <see cref="Query"/> object through this constructor.
+    /// </remarks>
+    public Query(string name, string type, string query)
+      : this(name, type, query, "@") {
+      UseSpaceAsTerminator = true;
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Query"/> class by using
     /// the specified query string and paraemter delimiter..
     /// </summary>
-    /// <param name="name">A string that uniquely identifies the query within
-    /// the main data store.</param>
-    /// <param name="query">A string that represents the query.</param>
-    /// <param name="delimiter">A string that is used to delimit the query
-    /// parameters.</param>
-    /// <param name="processor_factory_type">The assembly's fully qualified
-    /// name of the factory class that is responsible to create instances
-    /// of the class that can execute the query.</param>
+    /// <param name="name">
+    /// A string that uniquely identifies the query within the main data
+    /// store.
+    /// </param>
+    /// <param name="type">
+    /// A string that identifies the type of the query. This paramter is used
+    /// to locate a query processor that can process the query.
+    /// </param>
+    /// <param name="query">
+    /// A string that represents the query itself.
+    /// </param>
+    /// <param name="delimiter">
+    /// A string to be used as a parameter delimiter.
+    /// </param>
     /// <remarks>
-    /// A parameter is a sequence of characters without spaces
-    /// enclosed by the <paramref name="delimiter"/>.
+    /// A parameter is a sequence of characters without spaces enclosed by
+    /// <paramref name="delimiter"/>.
     /// </remarks>
-    public Query(string name, string query, string processor_factory_type,
-      string delimiter) : base(query, delimiter) {
-      processor_factory_type_ = processor_factory_type;
+    public Query(string name, string type, string query, string delimiter)
+      : base(query, delimiter) {
+      type_ = type;
       name_ = name;
+      is_parsed_ = false;
+    }
+    #endregion
+
+    /// <inheritdoc/>
+    public override void Parse() {
+      if (!is_parsed_) {
+        base.Parse();
+        is_parsed_ = true;
+      }
+    }
+
+    /// <summary>
+    /// Gets an instance of the <see cref="Query"/> class that represents an
+    /// empty query, that is a query whose name, type and query string is an
+    /// empty string.
+    /// </summary>
+    public static Query EmptyQuery {
+      get { return empty_query_; }
     }
 
     /// <summary>
@@ -68,14 +110,9 @@ namespace Nohros.Toolkit.RestQL
     }
 
     /// <summary>
-    /// Gets the assembly's fully qualified name of the factory class that can
-    /// create instances of the class that can execute the query.
     /// </summary>
-    /// <value>The assembly's fully qualified name of the factory class that
-    /// can create instances of the class that is able to process the query.
-    /// </value>
-    public string ProcessorFactoryType {
-      get { return processor_factory_type_; }
+    public string Type {
+      get { return type_; }
     }
   }
 }
