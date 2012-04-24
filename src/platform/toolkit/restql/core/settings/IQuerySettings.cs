@@ -1,14 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+
+using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
 {
   /// <summary>
   /// Contains the configuration data related with query definition.
   /// </summary>
-  public interface IQuerySettings : ISettings
+  public interface IQuerySettings
   {
+    /// <summary>
+    /// Gets an array containing the configuration for all the query processors
+    /// configured for the application.
+    /// </summary>
+    IProviderNode[] Processors { get; }
+
+    /// <summary>
+    /// Gets a number that indicates how long a query should remain before it
+    /// is last accessed.
+    /// </summary>
     long QueryCacheDuration { get; }
   }
 }
