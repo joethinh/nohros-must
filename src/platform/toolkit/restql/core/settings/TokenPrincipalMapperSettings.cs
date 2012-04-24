@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public class TokenPrincipalMapperSettings : Settings, ITokenPrincipalMapperSettings
+  public class TokenPrincipalMapperSettings : ITokenPrincipalMapperSettings
   {
     string anonymous_token_;
 
