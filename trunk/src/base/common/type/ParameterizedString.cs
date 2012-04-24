@@ -3,8 +3,8 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Collections;
 using System.Text;
-
 using Nohros.Collections;
+
 namespace Nohros
 {
   /// <summary>
@@ -15,14 +15,14 @@ namespace Nohros
   {
     protected const string kDefaultDelimiter = "$";
 
+    readonly string delimiter_;
+    readonly ParameterizedStringPartParameterCollection parameters_;
+    readonly Queue<ParameterizedStringPart> parts_;
+
     /// <summary>
     /// The original version of parameterized string.
     /// </summary>
     protected string flat_string_;
-
-    readonly string delimiter_;
-    readonly Queue<ParameterizedStringPart> parts_;
-    readonly ParameterizedStringPartCollection parameters_;
 
     #region .ctor
     /// <summary>
@@ -32,13 +32,15 @@ namespace Nohros
     /// <remarks>
     /// Implementors should initialize the <see cref="flat_string_"/> member.
     /// </remarks>
-    protected ParameterizedString() { }
+    protected ParameterizedString() {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterizedString"/>
     /// class.
     /// </summary>
-    public ParameterizedString(string str) : this(str, kDefaultDelimiter) { }
+    public ParameterizedString(string str) : this(str, kDefaultDelimiter) {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterizedString"/>
@@ -52,14 +54,16 @@ namespace Nohros
     /// <exception cref="ArgumentNullException"><paramref name="str"/> or
     /// <paramref name="delimiter"/> is <c>null</c>.</exception>
     public ParameterizedString(string str, string delimiter) {
-      if (str == null || delimiter == null)
+      if (str == null || delimiter == null) {
         throw new ArgumentNullException((str == null) ? "str" : "delimiter");
+      }
 
       delimiter_ = delimiter;
       flat_string_ = str;
       parts_ = new Queue<ParameterizedStringPart>();
-      parameters_ = new ParameterizedStringPartCollection();
+      parameters_ = new ParameterizedStringPartParameterCollection();
     }
+    #endregion
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterizedString"/>
@@ -74,8 +78,11 @@ namespace Nohros
     /// <paramref name="delimiter"/> is null.</exception>
     public static ParameterizedString FromParameterizedStringPartCollection(
       IEnumerable<ParameterizedStringPart> parts, string delimiter) {
-      if (parts == null || delimiter == null)
-        throw new ArgumentNullException((parts == null) ? "parts" : "delimiter");
+        if (parts == null || delimiter == null) {
+          throw new ArgumentNullException((parts == null)
+            ? "parts"
+            : "delimiter");
+        }
 
       ParameterizedString str = new ParameterizedString();
 
@@ -83,17 +90,16 @@ namespace Nohros
       foreach (ParameterizedStringPart part in parts) {
         str.parts_.Enqueue(part);
         if (part.IsParameter) {
-          builder.Append(delimiter).Append(part.LiteralValue).Append(delimiter);
-          str.parameters_.Add(part);
+          builder.Append(delimiter).Append(part.Value).Append(delimiter);
+          str.parameters_.Add((ParameterizedStringPartParameter) part);
           continue;
         }
-        builder.Append(part.LiteralValue);
+        builder.Append(part.Value);
       }
       str.flat_string_ = builder.ToString();
 
       return str;
     }
-    #endregion
 
     /// <summary>
     /// Parses a string extracting the paramters and literal parts.
@@ -109,14 +115,13 @@ namespace Nohros
         // literal into the stack.
         if (begin == -1) {
           parts_.Enqueue(
-            new ParameterizedStringPart(flat_string_.Substring(i)));
-          return;
+            new ParameterizedStringPartLiteral(flat_string_.Substring(i)));
         } else {
           // save the literal part that comes before the starting delimiter,
           // if it exists.
           if (begin - i > 0)
             parts_.Enqueue(
-              new ParameterizedStringPart(
+              new ParameterizedStringPartLiteral(
                 flat_string_.Substring(i, begin - i)));
 
           i = begin + delimiter_.Length; // next character after delimiter
@@ -130,15 +135,15 @@ namespace Nohros
             // parameter and we need to include the delimiter into it, so the
             // "i" pointer must be decremented by len(delimiter).
             parts_.Enqueue(
-              new ParameterizedStringPart(
+              new ParameterizedStringPartLiteral(
                 flat_string_.Substring(i - delimiter_.Length)));
-            return;
           } else {
             i = end + delimiter_.Length; // next character after delimiter
-            ParameterizedStringPart part = new ParameterizedStringPart(
-              flat_string_.Substring(
-                begin + delimiter_.Length, end - begin - delimiter_.Length),
-              string.Empty);
+            ParameterizedStringPartParameter part =
+              new ParameterizedStringPartParameter(
+                flat_string_.Substring(
+                  begin + delimiter_.Length, end - begin - delimiter_.Length),
+                string.Empty);
             parts_.Enqueue(part);
             parameters_.Add(part);
           }
@@ -177,21 +182,21 @@ namespace Nohros
     }
 
     /// <summary>
-    /// Gets a collection of parameters associated with this instance.
-    /// </summary>
-    public ParameterizedStringPartCollection Parameters {
-      get { return parameters_; }
-    }
-
-    /// <summary>
     /// Serializes this instance into a string object.
     /// </summary>
     /// <returns>A string representation of this instance.</returns>
     public override string ToString() {
       StringBuilder builder = new StringBuilder();
       while (parts_.Count > 0)
-        builder.Append(parts_.Dequeue().LiteralValue);
+        builder.Append(parts_.Dequeue().Value);
       return builder.ToString();
+    }
+
+    /// <summary>
+    /// Gets a collection of parameters associated with this instance.
+    /// </summary>
+    public ParameterizedStringPartParameterCollection Parameters {
+      get { return parameters_; }
     }
   }
 }

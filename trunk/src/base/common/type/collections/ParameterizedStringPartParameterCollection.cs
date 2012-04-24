@@ -8,59 +8,59 @@ namespace Nohros.Collections
 {
   /// <summary>
   /// Represents a collections of parameters associated with a
-  /// <see cref="ParameterizedString"/>. The elements added to this collection
-  /// must be a parameter, literal value are not allowed.
+  /// <see cref="ParameterizedString"/>.
   /// </summary>
-  public class ParameterizedStringPartCollection :
-    ICollection<ParameterizedStringPart>
+  /// <remarks>
+  /// A <see cref="ParameterizedStringPartParameterCollection"/> class was designed to
+  /// handle a small number of parameters and it uses classes that does not
+  /// performs well when the number of elements is greater than 10 elements.
+  /// </remarks>
+  public class ParameterizedStringPartParameterCollection :
+    ICollection<ParameterizedStringPartParameter>
   {
-    List<ParameterizedStringPart> parameters_;
+    readonly List<ParameterizedStringPartParameter> parameters_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the ParameterizedStringPartCollection.
+    /// Initializes a new instance of the ParameterizedStringPartParameterCollection.
     /// </summary>
-    internal ParameterizedStringPartCollection() {
-      parameters_ = new List<ParameterizedStringPart>();
+    internal ParameterizedStringPartParameterCollection() {
+      parameters_ = new List<ParameterizedStringPartParameter>();
     }
     #endregion
 
-    #region ICollection<ParameterizedStringPart> Members
+    #region ICollection<ParameterizedStringPartParameter> Members
     /// <summary>
-    /// Adds the specified <see cref="ParameterizedStringPart"/> object to
-    /// the <see cref="ParameterizedStringPartCollection"/>.
+    /// Adds the specified <see cref="ParameterizedStringPartParameter"/>
+    /// object to this <see cref="ParameterizedStringPartParameterCollection"/>.
     /// </summary>
     /// <param name="part">
-    /// The <see cref="ParameterizedStringPart"/> to add to the collection.
+    /// The <see cref="ParameterizedStringPartParameter"/> to add to the
+    /// collection.
     /// </param>
     /// <exception cref="ArgumentException">
     /// The <see cref="ParameterizedStringPart"/> specified is already added to
-    /// this <see cref="ParameterizedStringPartCollection"/>.
+    /// this <see cref="ParameterizedStringPartParameterCollection"/>.
     /// </exception>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="part"/> is <c>null</c>.
     /// </exception>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// <paramref name="part"/> is a literal value.
-    /// </exception>
-    public void Add(ParameterizedStringPart part) {
-      if (part == null)
+    public void Add(ParameterizedStringPartParameter part) {
+      if (part == null) {
         throw new ArgumentNullException("part");
-
-      if (part.ParameterName.Length == 0)
-        throw new ArgumentOutOfRangeException("part");
+      }
 
       if (Contains(part))
         throw new ArgumentException(
           string.Format(
-            StringResources.Collection_elm_AddingDuplicate, part.ParameterName));
+            StringResources.Collection_elm_AddingDuplicate, part.Name));
 
       parameters_.Add(part);
     }
 
     /// <summary>
     /// Removes all the <see cref="ParameterizedStringPart"/> objects from
-    /// the <see cref="ParameterizedStringPartCollection"/>.
+    /// the <see cref="ParameterizedStringPartParameterCollection"/>.
     /// </summary>
     public void Clear() {
       parameters_.Clear();
@@ -68,33 +68,33 @@ namespace Nohros.Collections
 
     /// <summary>
     /// Determines whether the specified <see cref="ParameterizedStringPart"/>
-    /// is in the <see cref="ParameterizedStringPartCollection"/>.
+    /// is in the <see cref="ParameterizedStringPartParameterCollection"/>.
     /// </summary>
     /// <param name="part">
     /// The <see cref="ParameterizedStringPart"/>value to verify.
     /// </param>
     /// <returns>
-    /// <c>true</c> if the <see cref="ParameterizedStringPartCollection"/>
+    /// <c>true</c> if the <see cref="ParameterizedStringPartParameterCollection"/>
     /// contains the <paramref name="part"/>; otherwise <c>false</c>.
     /// </returns>
-    public bool Contains(ParameterizedStringPart part) {
-      return (part != null && -1 != IndexOf(part.ParameterName));
+    public bool Contains(ParameterizedStringPartParameter part) {
+      return (part != null && -1 != IndexOf(part.Name));
     }
 
     /// <summary>
     /// Copies all elements of the current
-    /// <see cref="ParameterizedStringPartCollection"/> to the specified
-    /// <see cref="ParameterizedStringPartCollection"/> array starting at the
+    /// <see cref="ParameterizedStringPartParameterCollection"/> to the specified
+    /// <see cref="ParameterizedStringPartParameterCollection"/> array starting at the
     /// specified destination index.
     /// </summary>
     /// <param name="array">
-    /// The <see cref="ParameterizedStringPartCollection"/> array that is the
+    /// The <see cref="ParameterizedStringPartParameterCollection"/> array that is the
     /// destination of the elements copied from the current
-    /// <see cref="ParameterizedStringPartCollection"/>
+    /// <see cref="ParameterizedStringPartParameterCollection"/>
     /// </param>
     /// <param name="index">
     /// A 32-bit integer that represents the index in the
-    /// <see cref="ParameterizedStringPartCollection"/> at which copying
+    /// <see cref="ParameterizedStringPartParameterCollection"/> at which copying
     /// starts.
     /// </param>
     /// <exception cref="ArgumentNullException">
@@ -105,11 +105,11 @@ namespace Nohros.Collections
     /// </exception>
     /// <exception cref="ArgumentException">
     /// The number of elements in the source
-    /// <see cref="ParameterizedStringPartCollection"/> is greater than the
+    /// <see cref="ParameterizedStringPartParameterCollection"/> is greater than the
     /// available space from <paramref name="index"/> to the end of the
     /// destination array.
     /// </exception>
-    public void CopyTo(ParameterizedStringPart[] array, int index) {
+    public void CopyTo(ParameterizedStringPartParameter[] array, int index) {
       parameters_.CopyTo(array, index);
     }
 
@@ -130,16 +130,16 @@ namespace Nohros.Collections
     /// <see cref="Remove(ParameterizedStringPart)"/> method will do nothing.
     /// In particular, it does not throws an exception.
     /// </remarks>
-    public bool Remove(ParameterizedStringPart part) {
+    public bool Remove(ParameterizedStringPartParameter part) {
       if (part == null)
         return false;
 
-      return Remove(part.ParameterName);
+      return Remove(part.Name);
     }
 
     /// <summary>
     /// Returns an integer that contains the number of elements in the
-    /// <see cref="ParameterizedStringPartCollection"/>.
+    /// <see cref="ParameterizedStringPartParameterCollection"/>.
     /// </summary>
     public int Count {
       get { return parameters_.Count; }
@@ -147,34 +147,34 @@ namespace Nohros.Collections
 
     /// <summary>
     /// Gets a value that indicates whether the
-    /// <see cref="ParameterizedStringPartCollection"/> is read-only.
+    /// <see cref="ParameterizedStringPartParameterCollection"/> is read-only.
     /// </summary>
     /// <value>
-    /// Returns true if the <see cref="ParameterizedStringPartCollection"/>is
+    /// Returns true if the <see cref="ParameterizedStringPartParameterCollection"/>is
     /// read only; otherwise, false.
     /// </value>
-    bool ICollection<ParameterizedStringPart>.IsReadOnly {
+    bool ICollection<ParameterizedStringPartParameter>.IsReadOnly {
       get { return false; }
     }
 
     /// <summary>
     /// Returns an enumerator that iterates through the
-    /// <see cref="ParameterizedStringPartCollection"/>
+    /// <see cref="ParameterizedStringPartParameterCollection"/>
     /// </summary>
     /// <returns>
-    /// An IEnumerator of <see cref="ParameterizedStringPartCollection"/>
+    /// An IEnumerator of <see cref="ParameterizedStringPartParameterCollection"/>
     /// </returns>
-    IEnumerator<ParameterizedStringPart> IEnumerable<ParameterizedStringPart>.
-      GetEnumerator() {
+    IEnumerator<ParameterizedStringPartParameter>
+      IEnumerable<ParameterizedStringPartParameter>.GetEnumerator() {
       return GetEnumerator();
     }
 
     /// <summary>
     /// Returns an enumerator that iterates through the
-    /// <see cref="ParameterizedStringPartCollection"/>
+    /// <see cref="ParameterizedStringPartParameterCollection"/>
     /// </summary>
     /// <returns>
-    /// An IEnumerator of <see cref="ParameterizedStringPartCollection"/>.
+    /// An IEnumerator of <see cref="ParameterizedStringPartParameterCollection"/>.
     /// </returns>
     IEnumerator IEnumerable.GetEnumerator() {
       return GetEnumerator();
@@ -182,10 +182,32 @@ namespace Nohros.Collections
     #endregion
 
     /// <summary>
+    /// Adds the specified <see cref="ParameterizedStringPartParameter"/>
+    /// object to this <see cref="ParameterizedStringPartParameterCollection"/> if it
+    /// is not added yet.
+    /// </summary>
+    /// <param name="part">
+    /// The <see cref="ParameterizedStringPartParameter"/> to add to the
+    /// collection.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="part"/> is <c>null</c>.
+    /// </exception>
+    public void AddIfAbsent(ParameterizedStringPartParameter part) {
+      if (part == null) {
+        throw new ArgumentNullException("part");
+      }
+
+      if (!Contains(part)) {
+        parameters_.Add(part);
+      }
+    }
+
+    /// <summary>
     /// Gets the location of the specified
     /// <see cref="ParameterizedStringPart"/> with the specified name.
     /// </summary>
-    /// <param name="parameter_name">
+    /// <param name="name">
     /// The case-insensitive name of the <see cref="ParameterizedStringPart"/>
     /// to find.
     /// </param>
@@ -195,63 +217,18 @@ namespace Nohros.Collections
     /// case-insensitive name. Returns -1 when the object does not exists in
     /// the collection.
     /// </returns>
-    public int IndexOf(string parameter_name) {
-      if (parameter_name == null)
+    public int IndexOf(string name) {
+      if (name == null)
         return -1;
 
       for (int i = 0, j = parameters_.Count; i < j; i++) {
         if (string.Compare(
-            parameters_[i].ParameterName, parameter_name,
-              StringComparison.OrdinalIgnoreCase) == 0) {
+          parameters_[i].Name, name,
+          StringComparison.OrdinalIgnoreCase) == 0) {
           return i;
         }
       }
       return -1;
-    }
-
-    /// <summary>
-    /// Adds a new <see cref="ParameterizedStringPart"/> object to the
-    /// collection by using the specified literal text.
-    /// </summary>
-    /// <param name="literal_text">
-    /// A string that contains the parameterized string part.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="literal_text"/> is <c>null</c>.
-    /// </exception>
-    /// <remarks>
-    /// This method overload constructs a new
-    /// <see cref="ParameterizedStringPart"/> using the specified parameters
-    /// and add it to the collection.
-    /// </remarks>
-    /// <seealso cref="ParameterizedStringPart(string, string)"/>
-    public void Add(string literal_text) {
-      Add(new ParameterizedStringPart(literal_text));
-    }
-
-    /// <summary>
-    /// Adds a new <see cref="ParameterizedStringPart"/> object to the by using
-    /// the specified parameter name and value.
-    /// </summary>
-    /// <param name="parameter_name">
-    /// The name of the parameter.
-    /// </param>
-    /// <param name="parameter_value">
-    /// The value of the parameter. This could be null.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="parameter_name"/> is <c>null</c>.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// <paramref name="parameter_name"/> is a empty string.
-    /// </exception>
-    /// <remarks>
-    /// This method overload constructs a new
-    /// <see cref="ParameterizedStringPart"/> using the specified parameters
-    /// and add it to the collection.
-    /// </remarks>
-    /// <seealso cref="ParameterizedStringPart(string, string)"/>
-    public void Add(string parameter_name, string parameter_value) {
-      Add(new ParameterizedStringPart(parameter_name, parameter_value));
     }
 
     /// <summary>
@@ -281,12 +258,12 @@ namespace Nohros.Collections
 
     /// <summary>
     /// Returns an enumerator that iterates through the
-    /// <see cref="ParameterizedStringPartCollection"/>
+    /// <see cref="ParameterizedStringPartParameterCollection"/>
     /// </summary>
     /// <returns>
-    /// An IEnumerator of <see cref="ParameterizedStringPartCollection"/>.
+    /// An IEnumerator of <see cref="ParameterizedStringPartParameterCollection"/>.
     /// </returns>
-    IEnumerator<ParameterizedStringPart> GetEnumerator() {
+    IEnumerator<ParameterizedStringPartParameter> GetEnumerator() {
       for (int i = 0, j = parameters_.Count; i < j; i++) {
         yield return parameters_[i];
       }
@@ -304,34 +281,34 @@ namespace Nohros.Collections
     /// <exception cref="IndexOutOfRangeException">
     /// The specified index does not exists.
     /// </exception>
-    public ParameterizedStringPart this[int index] {
+    public ParameterizedStringPartParameter this[int index] {
       get { return parameters_[index]; }
     }
 
     /// <summary>
     /// Gets the <see cref="ParameterizedStringPart"/> with the specified name.
     /// </summary>
-    /// <param name="parameter_name">
+    /// <param name="name">
     /// The name of the parameter to retrieve.
     /// </param>
     /// <returns>
     /// The <see cref="ParameterizedStringPart"/> with the specified name.
     /// </returns>
     /// <exception cref="IndexOutOfRangeException">
-    /// <paramref name="parameter_name"/> is not found or is invalid.
+    /// <paramref name="name"/> is not found or is invalid.
     /// </exception>
     /// <remarks>
-    /// The <paramref name="parameter_name"/> is used to look up the index
+    /// The <paramref name="name"/> is used to look up the index
     /// value in the underlying
-    /// <see cref="ParameterizedStringPartCollection"/>. If the
-    /// <paramref name="parameter_name"/> is not found or if it is not valid,
+    /// <see cref="ParameterizedStringPartParameterCollection"/>. If the
+    /// <paramref name="name"/> is not found or if it is not valid,
     /// an <see cref="IndexOutOfRangeException"/> will be throw.
     /// </remarks>
-    public ParameterizedStringPart this[string parameter_name] {
+    public ParameterizedStringPartParameter this[string name] {
       get {
-        int index = IndexOf(parameter_name);
+        int index = IndexOf(name);
         if (index == -1)
-          throw new IndexOutOfRangeException("parameter_name");
+          throw new IndexOutOfRangeException("name");
         return parameters_[index];
       }
     }
