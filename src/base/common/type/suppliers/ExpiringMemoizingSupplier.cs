@@ -70,7 +70,7 @@ namespace Nohros
             T t = supplier_.Supply();
 
             // Disable the reordering between the instantiation of "t"
-            // and assignment of "t" to "value_"
+            // and assignment of "t" to "value"
             Thread.MemoryBarrier();
 
             value_ = t;
