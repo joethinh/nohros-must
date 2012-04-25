@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Xml;
 using Nohros.Resources;
 
@@ -12,7 +13,7 @@ namespace Nohros.Configuration
   /// </summary>
   public class RepositoryNode : AbstractConfigurationNode
   {
-    string path_;
+    string relative_path_;
 
     #region .ctor
     /// <summary>
@@ -28,7 +29,7 @@ namespace Nohros.Configuration
     /// </remarks>
     public RepositoryNode(string name)
       : base(name) {
-      path_ = AppDomain.CurrentDomain.BaseDirectory;
+      relative_path_ = string.Empty;
     }
 
     /// <summary>
@@ -38,21 +39,21 @@ namespace Nohros.Configuration
     /// <param name="name">
     /// A string that uniquely identifies the repository within an application.
     /// </param>
-    /// <param name="path">
+    /// <param name="relative_path">
     /// The application relative path of the repository.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// <paramref name="name"/> or <paramref name="path"/> is
+    /// <paramref name="name"/> or <paramref name="relative_path"/> is
     /// a null reference.
     /// </exception>
     /// <remarks>
     /// The existence of the physical path is not checked.
     /// </remarks>
-    public RepositoryNode(string name, string path)
+    public RepositoryNode(string name, string relative_path)
       : base(name) {
-      if (path == null)
-        throw new ArgumentNullException("path");
-      path_ = path;
+      if (relative_path == null)
+        throw new ArgumentNullException("relative_path");
+      RelativePath = relative_path;
     }
     #endregion
 
@@ -67,13 +68,13 @@ namespace Nohros.Configuration
     /// repository or the repository node contains an rooted path.
     /// </exception>
     public void Parse(XmlNode node) {
-      string relative_path = null;
+      string relative_path;
       if (!GetAttributeValue(node, "relative-path", out relative_path))
         throw new ConfigurationException(
           string.Format(StringResources.Config_ErrorAt, "attribute name",
             NohrosConfiguration.kRepositoryNodeTree + "." + name));
 
-      Path = relative_path;
+      RelativePath = relative_path;
     }
 
     /// <summary>
@@ -85,17 +86,26 @@ namespace Nohros.Configuration
     /// caller must specifies a non-rooted path that is relative to the
     /// application base directory.
     /// </remarks>
-    public string Path {
-      get { return path_; }
+    public string RelativePath {
+      get { return relative_path_; }
       set {
         // sanity check if the path is rooted. It must be relative to the
         // application base directory.
-        if (System.IO.Path.IsPathRooted(value))
+        if (Path.IsPathRooted(value))
           throw new ArgumentOutOfRangeException(
             string.Format(StringResources.Config_PathIsRooted, value));
 
-        path_ = System.IO.Path.Combine(
-          AppDomain.CurrentDomain.BaseDirectory, value);
+        relative_path_ = value;
+      }
+    }
+
+    /// <summary>
+    /// Get the full path pointed by the repository.
+    /// </summary>
+    public string FullPath {
+      get {
+        return Path.Combine(
+          AppDomain.CurrentDomain.BaseDirectory, relative_path_);
       }
     }
   }
