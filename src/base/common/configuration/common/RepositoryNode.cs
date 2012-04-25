@@ -102,7 +102,7 @@ namespace Nohros.Configuration
     /// <summary>
     /// Get the full path pointed by the repository.
     /// </summary>
-    public string FullPath {
+    public string AbsolutePath {
       get {
         return Path.Combine(
           AppDomain.CurrentDomain.BaseDirectory, relative_path_);
