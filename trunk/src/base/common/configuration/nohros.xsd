@@ -5,11 +5,137 @@
 	xmlns="http://nohros.com/schemas/nohros"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+  <xs:complexType name="Provider">
+    <xs:sequence minOccurs="0" maxOccurs="1">
+      <xs:element name="options" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="option" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:attribute name="name" type="xs:string" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" use="required"/>
+    <xs:attribute name="type" use="required"/>
+    <xs:attribute name="assembly-location" use="optional"/>
+  </xs:complexType>
+
   <xs:element name="nohros">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="common" type="CommonSchema" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="web" type="WebSchema" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="repositories" minOccurs="0" maxOccurs="1">
+          <xs:complexType id="Repositories">
+            <xs:sequence minOccurs ="0" maxOccurs="unbounded">
+              <xs:element name="add">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string"/>
+                  <xs:attribute name="path" type="xs:string"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="providers" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="data" minOccurs="0" maxOccurs="1">
+                <xs:complexType id="DataProvider">
+                  <xs:sequence>
+                    <xs:element name="provider" minOccurs="0" maxOccurs="unbounded" type="Provider"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="messenger" minOccurs="0" maxOccurs="1">
+                <xs:complexType id="MessengerProvider">
+                  <xs:sequence>
+								    <xs:element name="provider" minOccurs="0" maxOccurs="unbounded" type="Provider"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="cache" minOccurs="0" maxOccurs="1">
+                <xs:complexType id="CacheProvider">
+                  <xs:sequence>
+                    <xs:element name="provider" minOccurs="0" maxOccurs="unbounded" type="Provider"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="chains" minOccurs="0" maxOccurs="1">
+          <xs:complexType id="Chain">
+            <xs:sequence>
+              <xs:element name="chain" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="node" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="name" use="required"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="name" use="required"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="login-modules" minOccurs="0" maxOccurs ="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="module" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:any minOccurs="0" maxOccurs="unbounded"/>
+                  </xs:sequence>
+                  <xs:attribute name="name" use="required"/>
+                  <xs:attribute name="type" use="required"/>
+                  <xs:attribute name="flag" use="required"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="content-groups">
+          <xs:complexType id="ContentGroups">
+            <xs:sequence>
+              <xs:element name="group" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType id="ContentGroup">
+                  <xs:sequence>
+                    <xs:element name="add" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="file-name" type="xs:string"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" use="required"/>
+                  <xs:attribute name="mime-type" use="required">
+                    <xs:simpleType id="mime-type">
+                      <xs:restriction base="xs:string">
+                        <xs:enumeration value="text/html"/>
+                        <xs:enumeration value="text/css"/>
+                        <xs:enumeration value="text/javascript"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="path-ref" type="xs:string" use="required"/>
+                  <xs:attribute name="build" default="release" use="optional">
+                    <xs:simpleType id="ContentBuild">
+                      <xs:restriction base="xs:string">
+                        <xs:enumeration value="release"/>
+                        <xs:enumeration value="debug"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:sequence>
       <xs:attribute name="log4net-threshold" use="optional" default="INFO">
         <xs:simpleType>
@@ -27,143 +153,4 @@
       <xs:anyAttribute/>
     </xs:complexType>
   </xs:element>
-  
-  <xs:complexType name="CommonSchema">
-    <xs:sequence minOccurs="0" maxOccurs="1">
-      <xs:element name="repositories" minOccurs="0" maxOccurs="1">
-        <xs:complexType id="Repositories">
-          <xs:sequence minOccurs ="0" maxOccurs="unbounded">
-            <xs:element name="add">
-              <xs:complexType>
-                <xs:attribute name="name" type="xs:string"/>
-                <xs:attribute name="path" type="xs:string"/>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="providers" minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="data" minOccurs="0" maxOccurs="1">
-              <xs:complexType id="DataProvider">
-                <xs:sequence>
-                  <xs:element name="provider" minOccurs="0" maxOccurs="unbounded" type="Provider"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-            <xs:element name="messenger" minOccurs="0" maxOccurs="1">
-              <xs:complexType id="MessengerProvider">
-                <xs:sequence>
-									<xs:element name="provider" minOccurs="0" maxOccurs="unbounded" type="Provider"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-            <xs:element name="cache" minOccurs="0" maxOccurs="1">
-              <xs:complexType id="CacheProvider">
-                <xs:sequence>
-                  <xs:element name="provider" minOccurs="0" maxOccurs="unbounded" type="Provider"/>
-                </xs:sequence>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="chains" minOccurs="0" maxOccurs="1">
-        <xs:complexType id="Chain">
-          <xs:sequence>
-            <xs:element name="chain" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="node" minOccurs="0" maxOccurs="unbounded">
-                    <xs:complexType>
-                      <xs:attribute name="name" use="required"/>
-                    </xs:complexType>
-                  </xs:element>
-                </xs:sequence>
-                <xs:attribute name="name" use="required"/>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="login-modules" minOccurs="0" maxOccurs ="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="module" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:any minOccurs="0" maxOccurs="unbounded"/>
-                </xs:sequence>
-                <xs:attribute name="name" use="required"/>
-                <xs:attribute name="type" use="required"/>
-                <xs:attribute name="flag" use="required"/>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  
-  <xs:complexType name="WebSchema">
-    <xs:sequence>
-      <xs:element name="content-groups">
-        <xs:complexType id="ContentGroups">
-          <xs:sequence>
-            <xs:element name="group" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType id="ContentGroup">
-                <xs:sequence>
-                  <xs:element name="add" minOccurs="0" maxOccurs="unbounded">
-                    <xs:complexType>
-                      <xs:attribute name="file-name" type="xs:string"/>
-                    </xs:complexType>
-                  </xs:element>
-                </xs:sequence>
-                <xs:attribute name="name" type="xs:string" use="required"/>
-                <xs:attribute name="mime-type" use="required">
-                  <xs:simpleType id="mime-type">
-                    <xs:restriction base="xs:string">
-                      <xs:enumeration value="text/html"/>
-                      <xs:enumeration value="text/css"/>
-                      <xs:enumeration value="text/javascript"/>
-                    </xs:restriction>
-                  </xs:simpleType>
-                </xs:attribute>
-                <xs:attribute name="path-ref" type="xs:string" use="required"/>
-                <xs:attribute name="build" default="release" use="optional">
-                  <xs:simpleType id="ContentBuild">
-                    <xs:restriction base="xs:string">
-                      <xs:enumeration value="release"/>
-                      <xs:enumeration value="debug"/>
-                    </xs:restriction>
-                  </xs:simpleType>
-                </xs:attribute>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
-	<xs:complexType name="Provider">
-    <xs:sequence minOccurs="0" maxOccurs="1">
-      <xs:element name="options" minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="option" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:attribute name="name" type="xs:string" use="required"/>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-		<xs:attribute name="name" use="required"/>
-		<xs:attribute name="type" use="required"/>
-		<xs:attribute name="assembly-location" use="optional"/>
-	</xs:complexType>
-
 </xs:schema>
