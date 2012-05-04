@@ -197,7 +197,7 @@
     <Compile Include="type\ComparisonComparer.cs" />
     <Compile Include="data\transferobjects\TableTransferObject.cs" />
     <Compile Include="type\IValidator.cs" />
-    <Compile Include="type\json\JSONReader.cs" />
+    <Compile Include="data\json\JSONReader.cs" />
     <Compile Include="data\transferobjects\TransferQueue.cs" />
     <Compile Include="data\transferobjects\DataTransferObject.cs" />
     <Compile Include="data\transferobjects\DataTransferObjects.cs" />
