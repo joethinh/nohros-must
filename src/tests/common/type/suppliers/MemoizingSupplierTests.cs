@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+
 using NUnit.Framework;
 
-namespace Nohros.Tests
+namespace Nohros
 {
   [TestFixture]
   public class MemoizingSupplierTests
