@@ -31,8 +31,10 @@ namespace Nohros.Configuration
       string name = GetAttributeValue(element, Strings.kNameAttribute);
       string type = GetAttributeValue(element, Strings.kTypeAttribute);
       string location = GetLocation(element, base_directory);
+      string alias = GetAttributeValue(element, Strings.kAliasAttribute,
+        string.Empty);
 
-      DataProviderNode node = new DataProviderNode(name, type, location);
+      DataProviderNode node = new DataProviderNode(name, alias, type, location);
       node.options = GetOptions(element);
       return node;
     }

@@ -28,7 +28,9 @@ namespace Nohros.Configuration
       string name = GetAttributeValue(element, Strings.kNameAttribute);
       string type = GetAttributeValue(element, Strings.kNameAttribute);
       string location = GetLocation(element, Strings.kNameAttribute);
-      return new CacheProviderNode(name, type, location);
+      string alias = GetAttributeValue(element, Strings.kAliasAttribute,
+        string.Empty);
+      return new CacheProviderNode(name, alias, type, location);
     }
   }
 }
