@@ -2,7 +2,7 @@
 
 namespace Nohros.Configuration
 {
-  public partial class CacheProviderNode: ProviderNode, ICacheProviderNode
+  public partial class CacheProviderNode : ProviderNode, ICacheProviderNode
   {
     #region .ctor
     /// <summary>
@@ -19,6 +19,23 @@ namespace Nohros.Configuration
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="CacheProviderNode"/> class
+    /// by using the specified provider name and type.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the provider.
+    /// </param>
+    /// <param name="type">
+    /// The assembly-qualified name of the provider type.
+    /// </param>
+    /// <param name="alias">
+    /// The provider's alias.
+    /// </param>
+    protected CacheProviderNode(string name, string alias, string type)
+      : base(name, alias, type) {
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="CacheProviderNode"/> class by
     /// using the specified provider name, type and assembly location.
     /// </summary>
@@ -31,8 +48,12 @@ namespace Nohros.Configuration
     /// <param name="location">
     /// The path to the directory where the provider assembly file is stored.
     /// </param>
-    protected CacheProviderNode(string name, string type, string location)
-      : base(name, type, location) { }
+    /// <param name="alias">
+    /// The provider's alias.
+    /// </param>
+    protected CacheProviderNode(string name, string alias, string type,
+      string location) : base(name, alias, type, location) {
+    }
     #endregion
   }
 }

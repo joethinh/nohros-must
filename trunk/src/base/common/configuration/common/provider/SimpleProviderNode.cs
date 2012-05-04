@@ -6,7 +6,7 @@ namespace Nohros.Configuration
   /// <see cref="SimpleProviderNode"/> is the default implementation of the
   /// <see cref="ISimpleProviderNode"/> interface.
   /// </summary>
-  public partial class SimpleProviderNode: ProviderNode, ISimpleProviderNode
+  public partial class SimpleProviderNode : ProviderNode, ISimpleProviderNode
   {
     string group_;
 
@@ -19,9 +19,27 @@ namespace Nohros.Configuration
     /// A string that uniquely identifies the provider within a collection.
     /// </param>
     /// <param name="type">
-    /// The assembly's qualified name of the provider type.</param>
+    /// The assembly's qualified name of the provider type.
+    /// </param>
     public SimpleProviderNode(string name, string type)
-      : this(name, type, string.Empty) {
+      : base(name, type, string.Empty) {
+    }
+
+    /// <summary>
+    /// Intializes a new instance of the <see cref="SimpleProviderNode"/> by
+    /// using the specified provider name and type.
+    /// </summary>
+    /// <param name="name">
+    /// A string that uniquely identifies the provider within a collection.
+    /// </param>
+    /// <param name="type">
+    /// The assembly's qualified name of the provider type.
+    /// </param>
+    /// <param name="alias">
+    /// The provider's alias.
+    /// </param>
+    public SimpleProviderNode(string name, string alias, string type)
+      : this(name, alias, type, string.Empty) {
     }
 
     /// <summary>
@@ -30,8 +48,11 @@ namespace Nohros.Configuration
     /// </summary>
     /// <param name="name"></param>
     /// <param name="type"></param>
-    public SimpleProviderNode(string name, string type, string group)
-      : base(name, type) {
+    /// <param name="alias">
+    /// The provider's alias.
+    /// </param>
+    public SimpleProviderNode(string name, string alias, string type,
+      string group) : base(name, alias, type) {
       if (group == null) {
         throw new ArgumentNullException("group");
       }
@@ -39,6 +60,7 @@ namespace Nohros.Configuration
     }
     #endregion
 
+    #region ISimpleProviderNode Members
     /// <summary>
     /// Gets the group name of the provider.
     /// </summary>
@@ -54,5 +76,6 @@ namespace Nohros.Configuration
     public string Group {
       get { return group_; }
     }
+    #endregion
   }
 }
