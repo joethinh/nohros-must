@@ -13,7 +13,7 @@ namespace Nohros.Test.Configuration
     public class IConfiguration_
     {
         #region TestingConfiguration
-        public class TestingConfiguration : IConfiguration
+        public class TestingConfiguration : AbstractConfiguration
         {
             long timeout_;
             string name_;
@@ -43,7 +43,7 @@ namespace Nohros.Test.Configuration
             }
 
             public XmlNode XmlElement {
-                get { return element_; }
+                get { return element; }
             }
         }
         #endregion
@@ -122,10 +122,10 @@ namespace Nohros.Test.Configuration
             config.Load("desktop.config", "desktop");
             Assert.IsNotNull(config.XmlElement);
 
-            XmlNode node = IConfiguration.SelectNode(config.XmlElement, "/nohros/common/providers");
+            XmlNode node = AbstractConfiguration.SelectNode(config.XmlElement, "/nohros/common/providers");
             Assert.IsNull(node);
 
-            node = IConfiguration.SelectNode(config.XmlElement, "nohros/common/providers");
+            node = AbstractConfiguration.SelectNode(config.XmlElement, "nohros/common/providers");
             Assert.IsNotNull(node);
         }
     }

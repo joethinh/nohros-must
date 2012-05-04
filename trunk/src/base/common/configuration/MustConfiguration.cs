@@ -4,7 +4,6 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using System.Configuration;
-
 using Nohros.Logging;
 using Nohros.Data;
 using Nohros.Collections;
@@ -20,15 +19,16 @@ namespace Nohros.Configuration
   /// The nohros shcema is defined by the
   /// http://nohros.com/schemas/nohros/nohros.xsd file.
   /// </remarks>
-  public class NohrosConfiguration : AbstractConfiguration
+  public class MustConfiguration: AbstractConfiguration, ILoginConfiguration, IMustConfiguration
   {
-    #region configuration consts
     // configuration nodes names
     internal const string kNohrosNodeName = "nohros";
     internal const string kCommonNodeName = "common";
+    internal const string kRepositoriesNodeName = "repositories";
     internal const string kRepositoryNodeName = "repository";
     internal const string kConnectionStringsNodeName = "connection-strings";
     internal const string kProvidersNodeName = "providers";
+    internal const string kDataProviderServersNodeName = "servers";
     internal const string kDataProviderNodeName = "data";
     internal const string kSimpleProviderNodeName = "simple";
     internal const string kProviderNodeName = "provider";
@@ -39,25 +39,6 @@ namespace Nohros.Configuration
     internal const string kWebNodeName = "web";
     internal const string kContentGroupsNodeName = "content-groups";
 
-    // general purpose nodes
-    internal const string kCommonNodeTree = kCommonNodeName;
-    internal const string kSelfCommonNodeTree = kCommonNodeTree + "." + kCommonNodeName;
-    internal const string kRepositoryNodeTree = kCommonNodeTree + "." + kRepositoryNodeName;
-    internal const string kConnectionStringNodeTree = kCommonNodeTree + "." + kConnectionStringsNodeName;
-    internal const string kLoginModuleNodeTree = kCommonNodeTree + "." + kLoginModulesNodeName;
-    internal const string kChainNodeTree = kCommonNodeTree + "." + kChainsNodeName;
-
-    // providers node trees
-    internal const string kProvidersNodeTree = kCommonNodeTree + "." + kProvidersNodeName;
-    internal const string kDataProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kDataProviderNodeName;
-    internal const string kSimpleProviderNodeTree = kCommonNodeTree + "." + kProvidersNodeName + "." + kSimpleProviderNodeName;
-
-    // web related nodes
-    internal const string kWebNodeTree = kWebNodeName;
-    internal const string kSelfWebNodeTree = kWebNodeName + "." + kWebNodeName;
-    internal const string kContentGroupNodeTree = kWebNodeTree + "." + kContentGroupsNodeName;
-    #endregion
-
     const string kLogLevel = "log-level";
 
     /// <summary>
@@ -67,19 +48,22 @@ namespace Nohros.Configuration
     /// </summary>
     const string kConfigurationFileKey = "NohrosConfigurationFile";
 
-    DictionaryValue properties_;
-    DictionaryValue config_nodes_;
-
     LogLevel log_level_;
+    DictionaryValue properties_;
+
+    ProvidersNode providers_;
+    RepositoriesNode repositories_;
+    LoginModulesNode login_modules_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="NohrosConfiguration"/> class.
+    /// Initializes a new instance of the <see cref="MustConfiguration"/> class.
     /// </summary>
-    public NohrosConfiguration()
-      : base() {
+    public MustConfiguration() {
       properties_ = new DictionaryValue();
-      config_nodes_ = new DictionaryValue();
+      repositories_ = new RepositoriesNode();
+      providers_ = new ProvidersNode();
+      login_modules_ = new LoginModulesNode();
     }
     #endregion
 
@@ -104,7 +88,7 @@ namespace Nohros.Configuration
     /// </para>
     /// </remarks>
     public override void Load() {
-      InternalLoad((string)"nohros", false);
+      InternalLoad("nohros", false);
     }
 
     /// <summary>
@@ -132,7 +116,7 @@ namespace Nohros.Configuration
     /// and when it is modified the configuration values is reloaded.
     /// </para>
     public void LoadAndWatch() {
-      InternalLoad((string)"nohros", true);
+      InternalLoad("nohros", true);
     }
 
     /// <summary>
@@ -189,18 +173,19 @@ namespace Nohros.Configuration
       InternalLoad(root_node_name, true);
     }
 
-    void InternalLoad(string root_node_name, bool watch)
-    {
+    void InternalLoad(string root_node_name, bool watch) {
       string config_file_path =
         ConfigurationManager.AppSettings[kConfigurationFileKey];
 
-      if (config_file_path == null)
-        throw new ConfigurationErrorsException(string.Format(
-          StringResources.Config_KeyNotFound, kConfigurationFileKey));
+      if (config_file_path == null) {
+        throw new ConfigurationException(string.Format(
+          StringResources.Arg_KeyNotFound, kConfigurationFileKey));
+      }
 
-      if (Path.IsPathRooted(config_file_path))
-        throw new ConfigurationErrorsException(string.Format(
-          StringResources.Config_PathIsRooted, config_file_path));
+      if (Path.IsPathRooted(config_file_path)) {
+        throw new ConfigurationException(string.Format(
+          StringResources.Arg_PathRooted, config_file_path));
+      }
 
       config_file_path = Path.Combine(Location, config_file_path);
 
@@ -215,8 +200,9 @@ namespace Nohros.Configuration
     /// <summary>
     /// Parses the configuration node using the nohros schema.
     /// </summary>
-    /// <param name="element">A Xml element representing the configuration root
-    /// node.</param>
+    /// <param name="element">
+    /// A Xml element representing the configuration root node.
+    /// </param>
     /// <remarks>
     /// The <paramref name="element"/> does not need to be the nohros
     /// configuration node, but a node with name "nohros" must exists on the
@@ -225,30 +211,36 @@ namespace Nohros.Configuration
     internal override void Parse(XmlElement element) {
       base.Parse(element);
 
-      // attempt to get the "nohros" node.
-      XmlNode root_node = null;
-      if (string.Compare(element.Name, NohrosConfiguration.kNohrosNodeName, StringComparison.OrdinalIgnoreCase) == 0) {
-        root_node = element as XmlNode;
-      } else {
-        root_node = element.SelectSingleNode(NohrosConfiguration.kNohrosNodeName); // for backward compatibility
-        if (root_node == null) {
-          XmlNodeList nodes = element.GetElementsByTagName(NohrosConfiguration.kNohrosNodeName);
-          if (nodes.Count > 0)
-            root_node = nodes[0];
-        }
-      }
-
-      if (root_node == null)
-        throw new ConfigurationErrorsException(string.Format(
-          StringResources.Config_KeyNotFound,
-          NohrosConfiguration.kNohrosNodeName));
+      XmlElement root_node = GetRootNode(element);
 
       // the logger is used by some methods above and the level threshold of it
       // could be overloaded by a configuration key. So, we need to do the
       // first logger instantiation here and adjust the threshold level if
       // needed.
+      log_level_ = GetLogLevel(root_node);
+
+      // parse the know configuration nodes.
+      foreach (XmlNode node in element) {
+        if (node.NodeType == XmlNodeType.Element) {
+          string name = node.Name;
+          if (StringsAreEquals(name, Strings.kRepositoriesNodeName)) {
+            repositories_ = RepositoriesNode.Parse((XmlElement)node, location);
+          } else if (StringsAreEquals(name, Strings.kProvidersNodeName)) {
+            providers_ = ProvidersNode.Parse((XmlElement)node, location);
+          } else if (StringsAreEquals(name, Strings.kLoginModulesNodeName)) {
+            login_modules_ = LoginModulesNode.Parse((XmlElement)node, location);
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets the configured log level.
+    /// </summary>
+    LogLevel GetLogLevel(XmlElement element) {
       log_level_ = LogLevel.Info;
-      XmlAttribute attribute = root_node.Attributes[kLogLevel];
+      XmlAttribute attribute = element.Attributes[kLogLevel];
+
       if (attribute != null) {
         switch (attribute.Value.ToLower()) {
           case "all":
@@ -280,156 +272,39 @@ namespace Nohros.Configuration
             break;
         }
       }
+      return log_level_;
+    }
 
-      // parse the common node
-      XmlNode node = AbstractConfiguration.SelectNode(root_node, kCommonNodeName);
-      if (node != null) {
-        CommonNode common_node = new CommonNode(Location);
-        common_node.Parse(node, Nodes);
-
-        // parse the web node
-        node = AbstractConfiguration.SelectNode(root_node, kWebNodeName);
-        if (node != null) {
-          WebNode web_node = new WebNode();
-          web_node.Parse(node, Nodes);
-
-          // store the common node into the nodes collection
-          config_nodes_[kSelfWebNodeTree] = web_node;
+    /// <summary>
+    /// Gets the configuration root node that is the first node whose name is
+    /// "nohros" and is child of the <paramref name="element"/> node.
+    /// </summary>
+    XmlElement GetRootNode(XmlElement element) {
+      XmlElement root_node = null;
+      if (StringsAreEquals(element.Name, kNohrosNodeName)) {
+        root_node = element;
+      } else {
+        // the given node is not the "nohros" node, search for the that node
+        // in the xml hierarchy.
+        XmlNode node = element.SelectSingleNode(kNohrosNodeName);
+        if (node == null || node.NodeType != XmlNodeType.Element) {
+          XmlNodeList nodes = element.GetElementsByTagName(kNohrosNodeName);
+          foreach (XmlNode n in nodes) {
+            if (n.NodeType == XmlNodeType.Element) {
+              root_node = (XmlElement) n;
+              break;
+            }
+          }
         }
-
-        // store the web node into the nodes collection
-        config_nodes_[kSelfCommonNodeTree] = common_node;
       }
-    }
 
-    /// <summary>
-    /// Gets the configuration common node.
-    /// </summary>
-    public CommonNode CommonNode {
-      get {
-        return config_nodes_[kSelfCommonNodeTree] as CommonNode;
+      if (root_node == null) {
+        throw new ConfigurationErrorsException(string.Format(
+          StringResources.Arg_KeyNotFound, kNohrosNodeName));
       }
+      return root_node;
     }
 
-    /// <summary>
-    /// Gets the configuration web node.
-    /// </summary>
-    public WebNode WebNode {
-      get {
-        return config_nodes_[kSelfWebNodeTree] as WebNode;
-      }
-    }
-
-    public LogLevel LogLevel {
-      get { return log_level_; }
-    }
-
-    #region Nodes dictionaries
-    /// <summary>
-    /// Gets all the data providers configured for this application.
-    /// </summary>
-    /// <remarks>DataProviderNodes will never return a null reference;
-    /// however, the returned <see cref="DictionaryValue"/> will contain zero
-    /// elements if configuration contains no data providers.</remarks>
-    public DictionaryValue<DataProviderNode> DataProviderNodes {
-      get {
-        return GetDictionary<DataProviderNode>(kDataProviderNodeTree);
-      }
-    }
-
-    /// <summary>
-    /// Gets all the simple providers configured for this application.
-    /// </summary>
-    /// <remarks><see cref="SimpleProviderNodes"/> will never return a null
-    /// reference; however, the returned <see cref="DictionaryValue"/> will
-    /// contain zero elements if configuration contains no cache providers.
-    /// </remarks>
-    public DictionaryValue<DictionaryValue<SimpleProviderNode>> SimpleProviderNodes {
-      get {
-        return GetDictionary<DictionaryValue<SimpleProviderNode>>(
-          kSimpleProviderNodeTree);
-      }
-    }
-
-    /// <summary>
-    /// Gets all the connection strings nodes in configuration.
-    /// </summary>
-    /// <remarks>ConnectionStringNodes will never return a null reference;
-    /// however, the returned
-    /// <see cref="DictionaryValue&lt;ConnectionStringNode&gt;"/> will
-    /// contain zero elements if configuration contains no connections
-    /// string nodes.</remarks>
-    public DictionaryValue<ConnectionStringNode> ConnectionStringNodes {
-      get { return GetDictionary<ConnectionStringNode>(kConnectionStringNodeTree); }
-    }
-
-    /// <summary>
-    /// Gets a collection of all the login modules in configuration.
-    /// </summary>
-    /// <remarks>LoginModuleNodes will never return a null reference; however,
-    /// the returned <see cref="DictionaryValue"/> will contain zero elements
-    /// if configuration contains no login modules.</remarks>
-    public DictionaryValue<LoginModuleNode> LoginModuleNodes {
-      get { return GetDictionary<LoginModuleNode>(kLoginModuleNodeTree); }
-    }
-
-    /// <summary>
-    /// Gets a collection of all the repositories in configuration.
-    /// </summary>
-    /// <remarks>
-    /// RepositoryNodes will never return a null reference; however, the
-    /// returned <see cref="DictionaryValue"/> will contain zero elements if
-    /// configuration contains no repositories.</remarks>
-    public DictionaryValue<RepositoryNode> RepositoryNodes {
-      get { return GetDictionary<RepositoryNode>(kRepositoryNodeTree); }
-    }
-
-    /// <summary>
-    /// Gets a collection of all the chains in configuration.
-    /// </summary>
-    /// <remarks>ChainNodes will never return a null reference; however,
-    /// the returned <see cref="DictionaryValue"/> will contain zero elements
-    /// if configuration contains no chains.</remarks>
-    public DictionaryValue<ChainNode> ChainNodes {
-      get { return GetDictionary<ChainNode>(kChainNodeTree); }
-    }
-
-    /// <summary>
-    /// Gets a collection of all the chains in configuration.
-    /// </summary>
-    /// <remarks>ContentGroupNodes will never return a null reference;
-    /// however, the returned <see cref="DictionaryValue"/> will contain zero
-    /// elements if configuration contains no content groups.</remarks>
-    public DictionaryValue<ContentGroupNode> ContentGroupNodes {
-      get { return GetDictionary<ContentGroupNode>(kContentGroupNodeTree); }
-    }
-
-    /// <summary>
-    /// Gets a collection of all the child nodes in the configuration.
-    /// </summary>
-    /// <remarks>Nodes will never return a null reference; however,
-    /// the returned <see cref="DictionaryValue"/> will contain zero elements
-    /// if configuration contains no child nodes.</remarks>
-    internal DictionaryValue Nodes {
-      get { return config_nodes_; }
-    }
-
-    /// <summary>
-    /// Gets a node in the configuration.
-    /// </summary>
-    /// <remarks>This method will never return a null reference; however,
-    /// the returned <see cref="DictionaryValue&lt;T&gt;"/> will contain zero
-    /// elements if configuration contains no node with the specified
-    /// <paramref name="path"/>.</remarks>
-    DictionaryValue<T> GetDictionary<T>(string path) where T : class, IValue {
-      DictionaryValue<T> node = config_nodes_[path] as DictionaryValue<T>;
-      if (node == null)
-        node = new DictionaryValue<T>();
-      return node;
-    }
-    #endregion
-
-    #region Dynamic Properties
     /// <summary>
     /// Gets the value of a dynamic property by using the specified property namespace and name.
     /// </summary>
@@ -444,10 +319,15 @@ namespace Nohros.Configuration
     /// <summary>
     /// Recursively gets the dynamic properties.
     /// </summary>
-    /// <param name="node">A XML node containing the dynamic properties.</param>
-    /// <param name="path">The path to the node value.</param>
+    /// <param name="node">
+    /// A XML node containing the dynamic properties.
+    /// </param>
+    /// <param name="path">
+    /// The path to the node value.
+    /// </param>
     /// <remarks>
-    /// If the namespace of the property is not defined it will be assigned to the default namespace.
+    /// If the namespace of the property is not defined it will be assigned to
+    /// the default namespace.
     /// </remarks>
     void GetProperties(XmlNode node, string path) {
       if (node != null && node.ChildNodes.Count > 0) {
@@ -476,7 +356,7 @@ namespace Nohros.Configuration
     /// </summary>
     /// <param name="key">The key whose value to get</param>
     /// <returns>An string associated with the specified key.</returns>
-    /// <seealso cref="Item(string)"/>
+    /// <seealso cref="this(string)"/>
     public IValue GetProperty(string key) {
       return properties_[key];
     }
@@ -489,6 +369,48 @@ namespace Nohros.Configuration
     public void SetProperty(string key, IValue value) {
       properties_[key] = value;
     }
-    #endregion
+
+    /// <summary>
+    /// Gets the repositories that was configured for this application.
+    /// </summary>
+    /// <remarks>
+    /// If this application has no repositories configured, this property will
+    /// returns a empty <see cref="RepositoriesNode"/>, that is a
+    /// <see cref="RepositoriesNode"/> object that has no repository.
+    /// </remarks>
+    public IRepositoriesNode Repositories {
+      get { return repositories_; }
+    }
+
+    /// <summary>
+    /// Gets the providers that was configured for this application.
+    /// </summary>
+    /// <remarks>
+    /// If this application has no providers configured, this property will
+    /// returns a empty <see cref="ProvidersNode"/>, that is a
+    /// <see cref="ProvidersNode"/> object that has no repository.
+    /// </remarks>
+    public IProvidersNode Providers {
+      get { return providers_; }
+    }
+
+    /// <summary>
+    /// Gets the login modules that was configured for this application.
+    /// </summary>
+    /// <remarks>
+    /// If this application has no login modules configured, this property will
+    /// returns a empty <see cref="LoginModulesNode"/>, that is a
+    /// <see cref="LoginModulesNode"/> object that contains no login modules.
+    /// </remarks>
+    public ILoginModulesNode LoginModules {
+      get { return login_modules_; }
+    }
+
+    /// <summary>
+    /// Gets the logging level that was configured for this application.
+    /// </summary>
+    public LogLevel LogLevel {
+      get { return log_level_; }
+    }
   }
 }

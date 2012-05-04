@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Logging.Tests
+namespace Nohros.Tests
 {
   public static class Program
   {

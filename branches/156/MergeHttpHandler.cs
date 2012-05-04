@@ -47,7 +47,7 @@ namespace Nohros.Net
 #endif
 
     HttpContext context_;
-    NohrosConfiguration settings_;
+    MustConfiguration settings_;
 
     private FileCacheItem UpdateFileCache(ContentGroupNode content_group, string cache_key) {
       CacheDependency cd;
@@ -163,7 +163,7 @@ namespace Nohros.Net
 
       try {
         // TODO(neylor.silva): Fix this
-        //settings_ = NohrosConfiguration.DefaultConfiguration;
+        //settings_ = MustConfiguration.DefaultConfiguration;
       } catch (System.Configuration.ConfigurationErrorsException exception) {
         FileLogger.ForCurrentProcess.Error("[GetMergedContent   Nohros.Net.MergeHttpHandler]", exception);
         // the configuration file was not defined. we cant do nothing.

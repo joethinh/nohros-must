@@ -5,7 +5,7 @@ namespace Nohros.Toolkit.RestQL
   /// <summary>
   /// The application settings.
   /// </summary>
-  public partial class Settings : NohrosConfiguration, ISettings
+  public partial class Settings : MustConfiguration, ISettings
   {
     IQuerySettings query_settings_;
     ITokenPrincipalMapperSettings token_principal_mapper_settings_;

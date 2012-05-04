@@ -42,7 +42,7 @@ namespace Nohros.Data
       int j = column_names.Length;
       if (data_reader.FieldCount < j) {
         throw new ArgumentOutOfRangeException(
-          StringResources.DataHelper_OrdArrInvalidOfLen);
+          StringResources.ArgumentOutOfRange_ArrayLengthMismatch);
       }
 
       for (int i = 0; i < j; i++) {

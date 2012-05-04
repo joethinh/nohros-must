@@ -148,16 +148,15 @@ namespace Nohros.Concurrent
         TimeUnitHelper.ToMillis(timeout, unit)));
       if (acquired) {
         try {
-          T value;
           result = GetValue();
           return true;
         } finally {
           Monitor.Exit(mutex_);
         }
-      } else {
-        result = default(T);
-        return false;
       }
+
+      result = default(T);
+      return false;
     }
 
     public void AddListener(RunnableDelegate listener, IExecutor executor) {

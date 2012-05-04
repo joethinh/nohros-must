@@ -25,8 +25,17 @@ namespace Nohros.Security.Auth
     /// A <see cref="ILoginModule"/> that is associated with the given
     /// <paramref name="login_module_node"/>.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="login_module_node"/> or <paramref name="login_module"/>
+    /// are <c>null</c> references.
+    /// </exception>
     public LoginModuleNodePair(ILoginModuleNode login_module_node,
       ILoginModule login_module) {
+      if (login_module_node == null || login_module == null) {
+        throw new ArgumentNullException(login_module == null
+          ? "login_module"
+          : "login_module_node");
+      }
       login_module_ = login_module;
       login_module_node_ = login_module_node;
     }

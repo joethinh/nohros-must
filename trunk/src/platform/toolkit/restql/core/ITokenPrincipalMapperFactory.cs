@@ -18,6 +18,7 @@ namespace Nohros.Toolkit.RestQL
     /// </summary>
     /// <returns>A <see cref="ITokenPrincipalMapper"/> object.</returns>
     ITokenPrincipalMapper CreateTokenPrincipalMapper(
-      IDictionary<string, string> options);
+      IDictionary<string, string> options,
+      ITokenPrincipalMapperSettings settings);
   }
 }

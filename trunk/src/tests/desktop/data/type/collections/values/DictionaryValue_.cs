@@ -14,7 +14,7 @@ namespace Nohros.Test.Data.Type
     {
         static DictionaryValue FillDictionary() {
             DictionaryValue dict = new DictionaryValue();
-            CommonNode common = new CommonNode();
+            CommonNodeParser common = new CommonNodeParser();
             dict.Add("common.providers.commondataprovider", new DataProviderNode("commondataprovider", "System.String"));
             dict.Add("common.providers.testdataprovider", new DataProviderNode("testdataprovider", "System.String"));
             dict.Add("common.providers.nohrosdataprovider", new DataProviderNode("nohrosdataprovider", "System.String"));
@@ -25,7 +25,7 @@ namespace Nohros.Test.Data.Type
         [Test]
         public void Add() {
             DictionaryValue dict = new DictionaryValue();
-            CommonNode common = new CommonNode();
+            CommonNodeParser common = new CommonNodeParser();
             dict.Add("common.providers.commondataprovider", new DataProviderNode("commondataprovider", "System.String"));
             Assert.Pass();
         }

@@ -4,38 +4,47 @@ using System.Text;
 
 namespace Nohros.Data.TransferObjects
 {
-    public interface IDataTransferObject
-    {
-        /// <summary>
-        /// Gets a JSON-compliant string of characters that represents the underlying class and
-        /// is formatted like a JSON array element.
-        /// </summary>
-        /// <example>
-        ///     <code>
-        ///         [ToJsElement(), "somedata", ...]
-        ///     </code>
-        /// </example>
-        /// <returns>A JSON-compliant string of characters formatted like a JSON array element.</returns>
-        /// <remarks>
-        /// JSON spec: "http://www.ietf.org/rfc/rfc4627.txt"
-        /// The returned string will be scaped with quotation marks.
-        /// </remarks>
-        string ToJsElement();
+  /// <summary>
+  /// Represents an class that can be serialized using the json format. Classes
+  /// that implement this interface is usually used to transfer json encoded
+  /// data from the data access layer to another layer (usually a web
+  /// front-end).
+  /// </summary>
+  public interface IDataTransferObject
+  {
+    /// <summary>
+    /// Gets a json-compliant string of characters that represents the
+    /// underlying class and is formatted like a json array element.
+    /// </summary>
+    /// <example>
+    ///   <code>
+    ///     [ToJsElement(), "somedata", ...]
+    ///   </code>
+    /// </example>
+    /// <returns>
+    /// A json compliant string of characters formatted like a json array
+    /// element.
+    /// </returns>
+    /// <remarks>
+    /// The returned string will be scaped with quotation marks.
+    /// </remarks>
+    string AsJsonArray();
 
-        /// <summary>
-        /// Gets a JSON-compliant string of characters that represents the underlying class
-        /// and is formmated like a JSON object.
-        /// </summary>
-        /// <example>
-        ///     <code>
-        ///         { "name": "nohros systems", "surname": "nohros" }
-        ///     </code>
-        /// </example>
-        /// <returns>A JSON-compliant string of characters formatted like a JSON object.</returns>
-        /// <remarks>
-        /// JSON spec: "http://www.ietf.org/rfc/rfc4627.txt"
-        /// The strings inside the object will be escaped with quotation marks.
-        /// </remarks>
-        string ToJsObject();
-    }
+    /// <summary>
+    /// Gets a json compliant string of characters that represents the
+    /// underlying class and is formmated like a json object.
+    /// </summary>
+    /// <example>
+    ///   <code>
+    ///     { "name": "nohros systems", "surname": "nohros" }
+    ///   </code>
+    /// </example>
+    /// <returns>
+    /// A json compliant string of characters formatted like a json object.
+    /// </returns>
+    /// <remarks>
+    /// The strings inside the object will be escaped with quotation marks.
+    /// </remarks>
+    string AsJsonObject();
+  }
 }

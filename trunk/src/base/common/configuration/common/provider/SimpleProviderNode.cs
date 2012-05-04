@@ -1,42 +1,43 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 
 namespace Nohros.Configuration
 {
   /// <summary>
-  /// A simple non abstract implementation of the <see cref="IProviderNode"/>
-  /// interface.
+  /// <see cref="SimpleProviderNode"/> is the default implementation of the
+  /// <see cref="ISimpleProviderNode"/> interface.
   /// </summary>
-  /// <remarks>
-  /// This class defines a common and simple way to define types in
-  /// configuration files to dynamic load it at run-time.
-  /// </remarks>
-  public class SimpleProviderNode : ProviderNode
+  public partial class SimpleProviderNode: ProviderNode, ISimpleProviderNode
   {
-    const string kGroupKey = "group";
-
     string group_;
 
+    #region .ctor
     /// <summary>
     /// Intializes a new instance of the <see cref="SimpleProviderNode"/> by
     /// using the specified provider name and type.
     /// </summary>
-    /// <param name="name">The name of the provider.</param>
-    /// <param name="type">The assembly's qualified name of the provider
-    /// type.</param>
-    public SimpleProviderNode(string name, string type): base(name, type) {
-      group_ = string.Empty;
+    /// <param name="name">
+    /// A string that uniquely identifies the provider within a collection.
+    /// </param>
+    /// <param name="type">
+    /// The assembly's qualified name of the provider type.</param>
+    public SimpleProviderNode(string name, string type)
+      : this(name, type, string.Empty) {
     }
 
-    /// <inheritdoc/>
-    public override void Parse(XmlNode node, string base_path) {
-      InternalParse(node, base_path);
-
-      if (!GetAttributeValue(node, kGroupKey, out group_))
-        group_ = string.Empty;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleProviderNode"/> by
+    /// using the specified provider name, type and related group.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="type"></param>
+    public SimpleProviderNode(string name, string type, string group)
+      : base(name, type) {
+      if (group == null) {
+        throw new ArgumentNullException("group");
+      }
+      group_ = group;
     }
+    #endregion
 
     /// <summary>
     /// Gets the group name of the provider.

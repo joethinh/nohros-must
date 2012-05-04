@@ -149,7 +149,8 @@ namespace Nohros
 
     /// <inheritdoc/>
     public virtual string GetAsString() {
-      throw new InvalidCastException(string.Format(StringResources.Type_InvalidCastException, "Value", "string"));
+      throw new InvalidCastException(
+        string.Format(StringResources.InvalidCast_FromTo, "Value", "string"));
     }
     #endregion
 
