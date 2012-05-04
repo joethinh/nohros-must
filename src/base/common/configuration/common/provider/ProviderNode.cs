@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Xml;
 
 namespace Nohros.Configuration
 {
@@ -9,6 +8,11 @@ namespace Nohros.Configuration
   /// </summary>
   public partial class ProviderNode : AbstractConfigurationNode, IProviderNode
   {
+    /// <summary>
+    /// Gets the provider's alias.
+    /// </summary>
+    protected string alias;
+
     /// <summary>
     /// The path of the providers's assembly.
     /// </summary>
@@ -33,11 +37,31 @@ namespace Nohros.Configuration
     /// Initializes a new instance of the <see cref="ProviderNode"/> class by
     /// using the specified provider name and type.
     /// </summary>
-    /// <param name="name">The name of the provider.</param>
-    /// <param name="type">The assembly-qualified name of the provider
-    /// type.</param>
+    /// <param name="name">
+    /// The name of the provider.
+    /// </param>
+    /// <param name="type">
+    /// The assembly-qualified name of the provider type.
+    /// </param>
     protected ProviderNode(string name, string type)
-      : this(name, type, AppDomain.CurrentDomain.BaseDirectory) {
+      : this(name, string.Empty, type, AppDomain.CurrentDomain.BaseDirectory) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProviderNode"/> class by
+    /// using the specified provider name, type and alias.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the provider.
+    /// </param>
+    /// <param name="type">
+    /// The assembly-qualified name of the provider type.
+    /// </param>
+    /// <param name="alias">
+    /// The provider's alias.
+    /// </param>
+    protected ProviderNode(string name, string alias, string type)
+      : this(name, alias, type, AppDomain.CurrentDomain.BaseDirectory) {
     }
 
     /// <summary>
@@ -53,40 +77,36 @@ namespace Nohros.Configuration
     /// <param name="location">
     /// The path to the directory where the provider assembly file is stored.
     /// </param>
-    protected ProviderNode(string name, string type, string location)
-      : base(name) {
+    /// <param name="alias">
+    /// The provider's alias.
+    /// </param>
+    protected ProviderNode(string name, string alias, string type,
+      string location) : base(name) {
       if (type == null || location == null) {
         throw new ArgumentNullException(type == null ? "type" : "location");
       }
       this.type = type;
       this.location = location;
+      this.alias = alias;
       options = new Dictionary<string, string>();
     }
     #endregion
 
     #region IProviderNode Members
-    /// <summary>
-    /// Gets the assembly-qualified name of the provider type.
-    /// </summary>
-    /// <seealso cref="System.Type.AssemblyQualifiedName"/>
+    /// <inheritdoc/>
     public string Type {
       get { return type; }
     }
 
-    /// <summary>
-    /// Gets a string representing the fully qualified path to the directory
-    /// where the assembly associated with the provider is located.
-    /// </summary>
-    /// <value>
-    /// The fully qualified path to the folder where the provider assembly is
-    /// stored.
-    /// </value>
-    /// <remarks>
-    /// The assembly location must be an absolute path or a path relative to
-    /// the configuration file.
-    /// </remarks>
-    public string Location {
+    /// <inheritdoc/>
+    public virtual string Location {
       get { return location; }
+    }
+
+    /// <inheritdoc/>
+    public virtual string Alias {
+      get { return alias; }
+      set { alias = value; }
     }
 
     /// <inheritdoc/>
