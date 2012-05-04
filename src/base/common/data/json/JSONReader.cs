@@ -3,7 +3,7 @@ using System.Collections;
 
 using Nohros.Collections;
 
-namespace Nohros
+namespace Nohros.Data
 {
   /// <summary>
   /// A JSON parser. Converts strings of JSON into a
