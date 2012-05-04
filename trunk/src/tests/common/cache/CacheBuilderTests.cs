@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
-using Nohros.Caching;
-using Nohros.Caching.Providers;
 
-namespace Nohros.Common.Caching
+namespace Nohros.Caching
 {
   [TestFixture]
   public class CacheBuilderTests

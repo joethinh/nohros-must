@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+
 using NUnit.Framework;
 
-namespace Nohros.Common.type.json
+namespace Nohros.Data
 {
-
   [TestFixture]
   public class JSONReaderTests
   {

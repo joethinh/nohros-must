@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+
 using NUnit.Framework;
 
-namespace Nohros.Concurrent.Tests
+namespace Nohros.Concurrent
 {
   [TestFixture]
   public class AtomicReferenceTests
