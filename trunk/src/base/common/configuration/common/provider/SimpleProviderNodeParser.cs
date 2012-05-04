@@ -32,7 +32,9 @@ namespace Nohros.Configuration
       string type = GetAttributeValue(element, Strings.kTypeAttribute);
       string group = GetAttributeValue(element, Strings.kNameAttribute,
         string.Empty);
-      return new SimpleProviderNode(name, type);
+      string alias = GetAttributeValue(element, Strings.kAliasAttribute,
+        string.Empty);
+      return new SimpleProviderNode(name, alias, type, group);
     }
   }
 }
