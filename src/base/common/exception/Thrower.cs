@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
-
 using Nohros.Logging;
 using Nohros.Resources;
 
@@ -54,12 +53,10 @@ namespace Nohros
     /// </summary>
     /// <param name="argument">The <see cref="ExceptionArgument"/> to convert</param>
     /// <returns></returns>
-    internal static string GetArgumentName(ExceptionArgument argument)
-    {
+    internal static string GetArgumentName(ExceptionArgument argument) {
       string argument_name = null;
 
-      switch (argument)
-      {
+      switch (argument) {
         case ExceptionArgument.index:
           argument_name = "index";
           break;
@@ -137,7 +134,8 @@ namespace Nohros
           break;
 
         default:
-          Debug.Assert(false, "The enum value is not defined, please checked ExceptionArgumentName Enum");
+          Debug.Assert(false,
+            "The enum value is not defined, please checked ExceptionArgumentName Enum");
           return string.Empty;
       }
 
@@ -149,10 +147,8 @@ namespace Nohros
     /// </summary>
     /// <param name="resource">The <see cref="ExceptionResource"/> to convert</param>
     /// <returns>A string representation of the specified <see cref="ExceptionResource"/></returns>
-    internal static string GetResourceByName(ExceptionResource resource)
-    {
-      switch (resource)
-      {
+    internal static string GetResourceByName(ExceptionResource resource) {
+      switch (resource) {
         case ExceptionResource.Argument_AddingDuplicate:
           return StringResources.Argument_AddingDuplicate;
 
@@ -169,53 +165,41 @@ namespace Nohros
           return StringResources.Argument_InvalidOfLen;
 
         default:
-          Debug.Assert(false, "The enum value is not defined, please checked ExceptionArgumentName Enum");
+          Debug.Assert(false,
+            "The enum value is not defined, please checked ExceptionArgumentName Enum");
           return string.Empty;
       }
     }
 
-    #region size reduced methods
-    internal static void ThrowArgumentException(ExceptionResource resource)
-    {
+    internal static void ThrowArgumentException(ExceptionResource resource) {
       throw new ArgumentException(GetResourceByName(resource));
     }
 
-    internal static void ThrowEmptyArgumentException(ExceptionArgument argument)
-    {
-      throw new ArgumentException(StringResources.Argument_Empty, GetArgumentName(argument));
+    internal static void ThrowEmptyArgumentException(ExceptionArgument argument) {
+      throw new ArgumentException(StringResources.Argument_Empty,
+        GetArgumentName(argument));
     }
 
-    internal static void ThrowInvalidOperationException(ExceptionResource resource)
-    {
+    internal static void ThrowInvalidOperationException(
+      ExceptionResource resource) {
       throw new InvalidOperationException(GetResourceByName(resource));
     }
 
-    internal static void ThrowArgumentNullException(ExceptionArgument argument)
-    {
+    internal static void ThrowArgumentNullException(ExceptionArgument argument) {
       throw new ArgumentNullException(GetArgumentName(argument));
     }
 
-    internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument)
-    {
+    internal static void ThrowArgumentOutOfRangeException(
+      ExceptionArgument argument) {
       throw new ArgumentOutOfRangeException(GetArgumentName(argument));
     }
 
-    internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
-    {
-      throw new ArgumentOutOfRangeException(GetArgumentName(argument), GetResourceByName(resource));
+    internal static void ThrowArgumentOutOfRangeException(
+      ExceptionArgument argument, ExceptionResource resource) {
+      throw new ArgumentOutOfRangeException(GetArgumentName(argument),
+        GetResourceByName(resource));
     }
 
-    /// <summary>
-    /// Throws a <see cref="ConfigurationErrorsException"/> using the <see cref="StringResources.Config_FileInvalid"/>
-    /// like the exception message.
-    /// </summary>
-    internal static void ThrowConfigurationException_FileInvalid()
-    {
-      throw new ConfigurationErrorsException(StringResources.Config_FileInvalid);
-    }
-    #endregion
-
-    #region non size reduced methods
     /// <summary>
     /// Throws a <see cref="ConfigurationErrorsException"/> and logs the exception.
     /// </summary>
@@ -224,39 +208,41 @@ namespace Nohros
     /// <remarks>
     /// The exception is logged by using the <see cref="FileLogger"/> class.
     /// </remarks>
-    internal static void ThrowConfigurationException(string message, string source)
-    {
+    internal static void ThrowConfigurationException(string message,
+      string source) {
       MustLogger.ForCurrentProcess.Error(source + "   " + message);
       throw new ConfigurationErrorsException(message);
     }
 
     /// <summary>
-    /// Throws a <see cref="InvalidCastExeption"/>.
+    /// Throws a <see cref="InvalidCastException"/>.
     /// </summary>
-    /// <param name="typeA">The original type.</param>
-    /// <param name="typeB">The type which the object
-    /// <typeparamref name="typeA"/> was failed to cast.</param>
-    internal static void ThrowInvalidCastException(string typeA, string typeB) {
+    /// <param name="from_type">
+    /// The original type.
+    /// </param>
+    /// <param name="to_type">
+    /// The type which the type <paramref name="from_type"/> was failed to cast.
+    /// </param>
+    internal static void ThrowInvalidCastException(string from_type,
+      string to_type) {
       throw new InvalidCastException(string.Format(
-        StringResources.Type_InvalidCastException, typeA, typeB));
+        StringResources.InvalidCast_FromTo, from_type, to_type));
     }
 
     /// <summary>
     /// Throws a <see cref="ProviderException"/>, using the specified resource name.
     /// </summary>
-    internal static void ThrowProviderException(ExceptionResource resource)
-    {
+    internal static void ThrowProviderException(ExceptionResource resource) {
       throw new ProviderException(GetResourceByName(resource));
     }
 
     /// <summary>
     /// Throws a <see cref="ProviderException"/>, using the specified resource name and inner exception.
     /// </summary>
-    internal static void ThrowProviderException(ExceptionResource resource, System.Exception inner_exception)
-    {
+    internal static void ThrowProviderException(ExceptionResource resource,
+      System.Exception inner_exception) {
       throw new ProviderException(GetResourceByName(resource), inner_exception);
     }
-    #endregion
   }
 
   #region Enums

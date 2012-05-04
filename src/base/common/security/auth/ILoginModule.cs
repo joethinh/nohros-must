@@ -1,8 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Text;
+
+using Nohros.Configuration;
 
 namespace Nohros.Security.Auth
 {
@@ -20,8 +18,8 @@ namespace Nohros.Security.Auth
   /// requiring any modifications to the application itself.
   /// </para>
   /// <para>
-  /// The <see cref="ILoginConfiguration"/> is responsible for reading and
-  /// instantiating the appropriate <see cref="ILoginModules"/>.
+  /// The <see cref="ILoginConfiguration"/> is responsible for reading
+  /// the appropriate <see cref="ILoginModule"/> configuration data.
   /// </para>
   /// <para>
   /// The calling application sees the authentication process as a single
@@ -39,25 +37,23 @@ namespace Nohros.Security.Auth
   /// again.
   /// </para>
   /// <para>
-  /// In the second phase, if the LoginContext's overall authentication
-  /// succeeded(the relevant REQUIRED, REQUISITE, SUFFICIENT and OPTIONAL
-  /// <see cref="ILoginModule"/> succeeded), then the
-  /// <see cref="ILoginModule.Commit"/> method for the
-  /// <see cref="ILoginModule"/> gets invoked. The commit method for a
-  /// <see cref="ILoginModule"/> checks its privately saved state to see if
-  /// its own authentication succeeded. If the overall
+  /// In the second phase, if the <see cref="LoginContext"/>'s overall
+  /// authentication succeeded (the relevant "Required", "Requisite",
+  /// "Sufficient" and "Optional" login module succeeded), then the
+  /// <see cref="ILoginModule.Commit"/> method for the login module gets
+  /// invoked. The commit method for a login module checks its privately saved
+  /// state to see if its own authentication succeeded. If the overall
   /// <see cref="LoginContext"/> authentication succeeded and the login
   /// module's own authentication succeeded, then the commit method
-  /// associates the relevant Credentials(authentication data) with the
+  /// associates the relevant credentials (authentication data) with the
   /// <see cref="Subject"/> located within the login module.
   /// </para>
   /// <para>
-  /// If the <see cref="LoginContext's"/> overall authentication failed(the
-  /// relevant REQUIRED, REQUISITE, SUFFIIENT and OPTIONAL
-  /// <see cref="ILoginModule"/> did not succeeded), then the
-  /// <see cref="ILoginModule.Abort()"/> method for each login module gets
-  /// invoked. In this case, the login module removes/destroy any
-  /// authentication state originally saved.
+  /// If the <see cref="LoginContext"/>'s overall authentication failed (the
+  /// relevant "Required", "Requisite", "Sufficient" and "Optional" login
+  /// module did not succeeded), then the <see cref="ILoginModule.Abort()"/>
+  /// method for each login module gets invoked. In this case, the login module
+  /// removes/destroy any authentication state originally saved.
   /// </para>
   /// <para>
   /// Log out involves only one phase. The <see cref="LoginContext"/> invokes
@@ -81,24 +77,11 @@ namespace Nohros.Security.Auth
     bool Commit();
 
     /// <summary>
-    /// Initializes this <see cref="ILoginModule"/>.
+    /// Method to authenticate a subject.
     /// </summary>
-    /// <param name="subject">The <see cref="Subject"/> to be
-    /// authenticated.</param>
-    /// <param name="callback">A <see cref="IAuthCallbackHandler"/> for
-    /// communicating with the end user.</param>
-    /// <param name="sharedState">State shared with other configured
-    /// <see cref="ILoginModule"/>.</param>
-    /// <param name="options">Options specified in the
-    /// <see cref="ILoginConfiguration"/> for this particular
-    /// <see cref="ILoginModule"/></param>
-    void Init(Subject subject,
-      IAuthCallbackHandler callback, IDictionary<string, object> sharedState,
-      IDictionary<string, object> options);
-
-    /// <summary>
-    /// Method to authenticate a user - phase 1.
-    /// </summary>
+    /// <remarks>
+    /// The implementation of this method authenticates
+    /// </remarks>
     /// <returns></returns>
     bool Login();
 

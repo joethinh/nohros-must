@@ -73,7 +73,7 @@ namespace Nohros.Configuration
 
             build_type_ = (build == "release") ? BuildType.Release : BuildType.Debug;
             mime_type_ = mime_type;
-            base_path_ = str.Path;
+            base_path_ = str.RelativePath;
 
             string file_name = null;
             foreach (XmlNode file_node in node.ChildNodes) {

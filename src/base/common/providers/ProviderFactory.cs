@@ -48,14 +48,14 @@ namespace Nohros.Providers
       // assemlby is specified we need to load the assembly and try to get the
       // type from the loaded assembly. The name of the assembly will be
       // extracted from the provider type.
-      if (node.AssemblyLocation != null) {
+      if (node.Location != null) {
         string assembly_name = node.Type;
         int num = assembly_name.IndexOf(',');
-        if (num == -1)
+        if (num == -1) {
           throw new ProviderException(
             string.Format(
-              StringResources.Provider_LoadAssembly,
-              node.AssemblyLocation));
+              Resources.Resources.Provider_AssemblyNotSpecified, assembly_name));
+        }
 
         assembly_name = assembly_name.Substring(num + 1).Trim();
         int num2 = assembly_name.IndexOfAny(new char[] { ' ', ',' });
@@ -66,12 +66,13 @@ namespace Nohros.Providers
           assembly_name = assembly_name + ".dll";
 
         string assembly_path =
-          Path.Combine(node.AssemblyLocation, assembly_name);
+          Path.Combine(node.Location, assembly_name);
 
-        if (!File.Exists(assembly_path))
+        if (!File.Exists(assembly_path)) {
           throw new ProviderException(
             string.Format(
-              StringResources.Provider_LoadAssembly, assembly_path));
+              Resources.Resources.Provider_LoadAssembly, assembly_path));
+        }
 
         try {
           Assembly assembly = Assembly.LoadFrom(assembly_path);
@@ -79,10 +80,11 @@ namespace Nohros.Providers
         } catch (Exception ex) {
           throw new ProviderException(
             string.Format(
-              StringResources.Provider_LoadAssembly, assembly_path), ex);
+              Resources.Resources.Provider_LoadAssembly, assembly_path), ex);
         }
-      } else
+      } else {
         type = Type.GetType(node.Type);
+      }
 
       return type;
     }
@@ -167,8 +169,8 @@ namespace Nohros.Providers
       // the provider could not be created and we need to pack the exception
       // into a new ProviderException exception.
       throw new ProviderException(
-        string.Format(
-          StringResources.Type_CreateInstanceOf, typeof(T), inner_exception));
+        string.Format(Resources.Resources.TypeLoad_CreateInstance,
+        typeof (T)), inner_exception);
     }
   }
 }

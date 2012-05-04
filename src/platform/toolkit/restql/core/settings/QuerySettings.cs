@@ -4,14 +4,14 @@ using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public class QuerySettings : NohrosConfiguration, IQuerySettings
+  public class QuerySettings : MustConfiguration, IQuerySettings
   {
     IProviderNode[] processors_;
     long query_cache_duration_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="NohrosConfiguration"/>
+    /// Initializes a new instance of the <see cref="MustConfiguration"/>
     /// class.
     /// </summary>
     public QuerySettings(IProviderNode[] processors) {

@@ -92,7 +92,7 @@ namespace Nohros.Configuration
       if (root_node_name != null && root_node_name.Trim() == string.Empty) {
         throw new ArgumentException(
           string.Format(
-            StringResources.Config_KeyNotFound, root_node_name));
+            StringResources.Arg_KeyNotFound, root_node_name));
       }
 
       // have to use File.Exists() rather than config_file_info.Exists()
@@ -128,7 +128,7 @@ namespace Nohros.Configuration
             if (node == null) {
               throw new ArgumentException(
                 string.Format(
-                  StringResources.Config_KeyNotFound, root_node_name));
+                  StringResources.Arg_KeyNotFound, root_node_name));
             }
           } else {
             // If |root_node_name| is  null reference we need to use the
@@ -145,17 +145,16 @@ namespace Nohros.Configuration
             // not have a valid xml element:
             //   <?xml version="1.0" encoding="utf-8"?>
             if (node == null) {
-              throw new ArgumentException(
-                string.Format(StringResources.Config_FileInvalid));
+              throw new ConfigurationException(
+                string.Format(StringResources.Configuration_InvalidFormat,
+                  config_file_info.FullName));
             }
           }
 
           Load((XmlElement) node);
         }
       } else {
-        throw new FileNotFoundException(
-          string.Format(StringResources.Config_FileNotFound_Path,
-            config_file_info.FullName));
+        throw new FileNotFoundException(config_file_info.FullName);
       }
     }
 
@@ -199,12 +198,12 @@ namespace Nohros.Configuration
     /// <summary>
     /// Gets the directory path where the configuration file is stored.
     /// </summary>
-    /// <returns>An string that represents the location of the configuration
-    /// file or the application base directory if the location could not be
-    /// retrieved.</returns>
+    /// <returns>
+    /// An string that represents the location of the configuration file or the
+    /// application base directory if the location could not be retrieved.
+    /// </returns>
     public string Location {
       get { return location; }
-      set { location = value; }
     }
     #endregion
 
@@ -391,6 +390,26 @@ namespace Nohros.Configuration
     }
 
     /// <summary>
+    /// Compares two strings for equality.
+    /// </summary>
+    /// <param name="str_a">
+    /// The first string to compare.
+    /// </param>
+    /// <param name="str_b">
+    /// The second string to compare.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the two specified strings are equals; otherwise,
+    /// <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    /// This method performs a ordinal case-insensitive comparison.
+    /// </remarks>
+    internal static bool StringsAreEquals(string str_a, string str_b) {
+      return string.Compare(str_a, str_b, StringComparison.Ordinal) == 0;
+    }
+
+    /// <summary>
     /// Monitor the configuration file for changes and reload the
     /// configuration values if a change is detected.
     /// </summary>
@@ -570,7 +589,7 @@ namespace Nohros.Configuration
           } else if (property_type.IsValueType) {
             // try to convert the attribute value to the type of the property
             System.ValueType value;
-            if (DataHelper.TryParse(property_type, property_value, out value)) {
+            if (ValueTypes.TryParse(property_type, property_value, out value)) {
               property.SetValue(this, value, null);
             }
           }

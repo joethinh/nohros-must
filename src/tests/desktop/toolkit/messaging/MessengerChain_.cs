@@ -13,7 +13,7 @@ namespace Nohros.Test.Toolkit.Messaging
     {
         [Test]
         public void FromConfiguration() {
-            MessengerChain messengers = MessengerChain.FromConfiguration("pseudo-chain", NohrosConfiguration.DefaultConfiguration);
+            MessengerChain messengers = MessengerChain.FromConfiguration("pseudo-chain", MustConfiguration.DefaultConfiguration);
             Assert.IsNotNull(messengers);
             Assert.AreEqual(1, messengers.Count);
         }

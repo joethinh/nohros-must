@@ -1,10 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Security.Principal;
-
-using Nohros.Data;
 
 namespace Nohros.Security.Auth
 {
@@ -12,7 +6,8 @@ namespace Nohros.Security.Auth
   /// A <see cref="Subject"/> represents a grouping of related information for
   /// a single entity, such as a person or service. Such information includes
   /// the subject's permissions as well as its security-related attributes (
-  /// passwords and cryptographic keys, for example).<para>
+  /// passwords and cryptographic keys, for example).
+  /// <para>
   /// Subjects may potentially have multiple permissions. Each permission
   /// represented as a <see cref="IPermission"/> object within the subject.
   /// </para>
@@ -47,15 +42,15 @@ namespace Nohros.Security.Auth
   /// </example>
   /// </para>
   /// </summary>
-  public partial class Subject
+  public class Subject
   {
-    PermissionSet permissions_;
-    PrincipalSet principals_;
+    readonly PermissionSet permissions_;
+    readonly PrincipalSet principals_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the Subject class with an empty set of permissions and
-    /// principals.
+    /// Initializes a new instance of the <see cref="Subject"/> class with an
+    /// empty set of permissions and principals.
     /// </summary>
     public Subject() {
       permissions_ = new PermissionSet();
@@ -63,43 +58,60 @@ namespace Nohros.Security.Auth
     }
 
     /// <summary>
-    /// Creates an instance of a <see cref="Subject"/> class with the specified permissions and a
-    /// empty set of princiapals.
+    /// Creates an instance of a <see cref="Subject"/> class with the
+    /// specified permissions and a empty set of princiapals.
     /// </summary>
-    /// <param name="permissions">The subject's permissions collection.</param>
+    /// <param name="permissions">
+    /// The subject's permissions collection.
+    /// </param>
     /// <exception cref="ArgumentNullException">permissions is null.</exception>
     public Subject(PermissionSet permissions) {
-      if (permissions == null)
+      if (permissions == null) {
         throw new ArgumentNullException("permissions");
+      }
 
       permissions_ = permissions;
       principals_ = new PrincipalSet();
     }
 
     /// <summary>
-    /// Creates an instance of a <see cref="Subject"/> class with the specified principals and a
-    /// empty set of permissions.
+    /// Creates an instance of a <see cref="Subject"/> class with the
+    /// specified principals and a empty set of permissions.
     /// </summary>
-    /// <param name="principals">The subject's principals collection.</param>
-    /// <exception cref="ArgumentNullException">principals is null.</exception>
+    /// <param name="principals">
+    /// The subject's principals collection.
+    /// </param>
+    /// <exception cref="ArgumentNullException"><paramref name="principals"/>
+    /// is <c>null</c>.</exception>
     public Subject(PrincipalSet principals) {
-      if (principals == null)
+      if (principals == null) {
         throw new ArgumentNullException("principals");
+      }
 
       permissions_ = new PermissionSet();
       principals_ = principals;
     }
 
     /// <summary>
-    /// Creates an instance of a <see cref="Subject"/> class with the specified principals set and
-    /// permissions set.
+    /// Creates an instance of a <see cref="Subject"/> class with the
+    /// specified principals set and permissions set.
     /// </summary>
-    /// <param name="permissions">The subject's principals collection.</param>
-    /// <param name="principals">The subject's principals collection.</param>
-    /// <exception cref="ArgumentNullException">principals is null or permissions is null.</exception>
+    /// <param name="permissions">
+    /// The subject's principals collection.
+    /// </param>
+    /// <param name="principals">
+    /// The subject's principals collection.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="principals"/> or <paramref name="permissions"/> are
+    /// <c>null</c>.
+    /// </exception>
     public Subject(PermissionSet permissions, PrincipalSet principals) {
-      if (permissions == null || principals == null)
-        throw new ArgumentNullException((permissions == null) ? "permissions" : "principals");
+      if (permissions == null || principals == null) {
+        throw new ArgumentNullException((permissions == null)
+          ? "permissions"
+          : "principals");
+      }
 
       permissions_ = permissions;
       principals_ = principals;
@@ -177,11 +189,13 @@ namespace Nohros.Security.Auth
     /// equals.
     /// </remarks>
     public bool Equals(Subject subject) {
-      if (subject == null)
+      if ((object)subject == null) {
         return false;
+      }
 
-      if (!principals_.Equals(subject.Principals))
+      if (!principals_.Equals(subject.Principals)) {
         return false;
+      }
 
       return permissions_.Equals(subject.Permissions);
     }

@@ -30,26 +30,13 @@
   
   <xs:complexType name="CommonSchema">
     <xs:sequence minOccurs="0" maxOccurs="1">
-      <xs:element name="repository" minOccurs="0" maxOccurs="1">
-        <xs:complexType id="Repository">
+      <xs:element name="repositories" minOccurs="0" maxOccurs="1">
+        <xs:complexType id="Repositories">
           <xs:sequence minOccurs ="0" maxOccurs="unbounded">
             <xs:element name="add">
               <xs:complexType>
                 <xs:attribute name="name" type="xs:string"/>
-                <xs:attribute name="relative-path" type="xs:string"/>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="connection-strings" minOccurs ="0" maxOccurs="1">
-        <xs:complexType id="connection-strings">
-          <xs:sequence minOccurs ="0" maxOccurs="unbounded">
-            <xs:element name="add">
-              <xs:complexType>
-                <xs:attribute name="name" type="xs:string"/>
-                <xs:attribute name="dbowner" type="xs:string"/>
-                <xs:attribute name="dbstring" type="xs:string"/>
+                <xs:attribute name="path" type="xs:string"/>
               </xs:complexType>
             </xs:element>
           </xs:sequence>
@@ -61,25 +48,21 @@
             <xs:element name="data" minOccurs="0" maxOccurs="1">
               <xs:complexType id="DataProvider">
                 <xs:sequence>
-                  <xs:element name="provider" minOccurs="0" maxOccurs="unbounded">
-                    <xs:complexType>
-											<xs:complexContent>
-												<xs:extension base="IProvider">
-													<xs:attribute name="data-source-type" use="optional"/>
-													<xs:attribute name="database-owner" use="required"/>
-													<xs:attribute name="connection-string" use="required"/>
-													<xs:attribute name="encrypted" use="optional"/>
-												</xs:extension>
-											</xs:complexContent>
-                    </xs:complexType>
-                  </xs:element>
+                  <xs:element name="provider" minOccurs="0" maxOccurs="unbounded" type="Provider"/>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
             <xs:element name="messenger" minOccurs="0" maxOccurs="1">
               <xs:complexType id="MessengerProvider">
                 <xs:sequence>
-									<xs:element name="provider" minOccurs="0" maxOccurs="unbounded" type="IProvider"/>
+									<xs:element name="provider" minOccurs="0" maxOccurs="unbounded" type="Provider"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="cache" minOccurs="0" maxOccurs="1">
+              <xs:complexType id="CacheProvider">
+                <xs:sequence>
+                  <xs:element name="provider" minOccurs="0" maxOccurs="unbounded" type="Provider"/>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -164,11 +147,17 @@
     </xs:sequence>
   </xs:complexType>
 
-	<xs:complexType name="IProvider">
+	<xs:complexType name="Provider">
     <xs:sequence minOccurs="0" maxOccurs="1">
       <xs:element name="options" minOccurs="0" maxOccurs="1">
         <xs:complexType>
-          <xs:anyAttribute></xs:anyAttribute>
+          <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="option" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:attribute name="name" type="xs:string" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
         </xs:complexType>
       </xs:element>
     </xs:sequence>

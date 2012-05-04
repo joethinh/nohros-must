@@ -18,9 +18,12 @@ namespace Nohros.Caching.Providers
     /// Creates an instance of the <see cref="ICacheProvider"/> using the
     /// specified provider options.
     /// </summary>
-    /// <param name="options">A <see cref="IDictionary{TKey,TValue}"/>
-    /// containing a collection options configured for the provider.</param>
-    /// <returns>An instance of the <see cref="ICacheProvider"/> class.
+    /// <param name="options">
+    /// A <see cref="IDictionary{TKey,TValue}"/> containing a collection
+    /// options configured for the provider.
+    /// </param>
+    /// <returns>
+    /// An instance of the <see cref="ICacheProvider"/> class.
     /// </returns>
     ICacheProvider CreateCacheProvider(IDictionary<string, string> options);
   }

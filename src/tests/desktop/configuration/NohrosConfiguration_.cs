@@ -19,7 +19,7 @@ namespace Nohros.Test.Configuration
     public class NohrosConfiguration_
     {
         #region TestingConfiguration
-        public class TestingConfiguration : NohrosConfiguration
+        public class TestingConfiguration : MustConfiguration
         {
             string name_;
 
@@ -41,7 +41,7 @@ namespace Nohros.Test.Configuration
         {
             TestingConfiguration config = new TestingConfiguration();
             Assert.IsNotNull(config);
-            Assert.AreEqual(null, config.CommonNode);
+            Assert.AreEqual(null, config.CommonNodeParser);
             Assert.AreEqual(null, config.WebNode);
         }
 
@@ -57,7 +57,7 @@ namespace Nohros.Test.Configuration
             TestingConfiguration config = new TestingConfiguration();
             config.Load("with-namespace");
             Assert.AreEqual("with-namespace", config.Name);
-            Assert.IsNull(config.CommonNode);
+            Assert.IsNull(config.CommonNodeParser);
             Assert.IsNull(config.WebNode);
         }
 
@@ -66,7 +66,7 @@ namespace Nohros.Test.Configuration
             TestingConfiguration config = new TestingConfiguration();
             config.Load("without-namespace");
             Assert.AreEqual("without-namespace", config.Name);
-            Assert.IsNull(config.CommonNode);
+            Assert.IsNull(config.CommonNodeParser);
             Assert.IsNull(config.WebNode);
         }
 
@@ -75,7 +75,7 @@ namespace Nohros.Test.Configuration
             TestingConfiguration config = new TestingConfiguration();
             config.Load("missing-common");
             Assert.AreEqual("missing-common", config.Name);
-            Assert.IsNull(config.CommonNode);
+            Assert.IsNull(config.CommonNodeParser);
             Assert.IsNull(config.WebNode);
         }
 
@@ -97,7 +97,7 @@ namespace Nohros.Test.Configuration
         public void Load() {
             TestingConfiguration config = new TestingConfiguration();
             config.Load("desktop");
-            Assert.NotNull(config.CommonNode);
+            Assert.NotNull(config.CommonNodeParser);
             Assert.NotNull(config.WebNode);
         }
 
@@ -108,7 +108,7 @@ namespace Nohros.Test.Configuration
 
             RepositoryNode node = config.RepositoryNodes["css-path"];
             Assert.IsNotNull(node);
-            Assert.AreEqual(Path.Combine(config.Location, "css"), node.Path);
+            Assert.AreEqual(Path.Combine(config.Location, "css"), node.RelativePath);
         }
 
         [Test]
@@ -130,7 +130,7 @@ namespace Nohros.Test.Configuration
             DataProviderNode node = config.DataProviderNodes["NohrosDataProvider"] as DataProviderNode;
             Assert.AreEqual("NohrosDataProvider", node.Name);
             Assert.AreEqual("Nohros.Data.SqlNohrosDataProvider, nohros.data", node.Type);
-            Assert.AreEqual(config.Location, node.AssemblyLocation);
+            Assert.AreEqual(config.Location, node.Location);
             Assert.AreEqual("SQLSERVER", node.ConnectionString);
             Assert.AreEqual("dbo", node.DatabaseOwner);
             Assert.AreEqual(DataSourceType.MsSql, node.DataSourceType);
@@ -162,14 +162,14 @@ namespace Nohros.Test.Configuration
 
         [Test]
         public void DefaultConfiguration() {
-            NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
-            Assert.IsNotNull(config.CommonNode);
+            MustConfiguration config = MustConfiguration.DefaultConfiguration;
+            Assert.IsNotNull(config.CommonNodeParser);
             Assert.IsNotNull(config.WebNode);
         }
 
         [Test]
         public void ChainNode() {
-            NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
+            MustConfiguration config = MustConfiguration.DefaultConfiguration;
             ChainNode pseudo_chain = config.ChainNodes["pseudo-chain"] as ChainNode;
             Assert.IsNotNull(pseudo_chain);
             Assert.AreEqual("SmsMessenger", pseudo_chain.Nodes[0]);
@@ -179,13 +179,13 @@ namespace Nohros.Test.Configuration
         [Test]
         [ExpectedException(typeof(ConfigurationErrorsException))]
         public void LoginModuleWithInvalidFlag() {
-            NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
+            MustConfiguration config = MustConfiguration.DefaultConfiguration;
             config.Load("login-module-flag");
         }
 
         [Test]
         public void LoginModuleNode() {
-            NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
+            MustConfiguration config = MustConfiguration.DefaultConfiguration;
             config.Load("login-module-node");
 
             LoginModuleNode node = config.LoginModuleNodes["auth-login-module"];
@@ -198,7 +198,7 @@ namespace Nohros.Test.Configuration
 
         [Test]
         public void Threshold() {
-            NohrosConfiguration config = NohrosConfiguration.DefaultConfiguration;
+            MustConfiguration config = MustConfiguration.DefaultConfiguration;
             Assert.AreEqual(log4net.Core.Level.Debug, FileLogger.ForCurrentProcess.Threshold);
             Assert.AreEqual(log4net.Core.Level.Debug, ConsoleLogger.ForCurrentProcess.Threshold);
         }

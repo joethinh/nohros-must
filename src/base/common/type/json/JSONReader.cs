@@ -1,9 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
-using Nohros.Resources;
 
 using Nohros.Collections;
 
@@ -165,12 +161,14 @@ namespace Nohros
       if (root != null) {
         if (ParseToken().type == Token.TokenType.END_OF_INPUT) {
           return root;
-        } else {
-          throw new ArgumentException(string.Format(StringResources.JSON_UnexpectedDataAfterRoot, json_pos_));
         }
+
+        throw new InvalidOperationException(string.Format(
+          Resources.Resources.InvalidOperation_json_UnexpectedDataAfterRoot,
+            json_pos_));
       }
 
-      throw new ArgumentException(StringResources.Generic_SyntaxError);
+      throw new ArgumentException(Resources.Resources.Format_SyntaxError);
     }
 
     /// <summary>
@@ -182,8 +180,10 @@ namespace Nohros
     /// <exception cref="ArgumentException">Too much nesting.</exception>
     IValue BuildValue(bool is_root) {
       ++stack_depth_;
-      if (stack_depth_ > kStackLimit)
-        throw new ArgumentException(StringResources.JSON_TooMuchNesting);
+      if (stack_depth_ > kStackLimit) {
+        throw new InvalidOperationException(
+          Resources.Resources.InvalidOperation_TooMuchNesting);
+      }
 
       Token token = ParseToken();
       // The root token must be an array or an object.
@@ -238,7 +238,9 @@ namespace Nohros
                 // consumers need the parsing leniency, so handle accordingly.
                 if (token.type == Token.TokenType.ARRAY_END) {
                   if (!allow_trailing_comma_) {
-                    throw new ArgumentException(string.Format(StringResources.JSON_TrailingComma, json_pos_));
+                    throw new InvalidOperationException(string.Format(
+                      Resources.Resources.InvalidOperation_json_TrailingComma,
+                      json_pos_));
                   }
                   // Trailing comma OK, stop parsing the Array.
                   break;
@@ -261,8 +263,11 @@ namespace Nohros
             node = new DictionaryValue();
             while (token.type != Token.TokenType.OBJECT_END) {
               if (token.type != Token.TokenType.STRING) {
-                throw new ArgumentException(string.Format(StringResources.JSON_UnquotedDictionaryKey, json_pos_));
+                throw new InvalidOperationException(string.Format(
+                  Resources.Resources.InvalidOperation_json_UnquotedDictionaryKey,
+                  json_pos_));
               }
+
               IValue dict_key_value = DecodeString(token);
               if (dict_key_value == null)
                 return null;
@@ -294,7 +299,9 @@ namespace Nohros
                 // consumers need the parsing leniency, so handle accordingly.
                 if (token.type == Token.TokenType.OBJECT_END) {
                   if (!allow_trailing_comma_) {
-                    throw new ArgumentException(string.Format(StringResources.JSON_TrailingComma, json_pos_));
+                    throw new InvalidOperationException(string.Format(
+                      Resources.Resources.InvalidOperation_json_TrailingComma,
+                      json_pos_));
                   }
                   // Trailing comma OK, stop parsing the object.
                   break;

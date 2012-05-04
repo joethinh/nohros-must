@@ -50,6 +50,10 @@
       <Project>{7B7DCA88-945A-4FA9-985C-5F3CB667C2BC}</Project>
       <Name>desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="must\must.csproj">
+      <Project>{723DC158-8B66-472D-9310-7B4BEC62F278}</Project>
+      <Name>must</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ILoggerTemplate.vstemplate" />

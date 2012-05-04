@@ -53,7 +53,7 @@ namespace Nohros.Collections
       if (Contains(part))
         throw new ArgumentException(
           string.Format(
-            StringResources.Collection_elm_AddingDuplicate, part.Name));
+            StringResources.Argument_AddingDuplicate, part.Name));
 
       parameters_.Add(part);
     }

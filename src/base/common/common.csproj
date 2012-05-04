@@ -105,13 +105,61 @@
     <Compile Include="concurrent\IExecutor.cs" />
     <Compile Include="concurrent\IFuture.cs" />
     <Compile Include="concurrent\Mailbox.cs" />
-    <Compile Include="concurrent\RunnableDelegate.cs" />
+    <Compile Include="configuration\AbstractConfigurationNode.cs" />
+    <Compile Include="configuration\common\auth\ILoginModulesNode.cs" />
+    <Compile Include="configuration\common\auth\LoginModulesNode.cs" />
+    <Compile Include="configuration\common\auth\LoginModulesNodeParser.cs" />
+    <Compile Include="configuration\common\IRepositoriesNode.cs" />
+    <Compile Include="configuration\common\IRepositoryNode.cs" />
+    <Compile Include="configuration\common\provider\CacheProviderNode.cs" />
+    <Compile Include="configuration\common\provider\CacheProviderNodeParser.cs" />
+    <Compile Include="configuration\common\provider\CacheProvidersNode.cs" />
+    <Compile Include="configuration\common\provider\CacheProvidersNodeParser.cs" />
+    <Compile Include="configuration\common\provider\DataProviderNodeParser.cs" />
+    <Compile Include="configuration\common\provider\DataProvidersNode.cs" />
+    <Compile Include="configuration\common\auth\LoginModuleNodeParser.cs" />
+    <Compile Include="configuration\common\provider\ICacheProviderNode.cs" />
+    <Compile Include="configuration\common\provider\ICacheProvidersNode.cs" />
+    <Compile Include="configuration\common\provider\IDataProviderNode.cs" />
+    <Compile Include="configuration\common\provider\IDataProvidersNode.cs" />
+    <Compile Include="configuration\common\provider\IProvidersNode.cs" />
+    <Compile Include="configuration\common\provider\ISimpleProviderNode.cs" />
+    <Compile Include="configuration\common\provider\ISimpleProvidersNode.cs" />
+    <Compile Include="configuration\common\provider\ProviderNodeParser.cs" />
+    <Compile Include="configuration\common\provider\ProvidersNode.cs" />
+    <Compile Include="configuration\common\provider\ProvidersNodeParser.cs" />
+    <Compile Include="configuration\common\provider\SimpleProvidersNodeParser.cs" />
+    <Compile Include="configuration\common\RepositoriesNode.cs" />
+    <Compile Include="configuration\common\RepositoryNodeParser.cs" />
+    <Compile Include="configuration\common\RepositoriesNodeParser.cs" />
+    <Compile Include="configuration\AbstractConfigurationNodeParser.cs" />
+    <Compile Include="configuration\common\provider\DataProvidersNodeParser.cs" />
+    <Compile Include="configuration\common\provider\SimpleProviderNodeParser.cs" />
+    <Compile Include="configuration\common\provider\SimpleProvidersNode.cs" />
+    <Compile Include="configuration\IConfiguration.cs" />
+    <Compile Include="configuration\IMustConfiguration.cs" />
+    <Compile Include="configuration\Strings.cs" />
+    <Compile Include="data\DataParameters.cs" />
+    <Compile Include="exception\ConfigurationException.cs" />
+    <Compile Include="providers\data\IConnectionProvider.cs" />
+    <Compile Include="resources\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="resources\StringResources.cs" />
+    <Compile Include="security\auth\AbstractLoginModule.cs" />
+    <Compile Include="security\auth\ILoginModuleFactory.cs" />
+    <Compile Include="security\auth\ILoginModuleNodePair.cs" />
+    <Compile Include="security\auth\LoginModuleNodePair.cs" />
+    <Compile Include="type\events\RunnableDelegate.cs" />
     <Compile Include="concurrent\SerialExecutorState.cs" />
     <Compile Include="concurrent\Uninterruptibles.cs" />
     <Compile Include="concurrent\YQueue.cs" />
     <Compile Include="cache\CacheEntry.cs" />
     <Compile Include="configuration\common\provider\ProviderOptions.cs" />
-    <Compile Include="ExecutionException.cs" />
+    <Compile Include="data\DataReaders.cs" />
+    <Compile Include="exception\ExecutionException.cs" />
     <Compile Include="logging\ChainedLogger.cs" />
     <Compile Include="logging\MustLogger.cs" />
     <Compile Include="providers\cache\ICacheProviderFactory.cs" />
@@ -120,37 +168,34 @@
     <Compile Include="configuration\common\provider\ProviderType.cs" />
     <Compile Include="configuration\common\provider\SimpleProviderNode.cs" />
     <Compile Include="configuration\common\RepositoryNode.cs" />
-    <Compile Include="configuration\web\BuildType.cs" />
-    <Compile Include="configuration\common\ChainNode.cs" />
-    <Compile Include="configuration\common\CommonNode.cs" />
-    <Compile Include="configuration\AbstractConfigurationNode.cs" />
-    <Compile Include="configuration\common\ConnectionStringNode.cs" />
-    <Compile Include="configuration\web\ContentGroupNode.cs" />
+    <Compile Include="configuration\AbstractHierarchicalConfigurationNode.cs" />
     <Compile Include="configuration\common\provider\IProviderNode.cs" />
-    <Compile Include="configuration\common\LoginModuleNode.cs" />
+    <Compile Include="configuration\common\auth\LoginModuleNode.cs" />
     <Compile Include="providers\cache\ICacheProvider.cs" />
-    <Compile Include="providers\data\ISQLDataProvider.cs" />
+    <Compile Include="providers\data\IConnectionProviderFactory.cs" />
+    <Compile Include="providers\data\SqlConnectionProvider.cs" />
+    <Compile Include="providers\data\SqlConnectionProviderFactory.cs" />
     <Compile Include="type\Clock.cs" />
+    <Compile Include="type\events\Listeners.cs" />
+    <Compile Include="type\ParameterizedStringPartLiteral.cs" />
+    <Compile Include="type\ParameterizedStringPartParameter.cs" />
     <Compile Include="type\suppliers\ExpiringMemoizingSupplier.cs" />
     <Compile Include="type\suppliers\ISupplier.cs" />
     <Compile Include="type\suppliers\MemoizingSupplier.cs" />
     <Compile Include="type\ParameterizedStringPart.cs" />
-    <Compile Include="type\collections\ParameterizedStringPartCollection.cs" />
-    <Compile Include="configuration\IConfiguration.cs" />
+    <Compile Include="type\collections\ParameterizedStringPartParameterCollection.cs" />
+    <Compile Include="configuration\AbstractConfiguration.cs" />
     <Compile Include="configuration\IConfigurationNode.cs" />
-    <Compile Include="configuration\NohrosConfiguration.cs" />
+    <Compile Include="configuration\MustConfiguration.cs" />
     <Compile Include="configuration\common\provider\DataProviderNode.cs" />
     <Compile Include="type\StringMap.cs" />
-    <Compile Include="configuration\web\WebNode.cs" />
     <Compile Include="type\CacheEntry.cs" />
     <Compile Include="type\collections\IInOrderVisitable.cs" />
     <Compile Include="type\collections\InOrderVisitor.cs" />
     <Compile Include="type\collections\trees\AndersonTree.cs" />
     <Compile Include="type\collections\trees\AndersonTreeNode.cs" />
     <Compile Include="type\ComparisonComparer.cs" />
-    <Compile Include="data\DataHelper.cs" />
     <Compile Include="data\transferobjects\TableTransferObject.cs" />
-    <Compile Include="data\transferobjects\TableTransferObjectEnumerator.cs" />
     <Compile Include="type\IValidator.cs" />
     <Compile Include="type\json\JSONReader.cs" />
     <Compile Include="data\transferobjects\TransferQueue.cs" />
@@ -186,20 +231,19 @@
     <Compile Include="mq\IOperationData.cs" />
     <Compile Include="mq\IMessage.cs" />
     <Compile Include="mq\IMessageMiddleware.cs" />
-    <Compile Include="ProviderException.cs" />
+    <Compile Include="exception\ProviderException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="security\auth\BasicPermission.cs" />
     <Compile Include="security\auth\FieldCallback.cs" />
     <Compile Include="security\auth\callback\IAuthCallback.cs" />
     <Compile Include="security\auth\callback\IAuthCallbackHandler.cs" />
-    <Compile Include="security\auth\ILoginConfiguration.cs" />
+    <Compile Include="configuration\common\auth\ILoginConfiguration.cs" />
     <Compile Include="security\auth\IPermission.cs" />
     <Compile Include="security\auth\IPrincipal.cs" />
-    <Compile Include="security\auth\LoginConfiguration.cs" />
     <Compile Include="security\auth\LoginException.cs" />
     <Compile Include="security\auth\LoginFactory.cs" />
-    <Compile Include="security\auth\LoginModuleControlFlag.cs" />
-    <Compile Include="security\auth\ILoginModuleEntry.cs" />
+    <Compile Include="configuration\common\auth\LoginModuleControlFlag.cs" />
+    <Compile Include="configuration\common\auth\ILoginModuleNode.cs" />
     <Compile Include="security\auth\PermissionBase.cs" />
     <Compile Include="security\auth\NasUser.cs" />
     <Compile Include="security\auth\Principal.cs" />
@@ -214,25 +258,25 @@
     <Compile Include="security\auth\SQLite.cs" />
     <Compile Include="security\auth\Subject.cs" />
     <Compile Include="NSecurity.cs" />
-    <Compile Include="Thrower.cs" />
+    <Compile Include="exception\Thrower.cs" />
+    <Compile Include="type\ValueTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="nas.sqlite" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\resources\resources.csproj">
-      <Project>{A0341EAF-743E-4191-9012-87F9A7ACCBF3}</Project>
-      <Name>resources</Name>
-    </ProjectReference>
+    <EmbeddedResource Include="resources\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="nohros.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="nohros.xsd">
+    <None Include="configuration\nohros.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="nohros.xsx">
+    <None Include="configuration\nohros.xsx">
       <DependentUpon>nohros.xsd</DependentUpon>
     </None>
   </ItemGroup>
@@ -253,6 +297,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="configuration\web\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -263,7 +310,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

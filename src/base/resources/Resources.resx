@@ -283,4 +283,10 @@
   <data name="Type_InvalidCastException" xml:space="preserve">
     <value>Unable to cast object of type {0} to type {1}.</value>
   </data>
+  <data name="Argument_EmptyString" xml:space="preserve">
+    <value>The {0} arugment could not be an empty string.</value>
+  </data>
+  <data name="Argument_EmptyStringOrSpaceSequence" xml:space="preserve">
+    <value>The {0} arugment could not be an empty string or a sequence of spaces.</value>
+  </data>
 </root>

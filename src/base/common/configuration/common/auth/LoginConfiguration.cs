@@ -28,21 +28,14 @@ namespace Nohros.Security.Auth
     /// </summary>
     public LoginConfiguration() {
       modules_ = new ILoginModuleEntry[0];
-      LoadComplete += OnConfigLoadComplete;
     }
     #endregion
 
-    /// <summary>
-    /// The base <see cref="NohrosConfiguration"/> class has five Load method,
-    /// so instead of to override all that methods we will sibscribe to the
-    /// <see cref="IConfiguration.LoadComplete"/> in order our custom
-    /// parsing.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void OnConfigLoadComplete(object sender, EventArgs e) {
-      // store the login modules into a array to speed up the
-      // LoginModules property access.
+    protected override void  OnLoadComplete() {
+      base.OnLoadComplete();
+
+      // store the login modules into a array to speed up the LoginModules
+      // property access.
       LoginModuleNode[] nodes = LoginModuleNodes.ToArray();
       modules_ = new ILoginModuleEntry[nodes.Length];
       for (int i = 0; i < modules_.Length; i++) {
