@@ -25,15 +25,17 @@ namespace Nohros.Configuration
     /// <exception cref="ConfigurationException">
     /// The <paramref name="element"/> contains invalid configuration data.
     /// </exception>
-    public static SimpleProvidersNode SimpleProviderNode(XmlElement element,
+    public static SimpleProvidersNode Parse(XmlElement element,
       string base_directory) {
       CheckPreconditions(element, base_directory);
       SimpleProvidersNode providers = new SimpleProvidersNode();
       foreach (XmlElement node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element &&
           StringsAreEquals(node.Name, Strings.kProviderNodeName)) {
+          SimpleProviderNode provider =
+          SimpleProviderNode.Parse(element, base_directory);
           providers.AddChildNode(
-            DataProviderNode.Parse(element, base_directory));
+            SimpleProviderKey(provider.Name, provider.Group), provider);
         }
       }
       return providers;

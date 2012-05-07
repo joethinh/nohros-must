@@ -7,54 +7,50 @@ namespace Nohros.Configuration
   /// A <see cref="SimpleProvidersNode"/> is a collection of
   /// <see cref="SimpleProviderNode"/>.
   /// </summary>
-  public partial class SimpleProvidersNode: AbstractHierarchicalConfigurationNode, ISimpleProvidersNode
+  public partial class SimpleProvidersNode :
+    AbstractHierarchicalConfigurationNode, ISimpleProvidersNode
   {
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="SimpleProvidersNode"/>
     /// class.
     /// </summary>
-    public SimpleProvidersNode() : base(Strings.kSimpleProvidersNodeName) { }
+    public SimpleProvidersNode() : base(Strings.kSimpleProvidersNodeName) {
+    }
     #endregion
 
-    /// <summary>
-    /// Gets a <see cref="SimpleProvidersNode"/> node whose name is
-    /// <paramref name="simple_provider_name"/>.
-    /// </summary>
-    /// <param name="simple_provider_name">
-    /// The name of the simple provider.
-    /// </param>
-    /// <returns>
-    /// A <see cref="SimpleProvidersNode"/> object whose name is
-    /// <paramref name="simple_provider_name"/>.
-    /// </returns>
-    /// <exception cref="KeyNotFoundException">
-    /// A simple provider whose name is <param name="simple_provider_name"> was
-    /// not found.
-    /// </param>
-    /// </exception>
-    public ISimpleProvidersNode GetSimpleProvidersNode(string simple_provider_name) {
-      return base[simple_provider_name] as ISimpleProvidersNode;
+    /// <inheritdoc/>
+    public bool GetSimpleProviderNode(string simple_provider_name,
+      out ISimpleProviderNode simple_provider) {
+      return GetSimpleProviderNode(simple_provider_name, string.Empty,
+        out simple_provider);
     }
 
-    /// <summary>
-    /// Gets a <see cref="SimpleProvidersNode"/> whose name is
-    /// <paramref name="simple_provider_name"/>.
-    /// </summary>
-    /// <param name="simple_provider_name">
-    /// The name of the simple provider.
-    /// </param>
-    /// <param name="simple_provider">
-    /// When this method returns contains a <see cref="SimpleProvidersNode"/>
-    /// object whose name is <paramref name="simple_provider_name"/>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> when a simple provider whose name is
-    /// <paramref name="simple_provider_name"/> is found; otherwise, <c>false</c>.
-    /// </returns>
-    public bool GetSimpleProvidersNode(string simple_provider_name,
-      out ISimpleProvidersNode simple_provider) {
-      return GetChildNode(simple_provider_name, out simple_provider);
+    /// <inheritdoc/>
+    public bool GetSimpleProviderNode(string simple_provider_name,
+      string simple_provider_group, out ISimpleProviderNode simple_provider) {
+      return
+        GetChildNode(
+          SimpleProviderKey(simple_provider_name, simple_provider_group),
+          out simple_provider);
+    }
+
+    /// <inheritdoc/>
+    public ISimpleProviderNode GetSimpleProviderNode(string simple_provider_name) {
+      return GetSimpleProviderNode(simple_provider_name, string.Empty);
+    }
+
+    /// <inheritdoc/>
+    public ISimpleProviderNode GetSimpleProviderNode(
+      string simple_provider_name, string simple_provider_group) {
+      return
+        base[SimpleProviderKey(simple_provider_name, simple_provider_group)] as
+          ISimpleProviderNode;
+    }
+
+    static string SimpleProviderKey(string simple_provider_name,
+      string simple_provider_group) {
+      return "group:" + simple_provider_group + ",name:" + simple_provider_name;
     }
   }
 }
