@@ -7,6 +7,37 @@ namespace Nohros.Configuration
   public partial class ProviderNode
   {
     /// <summary>
+    /// Parses the specified <see cref="XmlElement"/> element into a
+    /// <see cref="ProviderNode"/> object.
+    /// </summary>
+    /// <param name="element">
+    /// A Xml element that contains the provider configuration data.
+    /// </param>
+    /// <param name="base_directory">
+    /// The base directory to use when resolving the providers's location.
+    /// </param>
+    /// <returns>
+    /// A <see cref="ProviderNode"/> containing the configured provider.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="element"/> is a <c>null</c> reference.
+    /// </exception>
+    /// <exception cref="ConfigurationException">
+    /// The <paramref name="element"/> contains invalid configuration data.
+    /// </exception>
+    public static ProviderNode Parse(XmlElement element, string base_directory) {
+      CheckPreconditions(element, base_directory);
+      string name = GetAttributeValue(element, Strings.kNameAttribute);
+      string type = GetAttributeValue(element, Strings.kTypeAttribute);
+      string group = GetAttributeValue(element, Strings.kNameAttribute,
+        string.Empty);
+
+      ProviderNode provider = new ProviderNode(name, type, group);
+      provider.options = GetOptions(element);
+      return provider;
+    }
+
+    /// <summary>
     /// Gets the provider options.
     /// </summary>
     /// <param name="element">

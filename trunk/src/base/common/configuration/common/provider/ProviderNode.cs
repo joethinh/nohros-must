@@ -9,14 +9,9 @@ namespace Nohros.Configuration
   public partial class ProviderNode : AbstractConfigurationNode, IProviderNode
   {
     /// <summary>
-    /// Gets the provider's alias.
-    /// </summary>
-    protected string alias;
-
-    /// <summary>
     /// The path of the providers's assembly.
     /// </summary>
-    protected string location;
+    string location_;
 
     /// <summary>
     /// The options configured for this provider.
@@ -30,7 +25,9 @@ namespace Nohros.Configuration
     /// <summary>
     /// The provider's assembly-qualified name.
     /// </summary>
-    protected string type;
+    string type_;
+
+    string group_;
 
     #region .ctor
     /// <summary>
@@ -44,24 +41,7 @@ namespace Nohros.Configuration
     /// The assembly-qualified name of the provider type.
     /// </param>
     protected ProviderNode(string name, string type)
-      : this(name, string.Empty, type, AppDomain.CurrentDomain.BaseDirectory) {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ProviderNode"/> class by
-    /// using the specified provider name, type and alias.
-    /// </summary>
-    /// <param name="name">
-    /// The name of the provider.
-    /// </param>
-    /// <param name="type">
-    /// The assembly-qualified name of the provider type.
-    /// </param>
-    /// <param name="alias">
-    /// The provider's alias.
-    /// </param>
-    protected ProviderNode(string name, string alias, string type)
-      : this(name, alias, type, AppDomain.CurrentDomain.BaseDirectory) {
+      : this(name, type, AppDomain.CurrentDomain.BaseDirectory) {
     }
 
     /// <summary>
@@ -77,17 +57,12 @@ namespace Nohros.Configuration
     /// <param name="location">
     /// The path to the directory where the provider assembly file is stored.
     /// </param>
-    /// <param name="alias">
-    /// The provider's alias.
-    /// </param>
-    protected ProviderNode(string name, string alias, string type,
-      string location) : base(name) {
+    protected ProviderNode(string name, string type, string location) : base(name) {
       if (type == null || location == null) {
         throw new ArgumentNullException(type == null ? "type" : "location");
       }
-      this.type = type;
-      this.location = location;
-      this.alias = alias;
+      type_ = type;
+      location_ = location;
       options = new Dictionary<string, string>();
     }
     #endregion
@@ -95,18 +70,12 @@ namespace Nohros.Configuration
     #region IProviderNode Members
     /// <inheritdoc/>
     public string Type {
-      get { return type; }
+      get { return type_; }
     }
 
     /// <inheritdoc/>
     public virtual string Location {
-      get { return location; }
-    }
-
-    /// <inheritdoc/>
-    public virtual string Alias {
-      get { return alias; }
-      set { alias = value; }
+      get { return location_; }
     }
 
     /// <inheritdoc/>
@@ -114,5 +83,12 @@ namespace Nohros.Configuration
       get { return options; }
     }
     #endregion
+
+    /// <summary>
+    /// Gets the group that this provider belongs to.
+    /// </summary>
+    public string Group {
+      get { return group_; }
+    }
   }
 }

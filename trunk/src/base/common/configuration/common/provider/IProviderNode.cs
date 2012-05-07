@@ -11,11 +11,6 @@ namespace Nohros.Configuration
   public interface IProviderNode : IConfigurationNode
   {
     /// <summary>
-    /// Gets or sets the provider's alias.
-    /// </summary>
-    string Alias { get; set; }
-
-    /// <summary>
     /// Gets the assembly-qualified name of the provider type, which includes
     /// the name of the assembly from which the provider type was loaded.
     /// </summary>

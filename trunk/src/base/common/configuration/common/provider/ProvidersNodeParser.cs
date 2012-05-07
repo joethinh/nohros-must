@@ -30,17 +30,11 @@ namespace Nohros.Configuration
       CheckPreconditions(element, base_directory);
       ProvidersNode providers = new ProvidersNode();
       foreach (XmlNode node in element.ChildNodes) {
-        if (node.NodeType == XmlNodeType.Element) {
-          if (StringsAreEquals(node.Name, Strings.kDataProvidersNodeName)) {
-            providers.data_provider_node_ = DataProvidersNode.Parse(
-              element, base_directory);
-          } else if (StringsAreEquals(node.Name, Strings.kCacheProvidersNodeName)) {
-            providers.cache_providers_node_ = CacheProvidersNode.Parse(
-              element, base_directory);
-          } else if (StringsAreEquals(node.Name, Strings.kSimpleProvidersNodeName)) {
-            providers.simple_providers_node_ = SimpleProvidersNode.Parse(
-              element, base_directory);
-          }
+        if (node.NodeType == XmlNodeType.Element &&
+          StringsAreEquals(node.Name, Strings.kProviderNodeName)) {
+          ProviderNode provider = ProviderNode.Parse(element, base_directory);
+          providers.AddChildNode(ProviderKey(provider.Name, provider.Group),
+            provider);
         }
       }
       return providers;
