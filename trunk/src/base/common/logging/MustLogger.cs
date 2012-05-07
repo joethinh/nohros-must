@@ -1,7 +1,6 @@
 using System;
-using Nohros.Logging;
 
-namespace Nohros
+namespace Nohros.Logging
 {
   /// <summary>
   /// A implementation of the <see cref="ILogger"/> used for internal library

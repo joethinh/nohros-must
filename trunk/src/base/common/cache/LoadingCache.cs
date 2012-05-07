@@ -1,4 +1,5 @@
 ﻿using System;
+using Nohros.Logging;
 using Nohros.Concurrent;
 using Nohros.Caching.Providers;
 
