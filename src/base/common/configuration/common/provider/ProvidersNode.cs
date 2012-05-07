@@ -6,55 +6,45 @@ namespace Nohros.Configuration
   /// A <see cref="ProvidersNode"/> is a collection of
   /// <see cref="ProviderNode"/> objects.
   /// </summary>
-  public partial class ProvidersNode : AbstractConfigurationNode, IProvidersNode
+  public partial class ProvidersNode: AbstractHierarchicalConfigurationNode, IProvidersNode
   {
-    IDataProvidersNode data_provider_node_;
-    ICacheProvidersNode cache_providers_node_;
-    ISimpleProvidersNode simple_providers_node_;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ProvidersNode"/> class.
     /// </summary>
-    public ProvidersNode() : base(Strings.kProvidersNodeName) {
-      data_provider_node_ = new DataProvidersNode();
-      cache_providers_node_ = new CacheProvidersNode();
-      simple_providers_node_ = new SimpleProvidersNode();
+    public ProvidersNode() : base(Strings.kProvidersNodeName) { }
+
+    /// <inheritdoc/>
+    public bool GetProviderNode(string simple_provider_name,
+      out IProviderNode simple_provider) {
+      return GetProviderNode(simple_provider_name, string.Empty,
+        out simple_provider);
     }
 
-    /// <summary>
-    /// Gets the configured data providers.
-    /// </summary>
-    /// <remarks>
-    /// If no providers was configured, this property will returns a
-    /// empty <see cref="DataProvidersNode"/> object that is a
-    /// <see cref="DataProvidersNode"/> that contains no providers.
-    /// </remarks>
-    public IDataProvidersNode DataProviders {
-      get { return data_provider_node_; }
+    /// <inheritdoc/>
+    public bool GetProviderNode(string simple_provider_name,
+      string simple_provider_group, out IProviderNode simple_provider) {
+      return
+        GetChildNode(
+          ProviderKey(simple_provider_name, simple_provider_group),
+          out simple_provider);
     }
 
-    /// <summary>
-    /// Gets all the configured cache providers.
-    /// </summary>
-    /// <remarks>
-    /// If no providers was configured, this property will returns a
-    /// empty <see cref="CacheProvidersNode"/> object that is a
-    /// <see cref="CacheProvidersNode"/> that contains no providers.
-    /// </remarks>
-    public ICacheProvidersNode CacheProviders {
-      get { return cache_providers_node_; }
+    /// <inheritdoc/>
+    public IProviderNode GetProviderNode(string simple_provider_name) {
+      return GetProviderNode(simple_provider_name, string.Empty);
     }
 
-    /// <summary>
-    /// Gets all the configured simple providers.
-    /// </summary>
-    /// <remarks>
-    /// If no providers was configured, this property will returns a empty
-    /// <see cref="SimpleProvidersNode"/> object that is a
-    /// <see cref="SimpleProvidersNode"/> that contains no providers.
-    /// </remarks>
-    public ISimpleProvidersNode SimpleProviders {
-      get { return simple_providers_node_; }
+    /// <inheritdoc/>
+    public IProviderNode GetProviderNode(
+      string simple_provider_name, string simple_provider_group) {
+      return
+        base[ProviderKey(simple_provider_name, simple_provider_group)] as
+          IProviderNode;
+    }
+
+    static string ProviderKey(string simple_provider_name,
+      string simple_provider_group) {
+      return "group:" + simple_provider_group + ",name:" + simple_provider_name;
     }
   }
 }
