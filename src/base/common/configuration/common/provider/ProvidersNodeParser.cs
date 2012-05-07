@@ -37,6 +37,9 @@ namespace Nohros.Configuration
           } else if (StringsAreEquals(node.Name, Strings.kCacheProvidersNodeName)) {
             providers.cache_providers_node_ = CacheProvidersNode.Parse(
               element, base_directory);
+          } else if (StringsAreEquals(node.Name, Strings.kSimpleProvidersNodeName)) {
+            providers.simple_providers_node_ = SimpleProvidersNode.Parse(
+              element, base_directory);
           }
         }
       }

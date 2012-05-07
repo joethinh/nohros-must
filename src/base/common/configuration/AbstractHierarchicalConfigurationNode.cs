@@ -63,8 +63,28 @@ namespace Nohros.Configuration
     /// An <see cref="AbstractHierarchicalConfigurationNode"/> to be added to
     /// the child nodes collection.
     /// </param>
+    /// <remarks>
+    /// The name of the node will be used as a key that is a unique string that
+    /// uniquelly identifies the node.
+    /// </remarks>
     protected virtual void AddChildNode(IConfigurationNode node) {
-      child_nodes_.Add(node.Name, node);
+      AddChildNode(node.Name, node);
+    }
+
+    /// <summary>
+    /// Adds the specified node to the internal collection of
+    /// <see cref="AbstractHierarchicalConfigurationNode"/>.
+    /// </summary>
+    /// <param name="node">
+    /// An <see cref="IConfigurationNode"/> to be added to
+    /// the child nodes collection.
+    /// </param>
+    /// <param name="node_key">
+    /// An string that uniquelly identifies the given configuration node.
+    /// </param>
+    protected virtual void AddChildNode(string node_key,
+      IConfigurationNode node) {
+      child_nodes_.Add(node_key, node);
     }
 
     /// <summary>

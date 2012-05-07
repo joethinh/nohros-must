@@ -10,7 +10,8 @@ namespace Nohros.Configuration
   {
     /// <summary>
     /// Gets a <see cref="SimpleProvidersNode"/> node whose name is
-    /// <paramref name="simple_provider_name"/>.
+    /// <paramref name="simple_provider_name"/> and is associated with the
+    /// default group.
     /// </summary>
     /// <param name="simple_provider_name">
     /// The name of the simple provider.
@@ -24,8 +25,31 @@ namespace Nohros.Configuration
     /// not found.
     /// </param>
     /// </exception>
-    ISimpleProvidersNode GetSimpleProvidersNode(
-      string simple_provider_name);
+    ISimpleProviderNode GetSimpleProviderNode(string simple_provider_name);
+
+    /// <summary>
+    /// Gets a <see cref="SimpleProvidersNode"/> node whose name is
+    /// <paramref name="simple_provider_name"/> and is associated with the
+    /// group <paramref name="simple_provider_group"/>.
+    /// </summary>
+    /// <param name="simple_provider_name">
+    /// The name of the simple provider.
+    /// </param>
+    /// <param name="simple_provider_group">
+    /// The name of the group associated with the simple provider.
+    /// </param>
+    /// <returns>
+    /// A <see cref="SimpleProviderNode"/> object whose name is
+    /// <paramref name="simple_provider_name"/>.
+    /// </returns>
+    /// <exception cref="KeyNotFoundException">
+    /// A simple provider whose name is <param name="simple_provider_name">
+    /// and is associated with the group
+    /// <paramref name="simple_provider_group"/> was not found.
+    /// </param>
+    /// </exception>
+    ISimpleProviderNode GetSimpleProviderNode(string simple_provider_name,
+      string simple_provider_group);
 
     /// <summary>
     /// Gets a <see cref="SimpleProvidersNode"/> whose name is
@@ -42,7 +66,29 @@ namespace Nohros.Configuration
     /// <c>true</c> when a simple provider whose name is
     /// <paramref name="simple_provider_name"/> is found; otherwise, <c>false</c>.
     /// </returns>
-    bool GetSimpleProvidersNode(string simple_provider_name,
-      out ISimpleProvidersNode simple_provider);
+    bool GetSimpleProviderNode(string simple_provider_name,
+      out ISimpleProviderNode simple_provider);
+
+    /// <summary>
+    /// Gets a <see cref="SimpleProvidersNode"/> node whose name is
+    /// <paramref name="simple_provider_name"/> and is associated with the
+    /// group <paramref name="simple_provider_group"/>.
+    /// </summary>
+    /// <param name="simple_provider_name">
+    /// The name of the simple provider.
+    /// </param>
+    /// <param name="simple_provider_group">
+    /// The name of the group associated with the simple provider.
+    /// </param>
+    /// <param name="simple_provider">
+    /// When this method returns contains a <see cref="SimpleProvidersNode"/>
+    /// object whose name is <paramref name="simple_provider_name"/>.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> when a simple provider whose name is
+    /// <paramref name="simple_provider_name"/> is found; otherwise, <c>false</c>.
+    /// </returns>
+    bool GetSimpleProviderNode(string simple_provider_name,
+      string simple_provider_group, out ISimpleProviderNode simple_provider);
   }
 }
