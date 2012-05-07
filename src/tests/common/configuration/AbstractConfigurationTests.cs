@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Xml;
+
 using NUnit.Framework;
 
 namespace Nohros.Configuration
 {
   class AbstractConfigurationMock : AbstractConfiguration {
-    public AbstractConfigurationMock() { }
   }
 
   public class AbstractConfigurationTests
   {
-    string config_file_path;
+    string config_file_path_;
 
     [SetUp]
     public void Setup() {
-      config_file_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+      config_file_path_ = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
         "config-tests.xml");
     }
 
@@ -58,24 +56,24 @@ namespace Nohros.Configuration
 
       Assert.DoesNotThrow(delegate()
       {
-        mock.Load(config_file_path, null);
+        mock.Load(config_file_path_, null);
       });
 
       Assert.DoesNotThrow(delegate()
       {
-        FileInfo fi = new FileInfo(config_file_path);
+        FileInfo fi = new FileInfo(config_file_path_);
         mock.Load(fi, null);
       });
 
       Assert.DoesNotThrow(delegate()
       {
-        FileInfo fi = new FileInfo(config_file_path);
+        FileInfo fi = new FileInfo(config_file_path_);
         mock.LoadAndWatch(fi, null);
       });
 
       Assert.DoesNotThrow(delegate()
       {
-        mock.LoadAndWatch(config_file_path, null);
+        mock.LoadAndWatch(config_file_path_, null);
       });
     }
 

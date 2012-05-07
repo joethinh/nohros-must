@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Nohros.Configuration;
-using Nohros.Providers;
+using Nohros.Logging;
 using Nohros.Resources;
 
 namespace Nohros.Security.Auth
