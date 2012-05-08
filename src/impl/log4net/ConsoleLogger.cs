@@ -1,18 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 
 using log4net;
 using log4net.Core;
-using log4net.Config;
 using log4net.Appender;
 using log4net.Layout;
-using log4net.Layout.Pattern;
 using log4net.Repository;
 using log4net.Repository.Hierarchy;
 
-namespace Nohros.Logging
+namespace Nohros.Logging.log4net
 {
   /// <summary>
   /// A generic logger that uses the third party log4net logging library.
@@ -30,17 +26,21 @@ namespace Nohros.Logging
   /// nohros configuration file.
   /// </para>
   /// </remarks>
-  public class Log4NetConsoleLogger: Log4NetLogger
+  public partial class ConsoleLogger: AbstractLogger
   {
-    const string kLogMessagePattern =
-      "[%-5level %date] %message%newline%exception";
+    readonly string layout_pattern_;
 
-    #region .ctor
     /// <summary>
-    /// Initializes a new instance of the ConsoleLogger class.
+    /// Initializes a new instance of the <see cref="ConsoleLogger"/> class by
+    /// using the specified layout pattern.
     /// </summary>
-    public Log4NetConsoleLogger() { }
-    #endregion
+    /// <param name="layout_pattern">
+    /// A string that identifies the pattern to be used to format the output
+    /// log message.
+    /// </param>
+    public ConsoleLogger(string layout_pattern) {
+      layout_pattern_ = layout_pattern;
+    }
 
     /// <summary>
     /// Configures the <see cref="FileLogger"/> logger adding the appenders
@@ -56,7 +56,7 @@ namespace Nohros.Logging
 
       // create the layout and appender for on error messages.
       PatternLayout layout = new PatternLayout();
-      layout.ConversionPattern = kLogMessagePattern;
+      layout.ConversionPattern = layout_pattern_;
       layout.ActivateOptions();
 
       // create the appender
@@ -71,7 +71,7 @@ namespace Nohros.Logging
 
       root_repository.Configured = true;
 
-      logger_ = LogManager.GetLogger("NohrosConsoleLogger");
+      logger = LogManager.GetLogger("NohrosConsoleLogger");
     }
   }
 }
