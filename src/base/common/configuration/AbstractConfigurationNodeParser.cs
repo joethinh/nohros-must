@@ -58,8 +58,9 @@ namespace Nohros.Configuration
         if (!Path.IsPathRooted(location))
           throw new ConfigurationException(
             string.Format(StringResources.Arg_PathRooted, location));
+        return Path.Combine(base_directory, location);
       }
-      return location;
+      return base_directory;
     }
 
     /// <summary>
@@ -151,7 +152,7 @@ namespace Nohros.Configuration
       string default_value, out string value) {
       XmlAttribute att = element.Attributes[name];
       value = (att != null) ? att.Value : default_value;
-      return (value != null);
+      return (att != null);
     }
 
     /// <summary>
