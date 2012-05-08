@@ -15,6 +15,7 @@ namespace Nohros.Configuration
     internal const string kLocationAttribute = "location";
     internal const string kTypeAttribute = "type";
     internal const string kAliasAttribute = "alias";
+    internal const string kGroupAttribute = "group";
 
     internal const string kControlFlagAttribute = "control-flag";
 
