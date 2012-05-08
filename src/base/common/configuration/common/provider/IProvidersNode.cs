@@ -113,7 +113,6 @@ namespace Nohros.Configuration
     /// </remarks>
     IProviderNode this[string provider_name] { get; }
 
-
     /// <summary>
     /// Gets a <see cref="IProviderNode"/> node whose name is
     /// <paramref name="provider_name"/> and is associated with the
