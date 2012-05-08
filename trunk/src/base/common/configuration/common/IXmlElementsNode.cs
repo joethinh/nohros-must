@@ -67,6 +67,6 @@ namespace Nohros.Configuration
     /// This method is a shortcut for the <see cref="GetXmlElement(string)"/>
     /// method.
     /// </remarks>
-    IProviderNode this[string xml_element_name] { get; }
+    XmlElement this[string xml_element_name] { get; }
   }
 }
