@@ -89,5 +89,56 @@ namespace Nohros.Configuration
     /// </returns>
     bool GetProviderNode(string provider_name,
       string provider_group, out IProviderNode simple_provider);
+
+    /// <summary>
+    /// Gets a <see cref="IProviderNode"/> node whose name is
+    /// <paramref name="provider_name"/> and is associated with the
+    /// default group.
+    /// </summary>
+    /// <param name="provider_name">
+    /// The name of the provider.
+    /// </param>
+    /// <returns>
+    /// A <see cref="IProviderNode"/> object whose name is
+    /// <paramref name="provider_name"/>.
+    /// </returns>
+    /// <exception cref="KeyNotFoundException">
+    /// A simple provider whose name is <param name="provider_name"> was
+    /// not found.
+    /// </param>
+    /// </exception>
+    /// <remarks>
+    /// This method is a shortcut for the <see cref="GetProviderNode(string)"/>
+    /// method.
+    /// </remarks>
+    IProviderNode this[string provider_name] { get; }
+
+
+    /// <summary>
+    /// Gets a <see cref="IProviderNode"/> node whose name is
+    /// <paramref name="provider_name"/> and is associated with the
+    /// group <paramref name="provider_group"/>.
+    /// </summary>
+    /// <param name="provider_name">
+    /// The name of the provider.
+    /// </param>
+    /// <param name="provider_group">
+    /// The name of the group associated with the provider.
+    /// </param>
+    /// <returns>
+    /// A <see cref="IProviderNode"/> object whose name is
+    /// <paramref name="provider_name"/>.
+    /// </returns>
+    /// <exception cref="KeyNotFoundException">
+    /// A provider whose name is <param name="provider_name"> and is
+    /// associated with the group <paramref name="provider_group"/> was not
+    /// found.
+    /// </param>
+    /// </exception>
+    /// <remarks>
+    /// This method is a shortcut for the
+    /// <see cref="GetProviderNode(string, string)"/> method.
+    /// </remarks>
+    IProviderNode this[string provider_name, string provider_group] { get; }
   }
 }
