@@ -48,6 +48,16 @@ namespace Nohros.Configuration
         base[ProviderKey(simple_provider_name, simple_provider_group)] as
           IProviderNode;
     }
+
+    /// <inheritdoc/>
+    IProviderNode IProvidersNode.this[string provider_name] {
+      get { return GetProviderNode(provider_name); }
+    }
+
+    /// <inheritdoc/>
+    IProviderNode IProvidersNode.this[string provider_name, string provider_group] {
+      get { return GetProviderNode(provider_name, provider_group); }
+    }
     #endregion
 
     static string ProviderKey(string simple_provider_name,
