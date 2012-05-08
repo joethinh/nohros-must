@@ -45,8 +45,8 @@ namespace Nohros.Configuration
     public IProviderNode GetProviderNode(
       string simple_provider_name, string simple_provider_group) {
       return
-        base[ProviderKey(simple_provider_name, simple_provider_group)] as
-          IProviderNode;
+        GetChildNode<IProviderNode>(ProviderKey(simple_provider_name,
+          simple_provider_group));
     }
 
     /// <inheritdoc/>
