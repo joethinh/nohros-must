@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
 namespace Nohros.Configuration
 {
@@ -132,17 +130,8 @@ namespace Nohros.Configuration
     /// <summary>
     /// Gets a list of all child nodes of the node.
     /// </summary>
-    protected virtual List<IConfigurationNode> ChildNodes {
-      get {
-        List<IConfigurationNode> nodes =
-          new List<IConfigurationNode>(child_nodes_.Count);
-        foreach (
-          KeyValuePair<string, IConfigurationNode> node in
-            child_nodes_) {
-          nodes.Add(node.Value);
-        }
-        return nodes;
-      }
+    protected virtual ICollection<IConfigurationNode> ChildNodes {
+      get { return child_nodes_.Values; }
     }
 
     /// <summary>
