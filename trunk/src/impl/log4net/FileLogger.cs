@@ -1,19 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Reflection;
 
 using log4net;
-using log4net.Core;
 using log4net.Config;
+using log4net.Core;
 using log4net.Appender;
 using log4net.Layout;
-using log4net.Layout.Pattern;
 using log4net.Repository;
 using log4net.Repository.Hierarchy;
 
-namespace Nohros.Logging
+namespace Nohros.Logging.log4net
 {
   /// <summary>
   /// A generic logger that uses the third party log4net logging library.
@@ -32,12 +28,10 @@ namespace Nohros.Logging
   /// configuration file.
   /// </para>
   /// </remarks>
-  public class Log4NetFileLogger: Log4NetLogger
+  public partial class FileLogger: AbstractLogger
   {
-    const string kLogMessagePattern =
-      "[%-5level %date] %message %exception%newline";
-
-    string log_file_path_;
+    readonly string log_file_path_;
+    readonly string layout_pattern_;
 
     #region .ctor
     /// <summary>
@@ -48,13 +42,23 @@ namespace Nohros.Logging
     /// The logger is not functional at this point, you need to call the
     /// <see cref="Configure"/> method to in order to make the logger usable.
     /// </remarks>
-    public Log4NetFileLogger(string log_file_path) {
-#if DEBUG
-      if (log_file_path == null || log_file_path.Length == 0) {
-        throw new ArgumentException("log_file_path is null or empty");
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="layout_pattern"/> or <paramref name="log_file_path"/>
+    /// are null.
+    /// </exception>
+    public FileLogger(string layout_pattern, string log_file_path) {
+      if (log_file_path == null || layout_pattern == null) {
+        throw new ArgumentNullException(log_file_path == null
+          ? "log_file_path"
+          : "layout_pattern");
       }
-#endif
+
+      if(log_file_path.Length == 0) {
+        throw new ArgumentException("log_file_path");
+      }
+
       log_file_path_ = log_file_path;
+      layout_pattern_ = layout_pattern;
     }
     #endregion
 
@@ -73,7 +77,7 @@ namespace Nohros.Logging
 
       // create the layout and appender for log messages
       PatternLayout layout = new PatternLayout();
-      layout.ConversionPattern = kLogMessagePattern;
+      layout.ConversionPattern = layout_pattern_;
       layout.ActivateOptions();
 
       FileAppender appender = new FileAppender();
@@ -89,7 +93,7 @@ namespace Nohros.Logging
 
       root_repository.Configured = true;
 
-      logger_ = LogManager.GetLogger("NohrosFileLogger");
+      logger = LogManager.GetLogger("NohrosFileLogger");
     }
   }
 }

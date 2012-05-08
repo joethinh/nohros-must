@@ -5,21 +5,19 @@ using System.Reflection;
 
 using log4net;
 using log4net.Core;
-using log4net.Config;
 using log4net.Appender;
 using log4net.Layout;
-using log4net.Layout.Pattern;
 using log4net.Repository;
 using log4net.Repository.Hierarchy;
 
-namespace Nohros.Logging
+namespace Nohros.Logging.log4net
 {
   /// <summary>
   /// A generic logger that uses the third party log4net logging library and
   /// logs messages to the system console.
   /// </summary>
   /// <remarks>
-  /// <see cref="Log4NetColoredConsoleLogger"/> appends log events to the
+  /// <see cref="ColoredConsoleLogger"/> appends log events to the
   /// standard output stream ot the error output stream using layout defined
   /// by the user. It also allows the color of a specific type of message to
   /// be set.
@@ -28,7 +26,7 @@ namespace Nohros.Logging
   /// nohros configuration file.
   /// </para>
   /// </remarks>
-  public class Log4NetColoredConsoleLogger: Log4NetLogger
+  public class ColoredConsoleLogger: AbstractLogger
   {
     string layout_pattern_;
     ColoredConsoleAppender.LevelColors[] level_colors_;
@@ -37,7 +35,7 @@ namespace Nohros.Logging
     /// <summary>
     /// Initializes a new instance of the ConsoleLogger class.
     /// </summary>
-    public Log4NetColoredConsoleLogger(string layout_pattern) {
+    public ColoredConsoleLogger(string layout_pattern) {
       layout_pattern_ = layout_pattern;
     }
     #endregion
@@ -85,7 +83,7 @@ namespace Nohros.Logging
 
       root_repository.Configured = true;
 
-      logger_ = LogManager.GetLogger("NohrosConsoleLogger");
+      logger = LogManager.GetLogger("NohrosConsoleLogger");
     }
 
     ColoredConsoleAppender.LevelColors[] GetDefaultLevelsColors() {
