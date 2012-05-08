@@ -29,10 +29,13 @@ namespace Nohros.Configuration
       CheckPreconditions(element, base_directory);
       string name = GetAttributeValue(element, Strings.kNameAttribute);
       string type = GetAttributeValue(element, Strings.kTypeAttribute);
-      string group = GetAttributeValue(element, Strings.kNameAttribute,
+      string location = GetLocation(element, base_directory);
+      string group = GetAttributeValue(element, Strings.kGroupAttribute,
         string.Empty);
 
-      ProviderNode provider = new ProviderNode(name, type, group);
+      ProviderNode provider = new ProviderNode(name, type);
+      provider.location_ = location;
+      provider.group_ = group;
       provider.options = GetOptions(element);
       return provider;
     }

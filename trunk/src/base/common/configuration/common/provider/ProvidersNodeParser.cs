@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 
 namespace Nohros.Configuration
@@ -32,7 +30,8 @@ namespace Nohros.Configuration
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element &&
           StringsAreEquals(node.Name, Strings.kProviderNodeName)) {
-          ProviderNode provider = ProviderNode.Parse(element, base_directory);
+          ProviderNode provider = ProviderNode.Parse(
+            (XmlElement) node, base_directory);
           providers.AddChildNode(ProviderKey(provider.Name, provider.Group),
             provider);
         }

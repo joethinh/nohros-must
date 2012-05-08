@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Nohros.Configuration
 {
@@ -6,13 +8,18 @@ namespace Nohros.Configuration
   /// A <see cref="ProvidersNode"/> is a collection of
   /// <see cref="ProviderNode"/> objects.
   /// </summary>
-  public partial class ProvidersNode: AbstractHierarchicalConfigurationNode, IProvidersNode
+  public partial class ProvidersNode : AbstractHierarchicalConfigurationNode,
+                                       IProvidersNode
   {
+    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="ProvidersNode"/> class.
     /// </summary>
-    public ProvidersNode() : base(Strings.kProvidersNodeName) { }
+    public ProvidersNode() : base(Strings.kProvidersNodeName) {
+    }
+    #endregion
 
+    #region IProvidersNode Members
     /// <inheritdoc/>
     public bool GetProviderNode(string simple_provider_name,
       out IProviderNode simple_provider) {
@@ -41,10 +48,21 @@ namespace Nohros.Configuration
         base[ProviderKey(simple_provider_name, simple_provider_group)] as
           IProviderNode;
     }
+    #endregion
 
     static string ProviderKey(string simple_provider_name,
       string simple_provider_group) {
       return "group:" + simple_provider_group + ",name:" + simple_provider_name;
+    }
+
+    public IEnumerator<IProviderNode> GetEnumerator() {
+      foreach(IConfigurationNode node in ChildNodes) {
+        yield return (IProviderNode) node;
+      }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() {
+      return GetEnumerator();
     }
   }
 }

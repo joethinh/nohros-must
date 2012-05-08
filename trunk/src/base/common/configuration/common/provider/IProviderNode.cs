@@ -36,6 +36,15 @@ namespace Nohros.Configuration
     string Location { get; }
 
     /// <summary>
+    /// Gets a string that identifies the group that a provider belongs to.
+    /// </summary>
+    /// <remarks>
+    /// If a provider is not associated with any group, this property returns
+    /// a empty string.
+    /// </remarks>
+    string Group { get; }
+
+    /// <summary>
     /// Gets a collection of key/value pairs containing the options configured
     /// for a provider.
     /// </summary>
