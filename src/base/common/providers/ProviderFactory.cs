@@ -43,12 +43,14 @@ namespace Nohros.Providers
       if (node == null)
         throw new ArgumentNullException("node");
 
-      Type type = null;
+      // Try to get the type from the loaded assemblies.
+      Type type = Type.GetType(node.Type);
+
       // attempt to load .NET type of the provider. If the location of the
       // assemlby is specified we need to load the assembly and try to get the
       // type from the loaded assembly. The name of the assembly will be
       // extracted from the provider type.
-      if (node.Location != null) {
+      if (type == null) {
         string assembly_name = node.Type;
         int num = assembly_name.IndexOf(',');
         if (num == -1) {
@@ -58,7 +60,7 @@ namespace Nohros.Providers
         }
 
         assembly_name = assembly_name.Substring(num + 1).Trim();
-        int num2 = assembly_name.IndexOfAny(new char[] { ' ', ',' });
+        int num2 = assembly_name.IndexOfAny(new char[] {' ', ','});
         if (num2 != -1)
           assembly_name = assembly_name.Substring(0, num2);
 
@@ -82,10 +84,7 @@ namespace Nohros.Providers
             string.Format(
               Resources.Resources.Provider_LoadAssembly, assembly_path), ex);
         }
-      } else {
-        type = Type.GetType(node.Type);
       }
-
       return type;
     }
 
