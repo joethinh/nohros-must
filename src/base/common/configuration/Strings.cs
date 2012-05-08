@@ -5,7 +5,7 @@ using System.Text;
 namespace Nohros.Configuration
 {
   /// <summary>
-  /// Defines all the constant string that could appear on the Xml
+  /// Defines the constant string that could appear on the nohros
   /// configuration files.
   /// </summary>
   internal sealed class Strings
@@ -14,7 +14,6 @@ namespace Nohros.Configuration
     internal const string kNameAttribute = "name";
     internal const string kLocationAttribute = "location";
     internal const string kTypeAttribute = "type";
-    internal const string kAliasAttribute = "alias";
     internal const string kGroupAttribute = "group";
 
     internal const string kControlFlagAttribute = "control-flag";
