@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Configuration
 {
@@ -8,7 +7,7 @@ namespace Nohros.Configuration
   /// A <see cref="IProvidersNode"/> is a collection of
   /// <see cref="IProvidersNode"/> objects.
   /// </summary>
-  public interface IProvidersNode
+  public interface IProvidersNode : IEnumerable<IProviderNode>
   {
     /// <summary>
     /// Gets a <see cref="IProviderNode"/> node whose name is
