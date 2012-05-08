@@ -12,8 +12,7 @@ namespace Nohros.Data.Providers
     /// Constructor implied by the interface
     /// <see cref="IConnectionProviderFactory"/>.
     /// </summary>
-    SqlConnectionProvider() {
-    }
+    SqlConnectionProvider() { }
     #endregion
 
     #region IConnectionProviderFactory Members
@@ -32,7 +31,8 @@ namespace Nohros.Data.Providers
         const int kLogin = 1;
         const int kPassword = 2;
 
-        builder = new SqlConnectionStringBuilder {
+        builder = new SqlConnectionStringBuilder
+        {
           DataSource = data[kServer],
           UserID = data[kLogin],
           Password = data[kPassword]
