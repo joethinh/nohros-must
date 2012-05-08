@@ -25,6 +25,16 @@ namespace Nohros.Configuration
     IProvidersNode Providers { get; }
 
     /// <summary>
+    /// Gets the xml elements that was configured for this application.
+    /// </summary>
+    /// <remarks>
+    /// If this application has no xml elements configured, this property will
+    /// returns an empty <see cref="IXmlElementsNode"/>, that is a
+    /// <see cref="IXmlElementsNode"/> object that contains no xml elements.
+    /// </remarks>
+    IXmlElementsNode XmlElements { get; }
+
+    /// <summary>
     /// Gets the logging level that was configured for this application.
     /// </summary>
     Logging.LogLevel LogLevel { get; }

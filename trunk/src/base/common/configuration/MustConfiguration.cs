@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.IO;
 using System.Configuration;
+
 using Nohros.Logging;
-using Nohros.Data;
 using Nohros.Collections;
 using Nohros.Resources;
 
@@ -19,7 +17,7 @@ namespace Nohros.Configuration
   /// The nohros shcema is defined by the
   /// http://nohros.com/schemas/nohros/nohros.xsd file.
   /// </remarks>
-  public class MustConfiguration: AbstractConfiguration, ILoginConfiguration, IMustConfiguration
+  public class MustConfiguration : AbstractConfiguration, ILoginConfiguration
   {
     // configuration nodes names
     internal const string kNohrosNodeName = "nohros";
@@ -49,11 +47,12 @@ namespace Nohros.Configuration
     const string kConfigurationFileKey = "NohrosConfigurationFile";
 
     LogLevel log_level_;
+    LoginModulesNode login_modules_;
     DictionaryValue properties_;
 
     ProvidersNode providers_;
     RepositoriesNode repositories_;
-    LoginModulesNode login_modules_;
+    XmlElementsNode xml_elements_;
 
     #region .ctor
     /// <summary>
@@ -64,9 +63,11 @@ namespace Nohros.Configuration
       repositories_ = new RepositoriesNode();
       providers_ = new ProvidersNode();
       login_modules_ = new LoginModulesNode();
+      xml_elements_ = new XmlElementsNode();
     }
     #endregion
 
+    #region ILoginConfiguration Members
     /// <summary>
     /// Loads the configuration values based on the application's configuration
     /// settings.
@@ -90,6 +91,87 @@ namespace Nohros.Configuration
     public override void Load() {
       InternalLoad("nohros", false);
     }
+
+    /// <summary>
+    /// Loads the configuration values based on the application's configuration
+    /// settings.
+    /// </summary>
+    /// <remarks>
+    /// Each application has a configuration file. This has the same name as
+    /// the application whith ' .config ' appended. This file is XML and
+    /// calling this function prompts the loader to look in that file for a key
+    /// named [NohrosConfigurationFile] that contains the path for the
+    /// configuration file.
+    /// <para>
+    /// The value of the [NohrosConfigurationFile] must be absolute or relative
+    /// to the application base directory.
+    /// </para>
+    /// <para>
+    /// The configuration file must be valid XML. It must contain at least one
+    /// element called <paramref name="root_node_name"/> that contains the
+    /// configuration data. Note that a element with name "nohros" must
+    /// exists some place on the root nodes tree.
+    /// </para>
+    /// </remarks>
+    public override void Load(string root_node_name) {
+      InternalLoad(root_node_name, false);
+    }
+
+    /// <summary>
+    /// Gets the repositories that was configured for this application.
+    /// </summary>
+    /// <remarks>
+    /// If this application has no repositories configured, this property will
+    /// returns a empty <see cref="RepositoriesNode"/>, that is a
+    /// <see cref="RepositoriesNode"/> object that has no repository.
+    /// </remarks>
+    public IRepositoriesNode Repositories {
+      get { return repositories_; }
+    }
+
+    /// <summary>
+    /// Gets the providers that was configured for this application.
+    /// </summary>
+    /// <remarks>
+    /// If this application has no providers configured, this property will
+    /// returns a empty <see cref="ProvidersNode"/>, that is a
+    /// <see cref="ProvidersNode"/> object that has no repository.
+    /// </remarks>
+    public IProvidersNode Providers {
+      get { return providers_; }
+    }
+
+    /// <summary>
+    /// Gets the login modules that was configured for this application.
+    /// </summary>
+    /// <remarks>
+    /// If this application has no login modules configured, this property will
+    /// returns a empty <see cref="LoginModulesNode"/>, that is a
+    /// <see cref="LoginModulesNode"/> object that contains no login modules.
+    /// </remarks>
+    public ILoginModulesNode LoginModules {
+      get { return login_modules_; }
+    }
+
+    /// <summary>
+    /// Gets the xml elements that was configured for this application.
+    /// </summary>
+    /// <remarks>
+    /// If this application has no xml elements configured, this property will
+    /// returns an empty <see cref="XmlElementsNode"/>, that is a
+    /// <see cref="XmlElementsNode"/> object that contains no xml elements.
+    /// </remarks>
+    public IXmlElementsNode XmlElements {
+      get { return xml_elements_; }
+    }
+
+    /// <summary>
+    /// Gets the logging level that was configured for this application.
+    /// </summary>
+    public LogLevel LogLevel {
+      get { return log_level_; }
+    }
+    #endregion
 
     /// <summary>
     /// Loads the configuration values based on the application's configuration
@@ -117,31 +199,6 @@ namespace Nohros.Configuration
     /// </para>
     public void LoadAndWatch() {
       InternalLoad("nohros", true);
-    }
-
-    /// <summary>
-    /// Loads the configuration values based on the application's configuration
-    /// settings.
-    /// </summary>
-    /// <remarks>
-    /// Each application has a configuration file. This has the same name as
-    /// the application whith ' .config ' appended. This file is XML and
-    /// calling this function prompts the loader to look in that file for a key
-    /// named [NohrosConfigurationFile] that contains the path for the
-    /// configuration file.
-    /// <para>
-    /// The value of the [NohrosConfigurationFile] must be absolute or relative
-    /// to the application base directory.
-    /// </para>
-    /// <para>
-    /// The configuration file must be valid XML. It must contain at least one
-    /// element called <paramref name="root_node_name"/> that contains the
-    /// configuration data. Note that a element with name "nohros" must
-    /// exists some place on the root nodes tree.
-    /// </para>
-    /// </remarks>
-    public override void Load(string root_node_name) {
-      InternalLoad(root_node_name, false);
     }
 
     /// <summary>
@@ -224,11 +281,11 @@ namespace Nohros.Configuration
         if (node.NodeType == XmlNodeType.Element) {
           string name = node.Name;
           if (StringsAreEquals(name, Strings.kRepositoriesNodeName)) {
-            repositories_ = RepositoriesNode.Parse((XmlElement)node, location);
+            repositories_ = RepositoriesNode.Parse((XmlElement) node, location);
           } else if (StringsAreEquals(name, Strings.kProvidersNodeName)) {
-            providers_ = ProvidersNode.Parse((XmlElement)node, location);
+            providers_ = ProvidersNode.Parse((XmlElement) node, location);
           } else if (StringsAreEquals(name, Strings.kLoginModulesNodeName)) {
-            login_modules_ = LoginModulesNode.Parse((XmlElement)node, location);
+            login_modules_ = LoginModulesNode.Parse((XmlElement) node, location);
           }
         }
       }
@@ -370,49 +427,6 @@ namespace Nohros.Configuration
     /// <param name="value">An string associated with the specified key within the given namespace</param>
     public void SetProperty(string key, IValue value) {
       properties_[key] = value;
-    }
-
-    /// <summary>
-    /// Gets the repositories that was configured for this application.
-    /// </summary>
-    /// <remarks>
-    /// If this application has no repositories configured, this property will
-    /// returns a empty <see cref="RepositoriesNode"/>, that is a
-    /// <see cref="RepositoriesNode"/> object that has no repository.
-    /// </remarks>
-    public IRepositoriesNode Repositories {
-      get { return repositories_; }
-    }
-
-    /// <summary>
-    /// Gets the providers that was configured for this application.
-    /// </summary>
-    /// <remarks>
-    /// If this application has no providers configured, this property will
-    /// returns a empty <see cref="ProvidersNode"/>, that is a
-    /// <see cref="ProvidersNode"/> object that has no repository.
-    /// </remarks>
-    public IProvidersNode Providers {
-      get { return providers_; }
-    }
-
-    /// <summary>
-    /// Gets the login modules that was configured for this application.
-    /// </summary>
-    /// <remarks>
-    /// If this application has no login modules configured, this property will
-    /// returns a empty <see cref="LoginModulesNode"/>, that is a
-    /// <see cref="LoginModulesNode"/> object that contains no login modules.
-    /// </remarks>
-    public ILoginModulesNode LoginModules {
-      get { return login_modules_; }
-    }
-
-    /// <summary>
-    /// Gets the logging level that was configured for this application.
-    /// </summary>
-    public LogLevel LogLevel {
-      get { return log_level_; }
     }
   }
 }
