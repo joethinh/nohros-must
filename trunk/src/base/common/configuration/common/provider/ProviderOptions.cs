@@ -133,33 +133,32 @@ namespace Nohros.Configuration
     /// The options keys to check for existence.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// <paramref name="options"/> is a null reference.
+    /// <paramref name="options"/> or <paramref name="keys"/> are <c>null</c>.
     /// </exception>
     /// <exception cref="KeyNotFoundException">
-    /// A given key does not exist in the specified options dictionaty.
+    /// A given key does not exist in the specified <paramref name="options"/>
+    /// dictionaty.
     /// </exception>
     /// <returns>
     /// An array of string containing the values for the specified option keys.
-    /// If no keys is specified this method returns an empty array.
     /// </returns>
     /// <remarks>
     /// This method checks the existence of each specified key and if one
-    /// of them does not exists throws an <see cref="ArgumentException"/>.
+    /// of them does not exists throws an <see cref="KeyNotFoundException"/>.
+    /// <para>
+    /// If no keys is specified this method returns an empty array.
+    /// </para>
     /// </remarks>
     public static string[] ThrowIfNotExists(IDictionary<string, string> options,
       params string[] keys) {
-      if (options == null) {
-        throw new ArgumentNullException("options");
-      }
-
-      if (keys == null) {
-        return new string[0];
+      if (options == null || keys == null) {
+        throw new ArgumentNullException(options == null ? "options" : "keys");
       }
 
       int j = keys.Length;
       string[] values = new string[j];
       for (int i = 0; i < j; i++) {
-        if (!options.TryGetValue(keys[i], out values[i])) {
+        if (keys[i] == null || !options.TryGetValue(keys[i], out values[i])) {
           throw new KeyNotFoundException(keys[i]);
         }
       }
