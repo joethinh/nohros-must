@@ -220,7 +220,7 @@ namespace Nohros.Configuration
       log_level_ = GetLogLevel(root_node);
 
       // parse the know configuration nodes.
-      foreach (XmlNode node in element) {
+      foreach (XmlNode node in root_node.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element) {
           string name = node.Name;
           if (StringsAreEquals(name, Strings.kRepositoriesNodeName)) {
@@ -295,6 +295,8 @@ namespace Nohros.Configuration
               break;
             }
           }
+        } else {
+          root_node = (XmlElement) node;
         }
       }
 
