@@ -31,5 +31,6 @@ namespace Nohros.Configuration
     internal const string kOptionsNodeName = "options";
     internal const string kLoginModulesNodeName = "login-modules";
     internal const string kLoginModuleNodeName = "module";
+    internal const string kXmlElementsNodeName = "xml-elements";
   }
 }
