@@ -55,6 +55,18 @@ namespace Nohros.Configuration
     }
 
     /// <inheritdoc/>
+    public IProviderNode[] GetProvidersNode(string group) {
+      List<IProviderNode> providers = new List<IProviderNode>(ChildNodes.Count);
+      foreach(IConfigurationNode node in ChildNodes) {
+        IProviderNode provider = node as IProviderNode;
+        if (StringsAreEquals(provider.Group, group)) {
+          providers.Add(provider);
+        }
+      }
+      return providers.ToArray();
+    }
+
+    /// <inheritdoc/>
     IProviderNode IProvidersNode.this[string provider_name, string provider_group] {
       get { return GetProviderNode(provider_name, provider_group); }
     }
