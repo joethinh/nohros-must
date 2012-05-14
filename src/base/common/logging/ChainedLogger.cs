@@ -1,18 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Logging
 {
   /// <summary>
-  /// A implementation of the <see cref="IChainedLogger"/> that uses the
+  /// A implementation of the <see cref="ChainedLogger"/> that uses the
   /// nohros must framework.
   /// </summary>
   /// <remarks>
   /// This class uses the nohros must framework and is the only point where
   /// this dependency exists. Clients should call the
   /// <see cref="ForCurrentProcess"/> method to obtain an instance of the
-  /// <see cref="IChainedLogger"/> class, and uses it to log messages.
+  /// <see cref="ChainedLogger"/> class, and uses it to log messages.
   /// <para>
   /// By default the <see cref="NOPLogger"/> is returned by the
   /// <see cref="ForCurrentProcess"/> method. The application must configure

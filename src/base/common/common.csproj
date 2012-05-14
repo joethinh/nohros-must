@@ -120,11 +120,15 @@
     <Compile Include="configuration\common\RepositoryNodeParser.cs" />
     <Compile Include="configuration\common\RepositoriesNodeParser.cs" />
     <Compile Include="configuration\AbstractConfigurationNodeParser.cs" />
+    <Compile Include="configuration\common\IXmlElementsNode.cs" />
+    <Compile Include="configuration\common\XmlElementsNode.cs" />
+    <Compile Include="configuration\common\XmlElementsNodeParser.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\IMustConfiguration.cs" />
     <Compile Include="configuration\Strings.cs" />
     <Compile Include="data\DataParameters.cs" />
     <Compile Include="exception\ConfigurationException.cs" />
+    <Compile Include="logging\ILoggerFactory.cs" />
     <Compile Include="providers\data\IConnectionProvider.cs" />
     <Compile Include="resources\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
@@ -292,7 +296,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
