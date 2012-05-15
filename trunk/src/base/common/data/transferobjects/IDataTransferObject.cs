@@ -17,34 +17,54 @@ namespace Nohros.Data.TransferObjects
     /// underlying class and is formatted like a json array element.
     /// </summary>
     /// <example>
-    ///   <code>
-    ///     [ToJsElement(), "somedata", ...]
-    ///   </code>
+    /// The example uses the AsJsonArray to serialize the MyDataTransferObject
+    /// to a string that represents an json array.
+    /// <code>
+    ///   class MyDataTransferObject : IDataTransferObject {
+    ///     string first_name_, las_name;
+    ///     
+    ///     public MyDataTransferObject(string first_name, string last_name) {
+    ///       first_name_ = first_name;
+    ///       last_name_ = last_name;
+    ///     }
+    /// 
+    ///     public string AsJsonArray() {
+    ///       return "['" + first_name + "','" + last_name + "']"
+    ///     }
+    ///   }
+    /// </code>
     /// </example>
     /// <returns>
     /// A json compliant string of characters formatted like a json array
     /// element.
     /// </returns>
-    /// <remarks>
-    /// The returned string will be scaped with quotation marks.
-    /// </remarks>
     string AsJsonArray();
 
     /// <summary>
-    /// Gets a json compliant string of characters that represents the
-    /// underlying class and is formmated like a json object.
+    /// Gets a json-compliant string of characters that represents the
+    /// underlying class and is formatted like a json object.
     /// </summary>
     /// <example>
-    ///   <code>
-    ///     { "name": "nohros systems", "surname": "nohros" }
-    ///   </code>
+    /// The example uses the AsJsonObject method to serialize the
+    /// MyDataTransferObject to a string that represents an json object.
+    /// <code>
+    ///   class MyDataTransferObject : IDataTransferObject {
+    ///     string first_name_, las_name;
+    ///     
+    ///     public MyDataTransferObject(string first_name, string last_name) {
+    ///       first_name_ = first_name;
+    ///       last_name_ = last_name;
+    ///     }
+    /// 
+    ///     public string AsJsonObject() {
+    ///       return "{\"first_name\":\"" + first_name + "\",\"last_name\":\"" + last_name + "\"}";
+    ///     }
+    ///   }
+    /// </code>
     /// </example>
     /// <returns>
     /// A json compliant string of characters formatted like a json object.
     /// </returns>
-    /// <remarks>
-    /// The strings inside the object will be escaped with quotation marks.
-    /// </remarks>
     string AsJsonObject();
   }
 }
