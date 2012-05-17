@@ -164,5 +164,41 @@ namespace Nohros.Configuration
       }
       return values;
     }
+
+    /// <summary>
+    /// Gets the value associated with the key <paramref name="key"/> and
+    /// try to convert the value to its 32-bit signed integer equivalent.
+    /// </summary>
+    /// <param name="options">
+    /// A <see cref="IDictionary{TKey,TValue}"/> to get the value from.
+    /// </param>
+    /// <param name="key">
+    /// The key that is associated with the value to get.
+    /// </param>
+    /// <param name="default_value">
+    /// A 32-bit integer that will be returned when the key
+    /// <paramref name="key"/> was not found.
+    /// </param>
+    /// <returns>
+    /// The value associated with the key <paramref name="key"/> or
+    /// <paramref name="default_value"/> if the key was not found.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="options"/> or <paramref name="key"/> is null.
+    /// </exception>
+    public static int TryGetInteger(IDictionary<string, string> options,
+      string key, int default_value) {
+      if (options == null || key == null) {
+        throw new ArgumentNullException(options == null ? "options" : "key");
+      }
+      string option_string;
+      if (options.TryGetValue(key, out option_string)) {
+        int option_int;
+        if (int.TryParse(option_string, out option_int)) {
+          return option_int;
+        }
+      }
+      return default_value;
+    }
   }
 }
