@@ -206,5 +206,42 @@ namespace Nohros.Resources
     public static string Log_MethodThrowsException {
       get { return Resources.Log_MethodThrowsException; }
     }
+
+    /// <summary>
+    /// Looks up a localized string similar to [The configuration node {0} is
+    /// not defined.].
+    /// </summary>
+    public static string Configuration_MissingNode {
+      get { return Resources.Configuration_MissingNode; }
+    }
+
+    /// <summary>
+    /// Looks up a localized string similar to [Argument should be of type {0}.].
+    /// </summary>
+    public static string ArgumentOutOfRange_ArgumentWrongType {
+      get { return Resources.ArgumentOutOfRange_ArgumentWrongType; }
+    }
+
+    /// <summary>
+    /// Looks up a localized string similar to [{0} should be of type.].
+    /// </summary>
+    public static string ArgumentOutOfRange_WrongType {
+      get { return Resources.ArgumentOutOfRange_WrongType; }
+    }
+
+    /// <summary>
+    /// Looks up a localized string similar to [The length of the array {0}
+    /// should be equals to the length of {1}.].
+    /// </summary>
+    public static string Arg_ArrayLengthDifferFrom {
+      get { return Resources.Arg_ArrayLengthDifferFrom; }
+    }
+
+    /// <summary>
+    /// Looks up a localized string similar to [Array lengths must be the same.].
+    /// </summary>
+    public static string Arg_ArrayLengthsDiffer {
+      get { return Resources.Arg_ArrayLengthsDiffer; }
+    }
   }
 }

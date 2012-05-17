@@ -292,4 +292,19 @@
   <data name="ArgumentOutOfRange_ArrayLengthMismatch" xml:space="preserve">
     <value>The number of elements of the array {0} is less than the number of elements of the array {1}.</value>
   </data>
+  <data name="Configuration_MissingNode" xml:space="preserve">
+    <value>The configuration node {0} is not defined.</value>
+  </data>
+  <data name="ArgumentOutOfRange_ArgumentWrongType" xml:space="preserve">
+    <value>Argument should be of type {0}.</value>
+  </data>
+  <data name="ArgumentOutOfRange_WrongType" xml:space="preserve">
+    <value>{0} should be of type.</value>
+  </data>
+  <data name="Arg_ArrayLengthDifferFrom" xml:space="preserve">
+    <value>The length of the array {0} should be equals to the length of {1}.</value>
+  </data>
+  <data name="Arg_ArrayLengthsDiffer" xml:space="preserve">
+    <value>Array lengths must be the same.</value>
+  </data>
 </root>
