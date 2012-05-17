@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace Nohros.Data.TransferObjects
+namespace Nohros.Data
 {
     public class TransferQueue<T> : IEnumerable<T>, ICollection, IEnumerable where T: class
     {

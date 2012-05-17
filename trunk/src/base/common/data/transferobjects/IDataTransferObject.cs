@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Data.TransferObjects
+namespace Nohros.Data
 {
   /// <summary>
   /// Represents an class that can be serialized using the json format. Classes
