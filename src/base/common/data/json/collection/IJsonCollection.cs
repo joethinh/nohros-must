@@ -5,7 +5,7 @@ namespace Nohros.Data.Json
   /// <summary>
   /// Represents a collection of <see cref="IJsonToken"/> objects.
   /// </summary>
-  public interface IJsonCollection
+  public interface IJsonCollection : IJsonToken
   {
     /// <summary>
     /// Adds an <see cref="IJsonToken"/> to the

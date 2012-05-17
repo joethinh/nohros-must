@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+
 using Nohros.Resources;
 
 namespace Nohros.Data.Json
@@ -53,6 +53,7 @@ namespace Nohros.Data.Json
     }
     #endregion
 
+    #region IJsonCollection Members
     /// <inheritdoc/>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="token"/> is not an instance of the class
@@ -62,10 +63,48 @@ namespace Nohros.Data.Json
       JsonArray array = token as JsonArray;
       if (array == null) {
         throw new ArgumentOutOfRangeException(string.Format(
-          StringResources.ArgumentOutOfRange_WrongType, "token", "JsonArray"));
+          StringResources.Arg_WrongType, "token", "JsonArray"));
       }
       Add(array);
     }
+
+    /// <inheritdoc/>
+    public int Count {
+      get { return rows_.Count; }
+    }
+    #endregion
+
+    #region IJsonToken Members
+    /// <summary>
+    /// Gets a string of characters representing the underlying
+    /// class and formatted like a json array.
+    /// </summary>
+    /// <returns>
+    /// A string representation of the <see cref="JsonTable"/> class
+    /// that represents a json array.
+    /// </returns>
+    public string AsJson() {
+      int length = columns_.Length;
+      if (length == 0) {
+        return "{}";
+      }
+
+      #region Member names
+      const string kColumnNamesMemberName = "columns";
+      const string kDataMemberName = "data";
+      #endregion
+
+      JsonStringBuilder builder = new JsonStringBuilder()
+        .WriteBeginObject()
+        .WriteMemberName(kColumnNamesMemberName)
+        .WriteStringArray(columns_)
+        .WriteMemberName(kDataMemberName);
+      for (int i = 0, j = rows_.Count; i < j; i++) {
+        builder.WriteUnquotedString(rows_[i].AsJson());
+      }
+      return builder.WriteEndObject().ToString();
+    }
+    #endregion
 
     /// <summary>
     /// Adds an <see cref="IJsonToken"/> to the
@@ -92,34 +131,6 @@ namespace Nohros.Data.Json
           StringResources.Arg_ArrayLengthDifferFrom, "array.Value", "columns"));
       }
       rows_.Add(array);
-    }
-
-    /// <summary>
-    /// Gets a string of characters representing the underlying
-    /// class and formatted like a json array.
-    /// </summary>
-    /// <returns>
-    /// A string representation of the <see cref="JsonTable"/> class
-    /// that represents a json array.
-    /// </returns>
-    public string AsJson() {
-      int length = columns_.Length;
-      if (length == 0) {
-        return "{}";
-      }
-
-      #region Member names
-      const string kColumnNamesMemberName = "columns";
-      #endregion
-
-      JsonStringBuilder builder = new JsonStringBuilder()
-        .WriteBeginObject()
-        .WriteMemberName(kColumnNamesMemberName)
-        .WriteStringArray(columns_);
-      for (int i = 0, j = rows_.Count; i < j;i++) {
-        builder.WriteUnquotedString(rows_[i].AsJson());
-      }
-      return builder.WriteEndObject().ToString();
     }
   }
 }
