@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Data.TransferObjects
+namespace Nohros.Data
 {
   public class DataTransferObjectSet<T>: ICollection<T> where T: IDataTransferObject
   {
