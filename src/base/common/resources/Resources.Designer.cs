@@ -61,6 +61,24 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The length of the array {0} should be equals to the length of {1}..
+        /// </summary>
+        internal static string Arg_ArrayLengthDifferFrom {
+            get {
+                return ResourceManager.GetString("Arg_ArrayLengthDifferFrom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Array lengths must be the same..
+        /// </summary>
+        internal static string Arg_ArrayLengthsDiffer {
+            get {
+                return ResourceManager.GetString("Arg_ArrayLengthsDiffer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Destination array is not long enough to copy all the items in the collection. Check array index and length..
         /// </summary>
         internal static string Arg_ArrayPlusOffTooSmall {
@@ -187,6 +205,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Argument should be of type {0}..
+        /// </summary>
+        internal static string ArgumentOutOfRange_ArgumentWrongType {
+            get {
+                return ResourceManager.GetString("ArgumentOutOfRange_ArgumentWrongType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The number of elements of the array {0} is less than the number of elements of the array {1}..
         /// </summary>
         internal static string ArgumentOutOfRange_ArrayLengthMismatch {
@@ -202,6 +229,15 @@ namespace Nohros.Resources {
         internal static string ArgumentOutOfRange_Index {
             get {
                 return ResourceManager.GetString("ArgumentOutOfRange_Index", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} should be of type..
+        /// </summary>
+        internal static string ArgumentOutOfRange_WrongType {
+            get {
+                return ResourceManager.GetString("ArgumentOutOfRange_WrongType", resourceCulture);
             }
         }
         
@@ -310,6 +346,15 @@ namespace Nohros.Resources {
         internal static string Configuration_Missing {
             get {
                 return ResourceManager.GetString("Configuration_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The configuration node {0} is not defined..
+        /// </summary>
+        internal static string Configuration_MissingNode {
+            get {
+                return ResourceManager.GetString("Configuration_MissingNode", resourceCulture);
             }
         }
         
