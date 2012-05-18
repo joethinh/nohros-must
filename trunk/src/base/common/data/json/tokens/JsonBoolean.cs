@@ -6,7 +6,7 @@ namespace Nohros.Data.Json
   /// An implementation of the <see cref="IJsonToken{T}"/> that represents a
   /// json bool token.
   /// </summary>
-  public class JsonBoolean: JsonToken<bool>
+  public class JsonBoolean: JsonToken<bool>, IDataField<bool>
   {
     #region .ctor
     /// <summary>
