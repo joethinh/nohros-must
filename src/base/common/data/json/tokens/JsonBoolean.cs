@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 namespace Nohros.Data.Json
 {
@@ -6,7 +7,7 @@ namespace Nohros.Data.Json
   /// An implementation of the <see cref="IJsonToken{T}"/> that represents a
   /// json bool token.
   /// </summary>
-  public class JsonBoolean: JsonToken<bool>, IDataField<bool>
+  public class JsonBoolean : JsonToken<bool>, IJsonDataField
   {
     #region .ctor
     /// <summary>
@@ -16,8 +17,29 @@ namespace Nohros.Data.Json
     /// <param name="value">
     /// The value to be associated with this class.
     /// </param>
-    public JsonBoolean(bool value)
-      : base(value) {
+    public JsonBoolean(bool value) : base(value) {
+    }
+    #endregion
+
+    #region IJsonDataField Members
+    /// <summary>
+    /// Gets a <see cref="JsonBoolean"/> object that contains the boolean value
+    /// readed from the <see cref="IDataReader"/> at
+    /// <paramref name="position"/>.
+    /// </summary>
+    /// <param name="reader">
+    /// A <see cref="IDataReader"/> that can be used to extract a boolean
+    /// value at <paramref name="position"/>.
+    /// </param>
+    /// <param name="position">
+    /// A integer that identifies the position to read the boolean value that
+    /// will be associated with the json boolean token.
+    /// </param>
+    /// <returns>
+    /// The newly created <see cref="JsonBoolean"/> object.
+    /// </returns>
+    IJsonToken IJsonDataField.GetJsonToken(IDataReader reader, int position) {
+      return new JsonBoolean(reader.GetBoolean(position));
     }
     #endregion
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 namespace Nohros.Data.Json
 {
@@ -9,7 +10,7 @@ namespace Nohros.Data.Json
   /// <typeparam name="T">
   /// The type of the underlying value.
   /// </typeparam>
-  public abstract class JsonNumber<T> : JsonToken<T>, IDataField<T>
+  public abstract class JsonNumber<T>: JsonToken<T>
   {
     /// <summary>
     /// The format used to convert the underlying value to a string.

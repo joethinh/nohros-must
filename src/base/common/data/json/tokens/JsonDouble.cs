@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 namespace Nohros.Data.Json
 {
@@ -6,7 +7,7 @@ namespace Nohros.Data.Json
   /// An implementation of the <see cref="IJsonToken{T}"/> that maps a
   /// <see cref="Double"/> type to a json number token.
   /// </summary>
-  public class JsonDouble: JsonNumber<double>
+  public class JsonDouble : JsonNumber<double>, IJsonDataField
   {
     #region .ctor
     /// <summary>
@@ -17,7 +18,8 @@ namespace Nohros.Data.Json
     /// <param name="value">
     /// The value to be associated with this class.
     /// </param>
-    public JsonDouble(double value) : this(value, "G") { }
+    public JsonDouble(double value) : this(value, "G") {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonDouble"/> class
@@ -30,10 +32,32 @@ namespace Nohros.Data.Json
     /// <param name="format">
     /// The format to use when converting this instance to a string.
     /// </param>
-    public JsonDouble(double value, string format): base(value, format) { }
+    public JsonDouble(double value, string format) : base(value, format) {
+    }
     #endregion
 
-    #region IJsonToken<Integer> Members
+    #region IJsonDataField Members
+    /// <summary>
+    /// Gets a <see cref="JsonDouble"/> object that contains the double value
+    /// readed from the <see cref="IDataReader"/> at
+    /// <paramref name="position"/>.
+    /// </summary>
+    /// <param name="reader">
+    /// A <see cref="IDataReader"/> that can be used to extract a double
+    /// value at <paramref name="position"/>.
+    /// </param>
+    /// <param name="position">
+    /// A integer that identifies the position to read the double value that
+    /// will be associated with the json double token.
+    /// </param>
+    /// <returns>
+    /// The newly created <see cref="JsonDouble"/> object.
+    /// </returns>
+    IJsonToken IJsonDataField.GetJsonToken(IDataReader reader, int position) {
+      return new JsonDouble(reader.GetDouble(position));
+    }
+    #endregion
+
     /// <summary>
     /// Gets the json string representation of the <see cref="IJsonToken{T}"/>
     /// class.
@@ -45,7 +69,6 @@ namespace Nohros.Data.Json
     public override string AsJson() {
       return value.ToString(format);
     }
-    #endregion
 
     /// <summary>
     /// Explicit converts an <see cref="Double"/> object to a

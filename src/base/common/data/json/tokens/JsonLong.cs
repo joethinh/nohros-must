@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 namespace Nohros.Data.Json
 {
@@ -6,7 +7,7 @@ namespace Nohros.Data.Json
   /// An implementation of the <see cref="IJsonToken{T}"/> that maps a
   /// <see cref="Int64"/> type to a json number token.
   /// </summary>
-  public class JsonLong: JsonNumber<long>
+  public class JsonLong : JsonNumber<long>, IJsonDataField
   {
     #region .ctor
     /// <summary>
@@ -17,7 +18,8 @@ namespace Nohros.Data.Json
     /// <param name="value">
     /// The value to be associated with this class.
     /// </param>
-    public JsonLong(long value) : this(value, "G") { }
+    public JsonLong(long value) : this(value, "G") {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonLong"/> class
@@ -34,7 +36,28 @@ namespace Nohros.Data.Json
     }
     #endregion
 
-    #region IJsonToken<Integer> Members
+    #region IJsonDataField Members
+    /// <summary>
+    /// Gets a <see cref="JsonLong"/> object that contains the long value
+    /// readed from the <see cref="IDataReader"/> at
+    /// <paramref name="position"/>.
+    /// </summary>
+    /// <param name="reader">
+    /// A <see cref="IDataReader"/> that can be used to extract a long
+    /// value at <paramref name="position"/>.
+    /// </param>
+    /// <param name="position">
+    /// A integer that identifies the position to read the long value that
+    /// will be associated with the json long token.
+    /// </param>
+    /// <returns>
+    /// The newly created <see cref="JsonLong"/> object.
+    /// </returns>
+    IJsonToken IJsonDataField.GetJsonToken(IDataReader reader, int position) {
+      return new JsonLong(reader.GetInt64(position));
+    }
+    #endregion
+
     /// <summary>
     /// Gets the json string representation of the <see cref="IJsonToken{T}"/>
     /// class.
@@ -46,7 +69,6 @@ namespace Nohros.Data.Json
     public override string AsJson() {
       return value.ToString(format);
     }
-    #endregion
 
     /// <summary>
     /// Explicit converts an <see cref="Int64"/> object to a

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 namespace Nohros.Data.Json
 {
@@ -6,7 +7,7 @@ namespace Nohros.Data.Json
   /// An implementation of the <see cref="IJsonToken{T}"/> that maps a
   /// <see cref="Single"/> type to a json number token.
   /// </summary>
-  public class JsonFloat : JsonNumber<float>
+  public class JsonFloat : JsonNumber<float>, IJsonDataField
   {
     #region .ctor
     /// <summary>
@@ -33,6 +34,28 @@ namespace Nohros.Data.Json
     /// </param>
     public JsonFloat(float value, string format)
       : base(value, format) {
+    }
+    #endregion
+
+    #region IJsonDataField Members
+    /// <summary>
+    /// Gets a <see cref="JsonFloat"/> object that contains the float value
+    /// readed from the <see cref="IDataReader"/> at
+    /// <paramref name="position"/>.
+    /// </summary>
+    /// <param name="reader">
+    /// A <see cref="IDataReader"/> that can be used to extract a float
+    /// value at <paramref name="position"/>.
+    /// </param>
+    /// <param name="position">
+    /// A integer that identifies the position to read the float value that
+    /// will be associated with the json float token.
+    /// </param>
+    /// <returns>
+    /// The newly created <see cref="JsonFloat"/> object.
+    /// </returns>
+    IJsonToken IJsonDataField.GetJsonToken(IDataReader reader, int position) {
+      return new JsonFloat(reader.GetFloat(position));
     }
     #endregion
 
