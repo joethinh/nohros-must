@@ -6,7 +6,7 @@ namespace Nohros.Data.Json
   /// An implementation of the <see cref="IJsonToken{T}"/> that represents a
   /// json string token.
   /// </summary>
-  public class JsonString : JsonToken<string>
+  public class JsonString : JsonToken<string>, IDataField<string>
   {
     #region .ctor
     /// <summary>

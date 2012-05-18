@@ -34,7 +34,7 @@ namespace Nohros.Data.Json
     /// The format to use when converting this instance to a string.
     /// </param>
     public JsonShort(short value, string format)
-      : base(format) {
+      : base(value, format) {
       value_ = value;
     }
     #endregion

@@ -9,7 +9,7 @@ namespace Nohros.Data.Json
   /// <typeparam name="T">
   /// The type of the underlying value.
   /// </typeparam>
-  public abstract class JsonNumber<T> : JsonToken<T>
+  public abstract class JsonNumber<T> : JsonToken<T>, IDataField<T>
   {
     /// <summary>
     /// The format used to convert the underlying value to a string.
