@@ -1,27 +1,21 @@
-﻿using Nohros.Data;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Nohros.Toolkit.RestQL
 {
   /// <summary>
-  /// Represents a string that contains data to be passed to a query processor
-  /// in order to obtain results from a data source.
+  /// The default implementation of the <see cref="IQuery"/> interface.
   /// </summary>
-  /// <remarks>
-  /// A query is composed by a plain text having or not parameters within it.
-  /// A parameter is a sequence of characters with no spaces delimited by
-  /// anohther string. The default parameter delimiter is the string "$".
-  /// <para>
-  /// Each query should have a unique name.
-  /// </para>
-  /// </remarks>
-  public class Query : ParameterizedString
+  public class Query : ParameterizedString, IQuery
   {
     static readonly Query empty_query_;
 
     readonly string name_;
+    readonly IDictionary<string, string> options_;
     readonly string type_;
 
     bool is_parsed_;
+    QueryMethod query_method_;
 
     #region .ctor
     /// <summary>
@@ -30,7 +24,9 @@ namespace Nohros.Toolkit.RestQL
     static Query() {
       empty_query_ = new Query(string.Empty, string.Empty, string.Empty);
     }
+    #endregion
 
+    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="Query"/> class by using
     /// the specified query string, name and type.
@@ -82,6 +78,39 @@ namespace Nohros.Toolkit.RestQL
       type_ = type;
       name_ = name;
       is_parsed_ = false;
+      options_ = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+      query_method_ = QueryMethod.Get;
+    }
+    #endregion
+
+    #region IQuery Members
+    /// <inheritdoc/>
+    public string Name {
+      get { return name_; }
+    }
+
+    /// <inheritdoc/>
+    public string Type {
+      get { return type_; }
+    }
+
+    /// <summary>
+    /// Gets or sets the query's method.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref=" QueryMethod"/> identifies the type of operation that
+    /// will be performed on the data base ( retrieve value, modify data,
+    /// modify and retrieve data).
+    /// </remarks>
+    public QueryMethod QueryMethod {
+      get { return query_method_; }
+      set { query_method_ = value; }
+    }
+
+
+    /// <inheritdoc/>
+    public IDictionary<string, string> Options {
+      get { return options_; }
     }
     #endregion
 
@@ -93,26 +122,43 @@ namespace Nohros.Toolkit.RestQL
       }
     }
 
+    public override bool Equals(object obj) {
+      Query query = obj as Query;
+      if ((object) obj == null) {
+        return false;
+      }
+      return Equals(query);
+    }
+
+    public bool Equals(Query query) {
+      return query.name_ == name_;
+    }
+
+    public override int GetHashCode() {
+      return name_.GetHashCode();
+    }
+
+    public static bool operator ==(Query query_a, Query query_b) {
+      if (ReferenceEquals(query_a, query_b)) {
+        return true;
+      }
+      if ((object) query_a == null || (object) query_b == null) {
+        return false;
+      }
+      return query_a.name_ == query_b.name_;
+    }
+
+    public static bool operator !=(Query query_a, Query query_b) {
+      return !(query_a == query_b);
+    }
+
     /// <summary>
     /// Gets an instance of the <see cref="Query"/> class that represents an
     /// empty query, that is a query whose name, type and query string is an
     /// empty string.
     /// </summary>
-    public static Query EmptyQuery {
+    public static IQuery EmptyQuery {
       get { return empty_query_; }
-    }
-
-    /// <summary>
-    /// Gets the name of the query.
-    /// </summary>
-    public string Name {
-      get { return name_; }
-    }
-
-    /// <summary>
-    /// </summary>
-    public string Type {
-      get { return type_; }
     }
   }
 }
