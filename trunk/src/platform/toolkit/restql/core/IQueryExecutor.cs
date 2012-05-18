@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -22,6 +20,20 @@ namespace Nohros.Toolkit.RestQL
     /// should check the documentation of each processor to understand the
     /// meaning of the returned string.
     /// </remarks>
-    string Execute(Query query);
+    string Execute(IQuery query);
+
+    /// <summary>
+    /// Gets a value indicating if a <see cref="IQueryExecutor"/> can execute
+    /// the specified query.
+    /// </summary>
+    /// <param name="query">
+    /// The <seealso cref="Query"/> object to check.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> If the executor can execute the query
+    /// <paramref name="query"/>; otherwise, <c>false</c>.
+    /// </returns>
+    /// <seealso cref="Query"/>
+    bool CanExecute(IQuery query);
   }
 }

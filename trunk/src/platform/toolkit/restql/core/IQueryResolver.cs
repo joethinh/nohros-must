@@ -24,16 +24,18 @@ namespace Nohros.Toolkit.RestQL
     /// The resolved query or <see cref="Query.EmptyQuery"/> if the query could
     /// not be resolved.
     /// </returns>
-    Query GetQuery(string name);
+    IQuery GetQuery(string name);
 
     /// <summary>
-    /// Resolves a query using its unique name and parameters.
+    /// Resolves a query using its unique name and bound the speicifed
+    /// parameters to it.
     /// </summary>
     /// <param name="name">
     /// The query's unique name.
     /// </param>
     /// <param name="parameters">
-    /// The query's parameters.
+    /// A <see cref="IDictionary{TKey,TValue}"/> object containing the
+    /// parameters to be bound to the resolved query.
     /// </param>
     /// <returns>
     /// The resolved query or <see cref="Query.EmptyQuery"/> if the query could
@@ -43,6 +45,47 @@ namespace Nohros.Toolkit.RestQL
     /// The given parameters will be bound to the query if it can be resolved
     /// using its name.
     /// </remarks>
-    Query GetQuery(string name, IDictionary<string, string> parameters);
+    IQuery GetQuery(string name, IDictionary<string, string> parameters);
+
+    /// <summary>
+    /// Resolves a query using its unique name and options and bound the
+    /// specified parameters to it.
+    /// </summary>
+    /// <param name="name">
+    /// The query's unique name.
+    /// </param>
+    /// <param name="parameters">
+    /// A <see cref="IDictionary{TKey,TValue}"/> object containing the
+    /// parameters to be bound to the resolved query.
+    /// </param>
+    /// <param name="options">
+    /// A <see cref="IDictionary{TKey,TValue}"/> object containing the options
+    /// for the query.
+    /// </param>
+    /// <returns>
+    /// The resolved query or <see cref="Query.EmptyQuery"/> if the query could
+    /// not be resolved.
+    /// </returns>
+    /// <remarks>
+    /// The given parameters will be bound to the query if it can be resolved
+    /// using its name.
+    /// </remarks>
+    IQuery GetQuery(string name, IDictionary<string, string> parameters,
+      IDictionary<string, string> options);
+
+    /// <summary>
+    /// Gets a <see cref="IQueryExecutor"/> that is capable to resolve the
+    /// specified query.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="IQueryExecutor"/> object that is capable to execute the
+    /// given query.
+    /// </returns>
+    /// <remarks>
+    /// If there are no query executors that can execute the specified query
+    /// a instance of the <see cref="NoOpQueryExecutor"/> class will be
+    /// returned.
+    /// </remarks>
+    IQueryExecutor GetQueryExecutor(IQuery query);
   }
 }
