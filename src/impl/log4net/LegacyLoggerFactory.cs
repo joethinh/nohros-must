@@ -8,6 +8,14 @@ namespace Nohros.Logging.log4net
 {
   public partial class LegacyLogger : ILoggerFactory
   {
+    #region .ctor
+    /// <summary>
+    /// Constructor required by the <see cref="ILoggerFactory"/> class.
+    /// </summary>
+    LegacyLogger() {
+    }
+    #endregion
+
     #region ILoggerFactory Members
     /// <summary>
     /// Creates an instance of the <see cref="LegacyLogger"/> class using the
