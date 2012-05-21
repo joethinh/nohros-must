@@ -289,22 +289,28 @@
   <data name="InvalidCast_FromTo" xml:space="preserve">
     <value>Invalid cast from {0} to {1}.</value>
   </data>
-  <data name="ArgumentOutOfRange_ArrayLengthMismatch" xml:space="preserve">
+  <data name="Argument_ArrayLengthMismatch" xml:space="preserve">
     <value>The number of elements of the array {0} is less than the number of elements of the array {1}.</value>
   </data>
   <data name="Configuration_MissingNode" xml:space="preserve">
     <value>The configuration node {0} is not defined.</value>
   </data>
-  <data name="ArgumentOutOfRange_ArgumentWrongType" xml:space="preserve">
-    <value>Argument should be of type {0}.</value>
-  </data>
-  <data name="ArgumentOutOfRange_WrongType" xml:space="preserve">
-    <value>{0} should be of type.</value>
+  <data name="Arg_WrongType" xml:space="preserve">
+    <value>{0} should be of type {1}.</value>
   </data>
   <data name="Arg_ArrayLengthDifferFrom" xml:space="preserve">
     <value>The length of the array {0} should be equals to the length of {1}.</value>
   </data>
   <data name="Arg_ArrayLengthsDiffer" xml:space="preserve">
     <value>Array lengths must be the same.</value>
+  </data>
+  <data name="ArgumentOutOfRange_NeedNonNegNum" xml:space="preserve">
+    <value>Non-negative number required.</value>
+  </data>
+  <data name="Argument_CollectionNoNulls" xml:space="preserve">
+    <value>{0} cannot contain null elements.</value>
+  </data>
+  <data name="NotSupported_CannotCreateType" xml:space="preserve">
+    <value>This method cannot be used to create types related to {0}.</value>
   </data>
 </root>
