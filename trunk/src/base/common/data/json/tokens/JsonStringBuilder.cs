@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Nohros.Data.Json
@@ -109,6 +110,14 @@ namespace Nohros.Data.Json
       WriteBeginArray();
       for (int i = 0, j = tokens.Length; i < j; i++) {
         WriteUnquotedString(tokens[i].AsJson());
+      }
+      return WriteEndArray();
+    }
+
+    public JsonStringBuilder WriteTokenArray(IEnumerable<IJsonToken> tokens) {
+      WriteBeginArray();
+      foreach (IJsonToken token in tokens) {
+        WriteUnquotedString(token.AsJson());
       }
       return WriteEndArray();
     }
