@@ -6,7 +6,7 @@ namespace Nohros.Data.Json
   /// <summary>
   /// An implementation of the 
   /// </summary>
-  public class JsonShort : JsonNumber<short>, IJsonDataField
+  public class JsonShort : JsonNumber<short>
   {
     readonly short value_;
 
@@ -37,28 +37,6 @@ namespace Nohros.Data.Json
     public JsonShort(short value, string format)
       : base(value, format) {
       value_ = value;
-    }
-    #endregion
-
-    #region IJsonDataField Members
-    /// <summary>
-    /// Gets a <see cref="JsonShort"/> object that contains the short value
-    /// readed from the <see cref="IDataReader"/> at
-    /// <paramref name="position"/>.
-    /// </summary>
-    /// <param name="reader">
-    /// A <see cref="IDataReader"/> that can be used to extract a short
-    /// value at <paramref name="position"/>.
-    /// </param>
-    /// <param name="position">
-    /// A integer that identifies the position to read the short value that
-    /// will be associated with the json short token.
-    /// </param>
-    /// <returns>
-    /// The newly created <see cref="JsonShort"/> object.
-    /// </returns>
-    IJsonToken IJsonDataField.GetJsonToken(IDataReader reader, int position) {
-      return new JsonShort(reader.GetInt16(position));
     }
     #endregion
 
