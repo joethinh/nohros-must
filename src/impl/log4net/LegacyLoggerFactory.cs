@@ -28,9 +28,17 @@ namespace Nohros.Logging.log4net
     public ILogger CreateLogger(IDictionary<string, string> options,
       IMustConfiguration configuration) {
       string logger_name = options[Strings.kLoggerName];
+      string xml_element_name = ProviderOptions.GetIfExists(options,
+        Strings.kLegacyLoggerXmlElementName,
+        Strings.kDefaultLegacyLoggerXmlElementName);
+
+      // Get the xml element that is used to configure the legacy log4net
+      // logger.
       XmlElement element =
-        configuration.XmlElements[Strings.kLog4NetXmlElementName];
-      return new LegacyLogger(element, logger_name);
+        configuration.XmlElements[xml_element_name];
+      LegacyLogger legacy_logger = new LegacyLogger(element, logger_name);
+      legacy_logger.Configure();
+      return legacy_logger;
     }
     #endregion
   }
