@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using Nohros.Resources;
 
 namespace Nohros.Data
 {
@@ -25,11 +26,9 @@ namespace Nohros.Data
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="DataField{T}"/> class by
-    /// using the specified <paramref name="value"/>.
+    /// using the specified field <paramref name="name"/> and
+    /// ordinal <paramref name="position"/>.
     /// </summary>
-    /// <param name="value">
-    /// The underlying value.
-    /// </param>
     /// <param name="name">
     /// The name of the field.
     /// </param>
@@ -37,7 +36,22 @@ namespace Nohros.Data
     /// The zero based ordinal position of the field within an
     /// <see cref="IDataReader"/>.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="name"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="IndexOutOfRangeException">
+    /// <paramref name="position"/> is negative.
+    /// </exception>
     protected DataField(string name, int position) {
+      if (name == null) {
+        throw new ArgumentNullException("name");
+      }
+
+      if (position < 0) {
+        throw new IndexOutOfRangeException(
+          string.Format(StringResources.ArgumentOutOfRange_NeedNonNegNum));
+      }
+
       this.name = name;
       this.position = position;
     }
