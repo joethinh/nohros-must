@@ -8,10 +8,10 @@ namespace Nohros.Data
   /// <see cref="Int32"/> data type to a concrete <see cref="IDataField{T}"/>
   /// object.
   /// </summary>
-  public class DataFieldInt : DataField<int>
+  public class DataFieldInteger : DataField<int>
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="DataFieldInt"/> class by
+    /// Initializes a new instance of the <see cref="DataFieldInteger"/> class by
     /// using the specified field name and position.
     /// </summary>
     /// <param name="name">
@@ -21,7 +21,7 @@ namespace Nohros.Data
     /// The zero based ordinal position of the field within an
     /// <see cref="IDataReader"/>.
     /// </param>
-    public DataFieldInt(string name, int position)
+    public DataFieldInteger(string name, int position)
       : base(name, position) {
     }
 
