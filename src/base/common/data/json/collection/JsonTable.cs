@@ -24,6 +24,14 @@ namespace Nohros.Data.Json
 
     #region .ctor
     /// <summary>
+    /// Initializes a new instance of the <see cref="JsonTable"/> class that
+    /// is empty and has no columns.
+    /// </summary>
+    public JsonTable() {
+      columns_ = new string[0];
+    }
+
+    /// <summary>
     /// Creates a new instance of the <see cref="JsonTable"/> class
     /// that has no values and contains the specified columns.
     /// </summary>
