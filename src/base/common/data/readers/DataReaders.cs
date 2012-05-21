@@ -47,7 +47,5 @@ namespace Nohros.Data
       }
       return ordinals;
     }
-
-    public static IDataField<T> 
   }
 }
