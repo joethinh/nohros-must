@@ -286,6 +286,8 @@ namespace Nohros.Configuration
             providers_ = ProvidersNode.Parse((XmlElement) node, location);
           } else if (StringsAreEquals(name, Strings.kLoginModulesNodeName)) {
             login_modules_ = LoginModulesNode.Parse((XmlElement) node, location);
+          } else if (StringsAreEquals(name, Strings.kXmlElementsNodeName)) {
+            xml_elements_ = XmlElementsNode.Parse((XmlElement) node);
           }
         }
       }
