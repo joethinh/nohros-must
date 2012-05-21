@@ -126,11 +126,50 @@
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\IMustConfiguration.cs" />
     <Compile Include="configuration\Strings.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldBoolean.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldDecimal.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldDouble.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldFloat.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldInteger.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldLong.cs" />
+    <Compile Include="data\json\datafields\JsonDataFields.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldShort.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldString.cs" />
+    <Compile Include="data\readers\DataField.cs" />
+    <Compile Include="data\readers\DataFieldBoolean.cs" />
+    <Compile Include="data\readers\DataFieldDecimal.cs" />
+    <Compile Include="data\readers\DataFieldDouble.cs" />
+    <Compile Include="data\readers\DataFieldFloat.cs" />
+    <Compile Include="data\readers\DataFieldInteger.cs" />
+    <Compile Include="data\readers\DataFieldLong.cs" />
+    <Compile Include="data\readers\DataFieldShort.cs" />
+    <Compile Include="data\readers\DataFieldString.cs" />
     <Compile Include="data\DataParameters.cs" />
+    <Compile Include="data\readers\IDataField.cs" />
+    <Compile Include="data\readers\IDataFieldT.cs" />
+    <Compile Include="data\json\collection\IJsonCollection.cs" />
+    <Compile Include="data\json\collection\IJsonCollectionFactory.cs" />
+    <Compile Include="data\json\collection\JsonCollectionFactory.cs" />
+    <Compile Include="data\json\datafields\IJsonDataField.cs" />
+    <Compile Include="data\json\tokens\IJsonToken.cs" />
+    <Compile Include="data\json\collection\JsonArray.cs" />
+    <Compile Include="data\json\tokens\JsonBoolean.cs" />
+    <Compile Include="data\json\tokens\IJsonTokenT.cs" />
+    <Compile Include="data\json\tokens\JsonDecimal.cs" />
+    <Compile Include="data\json\tokens\JsonDouble.cs" />
+    <Compile Include="data\json\tokens\JsonFloat.cs" />
+    <Compile Include="data\json\tokens\JsonInteger.cs" />
+    <Compile Include="data\json\tokens\JsonLong.cs" />
+    <Compile Include="data\json\tokens\JsonNumber.cs" />
+    <Compile Include="data\json\collection\JsonObject.cs" />
+    <Compile Include="data\json\collection\JsonObjectMember.cs" />
+    <Compile Include="data\json\tokens\JsonShort.cs" />
+    <Compile Include="data\json\tokens\JsonString.cs" />
+    <Compile Include="data\json\tokens\JsonToken.cs" />
     <Compile Include="exception\ConfigurationException.cs" />
     <Compile Include="logging\ILoggerFactory.cs" />
     <Compile Include="providers\data\IConnectionProvider.cs" />
-    <Compile Include="resources\Resources.Designer.cs">
+    <Compile Include="Resources\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -146,7 +185,7 @@
     <Compile Include="concurrent\YQueue.cs" />
     <Compile Include="cache\CacheEntry.cs" />
     <Compile Include="configuration\common\provider\ProviderOptions.cs" />
-    <Compile Include="data\DataReaders.cs" />
+    <Compile Include="data\readers\DataReaders.cs" />
     <Compile Include="exception\ExecutionException.cs" />
     <Compile Include="logging\ChainedLogger.cs" />
     <Compile Include="logging\MustLogger.cs" />
@@ -181,14 +220,13 @@
     <Compile Include="type\collections\trees\AndersonTree.cs" />
     <Compile Include="type\collections\trees\AndersonTreeNode.cs" />
     <Compile Include="type\ComparisonComparer.cs" />
-    <Compile Include="data\transferobjects\TableTransferObject.cs" />
     <Compile Include="type\IValidator.cs" />
     <Compile Include="data\json\JSONReader.cs" />
     <Compile Include="data\transferobjects\TransferQueue.cs" />
-    <Compile Include="data\transferobjects\DataTransferObject.cs" />
+    <Compile Include="data\json\tokens\JsonStringBuilder.cs" />
     <Compile Include="data\transferobjects\DataTransferObjects.cs" />
     <Compile Include="data\transferobjects\IDataTransferObject.cs" />
-    <Compile Include="data\transferobjects\StringTransferObject.cs" />
+    <Compile Include="data\json\collection\JsonTable.cs" />
     <Compile Include="providers\data\IDataProvider.cs" />
     <Compile Include="type\ParameterizedString.cs" />
     <Compile Include="providers\ProviderFactory.cs" />
@@ -296,7 +334,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
