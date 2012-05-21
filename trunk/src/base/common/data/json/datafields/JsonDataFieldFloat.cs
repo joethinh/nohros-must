@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Nohros.Data.Json
 {
-  public class JsonDataFieldFloat: DataFieldFloat, IJsonDataField<float>
+  public class JsonDataFieldFloat : DataFieldFloat, IJsonDataField
   {
     #region .ctor
     /// <summary>
@@ -22,7 +22,7 @@ namespace Nohros.Data.Json
     }
     #endregion
 
-    #region IJsonDataField<float> Members
+    #region IJsonDataField Members
     /// <summary>
     /// Gets the a <see cref="IJsonToken{T}"/> object that represents the
     /// the field's value.
@@ -31,7 +31,7 @@ namespace Nohros.Data.Json
     /// A <see cref="IDataReader"/> that can be used to extract a
     /// <see cref="Single"/> at the field position.
     /// </param>
-    public IJsonToken<float> GetValue(IDataReader reader) {
+    public IJsonToken GetValue(IDataReader reader) {
       return new JsonFloat(base.GetValue(reader));
     }
     #endregion
