@@ -115,7 +115,7 @@ namespace Nohros.Providers
       // any exception.
       try {
         return CreateProviderFactory(node, args);
-      } catch(ProviderException) {
+      } catch (ProviderException) {
         // TODO: Add meaing to the exception.
         MustLogger.ForCurrentProcess.Error("");
       }
@@ -124,43 +124,97 @@ namespace Nohros.Providers
 
     /// <summary>
     /// Creates a new instance of the <typeparamref name="T"/> class by using
-    /// the type that is defined on the configuration node.
+    /// the type defined by the <paramref name="node"/> and the specified
+    /// arguments, falling back to the default constructor.
     /// </summary>
-    /// <param name="node">A <see cref="IProviderNode"/> object that contains
-    /// information about the type <typeparamref name="T"/></param>
-    /// <param name="args">An array of arguments that match in number, order,
+    /// <param name="node">
+    /// A <see cref="IProviderNode"/> object that contains information about
+    /// the type <typeparamref name="T"/>
+    /// </param>
+    /// <param name="args">
+    /// An array of arguments that match in number, order,
     /// and type the parameters of the constructor to invoke. If args is an
     /// empty array or null, the constructor that takes no parameters(the
-    /// default constructor) is invoked.</param>
-    /// <returns>An instance of the <typeparamref name="T"/> class.</returns>
-    /// <exception cref="ProviderException">A instance of the specified
-    /// type could not be created.</exception>
+    /// default constructor) is invoked.
+    /// </param>
+    /// <returns>
+    /// An instance of the <typeparamref name="T"/> class.
+    /// </returns>
+    /// <remarks>
+    /// If a constructor that match in number, order and type the specified
+    /// array of arguments is not found, this method try to create an instance
+    /// of the type <typeparamref name="T"/> using the default constructor.
+    /// </remarks>
+    /// <seealso cref="CreateProviderFactory"/>
+    /// <seealso cref="IProviderNode"/>
+    public static T CreateProviderFactoryFallback(IProviderNode node,
+      params object[] args) {
+      return CreateProviderFactory(node, true, args);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <typeparamref name="T"/> class by using
+    /// the type that is defined on the configuration node.
+    /// </summary>
+    /// <param name="node">
+    /// A <see cref="IProviderNode"/> object that contains information about
+    /// the type <typeparamref name="T"/>.
+    /// </param>
+    /// <param name="args">
+    /// An array of arguments that match in number, order, and type the
+    /// parameters of the constructor to invoke. If args is an empty array or
+    /// null, the constructor that takes no parameters(the default constructor)
+    /// is invoked.
+    /// </param>
+    /// <returns>
+    /// An instance of the <typeparamref name="T"/> class.
+    /// </returns>
+    /// <exception cref="ProviderException">
+    /// A instance of the specified type could not be created.
+    /// </exception>
     public static T CreateProviderFactory(IProviderNode node,
+      params object[] args) {
+      return CreateProviderFactory(node, false, args);
+    }
+
+    static T CreateProviderFactory(IProviderNode node, bool fallback,
       params object[] args) {
       Exception inner_exception = null;
 
-      // a try/catch block is used here because this method should throw only
+      // A try/catch block is used here because this method should throw only
       // a ProviderException, any other exception throwed should be packed
       // into a ProviderException.
       try {
         Type type = GetProviderFactoryType(node);
         if (type != null) {
-
           // create a new object instance using a public or non-public
           // constructor.
-          const BindingFlags flags =
+          const BindingFlags kFlags =
             BindingFlags.CreateInstance | BindingFlags.Public |
-            BindingFlags.Instance | BindingFlags.NonPublic;
+              BindingFlags.Instance | BindingFlags.NonPublic;
 
-          T new_obj =
-            Activator.CreateInstance(type, flags, null, args, null) as T;
+          T new_obj = null;
+
+          // A try catch block is used here because we need to fallback, if
+          // desired, to the default constructor if the first CreateInstance
+          // fails because of a missing constructor.
+          try {
+            new_obj =
+              Activator.CreateInstance(type, kFlags, null, args, null) as T;
+          } catch (MissingMethodException) {
+            if (fallback) {
+              new_obj =
+                Activator.CreateInstance(type, kFlags, null, null, null) as T;
+            }
+          }
+
           if (new_obj != null) {
             return new_obj;
           }
         }
-      } catch(ProviderException) {
+      } catch (ProviderException) {
         throw;
-      } catch(Exception ex) {
+      } catch (Exception ex) {
         // minimizing code duplication.
         inner_exception = ex;
       }
@@ -169,7 +223,7 @@ namespace Nohros.Providers
       // into a new ProviderException exception.
       throw new ProviderException(
         string.Format(Resources.Resources.TypeLoad_CreateInstance,
-        typeof (T)), inner_exception);
+          typeof (T)), inner_exception);
     }
   }
 }
