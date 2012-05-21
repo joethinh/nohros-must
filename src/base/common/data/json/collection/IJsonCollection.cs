@@ -13,7 +13,7 @@ namespace Nohros.Data.Json
     /// </summary>
     /// <param name="token">
     /// The <seealso cref="IJsonToken"/> object to be added to the
-    /// <see cref="IJsonToken"/>
+    /// <see cref="IJsonCollection"/>.
     /// </param>
     void Add(IJsonToken token);
 
