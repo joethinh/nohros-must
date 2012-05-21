@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Nohros.Data.Json
 {
-  public class JsonDataFieldBoolean : DataFieldBoolean, IJsonDataField<bool>
+  public class JsonDataFieldBoolean : DataFieldBoolean, IJsonDataField
   {
     #region .ctor
     /// <summary>
@@ -22,7 +22,7 @@ namespace Nohros.Data.Json
     }
     #endregion
 
-    #region IJsonDataField<bool> Members
+    #region IJsonDataField Members
     /// <summary>
     /// Gets the a <see cref="IJsonToken{T}"/> object that represents the
     /// the field's value.
@@ -31,7 +31,7 @@ namespace Nohros.Data.Json
     /// A <see cref="IDataReader"/> that can be used to extract a
     /// <see cref="Boolean"/> at the field position.
     /// </param>
-    public IJsonToken<bool> GetValue(IDataReader reader) {
+    public IJsonToken GetValue(IDataReader reader) {
       return new JsonBoolean(base.GetValue(reader));
     }
     #endregion

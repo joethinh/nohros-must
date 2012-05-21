@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using System.Data;
 
@@ -49,7 +48,7 @@ namespace Nohros.Data.Json
   /// </code>
   /// </example>
   /// </remarks>
-  public interface IJsonDataField<out T> : IDataField<IJsonToken<T>>
+  public interface IJsonDataField : IDataField<IJsonToken>
   {
   }
 }
