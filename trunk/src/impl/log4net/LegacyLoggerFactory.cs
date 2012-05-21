@@ -35,7 +35,8 @@ namespace Nohros.Logging.log4net
     /// </returns>
     public ILogger CreateLogger(IDictionary<string, string> options,
       IMustConfiguration configuration) {
-      string logger_name = options[Strings.kLoggerName];
+      string logger_name = ProviderOptions.GetIfExists(options,
+        Strings.kLoggerName, Strings.kDefaultLoggerName);
       string xml_element_name = ProviderOptions.GetIfExists(options,
         Strings.kLegacyLoggerXmlElementName,
         Strings.kDefaultLegacyLoggerXmlElementName);
