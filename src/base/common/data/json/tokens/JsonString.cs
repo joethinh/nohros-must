@@ -7,7 +7,7 @@ namespace Nohros.Data.Json
   /// An implementation of the <see cref="IJsonToken{T}"/> that represents a
   /// json string token.
   /// </summary>
-  public class JsonString: JsonToken<string>, IJsonDataField
+  public class JsonString: JsonToken<string>
   {
     #region .ctor
     /// <summary>
@@ -63,28 +63,6 @@ namespace Nohros.Data.Json
     public override string AsJson() {
       return QuoteStringOrNullToken(value);
     }
-
-    #region IJsonDataField Members
-    /// <summary>
-    /// Gets a <see cref="JsonString"/> object that contains the string value
-    /// readed from the <see cref="IDataReader"/> at
-    /// <paramref name="position"/>.
-    /// </summary>
-    /// <param name="reader">
-    /// A <see cref="IDataReader"/> that can be used to extract a string
-    /// value at <paramref name="position"/>.
-    /// </param>
-    /// <param name="position">
-    /// A integer that identifies the position to read the string value that
-    /// will be associated with the json string token.
-    /// </param>
-    /// <returns>
-    /// The newly created <see cref="JsonString"/> object.
-    /// </returns>
-    IJsonToken IJsonDataField.GetJsonToken(IDataReader reader, int position) {
-      return new JsonString(reader.GetString(position));
-    }
-    #endregion
 
     /// <summary>
     /// Explicit converts an <see cref="String"/> object to a

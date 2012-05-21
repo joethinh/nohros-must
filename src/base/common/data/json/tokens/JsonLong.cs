@@ -7,7 +7,7 @@ namespace Nohros.Data.Json
   /// An implementation of the <see cref="IJsonToken{T}"/> that maps a
   /// <see cref="Int64"/> type to a json number token.
   /// </summary>
-  public class JsonLong : JsonNumber<long>, IJsonDataField
+  public class JsonLong : JsonNumber<long>
   {
     #region .ctor
     /// <summary>
@@ -33,28 +33,6 @@ namespace Nohros.Data.Json
     /// The format to use when converting this instance to a string.
     /// </param>
     public JsonLong(long value, string format) : base(value, format) {
-    }
-    #endregion
-
-    #region IJsonDataField Members
-    /// <summary>
-    /// Gets a <see cref="JsonLong"/> object that contains the long value
-    /// readed from the <see cref="IDataReader"/> at
-    /// <paramref name="position"/>.
-    /// </summary>
-    /// <param name="reader">
-    /// A <see cref="IDataReader"/> that can be used to extract a long
-    /// value at <paramref name="position"/>.
-    /// </param>
-    /// <param name="position">
-    /// A integer that identifies the position to read the long value that
-    /// will be associated with the json long token.
-    /// </param>
-    /// <returns>
-    /// The newly created <see cref="JsonLong"/> object.
-    /// </returns>
-    IJsonToken IJsonDataField.GetJsonToken(IDataReader reader, int position) {
-      return new JsonLong(reader.GetInt64(position));
     }
     #endregion
 

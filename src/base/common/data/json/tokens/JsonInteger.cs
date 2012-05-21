@@ -7,7 +7,7 @@ namespace Nohros.Data.Json
   /// An implementation of the <see cref="IJsonToken{T}"/> that maps a
   /// <see cref="Int32"/> type to a json number token.
   /// </summary>
-  public class JsonInteger: JsonNumber<int>, IJsonDataField
+  public class JsonInteger: JsonNumber<int>
   {
     #region .ctor
     /// <summary>
@@ -47,28 +47,6 @@ namespace Nohros.Data.Json
     public override string AsJson() {
       return value.ToString(format);
     }
-
-    #region IJsonDataField Members
-    /// <summary>
-    /// Gets a <see cref="JsonInteger"/> object that contains the integer value
-    /// readed from the <see cref="IDataReader"/> at
-    /// <paramref name="position"/>.
-    /// </summary>
-    /// <param name="reader">
-    /// A <see cref="IDataReader"/> that can be used to extract a integer
-    /// value at <paramref name="position"/>.
-    /// </param>
-    /// <param name="position">
-    /// A integer that identifies the position to read the integer value that
-    /// will be associated with the json integer token.
-    /// </param>
-    /// <returns>
-    /// The newly created <see cref="JsonInteger"/> object.
-    /// </returns>
-    IJsonToken IJsonDataField.GetJsonToken(IDataReader reader, int position) {
-      return new JsonInteger(reader.GetInt32(position));
-    }
-    #endregion
 
     /// <summary>
     /// Explicit converts an <see cref="Int32"/> object to a
