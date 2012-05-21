@@ -16,6 +16,21 @@ namespace Nohros.Resources
     }
 
     /// <summary>
+    /// Looks up a localized string similar to [{0} cannot contain null
+    /// elements.].
+    /// </summary>
+    public static string Argument_CollectionNoNulls {
+      get { return Resources.Argument_CollectionNoNulls; }
+    }
+
+    /// <summary>
+    /// Looks up a localized string similar to [Non-negative number required.].
+    /// </summary>
+    public static string ArgumentOutOfRange_NeedNonNegNum {
+      get { return Resources.ArgumentOutOfRange_NeedNonNegNum; }
+    }
+
+    /// <summary>
     /// Looks up a localized string similar to [Destination array is not long
     /// enough to copy all the items in the collection. Check array index and
     /// length.].
@@ -41,8 +56,8 @@ namespace Nohros.Resources
       get { return Resources.DataProvider_Connection; }
     }
 
-    public static string ArgumentOutOfRange_ArrayLengthMismatch {
-      get { return Resources.ArgumentOutOfRange_ArrayLengthMismatch; }
+    public static string Argument_ArrayLengthMismatch {
+      get { return Resources.Argument_ArrayLengthMismatch; }
     }
 
     /// <summary>
@@ -218,15 +233,15 @@ namespace Nohros.Resources
     /// <summary>
     /// Looks up a localized string similar to [Argument should be of type {0}.].
     /// </summary>
-    public static string ArgumentOutOfRange_ArgumentWrongType {
-      get { return Resources.ArgumentOutOfRange_ArgumentWrongType; }
+    public static string Arg_ArgumentWrongType {
+      get { return string.Format(Arg_WrongType, "Argument"); }
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [{0} should be of type.].
+    /// Looks up a localized string similar to [{0} should be of type {1}.].
     /// </summary>
-    public static string ArgumentOutOfRange_WrongType {
-      get { return Resources.ArgumentOutOfRange_WrongType; }
+    public static string Arg_WrongType {
+      get { return Resources.Arg_WrongType; }
     }
 
     /// <summary>
@@ -242,6 +257,14 @@ namespace Nohros.Resources
     /// </summary>
     public static string Arg_ArrayLengthsDiffer {
       get { return Resources.Arg_ArrayLengthsDiffer; }
+    }
+
+    /// <summary>
+    /// Looks up a localized string similar to [This class cannot be used to
+    /// create types related to {0}.].
+    /// </summary>
+    public static string NotSupported_CannotCreateType {
+      get { return Resources.NotSupported_CannotCreateType; }
     }
   }
 }

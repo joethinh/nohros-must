@@ -39,7 +39,7 @@ namespace Nohros.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Nohros.resources.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Nohros.Resources.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -142,6 +142,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} should be of type {1}..
+        /// </summary>
+        internal static string Arg_WrongType {
+            get {
+                return ResourceManager.GetString("Arg_WrongType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An entry with the same key already exists..
         /// </summary>
         internal static string Argument_AddingDuplicate {
@@ -151,11 +160,29 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The number of elements of the array {0} is less than the number of elements of the array {1}..
+        /// </summary>
+        internal static string Argument_ArrayLengthMismatch {
+            get {
+                return ResourceManager.GetString("Argument_ArrayLengthMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attempting to specify count and offset past end of array..
         /// </summary>
         internal static string Argument_ArrayPlusOffTooSmall {
             get {
                 return ResourceManager.GetString("Argument_ArrayPlusOffTooSmall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} cannot contain null elements..
+        /// </summary>
+        internal static string Argument_CollectionNoNulls {
+            get {
+                return ResourceManager.GetString("Argument_CollectionNoNulls", resourceCulture);
             }
         }
         
@@ -205,24 +232,6 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Argument should be of type {0}..
-        /// </summary>
-        internal static string ArgumentOutOfRange_ArgumentWrongType {
-            get {
-                return ResourceManager.GetString("ArgumentOutOfRange_ArgumentWrongType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The number of elements of the array {0} is less than the number of elements of the array {1}..
-        /// </summary>
-        internal static string ArgumentOutOfRange_ArrayLengthMismatch {
-            get {
-                return ResourceManager.GetString("ArgumentOutOfRange_ArrayLengthMismatch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Index was out of range. Must be non-negative and less than the size of the collection.
         ///.
         /// </summary>
@@ -233,11 +242,11 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} should be of type..
+        ///   Looks up a localized string similar to Non-negative number required..
         /// </summary>
-        internal static string ArgumentOutOfRange_WrongType {
+        internal static string ArgumentOutOfRange_NeedNonNegNum {
             get {
-                return ResourceManager.GetString("ArgumentOutOfRange_WrongType", resourceCulture);
+                return ResourceManager.GetString("ArgumentOutOfRange_NeedNonNegNum", resourceCulture);
             }
         }
         
@@ -499,6 +508,15 @@ namespace Nohros.Resources {
         internal static string Login_LogoutFails {
             get {
                 return ResourceManager.GetString("Login_LogoutFails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This method cannot be used to create types related to {0}..
+        /// </summary>
+        internal static string NotSupported_CannotCreateType {
+            get {
+                return ResourceManager.GetString("NotSupported_CannotCreateType", resourceCulture);
             }
         }
         
