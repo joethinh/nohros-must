@@ -32,6 +32,7 @@ namespace Nohros.Data
       IDbDataParameter parameter = command.CreateParameter();
       parameter.ParameterName = parameter_name;
       parameter.DbType = db_type;
+      command.Parameters.Add(parameter);
       return parameter;
     }
 
