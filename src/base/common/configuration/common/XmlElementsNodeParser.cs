@@ -29,7 +29,7 @@ namespace Nohros.Configuration
       XmlElementsNode xml_elements_node = new XmlElementsNode();
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element) {
-          xml_elements_node.AddChildNode(new XmlElementNode(element));
+          xml_elements_node.AddChildNode(new XmlElementNode((XmlElement) node));
         }
       }
       return xml_elements_node;
