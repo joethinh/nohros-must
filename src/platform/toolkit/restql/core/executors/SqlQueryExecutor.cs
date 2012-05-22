@@ -16,6 +16,7 @@ namespace Nohros.Toolkit.RestQL
   public partial class SqlQueryExecutor : IQueryExecutor
   {
     readonly ILoadingCache<IConnectionProvider> connection_provider_cache_;
+    readonly IJsonCollectionFactory json_collection_factory_;
 
     #region .ctor
     /// <summary>
@@ -26,14 +27,22 @@ namespace Nohros.Toolkit.RestQL
     /// A <see cref="ICache{T}"/> object where we can obtain named instances of
     /// <see cref="IConnectionProvider"/> objects.
     /// </param>
+    /// <param name="json_collection_factory">
+    /// A <see cref="IJsonCollectionFactory"/> object that can be used to
+    /// create instances of the <see cref="IJsonCollection"/> class.
+    /// </param>
     /// <remarks>
     /// </remarks>
     public SqlQueryExecutor(
-      ILoadingCache<IConnectionProvider> connection_provider_cache) {
-      if (connection_provider_cache_ == null) {
-        throw new ArgumentNullException("connection_provider_cache");
+      ILoadingCache<IConnectionProvider> connection_provider_cache,
+      IJsonCollectionFactory json_collection_factory) {
+      if (connection_provider_cache_ == null || json_collection_factory == null) {
+        throw new ArgumentNullException(connection_provider_cache == null
+          ? "connection_provider_cache"
+          : "json_collection_factory");
       }
       connection_provider_cache_ = connection_provider_cache;
+      json_collection_factory_ = json_collection_factory;
     }
     #endregion
 
@@ -62,12 +71,12 @@ namespace Nohros.Toolkit.RestQL
       using (IDbConnection connection = connection_provider.CreateConnection())
       using (IDbCommand command = GetCommand(connection, query)) {
         connection.Open();
-        IJsonCollection data =
+        string response =
           (query.QueryMethod == QueryMethod.Get)
-            ? ExecuteReader(command)
-            : ExecuteNonQuery(command);
+            ? ExecuteReader(command, query)
+            : ExecuteNonQuery(command, query);
         connection.Close();
-        return data.AsJson();
+        return response;
       }
     }
 
@@ -92,15 +101,36 @@ namespace Nohros.Toolkit.RestQL
     }
     #endregion
 
-    IJsonCollection ExecuteReader(IDbCommand command, IJsonCollectionFactory json_collection_factory) {
+    string ExecuteReader(IDbCommand command, IQuery query) {
       IDataReader reader = command.ExecuteReader();
-      do {
-        while(reader.Read()) {
-        }
-      }
+      string preferred_json_collection =
+        ProviderOptions.GetIfExists(query.Options,
+          Strings.kJsonCollectionOption, Strings.kDefaultJsonCollection);
+      IJsonCollection json_collection =
+        json_collection_factory_.CreateJsonCollection(
+          preferred_json_collection, reader);
+      return Serialize(json_collection, json_collection.Count);
     }
 
-    IJsonCollection ExecuteNonQuery(IDbCommand command) {
+    string ExecuteNonQuery(IDbCommand command, IQuery query) {
+      int no_of_affected_records = command.ExecuteNonQuery();
+      string preferred_json_collection =
+        ProviderOptions.GetIfExists(query.Options,
+          Strings.kJsonCollectionOption, Strings.kDefaultJsonCollection);
+      IJsonCollection json_collection =
+        json_collection_factory_.CreateJsonCollection(preferred_json_collection);
+      return Serialize(json_collection, no_of_affected_records);
+    }
+
+    string Serialize(IJsonCollection json_collection, int no_of_affected_rows) {
+      JsonStringBuilder builder = new JsonStringBuilder()
+        .WriteBeginObject()
+        .WriteMember(Strings.kResponseAffectedRowsMemberName,
+          no_of_affected_rows)
+        .WriteMemberName(Strings.kResponseDataMemberName)
+        .WriteUnquotedString(json_collection.AsJson())
+        .WriteEndObject();
+      return builder.ToString();
     }
 
     IDbCommand GetCommand(IDbConnection connection, IQuery query) {
@@ -116,7 +146,8 @@ namespace Nohros.Toolkit.RestQL
     CommandType GetCommandType(IDictionary<string, string> options) {
       string command_type_string = ProviderOptions.GetIfExists(
         options, Strings.kCommandTypeOption, Strings.kTextCommandType);
-      if (string.Compare(command_type_string, "storedprocedure",
+      if (string.Compare(command_type_string,
+        Strings.kStoredProcedureCommandType,
         StringComparison.OrdinalIgnoreCase) == 0) {
         return CommandType.StoredProcedure;
       }
