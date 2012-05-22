@@ -52,47 +52,5 @@ namespace Nohros.Toolkit.RestQL
           .CreateProviderFactory(provider)
           .CreateCommonDataProvider(provider.Options, settings);
     }
-
-    /// <summary>
-    /// Creates an instance of the <see cref="IQuerySettings"/> object.
-    /// </summary>
-    /// <returns>
-    /// The newly created <see cref="IQuerySettings"/> object.
-    /// </returns>
-    public IQuerySettings CreateQuerySettings() {
-      XmlElement local_element = GetConfigurationElement(Strings.kQueryNode);
-      IProviderNode[] processors =
-        Providers.GetProvidersNode(Strings.kQueryProcessorsGroup);
-
-      QuerySettings query_settings = new QuerySettings(processors);
-      query_settings.CopyFrom(this);
-      query_settings.Load(local_element);
-      return query_settings;
-    }
-
-    /// <summary>
-    /// Creates an instance of the <see cref="ITokenPrincipalMapperSettings"/>
-    /// object.
-    /// </summary>
-    /// <returns></returns>
-    public ITokenPrincipalMapperSettings CreateTokenPrincipalMapperSettings() {
-      XmlElement local_element =
-        GetConfigurationElement(Strings.kTokenPrincipalMapperNode);
-
-      TokenPrincipalMapperSettings token_principal_mapper_settings =
-        new TokenPrincipalMapperSettings();
-      token_principal_mapper_settings.Load(local_element);
-      return token_principal_mapper_settings;
-    }
-
-    XmlElement GetConfigurationElement(string element_name) {
-      XmlElement local_element = SelectElement(element, element_name);
-      if (local_element == null) {
-        throw new ConfigurationException(
-          string.Format(
-            StringResources.Configuration_MissingNode, element_name));
-      }
-      return local_element;
-    }
   }
 }

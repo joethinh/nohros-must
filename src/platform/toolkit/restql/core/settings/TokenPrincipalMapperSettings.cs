@@ -1,24 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Nohros.Configuration;
+using System.Xml;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public class TokenPrincipalMapperSettings : MustConfiguration,
-                                              ITokenPrincipalMapperSettings
+  public partial class Settings : ITokenPrincipalMapperSettings
   {
     string anonymous_token_;
-
-    #region .ctor
-    /// <summary>
-    /// Initializes a new instance of the
-    /// <see cref="TokenPrincipalMapperSettings"/> class.
-    /// </summary>
-    public TokenPrincipalMapperSettings() {
-      anonymous_token_ = "anonymous";
-    }
-    #endregion
 
     #region ITokenPrincipalMapperSettings Members
     /// <inheritdoc/>
@@ -27,5 +16,16 @@ namespace Nohros.Toolkit.RestQL
       protected set { anonymous_token_ = value; }
     }
     #endregion
+
+    /// <summary>
+    /// Creates an instance of the <see cref="ITokenPrincipalMapperSettings"/>
+    /// object.
+    /// </summary>
+    /// <returns></returns>
+    void ParseTokenPrincipalMapperSettings() {
+      XmlElement local_element =
+        GetConfigurationElement(Strings.kTokenPrincipalMapperNode);
+      ParseProperties(local_element);
+    }
   }
 }
