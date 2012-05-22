@@ -1,6 +1,5 @@
 ﻿using System;
 
-using Nohros.Caching;
 using Nohros.Caching.Providers;
 using Nohros.Providers;
 using Nohros.Configuration;

@@ -7,7 +7,7 @@ namespace Nohros.Toolkit.RestQL
   /// <summary>
   /// Contains the configuration data related with query definition.
   /// </summary>
-  public interface IQuerySettings
+  public interface IQuerySettings : IMustConfiguration
   {
     /// <summary>
     /// Gets an array containing the configuration for all the query executors
@@ -17,7 +17,7 @@ namespace Nohros.Toolkit.RestQL
 
     /// <summary>
     /// Gets a number that indicates how long a query should remain before it
-    /// is last accessed.
+    /// is last accessed in seconds.
     /// </summary>
     long QueryCacheDuration { get; }
   }

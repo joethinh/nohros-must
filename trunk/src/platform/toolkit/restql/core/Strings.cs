@@ -55,5 +55,13 @@ namespace Nohros.Toolkit.RestQL
     public const string kStoredProcedureCommandType = kStoredProcedure;
 
     public const string kCommandTimeoutOption = "command-timeout";
+
+    public const string kJsonCollectionOption = "json-collection";
+
+    public const string kDefaultJsonCollection = "object";
+
+    public const string kResponseAffectedRowsMemberName = "affectedRows";
+
+    public const string kResponseDataMemberName = "data";
   }
 }
