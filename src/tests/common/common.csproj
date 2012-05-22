@@ -58,6 +58,7 @@
     <Compile Include="concurrent\MailboxTests.cs" />
     <Compile Include="concurrent\YQueueTests.cs" />
     <Compile Include="configuration\AbstractConfigurationTests.cs" />
+    <Compile Include="GenericTest.cs" />
     <Compile Include="Program.cs" />
     <None Include="ProgramTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -2,7 +2,6 @@ using System;
 using System.Xml;
 using System.IO;
 using System.Configuration;
-
 using Nohros.Logging;
 using Nohros.Collections;
 using Nohros.Resources;
@@ -17,7 +16,8 @@ namespace Nohros.Configuration
   /// The nohros shcema is defined by the
   /// http://nohros.com/schemas/nohros/nohros.xsd file.
   /// </remarks>
-  public class MustConfiguration : AbstractConfiguration, ILoginConfiguration
+  public class MustConfiguration : AbstractConfiguration, IMustConfiguration,
+                                   ILoginConfiguration
   {
     const string kLogLevel = "log-level";
 
@@ -29,7 +29,7 @@ namespace Nohros.Configuration
     const string kConfigurationFileKey = "NohrosConfigurationFile";
 
     LogLevel log_level_;
-    LoginModulesNode login_modules_;
+    ILoginModulesNode login_modules_;
     DictionaryValue properties_;
 
     ProvidersNode providers_;
@@ -50,6 +50,20 @@ namespace Nohros.Configuration
     #endregion
 
     #region ILoginConfiguration Members
+    /// <summary>
+    /// Gets the login modules that was configured for this application.
+    /// </summary>
+    /// <remarks>
+    /// If this application has no login modules configured, this property will
+    /// returns a empty <see cref="LoginModulesNode"/>, that is a
+    /// <see cref="LoginModulesNode"/> object that contains no login modules.
+    /// </remarks>
+    public ILoginModulesNode LoginModules {
+      get { return login_modules_; }
+    }
+    #endregion
+
+    #region IMustConfiguration Members
     /// <summary>
     /// Loads the configuration values based on the application's configuration
     /// settings.
@@ -121,18 +135,6 @@ namespace Nohros.Configuration
     /// </remarks>
     public IProvidersNode Providers {
       get { return providers_; }
-    }
-
-    /// <summary>
-    /// Gets the login modules that was configured for this application.
-    /// </summary>
-    /// <remarks>
-    /// If this application has no login modules configured, this property will
-    /// returns a empty <see cref="LoginModulesNode"/>, that is a
-    /// <see cref="LoginModulesNode"/> object that contains no login modules.
-    /// </remarks>
-    public ILoginModulesNode LoginModules {
-      get { return login_modules_; }
     }
 
     /// <summary>
@@ -280,6 +282,22 @@ namespace Nohros.Configuration
     }
 
     /// <summary>
+    /// Copies the configuration data from the specified
+    /// <see cref="MustConfiguration"/> object.
+    /// </summary>
+    /// <param name="configuration">
+    /// A <see cref="MustConfiguration"/> object that contains the
+    /// configuration data to be copied.
+    /// </param>
+    public void CopyFrom(MustConfiguration configuration) {
+      providers_ = configuration.providers_;
+      repositories_ = configuration.repositories_;
+      xml_elements_ = configuration.xml_elements_;
+      log_level_ = configuration.log_level_;
+      login_modules_ = configuration.login_modules_;
+    }
+
+    /// <summary>
     /// Gets the configured log level.
     /// </summary>
     LogLevel GetLogLevel(XmlElement element) {
@@ -326,14 +344,15 @@ namespace Nohros.Configuration
     /// </summary>
     XmlElement GetRootNode(XmlElement element) {
       XmlElement root_node = null;
-      if (StringsAreEquals(element.Name, kNohrosNodeName)) {
+      if (StringsAreEquals(element.Name, Strings.kNohrosNodeName)) {
         root_node = element;
       } else {
         // the given node is not the "nohros" node, search for the that node
         // in the xml hierarchy.
-        XmlNode node = element.SelectSingleNode(kNohrosNodeName);
+        XmlNode node = element.SelectSingleNode(Strings.kNohrosNodeName);
         if (node == null || node.NodeType != XmlNodeType.Element) {
-          XmlNodeList nodes = element.GetElementsByTagName(kNohrosNodeName);
+          XmlNodeList nodes =
+            element.GetElementsByTagName(Strings.kNohrosNodeName);
           foreach (XmlNode n in nodes) {
             if (n.NodeType == XmlNodeType.Element) {
               root_node = (XmlElement) n;
@@ -347,7 +366,7 @@ namespace Nohros.Configuration
 
       if (root_node == null) {
         throw new ConfigurationErrorsException(string.Format(
-          StringResources.Arg_KeyNotFound, kNohrosNodeName));
+          StringResources.Arg_KeyNotFound, Strings.kNohrosNodeName));
       }
       return root_node;
     }
@@ -409,10 +428,12 @@ namespace Nohros.Configuration
     }
 
     /// <summary>
-    /// Sets the value associated with the specified key within the default namespace.
+    /// Sets the value associated with the specified key within the default
+    /// namespace.
     /// </summary>
     /// <param name="key">The key whose value to set</param>
-    /// <param name="value">An string associated with the specified key within the given namespace</param>
+    /// <param name="value">An string associated with the specified key within
+    /// the given namespace</param>
     public void SetProperty(string key, IValue value) {
       properties_[key] = value;
     }

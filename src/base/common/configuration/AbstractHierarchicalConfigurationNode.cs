@@ -144,7 +144,7 @@ namespace Nohros.Configuration
     /// A child node with the specified name or <c>null</c> if the node is not
     /// found.
     /// </returns>
-    protected virtual IConfigurationNode this[string name] {
+    protected internal virtual IConfigurationNode this[string name] {
       get {
         IConfigurationNode node = null;
         child_nodes_.TryGetValue(name, out node);

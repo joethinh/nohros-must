@@ -10,14 +10,11 @@ namespace Nohros.Toolkit.RestQL
   {
     public static void Main(string[] args) {
       Settings settings = Settings.CreateSettings();
+      IQuerySettings query_settings = settings.CreateQuerySettings();
+      ITokenPrincipalMapperSettings token_principal_mapper_settings =
+        settings.CreateTokenPrincipalMapperSettings();
 
-      AppFactory factory = new AppFactory(settings);
-      ICacheProvider cache_provider = factory.CreateCacheProvider();
-      ICommonDataProvider common_data_provider =
-        factory.CreateCommonDataProvider();
-      IQueryResolver resolver = QueryResolver.CreateQueryResolver(
-        settings.QuerySettings, common_data_provider, cache_provider);
-      IQueryProcessor processor = factory.CreateQueryProcessor(resolver);
+      IQueryResolver resolver = QueryResolver.CreateQueryResolver(query_settings);
     }
   }
 }
