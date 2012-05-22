@@ -523,6 +523,30 @@ namespace Nohros.Configuration
     }
 
     /// <summary>
+    /// Parses a <see cref="XmlElement"/> object into a
+    /// <see cref="AbstractConfiguration"/> object.
+    /// </summary>
+    /// <param name="element">
+    /// A <see cref="XmlElement"/> that containing the configuration data.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="element"/> is <c>null</c>.
+    /// </exception>
+    /// <remarks>
+    /// This mehtod is called by the one of the Loads method to parses the
+    /// <paramref name="element"/>. This method only calls the
+    /// <see cref="ParseProperties"/> method, you should override this method
+    /// if you want to parse more information than the element properties.
+    /// </remarks>
+    /// <seealso cref="ParseProperties"/>
+    protected virtual void Parse(XmlElement element) {
+      if (element == null) {
+        throw new ArgumentNullException("element");
+      }
+      ParseProperties(element);
+    }
+
+    /// <summary>
     /// Load the configuration values by parsing a DOM tree of XML elements.
     /// </summary>
     /// <param name="element">

@@ -250,7 +250,7 @@ namespace Nohros.Configuration
     /// node hierarchy.
     /// </remarks>
     protected virtual void Parse(XmlElement element) {
-      ParseProperties(element);
+      base.Parse(element);
 
       XmlElement root_node = GetRootNode(element);
 
