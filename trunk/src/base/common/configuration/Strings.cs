@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Nohros.Configuration
+using Nohros.Configuration;
+
+namespace Nohros
 {
   /// <summary>
   /// Defines the constant string that could appear on the nohros
   /// configuration files.
   /// </summary>
-  internal sealed class Strings
+  public sealed class Strings
   {
+    internal const string kNohrosNodeName = "nohros";
+
     internal const string kBaseDirectoryAttribute = "base-directory";
     internal const string kNameAttribute = "name";
     internal const string kLocationAttribute = "location";
@@ -32,5 +34,11 @@ namespace Nohros.Configuration
     internal const string kLoginModulesNodeName = "login-modules";
     internal const string kLoginModuleNodeName = "module";
     internal const string kXmlElementsNodeName = "xml-elements";
+
+    /// <summary>
+    /// The key that will be used to store the Xml element that was used to
+    /// configure a <see cref="IMustConfiguration"/> object.
+    /// </summary>
+    public const string kRootXmlElementName = kNohrosNodeName;
   }
 }

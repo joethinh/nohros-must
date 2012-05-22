@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Nohros.Caching.Providers;
 using Nohros.Providers;
 using Nohros.Configuration;
@@ -11,13 +10,14 @@ namespace Nohros.Toolkit.RestQL
   /// </summary>
   internal class AppFactory
   {
-    readonly Settings settings_;
+    readonly ISettings settings_;
 
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="AppFactory"/>.
     /// </summary>
-    public AppFactory(Settings settings) {
+    public AppFactory(ISettings settings) {
+      settings_ = settings;
     }
     #endregion
 
@@ -34,11 +34,11 @@ namespace Nohros.Toolkit.RestQL
     /// implements the <see cref="ITokenPrincipalMapper"/> interface.
     /// </returns>
     /// <remarks></remarks>
-    public ITokenPrincipalMapper CreateTokenPrincipalMapper(IProviderNode node) {
+    public ITokenPrincipalMapper CreateTokenPrincipalMapper(
+      ITokenPrincipalMapperSettings settings, IProviderNode node) {
       return ProviderFactory<ITokenPrincipalMapperFactory>
         .CreateProviderFactory(node)
-        .CreateTokenPrincipalMapper(node.Options,
-          settings_.TokenPrincipalMapperSettings);
+        .CreateTokenPrincipalMapper(node.Options, settings);
     }
 
     /// <summary>
@@ -53,22 +53,6 @@ namespace Nohros.Toolkit.RestQL
     /// </returns>
     public IQueryProcessor CreateQueryProcessor(IQueryResolver resolver) {
       return new QueryProcessor(resolver);
-    }
-
-    public ICommonDataProvider CreateCommonDataProvider() {
-      IProviderNode provider =
-        settings_.Providers[Strings.kCommonDataProviderName];
-      return ProviderFactory<ICommonDataProviderFactory>
-        .CreateProviderFactory(provider)
-        .CreateCommonDataProvider(provider.Options, settings_);
-    }
-
-    public ICacheProvider CreateCacheProvider() {
-      IProviderNode provider =
-        settings_.Providers[Strings.kCommonDataProviderName];
-      return ProviderFactory<ICacheProviderFactory>
-        .CreateProviderFactory(provider)
-        .CreateCacheProvider(provider.Options);
     }
   }
 }

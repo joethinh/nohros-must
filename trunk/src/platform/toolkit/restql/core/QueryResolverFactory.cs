@@ -16,19 +16,18 @@ namespace Nohros.Toolkit.RestQL
     /// <returns>
     /// The created <see cref="QueryResolver"/> object.
     /// </returns>
-    public static QueryResolver CreateQueryResolver(IQuerySettings settings,
-      ICommonDataProvider common_data_provider, ICacheProvider cache_provider) {
+    public static QueryResolver CreateQueryResolver(IQuerySettings settings) {
       CacheBuilder<QueryExecutorPair> cache =
         new CacheBuilder<QueryExecutorPair>();
       cache.ExpireAfterAccess(settings.QueryCacheDuration, TimeUnit.Minutes);
       ILoadingCache<QueryExecutorPair> loading_cache =
-        cache.Build(cache_provider,
+        cache.Build(settings.CacheProvider,
           CacheLoader<QueryExecutorPair>.From(
             delegate(string key)
             {
               return
                 new QueryExecutorPair(
-                  common_data_provider.GetQuery(key));
+                  settings.CommonDataProvider.GetQuery(key));
             }));
       return new QueryResolver(loading_cache, GetQueryExecutors(settings));
     }

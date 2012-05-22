@@ -7,7 +7,7 @@ namespace Nohros.Toolkit.RestQL
   /// <summary>
   /// Contains the configuration data related with query definition.
   /// </summary>
-  public interface IQuerySettings : IMustConfiguration
+  public interface IQuerySettings : ISettings
   {
     /// <summary>
     /// Gets an array containing the configuration for all the query executors

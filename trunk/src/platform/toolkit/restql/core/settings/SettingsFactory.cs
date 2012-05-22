@@ -2,9 +2,9 @@
 using System.IO;
 using System.Reflection;
 using System.Xml;
-using Nohros.Collections;
+using Nohros.Caching.Providers;
 using Nohros.Configuration;
-using Nohros.Logging;
+using Nohros.Providers;
 using Nohros.Resources;
 
 namespace Nohros.Toolkit.RestQL
@@ -30,24 +30,43 @@ namespace Nohros.Toolkit.RestQL
 
       Settings settings = new Settings();
       settings.LoadAndWatch(settings_file_info, kRestQLRootNodeName);
-      settings.query_settings_ = CreateQuerySettings(settings);
-      settings.token_principal_mapper_settings_ =
-        CreateTokenPrincipalMapperSettings(settings);
+
+      settings.cache_provider_ = CreateCacheProvider(settings);
+      settings.common_data_provider_ = CreateCommonDataProvider(settings);
       return settings;
+    }
+
+    static ICacheProvider CreateCacheProvider(Settings settings) {
+      IProviderNode provider = settings.Providers[Strings.kCacheProviderName];
+      return
+        ProviderFactory<ICacheProviderFactory>
+          .CreateProviderFactory(provider)
+          .CreateCacheProvider(provider.Options);
+    }
+
+    static ICommonDataProvider CreateCommonDataProvider(Settings settings) {
+      IProviderNode provider =
+        settings.Providers[Strings.kCommonDataProviderName];
+      return
+        ProviderFactory<ICommonDataProviderFactory>
+          .CreateProviderFactory(provider)
+          .CreateCommonDataProvider(provider.Options, settings);
     }
 
     /// <summary>
     /// Creates an instance of the <see cref="IQuerySettings"/> object.
     /// </summary>
-    /// <param name="settings"></param>
-    /// <returns></returns>
-    public static IQuerySettings CreateQuerySettings(Settings settings) {
-      XmlElement element = GetConfigurationElement(settings.element,
-        Strings.kQueryNode);
+    /// <returns>
+    /// The newly created <see cref="IQuerySettings"/> object.
+    /// </returns>
+    public IQuerySettings CreateQuerySettings() {
+      XmlElement local_element = GetConfigurationElement(Strings.kQueryNode);
       IProviderNode[] processors =
-        settings.Providers.GetProvidersNode(Strings.kQueryProcessorsGroup);
+        Providers.GetProvidersNode(Strings.kQueryProcessorsGroup);
+
       QuerySettings query_settings = new QuerySettings(processors);
-      query_settings.Load(element);
+      query_settings.CopyFrom(this);
+      query_settings.Load(local_element);
       return query_settings;
     }
 
@@ -55,20 +74,18 @@ namespace Nohros.Toolkit.RestQL
     /// Creates an instance of the <see cref="ITokenPrincipalMapperSettings"/>
     /// object.
     /// </summary>
-    /// <param name="settings"></param>
     /// <returns></returns>
-    public static ITokenPrincipalMapperSettings
-      CreateTokenPrincipalMapperSettings(Settings settings) {
-      XmlElement element = GetConfigurationElement(settings.element,
-        Strings.kTokenPrincipalMapperNode);
+    public ITokenPrincipalMapperSettings CreateTokenPrincipalMapperSettings() {
+      XmlElement local_element =
+        GetConfigurationElement(Strings.kTokenPrincipalMapperNode);
+
       TokenPrincipalMapperSettings token_principal_mapper_settings =
         new TokenPrincipalMapperSettings();
-      token_principal_mapper_settings.Load(element);
+      token_principal_mapper_settings.Load(local_element);
       return token_principal_mapper_settings;
     }
 
-    static XmlElement GetConfigurationElement(XmlElement element,
-      string element_name) {
+    XmlElement GetConfigurationElement(string element_name) {
       XmlElement local_element = SelectElement(element, element_name);
       if (local_element == null) {
         throw new ConfigurationException(

@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Nohros.Caching.Providers;
 using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
@@ -14,12 +13,22 @@ namespace Nohros.Toolkit.RestQL
     /// Gets a <see cref="IQuerySettings"/> object containing the query
     /// settings.
     /// </summary>
-    IQuerySettings QuerySettings { get; }
+    //IQuerySettings QuerySettings { get; }
 
     /// <summary>
     /// Gets a <see cref="ITokenPrincipalMapperSettings"/> object containing
     /// the token mapper settings.
     /// </summary>
-    ITokenPrincipalMapperSettings TokenPrincipalMapperSettings { get; }
+    //ITokenPrincipalMapperSettings TokenPrincipalMapperSettings { get; }
+
+    /// <summary>
+    /// Gets the application cache provider.
+    /// </summary>
+    ICacheProvider CacheProvider { get; }
+
+    /// <summary>
+    /// Gets the application common data provider.
+    /// </summary>
+    ICommonDataProvider CommonDataProvider { get; }
   }
 }
