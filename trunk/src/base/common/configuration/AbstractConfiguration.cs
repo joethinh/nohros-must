@@ -523,12 +523,13 @@ namespace Nohros.Configuration
     }
 
     /// <summary>
-    /// Used internally to load the configuration values by parsing a DOM tree
-    /// of XML elements.
+    /// Load the configuration values by parsing a DOM tree of XML elements.
     /// </summary>
-    /// <param name="element">The root element to parse.</param>
+    /// <param name="element">
+    /// The Xml element to parse.
+    /// </param>
     /// <remarks>
-    /// This method is used only to assign values from the root attributes
+    /// This method is used to assign values from the root attributes
     /// to the configuration properties dynamically.
     /// <para>
     /// If a derived class contains a property whose name are equals to the
@@ -555,7 +556,7 @@ namespace Nohros.Configuration
     /// false.
     /// </para>
     /// </remarks>
-    internal virtual void Parse(XmlElement element) {
+    protected void ParseProperties(XmlElement element) {
 #if DEBUG
       if (element == null)
         throw new ArgumentNullException(
