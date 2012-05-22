@@ -56,6 +56,7 @@ namespace Nohros.Configuration
     /// <inheritdoc/>
     public new XmlElement this[string xml_element_name] {
       get { return GetXmlElement(xml_element_name); }
+      internal set { base[xml_element_name] = new XmlElementNode(value); }
     }
     #endregion
   }
