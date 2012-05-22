@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Web;
 using System.Web.Caching;
-
-using Nohros.Collections;
-using Nohros.Configuration;
-using Nohros.Providers;
 
 namespace Nohros.Toolkit.RestQL
 {
   /// <summary>
   /// 
   /// </summary>
-  public class RestQLHttpHandler : IHttpHandler
+  public class HttpHandler : IHttpHandler
   {
     const string kAppSettingsCacheKey = "app-settings-cache-key";
     const string kCommonSimpleProvidersConfigKey = "common";

@@ -79,7 +79,6 @@ namespace Nohros.Toolkit.RestQL
       name_ = name;
       is_parsed_ = false;
       options_ = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-      query_method_ = QueryMethod.Get;
     }
     #endregion
 

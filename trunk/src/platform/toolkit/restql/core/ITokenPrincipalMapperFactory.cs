@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-using Nohros.Configuration;
 namespace Nohros.Toolkit.RestQL
 {
   /// <summary>

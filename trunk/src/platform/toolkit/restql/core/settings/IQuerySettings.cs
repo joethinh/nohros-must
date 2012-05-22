@@ -10,10 +10,10 @@ namespace Nohros.Toolkit.RestQL
   public interface IQuerySettings
   {
     /// <summary>
-    /// Gets an array containing the configuration for all the query processors
+    /// Gets an array containing the configuration for all the query executors
     /// configured for the application.
     /// </summary>
-    IProviderNode[] Processors { get; }
+    IProviderNode[] Executors { get; }
 
     /// <summary>
     /// Gets a number that indicates how long a query should remain before it
