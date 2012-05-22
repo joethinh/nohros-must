@@ -4,7 +4,7 @@ using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public class QuerySettings : MustConfiguration, IQuerySettings
+  public class QuerySettings : Settings, IQuerySettings
   {
     readonly IProviderNode[] executors_;
     long query_cache_duration_;
