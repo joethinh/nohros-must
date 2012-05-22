@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Nohros.Caching;
 using Nohros.Collections;
-using Nohros.Configuration;
 using Nohros.Logging;
 
 namespace Nohros.Toolkit.RestQL

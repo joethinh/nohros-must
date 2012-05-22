@@ -43,12 +43,22 @@
     <Compile Include="AppFactory.cs" />
     <Compile Include="data\CommonDataProvider.cs" />
     <Compile Include="data\ICommonDataProvider.cs" />
+    <Compile Include="data\ICommonDataProviderFactory.cs" />
     <Compile Include="data\SqlCommonDataProvider.cs" />
+    <Compile Include="executors\SqlQueryExecutor.cs" />
+    <Compile Include="executors\SqlQueryExecutorFactory.cs" />
+    <Compile Include="IQuery.cs" />
+    <Compile Include="QueryMethod.cs" />
     <Compile Include="IQueryExecutor.cs" />
+    <Compile Include="IQueryProcessor.cs" />
     <Compile Include="IQueryResolver.cs" />
     <Compile Include="IQueryExecutorFactory.cs" />
+    <Compile Include="NoOpQueryExecutor.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="QueryExecutorPair.cs" />
+    <Compile Include="QueryProcessor.cs" />
     <Compile Include="QueryResolver.cs" />
+    <Compile Include="QueryResolverFactory.cs" />
     <Compile Include="settings\SettingsFactory.cs" />
     <Compile Include="settings\IQuerySettings.cs" />
     <Compile Include="settings\ISettings.cs" />
@@ -60,6 +70,7 @@
     <Compile Include="settings\QuerySettings.cs" />
     <Compile Include="settings\Settings.cs" />
     <Compile Include="settings\TokenPrincipalMapperSettings.cs" />
+    <Compile Include="Strings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\base\common\common.csproj">
@@ -69,7 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cache\" />
-    <Folder Include="provider\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

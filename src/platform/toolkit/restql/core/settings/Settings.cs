@@ -1,4 +1,5 @@
-﻿using Nohros.Configuration;
+﻿using System;
+using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
 {

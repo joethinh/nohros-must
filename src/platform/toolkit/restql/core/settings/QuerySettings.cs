@@ -6,31 +6,29 @@ namespace Nohros.Toolkit.RestQL
 {
   public class QuerySettings : MustConfiguration, IQuerySettings
   {
-    IProviderNode[] processors_;
+    readonly IProviderNode[] executors_;
     long query_cache_duration_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="MustConfiguration"/>
+    /// Initializes a new instance of the <see cref="QuerySettings"/>
     /// class.
     /// </summary>
-    public QuerySettings(IProviderNode[] processors) {
-      processors_ = processors;
+    public QuerySettings(IProviderNode[] executors) {
+      executors_ = executors;
     }
     #endregion
 
     #region IQuerySettings Members
     /// <inheritdoc/>
-    public IProviderNode[] Processors {
-      get { return processors_; }
+    public IProviderNode[] Executors {
+      get { return executors_; }
     }
 
     /// <inheritdoc/>
     public long QueryCacheDuration {
       get { return query_cache_duration_; }
-
-      // set by base class.
-      private set { query_cache_duration_ = value; }
+      protected set { query_cache_duration_ = value; }
     }
     #endregion
   }
