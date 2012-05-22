@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Xml;
 using Nohros.Caching.Providers;
 using Nohros.Configuration;
+using Nohros.Resources;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -31,5 +33,21 @@ namespace Nohros.Toolkit.RestQL
       get { return common_data_provider_; }
     }
     #endregion
+
+    protected override void OnLoadComplete() {
+      base.OnLoadComplete();
+      ParseQuerySettings();
+      ParseTokenPrincipalMapperSettings();
+    }
+
+    XmlElement GetConfigurationElement(string element_name) {
+      XmlElement local_element = SelectElement(element, element_name);
+      if (local_element == null) {
+        throw new ConfigurationException(
+          string.Format(
+            StringResources.Configuration_MissingNode, element_name));
+      }
+      return local_element;
+    }
   }
 }

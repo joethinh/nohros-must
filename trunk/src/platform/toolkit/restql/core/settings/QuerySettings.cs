@@ -4,20 +4,10 @@ using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public class QuerySettings : Settings, IQuerySettings
+  public partial class Settings : IQuerySettings
   {
-    readonly IProviderNode[] executors_;
+    IProviderNode[] executors_;
     long query_cache_duration_;
-
-    #region .ctor
-    /// <summary>
-    /// Initializes a new instance of the <see cref="QuerySettings"/>
-    /// class.
-    /// </summary>
-    public QuerySettings(IProviderNode[] executors) {
-      executors_ = executors;
-    }
-    #endregion
 
     #region IQuerySettings Members
     /// <inheritdoc/>
@@ -31,5 +21,17 @@ namespace Nohros.Toolkit.RestQL
       protected set { query_cache_duration_ = value; }
     }
     #endregion
+
+    /// <summary>
+    /// Creates an instance of the <see cref="IQuerySettings"/> object.
+    /// </summary>
+    /// <returns>
+    /// The newly created <see cref="IQuerySettings"/> object.
+    /// </returns>
+    void ParseQuerySettings() {
+      XmlElement local_element = GetConfigurationElement(Strings.kQueryNode);
+      ParseProperties(local_element);
+      executors_ = Providers.GetProvidersNode(Strings.kQueryProcessorsGroup);
+    }
   }
 }
