@@ -19,24 +19,6 @@ namespace Nohros.Configuration
   /// </remarks>
   public class MustConfiguration : AbstractConfiguration, ILoginConfiguration
   {
-    // configuration nodes names
-    internal const string kNohrosNodeName = "nohros";
-    internal const string kCommonNodeName = "common";
-    internal const string kRepositoriesNodeName = "repositories";
-    internal const string kRepositoryNodeName = "repository";
-    internal const string kConnectionStringsNodeName = "connection-strings";
-    internal const string kProvidersNodeName = "providers";
-    internal const string kDataProviderServersNodeName = "servers";
-    internal const string kDataProviderNodeName = "data";
-    internal const string kSimpleProviderNodeName = "simple";
-    internal const string kProviderNodeName = "provider";
-    internal const string kLoginModulesNodeName = "login-modules";
-    internal const string kModuleNodeName = "module";
-    internal const string kChainsNodeName = "chains";
-    internal const string kChainNodeName = "chain";
-    internal const string kWebNodeName = "web";
-    internal const string kContentGroupsNodeName = "content-groups";
-
     const string kLogLevel = "log-level";
 
     /// <summary>
@@ -288,6 +270,10 @@ namespace Nohros.Configuration
             login_modules_ = LoginModulesNode.Parse((XmlElement) node, location);
           } else if (StringsAreEquals(name, Strings.kXmlElementsNodeName)) {
             xml_elements_ = XmlElementsNode.Parse((XmlElement) node);
+
+            // Add the element that was used to configure this class to the
+            // collection of xml elements nodes.
+            xml_elements_[Strings.kRootXmlElementName] = element;
           }
         }
       }
