@@ -19,20 +19,27 @@ namespace Nohros.Toolkit.RestQL
     /// options configured for the query processor.
     /// </param>
     /// <param name="settings">
-    /// A <see cref="IQuerySettings"/> containing configuration data for the
-    /// query processor.
+    /// A <see cref="IQuerySettings"/> containing the configuration data for
+    /// the query processor.
     /// </param>
     /// <returns>
     /// An instance of the <see cref="IQueryExecutor"/> class.
     /// </returns>
     public IQueryExecutor CreateQueryExecutor(
       IDictionary<string, string> options, IQuerySettings settings) {
-      IProviderNode provider = settings.Providers[Strings.kCacheProviderName];
-      CacheBuilder<IConnectionProvider> builder =
-        new CacheBuilder<IConnectionProvider>()
-          .ExpireAfterAccess(settings.QueryCacheDuration*3, TimeUnit.Seconds)
-          .Build();
+      SqlQueryExecutor executor = new SqlQueryExecutor(builder);
     }
     #endregion
+
+    ILoadingCache<IConnectionProvider> GetConnectionProviderCache(
+      IQuerySettings settings) {
+      ILoadingCache<IConnectionProvider> cache =
+        new CacheBuilder<IConnectionProvider>()
+          .ExpireAfterAccess(settings.QueryCacheDuration*3, TimeUnit.Seconds)
+          .Build(settings.CacheProvider,
+            CacheLoader<IConnectionProvider>.From(delegate(string key) {
+              GetConnectionProvider()
+            }));
+    }
   }
 }

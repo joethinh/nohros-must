@@ -1,5 +1,4 @@
 ﻿using System;
-using Nohros.Caching.Providers;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -10,11 +9,7 @@ namespace Nohros.Toolkit.RestQL
   {
     public static void Main(string[] args) {
       Settings settings = Settings.CreateSettings();
-      IQuerySettings query_settings = settings.CreateQuerySettings();
-      ITokenPrincipalMapperSettings token_principal_mapper_settings =
-        settings.CreateTokenPrincipalMapperSettings();
-
-      IQueryResolver resolver = QueryResolver.CreateQueryResolver(query_settings);
+      IQueryResolver resolver = QueryResolver.CreateQueryResolver(settings);
     }
   }
 }
