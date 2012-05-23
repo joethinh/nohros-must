@@ -156,7 +156,7 @@ namespace Nohros.Toolkit.RestQL
     /// empty query, that is a query whose name, type and query string is an
     /// empty string.
     /// </summary>
-    public static IQuery EmptyQuery {
+    public static Query EmptyQuery {
       get { return empty_query_; }
     }
   }

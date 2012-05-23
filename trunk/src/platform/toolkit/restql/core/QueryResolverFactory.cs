@@ -1,7 +1,6 @@
 ﻿using System;
 
 using Nohros.Caching;
-using Nohros.Caching.Providers;
 using Nohros.Configuration;
 using Nohros.Providers;
 
@@ -23,11 +22,13 @@ namespace Nohros.Toolkit.RestQL
       ILoadingCache<QueryExecutorPair> loading_cache =
         cache.Build(settings.CacheProvider,
           CacheLoader<QueryExecutorPair>.From(
-            delegate(string key)
-            {
+            delegate(string key) {
+              Query query = settings.CommonDataProvider.GetQuery(key) as Query;
+              if (query == null) {
+                query = Query.EmptyQuery;
+              }
               return
-                new QueryExecutorPair(
-                  settings.CommonDataProvider.GetQuery(key));
+                new QueryExecutorPair(query);
             }));
       return new QueryResolver(loading_cache, GetQueryExecutors(settings));
     }
