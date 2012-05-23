@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 
 namespace Nohros.Toolkit.RestQL
@@ -18,10 +16,9 @@ namespace Nohros.Toolkit.RestQL
     #endregion
 
     /// <summary>
-    /// Creates an instance of the <see cref="ITokenPrincipalMapperSettings"/>
-    /// object.
+    /// Parses the properties that is related with the
+    /// <see cref="ITokenPrincipalMapperSettings"/> interface.
     /// </summary>
-    /// <returns></returns>
     void ParseTokenPrincipalMapperSettings() {
       XmlElement local_element =
         GetConfigurationElement(Strings.kTokenPrincipalMapperNode);

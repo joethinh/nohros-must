@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml;
+
 using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
@@ -23,11 +24,9 @@ namespace Nohros.Toolkit.RestQL
     #endregion
 
     /// <summary>
-    /// Creates an instance of the <see cref="IQuerySettings"/> object.
+    /// Parses the properties that is related with the
+    /// <see cref="IQuerySettings"/> interface.
     /// </summary>
-    /// <returns>
-    /// The newly created <see cref="IQuerySettings"/> object.
-    /// </returns>
     void ParseQuerySettings() {
       XmlElement local_element = GetConfigurationElement(Strings.kQueryNode);
       ParseProperties(local_element);
