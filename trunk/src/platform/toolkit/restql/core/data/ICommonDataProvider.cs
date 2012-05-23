@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -20,6 +18,6 @@ namespace Nohros.Toolkit.RestQL
     /// name does not exists in the database this method should return an
     /// instance of the class <see cref="Query.EmptyQuery"/>.
     /// </remarks>
-    Query GetQuery(string name);
+    IQuery GetQuery(string name);
   }
 }
