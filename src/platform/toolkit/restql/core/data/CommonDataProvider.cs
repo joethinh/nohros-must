@@ -41,6 +41,6 @@ namespace Nohros.Toolkit.RestQL
     }
 
     /// <inheritdoc/>
-    public abstract Query GetQuery(string name);
+    public abstract IQuery GetQuery(string name);
   }
 }
