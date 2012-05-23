@@ -30,7 +30,7 @@ namespace Nohros.Toolkit.RestQL
     #endregion
 
     /// <inheritdoc/>
-    public override Query GetQuery(string name) {
+    public override IQuery GetQuery(string name) {
       const string kGetQuery = "rql_get_query";
 
       using (var conn = connection_provider_.CreateConnection())
