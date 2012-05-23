@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Nohros.Caching;
-using Nohros.Caching.Providers;
 using Nohros.Configuration;
+using Nohros.Data;
+using Nohros.Data.Json;
 using Nohros.Data.Providers;
+using Nohros.Providers;
 
 namespace Nohros.Toolkit.RestQL
 {
   public partial class SqlQueryExecutor : IQueryExecutorFactory
   {
+    const string kTypeForLogger =
+      "[Nohros.Toolkit.RestQL.GetJsonCollectionFactory]";
+
     #region IQueryExecutorFactory Members
     /// <summary>
     /// Creates a instance of the <see cref="IQueryExecutor"/> class by using
@@ -27,19 +33,37 @@ namespace Nohros.Toolkit.RestQL
     /// </returns>
     public IQueryExecutor CreateQueryExecutor(
       IDictionary<string, string> options, IQuerySettings settings) {
-      SqlQueryExecutor executor = new SqlQueryExecutor(builder);
+      ILoadingCache<IConnectionProvider> connection_provider_cache =
+        GetConnectionProviderCache(settings);
+      IJsonCollectionFactory json_collection_factory =
+        GetJsonCollectionFactory(settings);
+      return new SqlQueryExecutor(connection_provider_cache,
+        json_collection_factory);
     }
     #endregion
 
     ILoadingCache<IConnectionProvider> GetConnectionProviderCache(
       IQuerySettings settings) {
-      ILoadingCache<IConnectionProvider> cache =
+      return
         new CacheBuilder<IConnectionProvider>()
           .ExpireAfterAccess(settings.QueryCacheDuration*3, TimeUnit.Seconds)
           .Build(settings.CacheProvider,
-            CacheLoader<IConnectionProvider>.From(delegate(string key) {
-              GetConnectionProvider()
-            }));
+            new ConnectionProviderLoader(settings.Providers));
+    }
+
+    IJsonCollectionFactory GetJsonCollectionFactory(IQuerySettings settings) {
+      IProviderNode provider;
+      if (settings.Providers.GetProviderNode(Strings.kJsonCollectionProvider,
+        out provider)) {
+        try {
+          return ProviderFactory<IJsonCollectionFactory>
+            .CreateProviderFactoryFallback(provider, settings);
+        } catch (Exception exception) {
+          // log it and ignore
+          RestQLLogger.ForCurrentProcess.Error(kTypeForLogger, exception);
+        }
+      }
+      return new JsonCollectionFactory();
     }
   }
 }

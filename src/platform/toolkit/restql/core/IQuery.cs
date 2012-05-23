@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Nohros.Toolkit.RestQL
@@ -18,13 +19,12 @@ namespace Nohros.Toolkit.RestQL
   /// </remarks>
   public interface IQuery
   {
-
     /// <summary>
     /// Gets a <see cref="IDictionary{TKey,TValue}"/> containing the options
     /// configured for the query.
     /// </summary>
     /// <remarks>
-    /// Options is a collection of name/vaue pairs that contatins useful
+    /// Options is a collection of name/vaue pairs that contains useful
     /// informations about the query. This informations is typically used by
     /// query executors.
     /// </remarks>

@@ -10,6 +10,7 @@ namespace Nohros.Toolkit.RestQL
     public static void Main(string[] args) {
       Settings settings = Settings.CreateSettings();
       IQueryResolver resolver = QueryResolver.CreateQueryResolver(settings);
+      QueryProcessor processor = new QueryProcessor(resolver);
     }
   }
 }

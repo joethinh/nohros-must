@@ -5,15 +5,15 @@ namespace Nohros.Toolkit.RestQL
   public partial class QueryResolver
   {
     internal class QueryExecutorPair {
-      readonly Query query_;
+      readonly IQuery query_;
       IQueryExecutor query_executor_;
 
-      public QueryExecutorPair(Query query) {
+      public QueryExecutorPair(IQuery query) {
         query_ = query;
         query_executor_ = null;
       }
 
-      public Query Query {
+      public IQuery Query {
         get { return query_; }
       }
 
