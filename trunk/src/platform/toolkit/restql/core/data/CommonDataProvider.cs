@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+
 using System.Data;
 using Nohros.Data;
-using Nohros.Data.Providers;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -25,7 +23,7 @@ namespace Nohros.Toolkit.RestQL
     /// <see cref="IDataReader"/> is readable; otherwise the value of
     /// <see cref="Query.EmptyQuery"/> property.
     /// </returns>
-    protected Query CreatedQueryFromDataReader(IDataReader data_reader) {
+    protected IQuery CreatedQueryFromDataReader(IDataReader data_reader) {
       if (data_reader.Read()) {
         int[] ordinals = DataReaders.GetOrdinals(data_reader, get_query_fields);
 
