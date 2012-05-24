@@ -126,6 +126,7 @@
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\IMustConfiguration.cs" />
     <Compile Include="configuration\Strings.cs" />
+    <Compile Include="providers\data\ConnectionProviderLoader.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldBoolean.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDecimal.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDouble.cs" />
@@ -334,7 +335,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
