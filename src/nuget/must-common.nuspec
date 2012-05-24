@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>must.common</id>
-    <version>0.9.3</version>
+    <version>0.9.4</version>
     <title>Must Framework - Common</title>
     <authors>Nohros Inc</authors>
     <owners>Nohros Inc</owners>
@@ -11,9 +11,10 @@
     <description>
       This project contains several of Nohros' core .NET libraries that we use
       in our many .NET-based projects. The common package contains the common
-      classes that are used by the others packages of the framework.
+      classes that are used by the others packages of the framework.\n
       
-      * 0.9.3 - Remove dependency from the log4net library and bug fixes.
+      * 0.9.3 - Remove dependency from the log4net library and bug fixes. \n
+      * 0.9.4 - Small bug fixes.
     </description>
     <summary>The common package of the nohros must framework.</summary>
     <copyright>Nohros Inc</copyright>
