@@ -249,7 +249,7 @@ namespace Nohros.Configuration
     /// configuration node, but a node with name "nohros" must exists on the
     /// node hierarchy.
     /// </remarks>
-    protected virtual void Parse(XmlElement element) {
+    protected override void Parse(XmlElement element) {
       base.Parse(element);
 
       XmlElement root_node = GetRootNode(element);
