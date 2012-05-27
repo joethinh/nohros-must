@@ -9,5 +9,5 @@
 import os
 
 protc_dir = os.getcwd()
-os.system('proto_parser_generator.py "protogen.exe -namespace=Nohros.Logging.ZMQLog -umbrela_class_name=NohrosProtos -ignore_google_protobuf=true --include_imports -output_directory=./parsers/csharp/" .')
+os.system('proto_parser_generator.py "protogen.exe -namespace=Nohros.Logging.ZMQLog -ignore_google_protobuf=true --include_imports -output_directory=./parsers/csharp/" .')
 os.system('pause');
