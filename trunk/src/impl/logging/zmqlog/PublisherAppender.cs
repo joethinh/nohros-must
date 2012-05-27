@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Globalization;
+using Nohros.Concurrent;
 using Nohros.Resources;
 using ZMQ;
 using log4net.Appender;
+using log4net.Core;
 
 namespace Nohros.Logging.ZMQLog
 {
@@ -20,10 +22,14 @@ namespace Nohros.Logging.ZMQLog
   /// </remarks>
   public class PublisherAppender : AppenderSkeleton
   {
-    static Context context_;
+    const int kDefaultPort = 8156;
+
+    readonly static Context context_;
 
     string port_;
     Socket socket_;
+
+    readonly Mailbox<LogMessage> mailbox_;
 
     #region .ctor
     /// <summary>
@@ -34,14 +40,14 @@ namespace Nohros.Logging.ZMQLog
         context_ = new Context(1);
       }
     }
-    #endregion
 
-    #region .ctor
     /// <summary>
     /// Initializes a nes instance of the <see cref="PublisherAppender"/> using
     /// the specified <see cref="Socket"/> object.
     /// </summary>
     public PublisherAppender() {
+      Port = kDefaultPort;
+      mailbox_ = new Mailbox<LogMessage>(OnMessage);
     }
     #endregion
 
@@ -58,15 +64,48 @@ namespace Nohros.Logging.ZMQLog
         throw new InvalidOperationException("Context is null");
       }
 #endif
+      CreateSocket();
+    }
+
+    /// <summary>
+    /// Writes the logging event to the zeromq publisher socket.
+    /// </summary>
+    /// <param name="logging_event">
+    /// The event to log.
+    /// </param>
+    /// <remarks>
+    /// The event is not writted to the zeromq publisher socket immediatelly,
+    /// instead, we store it in a memory and returns. A dedicated thread (
+    /// possibly from the thead pool) is the responsible to remove the logging
+    /// event from the memory and dispatch to the zeromq socket.
+    /// </remarks>
+    protected override void Append(LoggingEvent logging_event) {
+      LoggingEventData logging_event_data = logging_event.GetLoggingEventData();
+      LogMessage message = new LogMessage.Builder()
+        .SetLevel(logging_event_data.Level.ToString())
+        .SetMessage(logging_event_data.Message)
+        .SetException(logging_event_data.ExceptionString)
+        .SetTimeStamp(TimeUnitHelper.ToUnixTime(logging_event_data.TimeStamp))
+        .Build();
+      mailbox_.Send(message);
+    }
+
+
+    /// <summary>
+    /// Create the socket that will be use to log messages.
+    /// </summary>
+    void CreateSocket() {
       // This method should be called every time a configuration change, we
       // need to ensure that any previously created socket is properly
       // disposed.
       if (socket_ != null) {
         socket_.Dispose();
       }
+
       try {
         socket_ = context_.Socket(SocketType.PUB);
-      } catch(ZMQ.Exception exception) {
+      }
+      catch (ZMQ.Exception exception) {
         ErrorHandler.Error(
           string.Format(StringResources.Log_MethodThrowsException,
             "ActivateOptions", "Nohros.Logging.ZMQLog"), exception);
@@ -74,10 +113,22 @@ namespace Nohros.Logging.ZMQLog
     }
 
     /// <summary>
+    /// Method that is executed when a message is posted on the mailbox.
+    /// </summary>
+    /// <param name="message">
+    /// The message that was posted.
+    /// </param>
+    void OnMessage(LogMessage message) {
+      socket_.Send(message.ToByteArray());
+    }
+
+    /// <summary>
     /// Closes the zerome publisher socket.
     /// </summary>
     protected override void OnClose() {
-      base.OnClose();
+      if (socket_ != null) {
+        socket_.Dispose();
+      }
     }
 
     /// <summary>
