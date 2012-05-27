@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Nohros.Concurrent
@@ -9,51 +7,61 @@ namespace Nohros.Concurrent
   /// Mailbox is basically a queue to store messages sent to a object that
   /// lives in a particular thread.
   /// </summary>
-  /// <remarks> Mailbox is intended to be used on concurrent enviroments that
-  /// use message passing to achieve concurrency and internl scalability.
-  /// <para>This mode of concurrency allows multithreaded applications to
-  /// work without using mutexes, condition variables or semaphores to
-  /// orchestrate the parallel processing. Instead, each object can live in
-  /// its own thread and no other thread should ever touch it(that's why
-  /// mutexes are not needed). Other threads can comunnicate with the object
-  /// by sendind it messages(T). Same way the object can speak to other
-  /// objects - potentially running in different threads - by sending them
-  /// messages.
+  /// <remarks>
+  /// Mailbox is intended to be used on concurrent enviroments that use message
+  /// passing to achieve concurrency and internl scalability.
+  /// <para>
+  /// This mode of concurrency allows multithreaded applications to work
+  /// without using mutexes, condition variables or semaphores to orchestrate
+  /// the parallel processing. Instead, each object can live in its own thread
+  /// and no other thread should ever touch it(that's why mutexes are not
+  /// needed). Other threads can comunnicate with the object by sendind it
+  /// messages(T). Same way the object can speak to other objects - potentially
+  /// running in different threads - by sending them messages.
   /// </para>
   /// </remarks>
-  /// <typeparam name="T">The type of the messages that the mailbox can
-  /// receive.
+  /// <typeparam name="T">
+  /// The type of the messages that the mailbox can receive.
   /// </typeparam>
   public class Mailbox<T>
   {
     // The pipe to store actual messages
-    YQueue<T> message_queue_;
+    readonly YQueue<T> message_queue_;
 
     // There is only one thread receiving from the mailbox, but there is
     // arbitrary number of threads sending. Given that |pipe| requires
     // synchronized access on both of its endpoints, we have to synchronize
     // the sending side.
-    object mutex_ ;
+    readonly object mutex_;
 
     // True if the underlying queue is active, ie. when we are allowed to
     // read command from it.
     volatile bool active_;
 
-    // Signaler to pass signals from writer thread to reader thread.
-    AutoResetEvent signaler_;
+    // Method called for each message that is received by this maibox.
+    readonly MailboxReceiveCallback<T> callback_;
+
+    // The synchronization context of the thread that creates the mailbox.
+    readonly SynchronizationContext synchronization_context_;
  
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="Mailbox{T}"/> class.
+    /// Initializes a new instance of the <see cref="Mailbox{T}"/> class by
+    /// using the specified receive callback and executor.
     /// </summary>
-    public Mailbox() {
+    /// <param name="callback">
+    /// A <see cref="MailboxReceiveCallback{T}"/> delegate that is called to
+    /// process each message sent to the <see cref="Mailbox{T}"/>.
+    /// </param>
+    public Mailbox(MailboxReceiveCallback<T> callback) {
       mutex_ = new object();
       message_queue_ = new YQueue<T>(16);
+      callback_ = callback;
+      synchronization_context_ = SynchronizationContext.Current;
 
       // Get the pipe into passive state. That way, if the user starts by
-      // polling on the associated queue it, it will be woken up when
+      // polling on the associated queue, it will be woken up when
       // new message is posted.
-      signaler_ = new AutoResetEvent(false);
       active_ = false;
     }
     #endregion
@@ -61,73 +69,101 @@ namespace Nohros.Concurrent
     /// <summary>
     /// Sends a command to the mailbox.
     /// </summary>
-    /// <param name="message"></param>
+    /// <param name="message">
+    /// The message to be sent.
+    /// </param>
     public void Send(T message) {
       lock(mutex_) {
         message_queue_.Enqueue(message);
-      }
 
-      // wake-up the reader thread.
+        ScheduleReceive();
+      }
+    }
+
+    /// <summary>
+    /// Schedule the callback method to be executed by a executor.
+    /// </summary>
+    void ScheduleReceive() {
       if (!active_) {
-        signaler_.Set();
+        active_ = true;
+        ThreadPool.QueueUserWorkItem(delegate(object state) {
+          if (state == null) {
+            Receive();
+          } else {
+            Receive(state);
+          }
+        }, synchronization_context_);
       }
     }
 
-
     /// <summary>
-    /// Receives messages from the mailbox.
+    /// Receives messages from the mailbox and executes the receiver callback.
     /// </summary>
-    /// <remarks>If no incoming message is available at the mailbox, the
-    /// <see cref="Receive()"/> call blocks and waits for message to arrive.
+    /// <remarks>
+    /// This method runs into a single dedicated thread.
     /// </remarks>
-    public T Receive() {
-      T t;
-      bool ok = Receive(out t, Timeout.Infinite);
-      return t;
+    void Receive() {
+      T message;
+      while (GetMessage(out message)) {
+        callback_(message);
+      }
     }
 
     /// <summary>
-    /// Receives messages from the mailbox, using a 32-bit signed integer to
-    /// specify the maxi wait time interval.
+    /// Receives messages from the mailbox and execute the receiver callback
+    /// using the context of the thread that creates the
+    /// <see cref="Mailbox{T}"/> object.
     /// </summary>
-    /// <param name="message">The message that was received.</param>
-    /// <param name="timeout_ms">The number of milliseconds to wait for a
-    /// message, ot Timeoit.Infinite(-1) to wait indefinitely.</param>
-    /// <returns><c>true</c> if the a message was received from the mailbox;
-    /// otherwise, <c>false</c>.</returns>
-    /// <remarks>If no incoming message is available at the mailbox, the
-    /// <see cref="Receive"/> call blocks and waits for message to arrive.
-    /// </remarks>
-    public bool Receive(out T message, int timeout_ms) {
-      bool ok;
-      // try to get command straight away.
-      if(active_) {
-        ok = message_queue_.Dequeue(out message);
-        if(ok) {
-          return true;
-        }
-
-        // If there are no more messages available, switch into passive mode.
-        active_ = false;
-      }
-
-      // Wait for signal from the message sender.
-      bool signaled = signaler_.WaitOne(timeout_ms);
-      if (!signaled) {
-        message = default(T);
-        return false;
-      }
-
-      // We've got a signal. Now we can switch into the active state.
-      active_ = true;
-
-      // Get a message
-      ok = message_queue_.Dequeue(out message);
+    /// <param name="state">
+    /// The <see cref="SynchronizationContext"/> object of the thread where the
+    /// callback will run.
+    /// </param>
+    void Receive(object state) {
 #if DEBUG
-      if(!ok)
-        throw new Exception("A signal was received from the sender thread. The queue should not be empty here.");
+      if (state == null) {
+        throw new ArgumentNullException("state");
+      }
 #endif
-      return ok;
+      SynchronizationContext context = state as SynchronizationContext;
+      T message;
+      while (GetMessage(out message)) {
+        context.Send(delegate(object o) {
+          callback_((T) o);
+        }, message);
+      }
+    }
+
+    /// <summary>
+    /// Gets a message from the mailbox.
+    /// </summary>
+    /// <returns><c>true</c> when a message is successfully retrieved from
+    /// the mailbox; otherwise, <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    /// If there are no incoming messages available at the mailbox, this
+    /// method switch to passive state and returns <c>false</c>.
+    /// </remarks>
+    bool GetMessage(out T message) {
+#if DEBUG
+      if (!active_) {
+        throw new InvalidOperationException("This method should not be called" +
+          "when there are no messages to process.");
+      }
+#endif
+      // try to get message straight away.
+      if (!message_queue_.Dequeue(out message)) {
+        // If there are no more messages available, switch into passive mode.
+        // We need to synchronize the state change with the sender, because
+        // it uses it to ensure that no more that one thread runs the receive
+        // method.
+        lock (mutex_) {
+          // recheck the queue for emptiness, now we are inside the lock.
+          if (!message_queue_.Dequeue(out message)) {
+            active_ = false;
+          }
+        }
+      }
+      return active_;
     }
   }
 }
