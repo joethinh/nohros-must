@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "restQL", "platform\toolkit\restQL\restQL.csproj", "{1A4ED279-F59C-4E37-AE66-D323A89C36ED}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "metrics", "platform\toolkit\metrics\metrics.csproj", "{EE140ABF-C917-44D7-B89F-D6946332F507}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "restQL", "platform\toolkit\restql\core\restQL.csproj", "{1A4ED279-F59C-4E37-AE66-D323A89C36ED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "(restql)", "(restql)", "{76487750-206F-4FCB-A594-A60D11319814}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aspnet", "platform\toolkit\restql\aspnet\aspnet.csproj", "{78158772-E272-46C1-B1DA-49B3251D83CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,16 +15,24 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1A4ED279-F59C-4E37-AE66-D323A89C36ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A4ED279-F59C-4E37-AE66-D323A89C36ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A4ED279-F59C-4E37-AE66-D323A89C36ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A4ED279-F59C-4E37-AE66-D323A89C36ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EE140ABF-C917-44D7-B89F-D6946332F507}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EE140ABF-C917-44D7-B89F-D6946332F507}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE140ABF-C917-44D7-B89F-D6946332F507}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE140ABF-C917-44D7-B89F-D6946332F507}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A4ED279-F59C-4E37-AE66-D323A89C36ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A4ED279-F59C-4E37-AE66-D323A89C36ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A4ED279-F59C-4E37-AE66-D323A89C36ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A4ED279-F59C-4E37-AE66-D323A89C36ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78158772-E272-46C1-B1DA-49B3251D83CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78158772-E272-46C1-B1DA-49B3251D83CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78158772-E272-46C1-B1DA-49B3251D83CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78158772-E272-46C1-B1DA-49B3251D83CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1A4ED279-F59C-4E37-AE66-D323A89C36ED} = {76487750-206F-4FCB-A594-A60D11319814}
+		{78158772-E272-46C1-B1DA-49B3251D83CC} = {76487750-206F-4FCB-A594-A60D11319814}
 	EndGlobalSection
 EndGlobal
