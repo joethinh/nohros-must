@@ -36,8 +36,8 @@ namespace Nohros.Logging.ZMQLog
     /// Initialize the per application zeromq context.
     /// </summary>
     static PublisherAppender() {
-      if (context_ != null) {
-        context_ = new Context(1);
+      if (context_ == null) {
+        context_ = new Context();
       }
     }
 
@@ -64,7 +64,7 @@ namespace Nohros.Logging.ZMQLog
         throw new InvalidOperationException("Context is null");
       }
 #endif
-      CreateSocket();
+      BindSocket();
     }
 
     /// <summary>
@@ -92,9 +92,9 @@ namespace Nohros.Logging.ZMQLog
 
 
     /// <summary>
-    /// Create the socket that will be use to log messages.
+    /// Creates a zeromq socket and bind it to the localhost.
     /// </summary>
-    void CreateSocket() {
+    void BindSocket() {
       // This method should be called every time a configuration change, we
       // need to ensure that any previously created socket is properly
       // disposed.
@@ -104,6 +104,7 @@ namespace Nohros.Logging.ZMQLog
 
       try {
         socket_ = context_.Socket(SocketType.PUB);
+        socket_.Bind("tcp://*:" + port_);
       }
       catch (ZMQ.Exception exception) {
         ErrorHandler.Error(
