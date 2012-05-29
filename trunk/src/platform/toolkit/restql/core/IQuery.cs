@@ -29,7 +29,7 @@ namespace Nohros.Toolkit.RestQL
     /// query executors.
     /// </remarks>
     IDictionary<string, string> Options { get; }
-
+      
     /// <summary>
     /// Gets the query's method.
     /// </summary>

@@ -27,27 +27,6 @@ namespace Nohros.Toolkit.RestQL
     IQuery GetQuery(string name);
 
     /// <summary>
-    /// Resolves a query using its unique name and bound the speicifed
-    /// parameters to it.
-    /// </summary>
-    /// <param name="name">
-    /// The query's unique name.
-    /// </param>
-    /// <param name="parameters">
-    /// A <see cref="IDictionary{TKey,TValue}"/> object containing the
-    /// parameters to be bound to the resolved query.
-    /// </param>
-    /// <returns>
-    /// The resolved query or <see cref="Query.EmptyQuery"/> if the query could
-    /// not be resolved.
-    /// </returns>
-    /// <remarks>
-    /// The given parameters will be bound to the query if it can be resolved
-    /// using its name.
-    /// </remarks>
-    IQuery GetQuery(string name, IDictionary<string, string> parameters);
-
-    /// <summary>
     /// Gets a <see cref="IQueryExecutor"/> that is capable to resolve the
     /// specified query.
     /// </summary>

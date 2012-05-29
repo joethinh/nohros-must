@@ -47,19 +47,8 @@ namespace Nohros.Toolkit.RestQL
     #endregion
 
     #region IQueryExecutor Members
-    /// <summary>
-    /// Computes the specified query and returns the computation results as a
-    /// string.
-    /// </summary>
-    /// <param name="query">
-    /// The query to be processed.
-    /// </param>
-    /// <remarks>
-    /// The format of the returned string is processor dependant. Callers
-    /// should check the documentation of each processor to understand the
-    /// meaning of the returned string.
-    /// </remarks>
-    public string Execute(IQuery query) {
+    /// <inheritdoc/>
+    public string Execute(IQuery query, IDictionary<string, string> parameters) {
       if (query == null) {
         throw new ArgumentNullException("query");
       }
@@ -69,15 +58,15 @@ namespace Nohros.Toolkit.RestQL
         connection_provider_cache_.Get(provider_name);
 
       using (IDbConnection connection = connection_provider.CreateConnection())
-      using (IDbCommand command = GetCommand(connection, query)) {
-        connection.Open();
-        string response =
-          (query.QueryMethod == QueryMethod.Get)
-            ? ExecuteReader(command, query)
-            : ExecuteNonQuery(command, query);
-        connection.Close();
-        return response;
-      }
+        using (IDbCommand command = GetCommand(connection, query)) {
+          connection.Open();
+          string response =
+            (query.QueryMethod == QueryMethod.Get)
+              ? ExecuteReader(command, query)
+              : ExecuteNonQuery(command, query);
+          connection.Close();
+          return response;
+        }
     }
 
     /// <summary>

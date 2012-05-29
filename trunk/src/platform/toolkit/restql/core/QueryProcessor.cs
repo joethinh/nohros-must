@@ -26,10 +26,10 @@ namespace Nohros.Toolkit.RestQL
       IDictionary<string, string> entries = ParseQueryString(query);
       string name;
       if (entries.TryGetValue(Strings.kQueryStringQueryName, out name)) {
-        IQuery query_to_execute = resolver_.GetQuery(name, entries);
+        IQuery query_to_execute = resolver_.GetQuery(name);
         IQueryExecutor executor = resolver_.GetQueryExecutor(query_to_execute);
         if (!(executor is NoOpQueryExecutor)) {
-          executor.Execute(query_to_execute);
+          executor.Execute(query_to_execute, entries);
         }
       }
       result = null;

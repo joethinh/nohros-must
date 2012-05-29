@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -15,12 +16,16 @@ namespace Nohros.Toolkit.RestQL
     /// <param name="query">
     /// The query to be processed.
     /// </param>
+    /// <param name="paramters">
+    /// A <see cref="IDictionary{TKey,TValue}"/> object containing the
+    /// parameters that should be binded to the query.
+    /// </param>
     /// <remarks>
     /// The format of the returned string is processor dependant. Callers
     /// should check the documentation of each processor to understand the
     /// meaning of the returned string.
     /// </remarks>
-    string Execute(IQuery query);
+    string Execute(IQuery query, IDictionary<string, string> paramters);
 
     /// <summary>
     /// Gets a value indicating if a <see cref="IQueryExecutor"/> can execute
