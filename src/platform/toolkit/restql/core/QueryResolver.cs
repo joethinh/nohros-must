@@ -44,37 +44,13 @@ namespace Nohros.Toolkit.RestQL
     /// returned.
     /// </remarks>
     public IQueryExecutor GetQueryExecutor(IQuery query) {
-      QueryExecutorPair query_executor_pair = cache_.LoadingCache.Get(query.Name);
-      IQueryExecutor query_executor = query_executor_pair.QueryExecutor;
-      if (query_executor == null) {
-        query_executor = FindQueryExecutor(query);
-        query_executor_pair.QueryExecutor = query_executor;
-        cache_.Put(query.Name, query_executor_pair);
-      }
-      return query_executor;
+      return cache_.GetQueryEecutor(query, executors_);
     }
 
     /// <inheritdoc/>
     public IQuery GetQuery(string name) {
       return cache_.GetQuery(name);
     }
-
-    /// <inheritdoc/>
-    public IQuery GetQuery(string name, IDictionary<string, string> parameters) {
-      IQuery query = cache_.Get(name).Query;
-      query.BindParameters(parameters);
-      return query;
-    }
     #endregion
-
-    IQueryExecutor FindQueryExecutor(IQuery query) {
-      for (int i = 0, j = executors_.Length; i < j; i++) {
-        IQueryExecutor executor = executors_[i];
-        if (executor.CanExecute(query)) {
-          return executor;
-        }
-      }
-      return NoOpQueryExecutor.StaticNoOpQueryExecutor;
-    }
   }
 }

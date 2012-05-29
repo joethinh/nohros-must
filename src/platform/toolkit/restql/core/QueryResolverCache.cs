@@ -15,7 +15,7 @@ namespace Nohros.Toolkit.RestQL
     public class QueryResolverCache
     {
       readonly ICommonDataProvider common_data_provider_;
-      ILoadingCache<QueryExecutorPair> cache_;
+      readonly ILoadingCache<QueryExecutorPair> cache_;
 
       #region .ctor
       /// <summary>
@@ -47,8 +47,40 @@ namespace Nohros.Toolkit.RestQL
       }
       #endregion
 
+      /// <summary>
+      /// Gets a query whose name is <paramref name="name"/>.
+      /// </summary>
+      /// <param name="name">
+      /// A string that uniquely identifies a <see cref="IQuery"/> within a 
+      /// database.
+      /// </param>
+      /// <returns>
+      /// A <see cref="IQuery"/> object whose name is <paramref name="name"/>.
+      /// </returns>
       public IQuery GetQuery(string name) {
         return cache_.Get(name).Query;
+      }
+
+      internal IQueryExecutor GetQueryEecutor(IQuery query,
+        IQueryExecutor[] executors) {
+        QueryExecutorPair query_executor_pair = cache_.Get(query.Name);
+        IQueryExecutor query_executor = query_executor_pair.QueryExecutor;
+        if (query_executor == null) {
+          query_executor = FindQueryExecutor(query, executors);
+          query_executor_pair.QueryExecutor = query_executor;
+          cache_.Put(query.Name, query_executor_pair);
+        }
+        return query_executor;
+      }
+
+      IQueryExecutor FindQueryExecutor(IQuery query, IQueryExecutor[] executors) {
+        for (int i = 0, j = executors.Length; i < j; i++) {
+          IQueryExecutor executor = executors[i];
+          if (executor.CanExecute(query)) {
+            return executor;
+          }
+        }
+        return NoOpQueryExecutor.StaticNoOpQueryExecutor;
       }
 
       /// <summary>

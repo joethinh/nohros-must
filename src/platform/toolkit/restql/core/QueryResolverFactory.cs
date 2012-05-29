@@ -1,6 +1,5 @@
 ﻿using System;
 
-using Nohros.Caching;
 using Nohros.Configuration;
 using Nohros.Providers;
 
@@ -16,21 +15,10 @@ namespace Nohros.Toolkit.RestQL
     /// The created <see cref="QueryResolver"/> object.
     /// </returns>
     public static QueryResolver CreateQueryResolver(IQuerySettings settings) {
-      CacheBuilder<QueryExecutorPair> cache =
-        new CacheBuilder<QueryExecutorPair>();
-      cache.ExpireAfterAccess(settings.QueryCacheDuration, TimeUnit.Minutes);
-      ILoadingCache<QueryExecutorPair> loading_cache =
-        cache.Build(settings.CacheProvider,
-          CacheLoader<QueryExecutorPair>.From(
-            delegate(string key) {
-              Query query = settings.CommonDataProvider.GetQuery(key) as Query;
-              if (query == null) {
-                query = Query.EmptyQuery;
-              }
-              return
-                new QueryExecutorPair(query);
-            }));
-      return new QueryResolver(loading_cache, GetQueryExecutors(settings));
+      QueryResolverCache query_resolver_cache =
+        new QueryResolverCache(settings.CacheProvider,
+          settings.CommonDataProvider, settings);
+      return new QueryResolver(GetQueryExecutors(settings), query_resolver_cache);
     }
 
     static IQueryExecutor[] GetQueryExecutors(IQuerySettings settings) {

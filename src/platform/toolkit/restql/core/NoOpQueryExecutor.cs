@@ -22,7 +22,7 @@ namespace Nohros.Toolkit.RestQL
     /// <remarks>
     /// This method always returns an empty string.
     /// </remarks>
-    public string Execute(IQuery query) {
+    public string Execute(IQuery query, IDictionary<string, string> parameters) {
       return string.Empty;
     }
 
