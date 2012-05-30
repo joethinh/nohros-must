@@ -5,6 +5,7 @@ using Nohros.Resources;
 using ZMQ;
 using log4net.Appender;
 using log4net.Core;
+using log4net.Util;
 
 namespace Nohros.Logging.ZMQLog
 {
@@ -24,12 +25,12 @@ namespace Nohros.Logging.ZMQLog
   {
     const int kDefaultPort = 8156;
 
-    readonly static Context context_;
+    static readonly Type declaring_type_;
+    static readonly Context context_;
+    readonly Mailbox<LogMessage> mailbox_;
 
     string port_;
     Socket socket_;
-
-    readonly Mailbox<LogMessage> mailbox_;
 
     #region .ctor
     /// <summary>
@@ -39,8 +40,11 @@ namespace Nohros.Logging.ZMQLog
       if (context_ == null) {
         context_ = new Context();
       }
+      declaring_type_ = typeof (PublisherAppender);
     }
+    #endregion
 
+    #region .ctor
     /// <summary>
     /// Initializes a nes instance of the <see cref="PublisherAppender"/> using
     /// the specified <see cref="Socket"/> object.
@@ -59,6 +63,7 @@ namespace Nohros.Logging.ZMQLog
     /// </remarks>
     public override void ActivateOptions() {
       base.ActivateOptions();
+
 #if DEBUG
       if (context_ == null) {
         throw new InvalidOperationException("Context is null");
@@ -81,6 +86,17 @@ namespace Nohros.Logging.ZMQLog
     /// </remarks>
     protected override void Append(LoggingEvent logging_event) {
       LoggingEventData logging_event_data = logging_event.GetLoggingEventData();
+
+      #region : logging :
+      if (LogLog.IsDebugEnabled) {
+        LogLog.Debug(declaring_type_, "Appending\r\n"
+          + "message:" + logging_event_data.Message
+            + "timestamp:" +
+              logging_event_data.TimeStamp.ToString("yyyy-mm-dd hh:MM:ss")
+                + "level:" + logging_event_data.Level);
+      }
+      #endregion
+
       LogMessage message = new LogMessage.Builder()
         .SetLevel(logging_event_data.Level.ToString())
         .SetMessage(logging_event_data.Message)
@@ -104,12 +120,23 @@ namespace Nohros.Logging.ZMQLog
 
       try {
         socket_ = context_.Socket(SocketType.PUB);
-        socket_.Bind("tcp://*:" + port_);
-      }
-      catch (ZMQ.Exception exception) {
-        ErrorHandler.Error(
-          string.Format(StringResources.Log_MethodThrowsException,
-            "ActivateOptions", "Nohros.Logging.ZMQLog"), exception);
+        string address = "tcp://*:" + port_;
+        socket_.Bind(address);
+
+        #region : logging :
+        if (LogLog.IsDebugEnabled) {
+          LogLog.Debug(declaring_type_,
+            "Listening for subscribers on [" + address + "]");
+        }
+        #endregion
+      } catch (ZMQ.Exception exception) {
+        #region : logging :
+        if (LogLog.IsErrorEnabled) {
+          LogLog.Error(declaring_type_,
+            string.Format(StringResources.Log_MethodThrowsException,
+              "ActivateOptions", "Nohros.Logging.ZMQLog"), exception);
+        }
+        #endregion
       }
     }
 
@@ -120,6 +147,15 @@ namespace Nohros.Logging.ZMQLog
     /// The message that was posted.
     /// </param>
     void OnMessage(LogMessage message) {
+      #region : logging :
+      if (LogLog.IsDebugEnabled) {
+        LogLog.Debug(declaring_type_, "Publishing\r\n"
+          + "message:" + message.Message
+            + "timestamp:" + message.TimeStamp.ToString("yyyy-mm-dd hh:MM:ss")
+              + "level:" + message.Level);
+      }
+      #endregion
+
       socket_.Send(message.ToByteArray());
     }
 
@@ -127,6 +163,12 @@ namespace Nohros.Logging.ZMQLog
     /// Closes the zerome publisher socket.
     /// </summary>
     protected override void OnClose() {
+      #region : logging :
+      if (LogLog.IsDebugEnabled) {
+        LogLog.Debug(declaring_type_, "OnClose");
+      }
+      #endregion
+
       if (socket_ != null) {
         socket_.Dispose();
       }
