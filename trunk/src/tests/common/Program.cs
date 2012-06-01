@@ -1,14 +1,22 @@
 ﻿using System;
 
+using Nohros.Concurrent;
+
 namespace Nohros.Tests
 {
   public static class Program
   {
     public static void Main() {
-      string str =
-        Desencrypta(
-          "ƒ‰¯~u–z''8¬kqf''K ²{u– qta''Vu‡±i‚g¬v„–¬t|‰¯''K ­iƒ—´w‚ˆz''#‡¬v„–¬t|‰¯''K i„…Ÿiƒ‰z''^‰ |q–''",
-          "PUNK");
+      long received_long = 0;
+      Mailbox<long> mailbox = new Mailbox<long>(
+        delegate(long message) {
+          Console.WriteLine(message);
+        }, Executors.SameThreadExecutor());
+
+      for (int i = 0, j = 15; i < j; i++) {
+        mailbox.Send(i);
+      }
+      Console.ReadLine();
     }
 
     public static string Desencrypta(string mSTRING, string mSENHA) {
