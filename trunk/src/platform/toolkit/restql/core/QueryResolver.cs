@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using Nohros.Collections;
-using Nohros.Logging;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -27,8 +23,6 @@ namespace Nohros.Toolkit.RestQL
     /// <param name="cache">
     /// A <see cref="QueryResolverCache"/> object that can be used to cache
     /// expensive and frequently used data.
-    /// </param>
-    /// <param name="">
     /// </param>
     public QueryResolver(IQueryExecutor[] executors, QueryResolverCache cache) {
       executors_ = executors;
