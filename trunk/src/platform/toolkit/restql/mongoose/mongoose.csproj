@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="MongooseSettings.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Strings.cs" />
     <Compile Include="third_party\mongoose\mongoose.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
