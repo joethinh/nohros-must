@@ -23,56 +23,23 @@ namespace Nohros.Toolkit.RestQL
     /// intrinsic server objects used to service HTTP requests.
     /// </param>
     public void ProcessRequest(HttpContext context) {
-      RestQLSettings settings = GetSettings(context);
-
       // the token information should be is always sent in the request body.
-      string token = context.Request.Form["token"];
+      string token = context.Request.Form["token"] ?? string.Empty;
 
       // Since this code is usually called from a javascript, we should never
       // throw an exception; a error message shoud be sent as response when
       // a unexpected event occur.
       try {
-        // map the token to a principal and resolve the query using the specified
-        // principal.
-        ITokenPrincipalMapper token_principal_mapper = GetTokenPrincipalMapper();
-        if (token_principal_mapper != null) {
-          token = token_principal_mapper.MapTokenToPrincipal(token);
-        } else {
-          token = settings.AnonymousToken;
-        }
-
-        if (token == null) {
-          // The initiator request is not authenticated, lets try to resolve the
-          // query using the "anonymous" token.
-          token = settings.AnonymousToken;
-        }
+        // map the token to a principal and resolve the query using the
+        // specified principal.
+        QueryServer server = Global.QueryServer;
+        ITokenPrincipalMapper token_principal_mapper =
+          server.TokenPrincipalMapper;
+        token = (token_principal_mapper != null)
+          ? token_principal_mapper.MapTokenToPrincipal(token)
+          : server.TokenPrincipalMapperSettings.AnonymousToken;
       } catch {
       }
-    }
-
-    /// <summary>
-    /// Gets the cached version of the application settings our build a new
-    /// one if the cached version does not exists.
-    /// </summary>
-    /// <param name="context">An <see cref="HttpCache"/> ibject related with
-    /// the current request.</param>
-    /// <returns>A <see cref="RestQLSettings"/> objects containing the current
-    /// application settings.</returns>
-    RestQLSettings GetSettings(HttpContext context) {
-      RestQLSettings settings =
-        context.Cache[kAppSettingsCacheKey] as RestQLSettings;
-
-      if(settings == null) {
-        settings = new RestQLSettings();
-        settings.LoadAndWatch();
-
-        // settings loading could be a expensive operation, lets cache it
-        // for perfoemance reasons.
-        context.Cache.Add(kAppSettingsCacheKey, settings, null,
-                          DateTime.MaxValue, Cache.NoSlidingExpiration,
-                          CacheItemPriority.Normal, null);
-      }
-      return settings;
     }
 
     /// <summary>

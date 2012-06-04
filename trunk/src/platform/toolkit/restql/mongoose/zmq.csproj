@@ -6,10 +6,10 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1BFFEEC8-143D-4830-9E40-C1B1AC9D9323}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Nohros.Toolkit.RestQL</RootNamespace>
-    <AssemblyName>nohros.toolkit.restql.mongoose</AssemblyName>
+    <AssemblyName>nohros.toolkit.restql.zmq</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\..\src\</SolutionDir>
@@ -32,16 +32,26 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="clrzmq">
+      <HintPath>..\..\..\..\packages\clrzmq.2.2.3\lib\clrzmq.dll</HintPath>
+    </Reference>
+    <Reference Include="clrzmq-ext">
+      <HintPath>..\..\..\..\packages\clrzmq.2.2.3\lib\clrzmq-ext.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MongooseSettings.cs" />
+    <Compile Include="IZmqSettings.cs" />
+    <Compile Include="Server.cs" />
+    <Compile Include="ZmqSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Strings.cs" />
-    <Compile Include="third_party\mongoose\mongoose.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +63,14 @@
       <Project>{1A4ED279-F59C-4E37-AE66-D323A89C36ED}</Project>
       <Name>restQL %28%28plataform%29\%28toolkit%29\%28restQL%29\restQL%29</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="libzmq.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

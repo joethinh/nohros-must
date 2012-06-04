@@ -39,8 +39,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Global.cs" />
+    <Compile Include="Strings.cs" />
+    <Compile Include="WebSettings.cs" />
     <Compile Include="properties\AssemblyInfo.cs" />
     <Compile Include="HttpHandler.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\base\common\common.csproj">
+      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
+      <Name>common %28%28base%29\common%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\core\restQL.csproj">
+      <Project>{1A4ED279-F59C-4E37-AE66-D323A89C36ED}</Project>
+      <Name>restQL %28%28plataform%29\%28toolkit%29\%28restQL%29\restQL%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
