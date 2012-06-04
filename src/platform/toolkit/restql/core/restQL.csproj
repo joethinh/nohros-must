@@ -48,6 +48,7 @@
     <Compile Include="executors\SqlQueryExecutor.cs" />
     <Compile Include="executors\SqlQueryExecutorFactory.cs" />
     <Compile Include="IQuery.cs" />
+    <Compile Include="IQueryServer.cs" />
     <Compile Include="IRestQLLogger.cs" />
     <Compile Include="QueryMethod.cs" />
     <Compile Include="IQueryExecutor.cs" />
@@ -59,9 +60,9 @@
     <Compile Include="QueryProcessor.cs" />
     <Compile Include="QueryResolver.cs" />
     <Compile Include="QueryResolverCache.cs" />
-    <Compile Include="QueryResolverFactory.cs" />
+    <Compile Include="QueryServer.cs" />
+    <Compile Include="QueryServerBuilder.cs" />
     <Compile Include="RestQLLogger.cs" />
-    <Compile Include="settings\SettingsFactory.cs" />
     <Compile Include="settings\IQuerySettings.cs" />
     <Compile Include="settings\ISettings.cs" />
     <Compile Include="ITokenPrincipalMapper.cs" />

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Xml;
-
 using Nohros.Caching.Providers;
 using Nohros.Configuration;
+using Nohros.Providers;
 using Nohros.Resources;
 
 namespace Nohros.Toolkit.RestQL
@@ -10,8 +12,12 @@ namespace Nohros.Toolkit.RestQL
   /// <summary>
   /// The application settings.
   /// </summary>
-  public partial class Settings : MustConfiguration, ISettings
+  public partial class Settings : MustConfiguration, IConfiguration,
+                                  IMustConfiguration, ISettings
   {
+    const string kRestQLSettingsFileName = "restql.config";
+    const string kRestQLRootNodeName = "restql";
+
     ICacheProvider cache_provider_;
     ICommonDataProvider common_data_provider_;
 
@@ -19,7 +25,37 @@ namespace Nohros.Toolkit.RestQL
     /// <summary>
     /// Initializes a new instance of the <see cref="Settings"/> class.
     /// </summary>
-    protected Settings() {
+    public Settings() {
+    }
+    #endregion
+
+    #region IConfiguration Members
+    public override void Load() {
+      string current_assembly_location =
+        Assembly.GetExecutingAssembly().Location;
+      string config_file_name = Path.Combine(current_assembly_location,
+        kRestQLSettingsFileName);
+      LoadAndWatch(config_file_name, kRestQLRootNodeName);
+    }
+
+    void IConfiguration.Load(string root_node_name) {
+      base.Load(root_node_name);
+    }
+
+    /// <inheritdoc/>
+    void IConfiguration.Load(string config_file_name, string root_node_name) {
+      base.Load(config_file_name, root_node_name);
+    }
+
+    /// <inheritdoc/>
+    void IConfiguration.Load(FileInfo config_file_info,
+      string root_node_name) {
+      base.Load(config_file_info, root_node_name);
+    }
+
+    /// <inheritdoc/>
+    void IConfiguration.Load(XmlElement element) {
+      base.Load(element);
     }
     #endregion
 
@@ -39,6 +75,25 @@ namespace Nohros.Toolkit.RestQL
       base.OnLoadComplete();
       ParseQuerySettings();
       ParseTokenPrincipalMapperSettings();
+
+      cache_provider_ = GetCacheProvider();
+      common_data_provider_ = GetCommonDataProvider();
+    }
+
+    ICacheProvider GetCacheProvider() {
+      IProviderNode provider = Providers[Strings.kCacheProviderName];
+      return
+        ProviderFactory<ICacheProviderFactory>
+          .CreateProviderFactory(provider)
+          .CreateCacheProvider(provider.Options);
+    }
+
+    ICommonDataProvider GetCommonDataProvider() {
+      IProviderNode provider = Providers[Strings.kCommonDataProviderName];
+      return
+        ProviderFactory<ICommonDataProviderFactory>
+          .CreateProviderFactory(provider)
+          .CreateCommonDataProvider(provider.Options, this);
     }
 
     /// <summary>
@@ -56,7 +111,7 @@ namespace Nohros.Toolkit.RestQL
     /// A <see cref="XmlElement"/> named <paramref name="element_name"/> does
     /// not exists in the configuration file.
     /// </exception>
-    protected XmlElement GetConfigurationElement(string element_name) {
+    protected internal XmlElement GetConfigurationElement(string element_name) {
       XmlElement local_element = SelectElement(element, element_name);
       if (local_element == null) {
         throw new ConfigurationException(

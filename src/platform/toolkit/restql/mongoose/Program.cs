@@ -8,12 +8,9 @@ namespace Nohros.Toolkit.RestQL
   public sealed class Program
   {
     public static void Main(string[] args) {
-      MongooseSettings settings = MongooseSettings.CreateSettings();
+      ZmqSettings settings = Settings.CreateSettings<ZmqSettings>();
       IQueryResolver resolver = QueryResolver.CreateQueryResolver(settings);
       QueryProcessor processor = new QueryProcessor(resolver);
-
-      Mongoose server = new Mongoose();
-      server.set_option("ports")
     }
   }
 }
