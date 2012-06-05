@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Net;
 
 namespace Nohros.Toolkit.RestQL
@@ -21,20 +22,38 @@ namespace Nohros.Toolkit.RestQL
     }
     #endregion
 
+    #region IQueryProcessor Members
     /// <inheritdoc/>
     public HttpStatusCode Process(string query, out string result) {
       IDictionary<string, string> entries = ParseQueryString(query);
+      return Process(entries, out result);
+    }
+
+    /// <inheritdoc/>
+    public HttpStatusCode Process(NameValueCollection query, out string result) {
+      Dictionary<string, string> entries =
+        new Dictionary<string, string>(query.Count);
+      foreach (KeyValuePair<string, string> pair in query) {
+        entries.Add(pair.Key, pair.Value);
+      }
+      return Process(entries, out result);
+    }
+
+    /// <inheritdoc/>
+    public HttpStatusCode Process(IDictionary<string, string> query,
+      out string result) {
       string name;
-      if (entries.TryGetValue(Strings.kQueryStringQueryName, out name)) {
+      if (query.TryGetValue(Strings.kQueryStringQueryName, out name)) {
         IQuery query_to_execute = resolver_.GetQuery(name);
         IQueryExecutor executor = resolver_.GetQueryExecutor(query_to_execute);
         if (!(executor is NoOpQueryExecutor)) {
-          executor.Execute(query_to_execute, entries);
+          executor.Execute(query_to_execute, query);
         }
       }
       result = null;
       return HttpStatusCode.NotFound;
     }
+    #endregion
 
     static IDictionary<string, string> ParseQueryString(string s) {
       IDictionary<string, string> entries = new Dictionary<string, string>();
