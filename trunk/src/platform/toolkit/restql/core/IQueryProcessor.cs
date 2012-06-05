@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Net;
-using System.Text;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -14,8 +12,12 @@ namespace Nohros.Toolkit.RestQL
     /// <summary>
     /// Process the given query.
     /// </summary>
-    /// <param name="query">
-    /// A query string to be processed.
+    /// <param name="name">
+    /// A string that uniquely identifies the query within an application.
+    /// </param>
+    /// <param name="options">
+    /// A collection of name value pairs containing the user supplied opition (
+    /// filter and parameters) for the query.
     /// </param>
     /// <param name="result">
     /// The result of the query processing.
@@ -24,36 +26,7 @@ namespace Nohros.Toolkit.RestQL
     /// A <see cref="HttpStatusCode"/> repsenting the status of the query
     /// processing.
     /// </returns>
-    HttpStatusCode Process(string query, out string result);
-
-    /// <summary>
-    /// Process the given query.
-    /// </summary>
-    /// <param name="query">
-    /// A collection of name value pairs that represents the query.
-    /// </param>
-    /// <param name="result">
-    /// The result of the query processing.
-    /// </param>
-    /// <returns>
-    /// A <see cref="HttpStatusCode"/> repsenting the status of the query
-    /// processing.
-    /// </returns>
-    HttpStatusCode Process(NameValueCollection query, out string result);
-
-    /// <summary>
-    /// Process the given query.
-    /// </summary>
-    /// <param name="query">
-    /// A collection of name value pairs that represents the query.
-    /// </param>
-    /// <param name="result">
-    /// The result of the query processing.
-    /// </param>
-    /// <returns>
-    /// A <see cref="HttpStatusCode"/> repsenting the status of the query
-    /// processing.
-    /// </returns>
-    HttpStatusCode Process(IDictionary<string, string> query, out string result);
+    HttpStatusCode Process(string name, IDictionary<string, string> options,
+      out string result);
   }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Nohros.Configuration;
 
 namespace Nohros.Caching.Providers
 {
@@ -10,7 +8,7 @@ namespace Nohros.Caching.Providers
   /// the <see cref="ICacheProvider"/> class.
   /// </summary>
   /// <remarks>
-  /// This interface implie a constructor with no parameters.
+  /// This interface implies a constructor with no parameters.
   /// </remarks>
   public interface ICacheProviderFactory
   {

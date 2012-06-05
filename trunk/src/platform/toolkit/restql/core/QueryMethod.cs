@@ -13,7 +13,7 @@ namespace Nohros.Toolkit.RestQL
     Get = 0,
 
     /// <summary>
-    /// The SET method is used to modify(add, insert, delete) and entity.
+    /// The SET method is used to modify(add, insert, delete) an entity.
     /// Queries that use this method should not return any data except the
     /// number of modification that was performed.
     /// </summary>

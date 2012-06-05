@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Xml;
 using System.IO;
 using System.Configuration;
@@ -156,6 +157,19 @@ namespace Nohros.Configuration
       get { return log_level_; }
     }
     #endregion
+
+    /// <summary>
+    /// Gets the the path to the configuration file named
+    /// <paramref name="name"/> using the running assembly path.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the configuration file to get the path.
+    /// </param>
+    public static string GetLocalConfigurationFilePath(string name) {
+      return
+        Path.Combine(
+          Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), name);
+    }
 
     /// <summary>
     /// Loads the configuration values based on the application's configuration

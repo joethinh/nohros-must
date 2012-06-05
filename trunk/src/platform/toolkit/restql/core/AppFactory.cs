@@ -35,27 +35,6 @@ namespace Nohros.Toolkit.RestQL
     }
 
     /// <summary>
-    /// Creates an instance of the <see cref="ITokenPrincipalMapper"/> object
-    /// using the information that is defined on the application settings.
-    /// </summary>
-    /// <param name="node">
-    /// A <see cref="IProviderNode"/> containing information about the
-    /// the token principal mapper that will be created.
-    /// </param>
-    /// <returns>
-    /// An instance of a class that implements or derives from a class that
-    /// implements the <see cref="ITokenPrincipalMapper"/> interface.
-    /// </returns>
-    /// <remarks></remarks>
-    public ITokenPrincipalMapper CreateTokenPrincipalMapper(
-      ITokenPrincipalMapperSettings settings) {
-      IProviderNode node = settings.Providers[Strings.kTokenPrincipalMapperNode];
-      return ProviderFactory<ITokenPrincipalMapperFactory>
-        .CreateProviderFactory(node)
-        .CreateTokenPrincipalMapper(node.Options, settings);
-    }
-
-    /// <summary>
     /// Creates an instance of the <see cref="QueryResolver"/> object using the
     /// specified cache provider, common data provider and query settings.
     /// </summary>

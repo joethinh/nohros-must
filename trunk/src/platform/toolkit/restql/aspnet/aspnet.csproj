@@ -40,7 +40,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Global.cs" />
+    <Compile Include="ITokenPrincipalMapperSettings.cs" />
     <Compile Include="Strings.cs" />
+    <Compile Include="TokenPrincipalMapperSettings.cs" />
     <Compile Include="WebSettings.cs" />
     <Compile Include="properties\AssemblyInfo.cs" />
     <Compile Include="HttpHandler.cs" />

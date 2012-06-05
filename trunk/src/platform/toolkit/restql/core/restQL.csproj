@@ -45,6 +45,7 @@
     <Compile Include="data\ICommonDataProvider.cs" />
     <Compile Include="data\ICommonDataProviderFactory.cs" />
     <Compile Include="data\SqlCommonDataProvider.cs" />
+    <Compile Include="data\SqlCommonDataProviderFactory.cs" />
     <Compile Include="executors\SqlQueryExecutor.cs" />
     <Compile Include="executors\SqlQueryExecutorFactory.cs" />
     <Compile Include="IQuery.cs" />
@@ -65,14 +66,10 @@
     <Compile Include="RestQLLogger.cs" />
     <Compile Include="settings\IQuerySettings.cs" />
     <Compile Include="settings\ISettings.cs" />
-    <Compile Include="ITokenPrincipalMapper.cs" />
-    <Compile Include="ITokenPrincipalMapperFactory.cs" />
-    <Compile Include="settings\ITokenPrincipalMapperSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query.cs" />
     <Compile Include="settings\QuerySettings.cs" />
     <Compile Include="settings\Settings.cs" />
-    <Compile Include="settings\TokenPrincipalMapperSettings.cs" />
     <Compile Include="Strings.cs" />
   </ItemGroup>
   <ItemGroup>
