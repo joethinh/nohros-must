@@ -18,9 +18,6 @@ namespace Nohros.Toolkit.RestQL
       IQueryResolver resolver_;
       ISettings settings_;
 
-      ITokenPrincipalMapper token_principal_mapper_;
-      ITokenPrincipalMapperSettings token_principal_mapper_settings_;
-
       #region .ctor
       public Builder() {
         factory_ = new AppFactory();
@@ -38,7 +35,6 @@ namespace Nohros.Toolkit.RestQL
 
         // order matter.
         EnsureSettings(factory);
-        EnsureTokenPrincipalMapper(factory);
         EnsureQueryResolver(factory);
         EnsureQueryProcessor(factory);
         return new QueryServer(this);
@@ -46,25 +42,14 @@ namespace Nohros.Toolkit.RestQL
 
       void EnsureSettings(AppFactory factory) {
         Settings settings = null;
-        if (settings_ == null || token_principal_mapper_settings_ ==null || query_settings_ == null) {
+        if (settings_ == null || query_settings_ == null) {
           settings = factory.CreateSettings();
         }
         if (settings_ == null) {
           settings_ = settings;
         }
-        if (token_principal_mapper_settings_ == null) {
-          token_principal_mapper_settings_ = settings;
-        }
         if (query_settings_ == null) {
           query_settings_ = settings;
-        }
-      }
-
-      void EnsureTokenPrincipalMapper(AppFactory factory) {
-        if (token_principal_mapper_ == null) {
-          token_principal_mapper_ =
-            factory.CreateTokenPrincipalMapper(
-              token_principal_mapper_settings_);
         }
       }
 
@@ -91,26 +76,24 @@ namespace Nohros.Toolkit.RestQL
       /// A <see cref="Builder"/> that uses <see cref="settings"/> to build
       /// a <see cref="QueryServer"/> instance.
       /// </returns>
-      public Builder SetSettings(Settings settings) {
+      public Builder SetSettings(ISettings settings) {
         settings_ = settings;
         return this;
       }
 
       /// <summary>
-      /// Sets the <see cref="ITokenPrincipalMapper"/> tha should be used to
-      /// build a <see cref="QueryServer"/> object.
+      /// Sets the <see cref="IQuerySettings"/> object to be used.
       /// </summary>
-      /// <param name="token_principal_mapper">
-      /// The <see cref="ITokenPrincipalMapper"/> object that should be used
-      /// to build a <see cref="QueryServer"/>.
+      /// <param name="query_settings">
+      /// The <see cref="IQuerySettings"/> object that should be used to build a
+      /// <see cref="QueryServer"/>.
       /// </param>
       /// <returns>
-      /// A <see cref="Builder"/> that uses <see cref="token_principal_mapper"/> to build
-      /// a <see cref="QueryServer"/> instance.
+      /// A <see cref="Builder"/> that uses <see cref="query_settings"/> to
+      /// build a <see cref="QueryServer"/> instance.
       /// </returns>
-      public Builder SetTokenPrincipalMapper(
-        ITokenPrincipalMapper token_principal_mapper) {
-        token_principal_mapper_ = token_principal_mapper;
+      public Builder SetQuerySettings(IQuerySettings query_settings) {
+        query_settings_ = query_settings;
         return this;
       }
 
@@ -152,10 +135,6 @@ namespace Nohros.Toolkit.RestQL
         get { return query_settings_; }
       }
 
-      public ITokenPrincipalMapperSettings TokenPrincipalMapperSettings {
-        get { return token_principal_mapper_settings_; }
-      }
-
       public IQueryProcessor QueryProcessor {
         get { return processor_; }
       }
@@ -166,10 +145,6 @@ namespace Nohros.Toolkit.RestQL
 
       public ISettings Settings {
         get { return settings_; }
-      }
-
-      public ITokenPrincipalMapper TokenPrincipalMapper {
-        get { return token_principal_mapper_; }
       }
     }
     #endregion

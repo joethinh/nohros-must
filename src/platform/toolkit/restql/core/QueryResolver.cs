@@ -38,7 +38,7 @@ namespace Nohros.Toolkit.RestQL
     /// returned.
     /// </remarks>
     public IQueryExecutor GetQueryExecutor(IQuery query) {
-      return cache_.GetQueryEecutor(query, executors_);
+      return cache_.GetQueryExecutor(query, executors_);
     }
 
     /// <inheritdoc/>

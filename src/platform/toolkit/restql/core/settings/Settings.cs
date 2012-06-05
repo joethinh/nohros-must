@@ -33,8 +33,10 @@ namespace Nohros.Toolkit.RestQL
     public override void Load() {
       string current_assembly_location =
         Assembly.GetExecutingAssembly().Location;
-      string config_file_name = Path.Combine(current_assembly_location,
-        kRestQLSettingsFileName);
+      string current_assembly_directory =
+        Path.GetDirectoryName(current_assembly_location);
+      string config_file_name =
+        Path.Combine(current_assembly_directory, kRestQLSettingsFileName);
       LoadAndWatch(config_file_name, kRestQLRootNodeName);
     }
 
@@ -74,7 +76,6 @@ namespace Nohros.Toolkit.RestQL
     protected override void OnLoadComplete() {
       base.OnLoadComplete();
       ParseQuerySettings();
-      ParseTokenPrincipalMapperSettings();
 
       cache_provider_ = GetCacheProvider();
       common_data_provider_ = GetCommonDataProvider();

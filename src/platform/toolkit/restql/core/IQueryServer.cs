@@ -13,10 +13,5 @@ namespace Nohros.Toolkit.RestQL
     /// Gets the server's setting.
     /// </summary>
     ISettings Settings { get; }
-
-    /// <summary>
-    /// Gets the server's principal mapper.
-    /// </summary>
-    ITokenPrincipalMapper TokenPrincipalMapper { get; }
   }
 }

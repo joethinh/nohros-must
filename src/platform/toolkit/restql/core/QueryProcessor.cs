@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Net;
 
 namespace Nohros.Toolkit.RestQL
@@ -24,65 +23,17 @@ namespace Nohros.Toolkit.RestQL
 
     #region IQueryProcessor Members
     /// <inheritdoc/>
-    public HttpStatusCode Process(string query, out string result) {
-      IDictionary<string, string> entries = ParseQueryString(query);
-      return Process(entries, out result);
-    }
-
-    /// <inheritdoc/>
-    public HttpStatusCode Process(NameValueCollection query, out string result) {
-      Dictionary<string, string> entries =
-        new Dictionary<string, string>(query.Count);
-      foreach (KeyValuePair<string, string> pair in query) {
-        entries.Add(pair.Key, pair.Value);
+    public HttpStatusCode Process(string name,
+      IDictionary<string, string> data, out string result) {
+      IQuery query_to_execute = resolver_.GetQuery(name);
+      IQueryExecutor executor = resolver_.GetQueryExecutor(query_to_execute);
+      if (!(executor is NoOpQueryExecutor)) {
+        result = executor.Execute(query_to_execute, data);
+        return HttpStatusCode.OK;
       }
-      return Process(entries, out result);
-    }
-
-    /// <inheritdoc/>
-    public HttpStatusCode Process(IDictionary<string, string> query,
-      out string result) {
-      string name;
-      if (query.TryGetValue(Strings.kQueryStringQueryName, out name)) {
-        IQuery query_to_execute = resolver_.GetQuery(name);
-        IQueryExecutor executor = resolver_.GetQueryExecutor(query_to_execute);
-        if (!(executor is NoOpQueryExecutor)) {
-          executor.Execute(query_to_execute, query);
-        }
-      }
-      result = null;
+      result = string.Empty;
       return HttpStatusCode.NotFound;
     }
     #endregion
-
-    static IDictionary<string, string> ParseQueryString(string s) {
-      IDictionary<string, string> entries = new Dictionary<string, string>();
-      int length = s != null ? s.Length : 0;
-      for (int i = 0; i < length; i++) {
-        int start_index = i;
-        int end_index = -1;
-        while (i < length) {
-          char ch = s[i];
-          if (ch == '=') {
-            if (end_index < 0) {
-              end_index = i;
-            }
-          } else if (ch == '&') {
-            break;
-          }
-          i++;
-        }
-
-        string name, value = string.Empty;
-        if (end_index > 0) {
-          name = s.Substring(start_index, end_index - start_index);
-          value = s.Substring(end_index + 1, (i - end_index) - 1);
-        } else {
-          name = s.Substring(start_index, i - start_index);
-        }
-        entries.Add(name, value);
-      }
-      return entries;
-    }
   }
 }

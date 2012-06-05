@@ -61,7 +61,7 @@ namespace Nohros.Toolkit.RestQL
         return cache_.Get(name).Query;
       }
 
-      internal IQueryExecutor GetQueryEecutor(IQuery query,
+      internal IQueryExecutor GetQueryExecutor(IQuery query,
         IQueryExecutor[] executors) {
         QueryExecutorPair query_executor_pair = cache_.Get(query.Name);
         IQueryExecutor query_executor = query_executor_pair.QueryExecutor;
