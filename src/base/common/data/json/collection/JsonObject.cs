@@ -88,7 +88,6 @@ namespace Nohros.Data.Json
     }
     #endregion
 
-    #region IJsonCollection Members
     /// <inheritdoc/>
     /// <exception cref="ArgumentOutOfRangeException">
     /// <paramref name="token"/> is not instance of the
@@ -109,9 +108,7 @@ namespace Nohros.Data.Json
     public int Count {
       get { return members_.Count; }
     }
-    #endregion
 
-    #region IJsonToken<JsonMember[]> Members
     /// <inheritdoc/>
     public string AsJson() {
       JsonStringBuilder builder = new JsonStringBuilder();
@@ -131,7 +128,6 @@ namespace Nohros.Data.Json
     public JsonMember[] Value {
       get { return members_.ToArray(); }
     }
-    #endregion
 
     /// <summary>
     /// Adds an <see cref="JsonMember"/> object to the

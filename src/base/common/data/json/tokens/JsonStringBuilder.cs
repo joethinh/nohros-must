@@ -19,11 +19,11 @@ namespace Nohros.Data.Json
   public class JsonStringBuilder
   {
     #region State
-    enum State
-    {
+    enum State {
       None = 0,
-      AfterBegin = 1,
-      AfterEnd = 2
+      ReservedBeginToken = 1,
+      ReservedEndToken = 2,
+      ContentToken = 3
     }
     #endregion
 
@@ -52,28 +52,28 @@ namespace Nohros.Data.Json
     /// Appends the begin array token to the current json string.
     /// </summary>
     public JsonStringBuilder WriteBeginArray() {
-      return WriteBeginToken(kBeginArray);
+      return WriteReservedBeginToken(kBeginArray);
     }
 
     /// <summary>
     /// Appends the end array token to the current json string.
     /// </summary>
     public JsonStringBuilder WriteEndArray() {
-      return WriteEndToken(kEndArray);
+      return WriteReservedEndToken(kEndArray);
     }
 
     /// <summary>
     /// Appends the begin object token to the current json string.
     /// </summary>
     public JsonStringBuilder WriteBeginObject() {
-      return WriteBeginToken(kBeginObject);
+      return WriteReservedBeginToken(kBeginObject);
     }
 
     /// <summary>
     /// Appends the end object token to the current json string.
     /// </summary>
     public JsonStringBuilder WriteEndObject() {
-      return WriteEndToken(kEndObject);
+      return WriteReservedEndToken(kEndObject);
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ namespace Nohros.Data.Json
     /// <paramref name="value"/>.
     /// </remarks>
     public JsonStringBuilder WriteString(string value) {
-      return WriteEndToken("\"" + (value ?? "null") + "\"");
+      return WriteContentToken("\"" + (value ?? "null") + "\"");
     }
 
     /// <summary>
@@ -95,7 +95,7 @@ namespace Nohros.Data.Json
     /// not encloses the string in a double quotes.
     /// </remarks>
     public JsonStringBuilder WriteUnquotedString(string value) {
-      return WriteEndToken(value ?? "null");
+      return WriteContentToken(value ?? "null");
     }
 
     public JsonStringBuilder WriteStringArray(string[] data) {
@@ -171,7 +171,7 @@ namespace Nohros.Data.Json
     /// format.
     /// </remarks>
     public JsonStringBuilder WriteNumber(int value, string format) {
-      return WriteEndToken(value.ToString(format));
+      return WriteContentToken(value.ToString(format));
     }
 
     /// <summary>
@@ -193,7 +193,7 @@ namespace Nohros.Data.Json
     /// format.
     /// </remarks>
     public JsonStringBuilder WriteNumber(long value, string format) {
-      return WriteEndToken(value.ToString(format));
+      return WriteContentToken(value.ToString(format));
     }
 
     /// <summary>
@@ -215,7 +215,7 @@ namespace Nohros.Data.Json
     /// format.
     /// </remarks>
     public JsonStringBuilder WriteNumber(double value, string format) {
-      return WriteEndToken(value.ToString(format));
+      return WriteContentToken(value.ToString(format));
     }
 
     /// <summary>
@@ -239,7 +239,7 @@ namespace Nohros.Data.Json
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, string value) {
-      return WriteEndToken(
+      return WriteContentToken(
         "\"" + name + "\"" + kNameSeparator + "\"" + value + "\"");
     }
 
@@ -261,7 +261,7 @@ namespace Nohros.Data.Json
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMemberName(string name) {
-      return WriteBeginToken(
+      return WriteReservedBeginToken(
         "\"" + name + "\"" + kNameSeparator);
     }
 
@@ -367,7 +367,7 @@ namespace Nohros.Data.Json
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, int value, string format) {
-      return WriteEndToken("\"" + name + "\":" + value.ToString(format));
+      return WriteContentToken("\"" + name + "\":" + value.ToString(format));
     }
 
     /// <summary>
@@ -400,7 +400,7 @@ namespace Nohros.Data.Json
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, long value, string format) {
-      return WriteEndToken("\"" + name + "\":" + value.ToString(format));
+      return WriteContentToken("\"" + name + "\":" + value.ToString(format));
     }
 
     /// <summary>
@@ -434,30 +434,43 @@ namespace Nohros.Data.Json
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, double value,
       string format) {
-      return WriteEndToken("\"" + name + "\":" + value.ToString(format));
+      return WriteContentToken("\"" + name + "\":" + value.ToString(format));
     }
 
-    JsonStringBuilder WriteBeginToken(string token) {
-      WriteToken(token);
-      current_state_ = State.AfterBegin;
-      return this;
-    }
-
-    JsonStringBuilder WriteEndToken(string token) {
-      WriteToken(token);
-      current_state_ = State.AfterEnd;
-      return this;
-    }
-
-    void WriteToken(string token) {
+    JsonStringBuilder WriteReservedBeginToken(string token) {
       switch (current_state_) {
-        case State.AfterBegin:
+        case State.None:
+        case State.ReservedBeginToken:
+        case State.ReservedEndToken:
           string_builder_.Append(token);
           break;
-        case State.AfterEnd:
+        case State.ContentToken:
           string_builder_.Append("," + token);
           break;
       }
+      current_state_ = State.ReservedBeginToken;
+      return this;
+    }
+
+    JsonStringBuilder WriteReservedEndToken(string token) {
+      string_builder_.Append(token);
+      current_state_ = State.ReservedEndToken;
+      return this;
+    }
+
+    JsonStringBuilder WriteContentToken(string token) {
+      switch (current_state_) {
+        case State.None:
+        case State.ReservedBeginToken:
+          string_builder_.Append(token);
+          break;
+        case State.ReservedEndToken:
+        case State.ContentToken:
+          string_builder_.Append("," + token);
+          break;
+      }
+      current_state_ = State.ContentToken;
+      return this;
     }
 
     /// <summary>

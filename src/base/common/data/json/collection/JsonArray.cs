@@ -36,7 +36,6 @@ namespace Nohros.Data.Json
     }
     #endregion
 
-    #region IJsonCollection Members
     /// <inheritdoc/>
     public int Count {
       get { return tokens_.Count; }
@@ -46,9 +45,7 @@ namespace Nohros.Data.Json
     public void Add(IJsonToken json_token) {
       tokens_.Add(json_token);
     }
-    #endregion
 
-    #region IJsonToken<IJsonToken[]> Members
     /// <inheritdoc/>
     public IJsonToken[] Value {
       get { return tokens_.ToArray(); }
@@ -63,19 +60,14 @@ namespace Nohros.Data.Json
     /// class.
     /// </returns>
     public string AsJson() {
-      int length = tokens_.Count;
-      if (length == 0) {
-        return "[]";
-      }
-      StringBuilder builder = new StringBuilder();
-      builder.Append("[");
-      for (int i = 0, j = length; i < j; i++) {
+      JsonStringBuilder builder = new JsonStringBuilder();
+      builder.WriteBeginArray();
+      for (int i = 0, j = tokens_.Count; i < j; i++) {
         IJsonToken token = tokens_[i];
-        builder.Append((token == null ? "null" : token.AsJson()) + ",");
+        builder.WriteUnquotedString(token.AsJson());
       }
-      builder[length - 1] = ']';
+      builder.WriteEndArray();
       return builder.ToString();
     }
-    #endregion
   }
 }
