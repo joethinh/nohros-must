@@ -14,6 +14,7 @@ namespace Nohros.Data.Json
     const string kJsonTableCollection = "table";
     const string kJsonObjectCollection = "object";
     const string kArrayCollection = "array";
+    const string kArrayOfObjectsCollection = "array-of-object";
 
     #region .ctor
     /// <summary>
@@ -32,6 +33,7 @@ namespace Nohros.Data.Json
           return new JsonObject();
 
         case kArrayCollection:
+        case kArrayOfObjectsCollection:
           return new JsonArray();
 
         case kJsonTableCollection:
@@ -55,6 +57,9 @@ namespace Nohros.Data.Json
         case kJsonTableCollection:
           return CreateJsonTable(reader);
 
+        case kArrayOfObjectsCollection:
+          return CreateJsonArrayOfObject(reader);
+
         default:
           throw new NotSupportedException(string.Format(
             StringResources.NotSupported_CannotCreateType, name));
@@ -74,6 +79,10 @@ namespace Nohros.Data.Json
     /// A <see cref="JsonObject"/> object that contains the data readed from
     /// the <paramref name="reader"/>.
     /// </returns>
+    /// <remarks>
+    /// This method reads only the first line of th <paramref name="reader"/>
+    /// and discards the rest.
+    /// </remarks>
     public JsonObject CreateJsonObject(IDataReader reader) {
       JsonObject json_object = new JsonObject();
       if (reader.Read()) {
@@ -104,6 +113,10 @@ namespace Nohros.Data.Json
     /// A <see cref="JsonArray"/> object that contains the data readed from
     /// the <paramref name="reader"/>.
     /// </returns>
+    /// <remarks>
+    /// This method reads only the first line of th <paramref name="reader"/>
+    /// and discards the rest.
+    /// </remarks>
     public JsonArray CreateJsonArray(IDataReader reader) {
       JsonArray json_array = new JsonArray();
       if (reader.Read()) {
@@ -156,6 +169,43 @@ namespace Nohros.Data.Json
         } while (reader.Read());
       }
       return new JsonTable();
+    }
+
+    /// <summary>
+    /// Creates a <see cref="JsonArray"/> containing the data readed from
+    /// <paramref name="reader"/>.
+    /// </summary>
+    /// <param name="reader">
+    /// A <see cref="IDataReader"/> object that contains the data that will be
+    /// used to populate a <see cref="JsonArray"/>.
+    /// </param>
+    /// <returns>
+    /// A <see cref="JsonArray"/> object that contains the data readed from
+    /// the <paramref name="reader"/>.
+    /// </returns>
+    /// <remarks>
+    /// Each line readed from the <paramref name="reader"/> is mapped to a
+    /// <see cref="JsonObject"/> object.
+    /// </remarks>
+    public JsonArray CreateJsonArrayOfObject(IDataReader reader) {
+      JsonArray json_array = new JsonArray();
+      if (reader.Read()) {
+        IJsonDataField[] json_data_fields = GetJsonDataFields(reader);
+
+        int length = json_data_fields.Length;
+        do {
+          JsonObject json_object = new JsonObject();
+          json_array.Add(json_object);
+          for (int i = 0, j = length; i < j; i++) {
+            IJsonDataField json_data_field = json_data_fields[i];
+            JsonObject.JsonMember json_object_member =
+              new JsonObject.JsonMember(json_data_field.Name,
+                json_data_field.GetValue(reader));
+            json_object.Add(json_object_member);
+          }
+        } while (reader.Read());
+      }
+      return json_array;
     }
 
     IJsonDataField[] GetJsonDataFields(IDataReader reader) {
