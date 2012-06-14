@@ -6,6 +6,15 @@ namespace Nohros.Logging.log4net
 {
   public partial class ConsoleLogger : ILoggerFactory
   {
+    #region .ctor
+    /// <summary>
+    /// Constructor required by the <see cref="ILoggerFactory"/> interface.
+    /// </summary>
+    protected ConsoleLogger() {
+    }
+    #endregion
+
+    #region ILoggerFactory Members
     /// <summary>
     /// Creates an instance of the <see cref="ConsoleLogger"/> using
     /// the specified <paramref name="options"/> object.
@@ -21,7 +30,10 @@ namespace Nohros.Logging.log4net
       IMustConfiguration configuration) {
       string layout_pattern = ProviderOptions.GetIfExists(options,
         Strings.kLayoutPattern, kDefaultLogMessagePattern);
-      return new ConsoleLogger(layout_pattern);
+      ConsoleLogger logger = new ConsoleLogger(layout_pattern);
+      logger.Configure();
+      return logger;
     }
+    #endregion
   }
 }

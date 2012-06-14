@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Nohros.Configuration;
 
 namespace Nohros.Logging.log4net
 {
   public partial class FileLogger : ILoggerFactory
   {
+    #region .ctor
+    /// <summary>
+    /// Constructor required by the <see cref="ILoggerFactory"/> interface.
+    /// </summary>
+    protected FileLogger() {
+    }
+    #endregion
+
     #region ILoggerFactory Members
     /// <summary>
     /// Creates an instance of the <see cref="FileLogger"/> class using the
@@ -30,7 +37,9 @@ namespace Nohros.Logging.log4net
         Strings.kLayoutPattern, kDefaultLogMessagePattern);
       string log_file_name = ProviderOptions.GetIfExists(options,
         Strings.kLogFileName, kDefaultLogFileName);
-      return new FileLogger(layout_pattern, log_file_name);
+      FileLogger logger = new FileLogger(layout_pattern, log_file_name);
+      logger.Configure();
+      return logger;
     }
     #endregion
   }
