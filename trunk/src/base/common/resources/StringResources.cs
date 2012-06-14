@@ -31,12 +31,19 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [Destination array is not long
-    /// enough to copy all the items in the collection. Check array index and
-    /// length.].
+    /// Looks up a localized string similar to [An entry with the same key
+    /// already exists].
     /// </summary>
     public static string Argument_AddingDuplicate {
       get { return Resources.Argument_AddingDuplicate; }
+    }
+
+    /// <summary>
+    /// Looks up a localized string similar to [An entry with the same key
+    /// already exists. Key:{0}.].
+    /// </summary>
+    public static string Argument_AddingDuplicateKey {
+      get { return Resources.Argument_AddingDuplicateKey; }
     }
 
     /// <summary>

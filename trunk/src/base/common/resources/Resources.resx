@@ -281,7 +281,7 @@
     <value>Logout has been failedfor module {0}.</value>
   </data>
   <data name="Log_MethodThrowsException" xml:space="preserve">
-    <value>The {0} method of {0} throws an exception.</value>
+    <value>The {0} method of {1} throws an exception.</value>
   </data>
   <data name="Log_ThrowsException" xml:space="preserve">
     <value>{0} throws an exception.</value>
@@ -312,5 +312,11 @@
   </data>
   <data name="NotSupported_CannotCreateType" xml:space="preserve">
     <value>This method cannot be used to create types related to {0}.</value>
+  </data>
+  <data name="Argument_AddingDuplicateKey" xml:space="preserve">
+    <value>An entry with the same key already exists. Key:{0}.</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
 </root>
