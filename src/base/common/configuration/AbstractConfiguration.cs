@@ -3,7 +3,6 @@ using System.Xml;
 using System.IO;
 using System.Reflection;
 using System.Configuration;
-
 using Nohros.Resources;
 
 namespace Nohros.Configuration
@@ -203,6 +202,70 @@ namespace Nohros.Configuration
     #endregion
 
     /// <summary>
+    /// Gets a <see cref="XmlElement"/> named <paramref name="element_name"/>
+    /// from the loaded configuration file.
+    /// </summary>
+    /// <param name="element_name">
+    /// The name of the xml element to get.
+    /// </param>
+    /// <returns>
+    /// A <see cref="XmlElement"/> which name is
+    /// <paramref name="element_name"/>.
+    /// </returns>
+    /// <exception cref="ConfigurationException">
+    /// A <see cref="XmlElement"/> named <paramref name="element_name"/> does
+    /// not exists in the configuration file.
+    /// </exception>
+    /// <remarks>
+    /// This is a convenient wrapper for <see cref="SelectElement"/> which uses
+    /// the the <see cref="element"/> as the node parameter.
+    /// </remarks>
+    protected internal XmlElement GetConfigurationElement(string element_name) {
+      XmlElement local_element = SelectElement(element, element_name);
+      if (local_element == null) {
+        throw new ConfigurationException(
+          string.Format(
+            StringResources.Configuration_MissingNode, element_name));
+      }
+      return local_element;
+    }
+
+    /// <summary>
+    /// Gets a <see cref="XmlElement"/> named <paramref name="element_name"/>
+    /// from the loaded configuration file.
+    /// </summary>
+    /// <param name="element_name">
+    /// The name of the xml element to get.
+    /// </param>
+    /// <param name="element">
+    /// A <see cref="XmlElement"/> which name is
+    /// <paramref name="element_name"/> if it is found; otwherwise, null.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> when a element whose name is
+    /// <paramref name="element_name"/> is found; otherwise, <c>false</c>.
+    /// </returns>
+    /// <exception cref="ConfigurationException">
+    /// A <see cref="XmlElement"/> named <paramref name="element_name"/> does
+    /// not exists in the configuration file.
+    /// </exception>
+    /// <remarks>
+    /// This is a convenient wrapper for <see cref="SelectElement"/> which uses
+    /// the the <see cref="element"/> as the node parameter.
+    /// </remarks>
+    protected internal bool GetConfigurationElement(string element_name,
+      out XmlElement element) {
+      XmlNode node;
+      if (SelectNode(this.element, element_name, XmlNodeType.Element, out node)) {
+        element = node as XmlElement;
+        return true;
+      }
+      element = null;
+      return false;
+    }
+
+
+    /// <summary>
     /// Selects the first sibling <see cref="XmlNode"/> of the specified node
     /// that matches the specified name.
     /// </summary>
@@ -261,7 +324,10 @@ namespace Nohros.Configuration
     public static XmlNode SelectNode(XmlNode node, string xpath) {
       if (node == null || xpath == null)
         throw new ArgumentNullException((node == null) ? "node" : "xpath");
-      return SelectNode(node, xpath, XmlNodeType.None);
+
+      XmlNode found_node = null;
+      SelectNode(node, xpath, XmlNodeType.None, out found_node);
+      return found_node;
     }
 
     /// <summary>
@@ -337,10 +403,14 @@ namespace Nohros.Configuration
     public static XmlElement SelectElement(XmlNode node, string xpath) {
       if (node == null || xpath == null)
         throw new ArgumentNullException((node == null) ? "node" : "xpath");
-      return SelectNode(node, xpath, XmlNodeType.Element) as XmlElement;
+
+      XmlNode found_node = null;
+      SelectNode(node, xpath, XmlNodeType.Element, out found_node);
+      return found_node as XmlElement;
     }
 
-    static XmlNode SelectNode(XmlNode node, string xpath, XmlNodeType node_type) {
+    static bool SelectNode(XmlNode node, string xpath, XmlNodeType node_type,
+      out XmlNode found_node) {
       int len = xpath.Length;
       int first_character_position = 0;
       if (len > 0 && xpath[0] == '/') {
@@ -355,11 +425,11 @@ namespace Nohros.Configuration
         ? xpath.Substring(first_character_position)
         : xpath;
 
-      return SelectNodeRecursive(node, name, XmlNodeType.None);
+      return SelectNodeRecursive(node, name, XmlNodeType.None, out found_node);
     }
 
-    static XmlNode SelectNodeRecursive(XmlNode node, string xpath,
-      XmlNodeType node_type) {
+    static bool SelectNodeRecursive(XmlNode node, string xpath,
+      XmlNodeType node_type, out XmlNode found_node) {
       string name = xpath;
       int delimiter_position = xpath.IndexOf('/');
       if (delimiter_position != -1) {
@@ -371,17 +441,19 @@ namespace Nohros.Configuration
           n.Name, name, StringComparison.OrdinalIgnoreCase) == 0) {
           if (delimiter_position == -1) {
             if (node_type == XmlNodeType.None) {
-              return n;
+              found_node = n;
+              return true;
             }
             // If a xml node whose name is "name" was found but it is not a xml
             // element we need to keep searching.
-            SelectNodeRecursive(n, name, node_type);
+            SelectNodeRecursive(n, name, node_type, out found_node);
           }
-          return SelectNodeRecursive(
-            n, xpath.Substring(delimiter_position + 1), node_type);
+          return SelectNodeRecursive(n,
+            xpath.Substring(delimiter_position + 1), node_type, out found_node);
         }
       }
-      return null;
+      found_node = null;
+      return false;
     }
 
     /// <summary>
