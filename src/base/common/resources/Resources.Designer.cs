@@ -160,6 +160,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An entry with the same key already exists. Key:{0}..
+        /// </summary>
+        internal static string Argument_AddingDuplicateKey {
+            get {
+                return ResourceManager.GetString("Argument_AddingDuplicateKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The number of elements of the array {0} is less than the number of elements of the array {1}..
         /// </summary>
         internal static string Argument_ArrayLengthMismatch {
@@ -485,7 +494,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The {0} method of {0} throws an exception..
+        ///   Looks up a localized string similar to The {0} method of {1} throws an exception..
         /// </summary>
         internal static string Log_MethodThrowsException {
             get {
@@ -625,6 +634,15 @@ namespace Nohros.Resources {
         internal static string SkipList_NullKey {
             get {
                 return ResourceManager.GetString("SkipList_NullKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         
