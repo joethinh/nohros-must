@@ -20,30 +20,43 @@ namespace Nohros.Caching.Providers
     /// <summary>
     /// Gets the value associated with the given key.
     /// </summary>
-    /// <param name="key">The identifier for the item to retrieve from cache.
+    /// <param name="key">
+    /// The identifier for the item to retrieve from cache.
     /// </param>
-    /// <returns>A value associated with the given key, ou the default value
-    /// for <typeparamref name="T"/> if the key was not found.</returns>
+    /// <returns>
+    /// A value associated with the given key, ou the default value for
+    /// <typeparamref name="T"/> if the key was not found.
+    /// </returns>
     T Get<T>(string key);
 
     /// <summary>
     /// Gets the value associated with the given key.
     /// </summary>
-    /// <param name="key">The identifier for the item to retrieve from cache.
+    /// <param name="key">
+    /// The identifier for the item to retrieve from cache.
     /// </param>
-    /// <param name="item">If a item associated with <paramref name="key"/>
-    /// exists in the cache, the associated item; otherwise, the default
-    /// value for <typeparamref name="T"/></param>
-    /// <returns><c>true</c> if the key is found; otherwise, false.</returns>
+    /// <param name="item">
+    /// If a item associated with <paramref name="key"/> exists in the cache,
+    /// the associated item; otherwise, the default value for
+    /// <typeparamref name="T"/>
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the key is found; otherwise, <c>false</c>.
+    /// </returns>
     bool Get<T>(string key, out T item);
 
     /// <summary>
     /// Adds or replace the specified item to the cache.
     /// </summary>
-    /// <param name="key">The cache key used to reference the item.</param>
-    /// <param name="value">The item to be added to the cache.</param>
-    /// <exception cref="ArgumentNullException">The <paramref name="key"/> or
-    /// <paramref name="value"/> parameter is set to <c>null.</c></exception>
+    /// <param name="key">
+    /// The cache key used to reference the item.
+    /// </param>
+    /// <param name="value">
+    /// The item to be added to the cache.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="key"/> or <paramref name="value"/> are <c>null</c>.
+    /// </exception>
     /// <remarks>
     /// The item added to the cache should never expires(although it may be
     /// deleted from the cache to make place or other items, depending on the
@@ -54,33 +67,49 @@ namespace Nohros.Caching.Providers
     /// <summary>
     /// Adds or replace the specified item to the cache with expiration policy.
     /// </summary>
-    /// <param name="key">The cache key used to reference the item.</param>
-    /// <param name="value">The item to be added to the cache.</param>
-    /// <param name="duration">The length of time time at which the added object
-    /// expires from a point in time(after access or after write, depending on
-    /// the cache provider configuration and implementation) and is
-    /// removed from the cache. If it's is zero, the item should
-    /// never expires(although it may be deleted from the cache to make place
-    /// or other items, depending on the cache provider implementation).
+    /// <param name="key">
+    /// The cache key used to reference the item.
     /// </param>
-    /// <param name="unit">The unit that <paramref name="duration"/> is
-    /// expressed in.</param>
-    /// <exception cref="ArgumentNullException">The <paramref name="key"/> or
-    /// <paramref name="value"/> parameter is set to <c>null.</c></exception>
-    /// <exception cref="ArgumentOutOfRangeException">You set the
-    /// <paramref name="duration"/> to a value that is less than zero.
+    /// <param name="value">
+    /// The item to be added to the cache.
+    /// </param>
+    /// <param name="duration">
+    /// The length of time time at which the added object expires from a point
+    /// in time(after access or after write, depending on the cache provider
+    /// configuration and implementation) and is removed from the cache. If
+    /// it's is zero, the item should never expires(although it may be deleted
+    /// from the cache to make place or other items, depending on the cache
+    /// provider implementation).
+    /// </param>
+    /// <param name="unit">
+    /// The unit that <paramref name="duration"/> is expressed in.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// The <paramref name="key"/> or <paramref name="value"/> parameter is
+    /// set to <c>null.</c>
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// You set the <paramref name="duration"/> to a value that is less than
+    /// zero.
     /// </exception>
     void Set(string key, object value, long duration, TimeUnit unit);
 
     /// <summary>
     /// Adds the specified item to the cache.
     /// </summary>
-    /// <param name="key">The cache key used to reference the item.</param>
-    /// <param name="value">The item to be added to the cache.</param>
-    /// <exception cref="ArgumentNullException">The <paramref name="key"/> or
-    /// <paramref name="value"/> parameter is set to <c>null.</c></exception>
-    /// <exception cref="InvalidOperationException">An item with the ke
-    /// <paramref name="key"/> already exists in the cache.</exception>
+    /// <param name="key">
+    /// The cache key used to reference the item.
+    /// </param>
+    /// <param name="value">
+    /// The item to be added to the cache.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// The <paramref name="key"/> or <paramref name="value"/> parameter is set
+    /// to <c>null.</c>
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// An item with the key <paramref name="key"/> already exists in cache.
+    /// </exception>
     /// <remarks>
     /// Calls to this method should throws a exception if an item with the same
     /// <paramref name="key"/> parameter is already stored in the cache. To
@@ -99,23 +128,34 @@ namespace Nohros.Caching.Providers
     /// <summary>
     /// Adds the specified item to the cache with expiration policy.
     /// </summary>
-    /// <param name="key">The cache key used to reference the item.</param>
-    /// <param name="value">The item to be added to the cache.</param>
-    /// <param name="duration">The length of time time at which the added object
-    /// expires from a point in time(after access or after write, depending on
-    /// the cache provider configuration and implementation) and is
-    /// removed from the cache. If it's is zero, the item should
-    /// never expires(although it may be deleted from the cache to make place
-    /// or other items, depending on the cache provider implementation).
+    /// <param name="key">
+    /// The cache key used to reference the item.
     /// </param>
-    /// <param name="unit">The unit that <paramref name="duration"/> is
-    /// expressed in.</param>
-    /// <exception cref="ArgumentNullException">The <paramref name="key"/> or
-    /// <paramref name="value"/> parameter is set to <c>null.</c></exception>
-    /// <exception cref="InvalidOperationException">An item with the ke
-    /// <paramref name="key"/> already exists in the cache.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">You set the
-    /// <paramref name="duration"/> to a value that is less than zero.
+    /// <param name="value">
+    /// The item to be added to the cache.
+    /// </param>
+    /// <param name="duration">
+    /// The length of time time at which the added object expires from a point
+    /// in time(after access or after write, depending on the cache provider
+    /// configuration and implementation) and is removed from the cache. If
+    /// it's is zero, the item should never expires(although it may be deleted
+    /// from the cache to make place or other items, depending on the cache
+    /// provider implementation).
+    /// </param>
+    /// <param name="unit">
+    /// The unit that <paramref name="duration"/> is expressed in.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// The <paramref name="key"/> or <paramref name="value"/> parameter is
+    /// set to <c>null.</c>
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// An item with the key <paramref name="key"/> already exists in the
+    /// cache.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// You set the <paramref name="duration"/> to a value that is less than
+    /// zero.
     /// </exception>
     /// <remarks>
     /// Calls to this method should throws a exception if an item with the same
@@ -136,6 +176,10 @@ namespace Nohros.Caching.Providers
     /// <summary>
     /// Discards all entries in the cache.
     /// </summary>
+    /// <remarks>
+    /// If the cache does not implement this method it shold not throw any
+    /// exception, it should just fail silently.
+    /// </remarks>
     void Clear();
   }
 }
