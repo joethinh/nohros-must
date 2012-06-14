@@ -197,7 +197,7 @@ namespace Nohros.Concurrent
     /// <c>true</c> if the state was successfully changed.
     /// </returns>
     protected virtual bool SetException(Exception exception) {
-      bool ok = Complete(default(T), null, FutureState.Completed);
+      bool ok = Complete(default(T), exception, FutureState.Completed);
       if (ok) {
         execution_list_.Execute();
       }
