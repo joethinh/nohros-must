@@ -26,7 +26,7 @@ namespace Nohros.Toolkit.RestQL
     /// The name of the group which the query processor providers should be
     /// associated.
     /// </summary>
-    public const string kQueryProcessorsGroup = "query-processor";
+    public const string kQueryExecutorsGroup = "query-executors";
 
     public const string kTokenPrincipalMapperNode = "token-principal-mapper";
 
@@ -63,7 +63,7 @@ namespace Nohros.Toolkit.RestQL
 
     public const string kJsonCollectionOption = "json-collection";
 
-    public const string kDefaultJsonCollection = "object";
+    public const string kDefaultJsonCollection = "array-of-object";
 
     public const string kResponseAffectedRowsMemberName = "affectedRows";
 

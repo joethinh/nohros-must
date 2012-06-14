@@ -1,4 +1,5 @@
 ﻿using System;
+using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -19,5 +20,15 @@ namespace Nohros.Toolkit.RestQL
     /// instance of the class <see cref="Query.EmptyQuery"/>.
     /// </remarks>
     IQuery GetQuery(string name);
+
+    /// <summary>
+    /// Gets an array of <see cref="IProviderNode"/> objects containing the
+    /// connection providers that was configured on the database side.
+    /// </summary>
+    /// <returns>
+    /// An array of <see cref="IProviderNode"/> containing the connection
+    /// providers that was configured on the database side.
+    /// </returns>
+    IProviderNode[] GetConnectionProviders();
   }
 }

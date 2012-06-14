@@ -36,7 +36,7 @@ namespace Nohros.Toolkit.RestQL
     public SqlQueryExecutor(
       ILoadingCache<IConnectionProvider> connection_provider_cache,
       IJsonCollectionFactory json_collection_factory) {
-      if (connection_provider_cache_ == null || json_collection_factory == null) {
+      if (connection_provider_cache == null || json_collection_factory == null) {
         throw new ArgumentNullException(connection_provider_cache == null
           ? "connection_provider_cache"
           : "json_collection_factory");

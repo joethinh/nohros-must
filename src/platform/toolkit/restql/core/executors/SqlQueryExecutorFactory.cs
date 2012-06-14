@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using Nohros.Caching;
 using Nohros.Configuration;
 using Nohros.Data;
 using Nohros.Data.Json;
 using Nohros.Data.Providers;
 using Nohros.Providers;
+using Nohros.Resources;
 
 namespace Nohros.Toolkit.RestQL
 {
   public partial class SqlQueryExecutor : IQueryExecutorFactory
   {
-    const string kTypeForLogger =
-      "[Nohros.Toolkit.RestQL.GetJsonCollectionFactory]";
+    const string kClassName = "Nohros.Toolkit.RestQL.SqlQueryExecutor";
+
+    /// <summary>
+    /// Constructor implied by the <see cref="IQueryExecutorFactory"/>
+    /// interface.
+    /// </summary>
+    protected SqlQueryExecutor() {
+    }
 
     #region IQueryExecutorFactory Members
     /// <summary>
@@ -44,11 +50,18 @@ namespace Nohros.Toolkit.RestQL
 
     ILoadingCache<IConnectionProvider> GetConnectionProviderCache(
       IQuerySettings settings) {
+      ICommonDataProvider common_data_provider = settings.CommonDataProvider;
+
+      // Merges the application configured connection provider with the
+      // list of connection providers fetched from the common data provider.
+      List<IProviderNode> providers = new List<IProviderNode>(settings.Providers);
+      providers.AddRange(common_data_provider.GetConnectionProviders());
+
       return
         new CacheBuilder<IConnectionProvider>()
           .ExpireAfterAccess(settings.QueryCacheDuration*3, TimeUnit.Seconds)
           .Build(settings.CacheProvider,
-            new ConnectionProviderLoader(settings.Providers));
+            new ConnectionProviderLoader(providers));
     }
 
     IJsonCollectionFactory GetJsonCollectionFactory(IQuerySettings settings) {
@@ -60,7 +73,9 @@ namespace Nohros.Toolkit.RestQL
             .CreateProviderFactoryFallback(provider, settings);
         } catch (Exception exception) {
           // log it and ignore
-          RestQLLogger.ForCurrentProcess.Error(kTypeForLogger, exception);
+          RestQLLogger.ForCurrentProcess.Error(
+            string.Format(StringResources.Log_MethodThrowsException,
+              "GetJsonCollectionFactory", kClassName), exception);
         }
       }
       return new JsonCollectionFactory();

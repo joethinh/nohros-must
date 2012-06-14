@@ -96,30 +96,5 @@ namespace Nohros.Toolkit.RestQL
           .CreateProviderFactory(provider)
           .CreateCommonDataProvider(provider.Options, this);
     }
-
-    /// <summary>
-    /// Gets a <see cref="XmlElement"/> named <paramref name="element_name"/>
-    /// from the loaded configuration file.
-    /// </summary>
-    /// <param name="element_name">
-    /// The name of the xml element to get.
-    /// </param>
-    /// <returns>
-    /// A <see cref="XmlElement"/> which name is
-    /// <paramref name="element_name"/>.
-    /// </returns>
-    /// <exception cref="ConfigurationException">
-    /// A <see cref="XmlElement"/> named <paramref name="element_name"/> does
-    /// not exists in the configuration file.
-    /// </exception>
-    protected internal XmlElement GetConfigurationElement(string element_name) {
-      XmlElement local_element = SelectElement(element, element_name);
-      if (local_element == null) {
-        throw new ConfigurationException(
-          string.Format(
-            StringResources.Configuration_MissingNode, element_name));
-      }
-      return local_element;
-    }
   }
 }
