@@ -17,7 +17,7 @@ namespace Nohros
 
     readonly string delimiter_;
     readonly ParameterizedStringPartParameterCollection parameters_;
-    readonly Queue<ParameterizedStringPart> parts_;
+    readonly List<ParameterizedStringPart> parts_;
 
     /// <summary>
     /// The original version of parameterized string.
@@ -66,7 +66,7 @@ namespace Nohros
 
       delimiter_ = delimiter;
       flat_string = str;
-      parts_ = new Queue<ParameterizedStringPart>();
+      parts_ = new List<ParameterizedStringPart>();
       parameters_ = new ParameterizedStringPartParameterCollection();
       use_space_as_terminator = false;
     }
@@ -103,7 +103,7 @@ namespace Nohros
           throw new ArgumentException("part");
         }
 
-        str.parts_.Enqueue(part);
+        str.parts_.Add(part);
         if (part.IsParameter) {
           builder.Append(delimiter).Append(part.Value).Append(delimiter);
           str.parameters_.AddIfAbsent((ParameterizedStringPartParameter) part);
@@ -132,7 +132,7 @@ namespace Nohros
         // no delimiter was found after position "i", put the last
         // literal into the stack.
         if (begin == -1) {
-          parts_.Enqueue(
+          parts_.Add(
             new ParameterizedStringPartLiteral(flat_string.Substring(i)));
           break;
         }
@@ -140,7 +140,7 @@ namespace Nohros
         // save the literal part that comes before the starting delimiter,
         // if it exists.
         if (begin - i > 0) {
-          parts_.Enqueue(
+          parts_.Add(
             new ParameterizedStringPartLiteral(
               flat_string.Substring(i, begin - i)));
         }
@@ -156,7 +156,7 @@ namespace Nohros
           // the delimiters are not part of the parameters, but it is not a
           // parameter and we need to include the delimiter into it, so the
           // "i" pointer must be decremented by len(delimiter).
-          parts_.Enqueue(
+          parts_.Add(
             new ParameterizedStringPartLiteral(
               flat_string.Substring(i - delimiter_.Length)));
           break;
@@ -176,7 +176,7 @@ namespace Nohros
             flat_string.Substring(
               begin + delimiter_.Length, end - begin - delimiter_.Length),
             string.Empty);
-        parts_.Enqueue(part);
+        parts_.Add(part);
         parameters_.AddIfAbsent(part);
       }
     }
@@ -235,8 +235,8 @@ namespace Nohros
     /// </remarks>
     public override string ToString() {
       StringBuilder builder = new StringBuilder();
-      while (parts_.Count != 0) {
-        builder.Append(parts_.Dequeue().Value);
+      foreach(ParameterizedStringPart part in parts_) {
+        builder.Append(part.Value);
       }
       return builder.ToString();
     }
