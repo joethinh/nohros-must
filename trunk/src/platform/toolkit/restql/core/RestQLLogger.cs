@@ -21,7 +21,7 @@ namespace Nohros.Toolkit.RestQL
   /// </remarks>
   public class RestQLLogger : IRestQLLogger
   {
-    readonly static IRestQLLogger current_process_logger_;
+    static IRestQLLogger current_process_logger_;
     readonly ILogger internal_logger_;
 
     #region .ctor
@@ -65,6 +65,7 @@ namespace Nohros.Toolkit.RestQL
       get {
         return current_process_logger_;
       }
+      set { current_process_logger_ = value; }
     }
 
     #region IsEnabled

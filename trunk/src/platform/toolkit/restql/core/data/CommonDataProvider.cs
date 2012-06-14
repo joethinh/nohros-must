@@ -1,20 +1,41 @@
 ﻿using System;
-
 using System.Data;
+using Nohros.Configuration;
 using Nohros.Data;
 
 namespace Nohros.Toolkit.RestQL
 {
   public abstract class CommonDataProvider : ICommonDataProvider
   {
+    const int kQueryName = 0;
+    const int kQueryType = 1;
+    const int kQuery = 2;
+    const int kQueryMethod = 3;
+
+    const int kQueryOptionName = 0;
+    const int kQueryOptionValue = 1;
+
     protected readonly string[] get_query_fields = {
-      "queryname", "querytype" ,"query" };
+      "queryname", "querytype", "query", "querymethod"
+    };
+
+    protected readonly string[] get_query_options_fields = {
+      "optionname", "optionvalue"
+    };
+
+    #region ICommonDataProvider Members
+    /// <inheritdoc/>
+    public abstract IQuery GetQuery(string name);
+
+    /// <inheritdoc/>
+    public abstract IProviderNode[] GetConnectionProviders();
+    #endregion
 
     /// <summary>
     /// Create an <see cref="Query"/> object by reading the data from the
     /// goven <see cref="IDataReader"/>.
     /// </summary>
-    /// <param name="data_reader">
+    /// <param name="reader">
     /// A <see cref="IDataReader"/> object where the data to create the
     /// <see cref="Query"/> object could be read from.
     /// </param>
@@ -23,24 +44,37 @@ namespace Nohros.Toolkit.RestQL
     /// <see cref="IDataReader"/> is readable; otherwise the value of
     /// <see cref="Query.EmptyQuery"/> property.
     /// </returns>
-    protected IQuery CreatedQueryFromDataReader(IDataReader data_reader) {
-      if (data_reader.Read()) {
-        int[] ordinals = DataReaders.GetOrdinals(data_reader, get_query_fields);
+    protected IQuery CreatedQueryFromDataReader(IDataReader reader) {
+      if (reader.Read()) {
+        int[] ordinals = DataReaders.GetOrdinals(reader, get_query_fields);
 
-        const int kQueryName = 0;
-        const int kQueryProcessor = 2;
-        const int kQuery = 3;
+        string name = reader.GetString(ordinals[kQueryName]);
+        string type = reader.GetString(ordinals[kQueryType]);
+        string query_string = reader.GetString(ordinals[kQuery]);
+        int method = reader.GetInt32(ordinals[kQueryMethod]);
 
-        string name = data_reader.GetString(ordinals[kQueryName]);
-        string type = data_reader.GetString(ordinals[kQueryProcessor]);
-        string query = data_reader.GetString(ordinals[kQuery]);
+        Query query = new Query(name, type, query_string);
+        query.QueryMethod = (QueryMethod) method;
 
-        return new Query(name, type, query);
+        // get the query options
+        if (reader.NextResult()) {
+          SetQueryOptions(reader, query);
+        }
+        return query;
       }
       return Query.EmptyQuery;
     }
 
-    /// <inheritdoc/>
-    public abstract IQuery GetQuery(string name);
+    void SetQueryOptions(IDataReader reader, Query query) {
+      if (reader.Read()) {
+        int[] ordinals = DataReaders.GetOrdinals(reader,
+          get_query_options_fields);
+        do {
+          string name = reader.GetString(ordinals[kQueryOptionName]);
+          string value = reader.GetString(ordinals[kQueryOptionValue]);
+          query.Options.Add(name, value);
+        } while (reader.Read());
+      }
+    }
   }
 }

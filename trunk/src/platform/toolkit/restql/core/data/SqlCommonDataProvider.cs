@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-
+using Nohros.Configuration;
 using Nohros.Data;
 using Nohros.Data.Providers;
 
@@ -31,7 +31,7 @@ namespace Nohros.Toolkit.RestQL
 
     /// <inheritdoc/>
     public override IQuery GetQuery(string name) {
-      const string kGetQuery = "rql_get_query";
+      const string kGetQuery = ".rql_get_query";
 
       using (var conn = connection_provider_.CreateConnection())
       using (var cmd = conn.CreateCommand()) {
@@ -47,6 +47,10 @@ namespace Nohros.Toolkit.RestQL
           return CreatedQueryFromDataReader(dr);
         }
       }
+    }
+
+    public override IProviderNode[] GetConnectionProviders() {
+      return new IProviderNode[] {};
     }
   }
 }

@@ -30,7 +30,7 @@ namespace Nohros.Toolkit.RestQL
     void ParseQuerySettings() {
       XmlElement local_element = GetConfigurationElement(Strings.kQueryNode);
       ParseProperties(local_element);
-      executors_ = Providers.GetProvidersNode(Strings.kQueryProcessorsGroup);
+      executors_ = Providers.GetProvidersNode(Strings.kQueryExecutorsGroup);
     }
   }
 }
