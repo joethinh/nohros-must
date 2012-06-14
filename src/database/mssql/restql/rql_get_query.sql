@@ -44,8 +44,21 @@ alter proc rql_get_query (
 )
 as
 
-select queryname,
-  querytype,
-  query
-from rql_qeury
+declare @queryid int
+
+select @queryid = queryid
+from rql_query q
 where queryname = @queryname
+
+select queryname,
+  query,
+  querytype,
+  querymethodid as querymethod
+from rql_query q
+  inner join rql_querytype qt on qt.querytypeid = q.querytypeid
+where queryid = @queryid
+
+select optionname
+  ,optionvalue
+from rql_queryoption
+where queryid = @queryid
