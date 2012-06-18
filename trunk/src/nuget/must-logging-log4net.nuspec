@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>must.logging.log4net</id>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <title>Must Logging for log4net</title>
     <authors>Nohros Inc</authors>
     <owners>Nohros Inc</owners>
@@ -17,11 +17,9 @@
       <dependency id="log4net" version="1.2.10" />
       <dependency id="must.common" version="0.7" />
     </dependencies>
-    <references>
-      <reference file="nohros.logging.log4net.dll" />
-    </references>
   </metadata>
   <files>
-    <file src="..\bin\release\nohros.logging.log4net.dll" target="lib\nohros.logging.log4net.dll" />
+    <file src="..\bin\release\nohros.logging.log4net.dll" target="content\nohros.logging.log4net.dll" />
+    <file src="..\nuget\must-logging-log4net.ps1" target="tools\install.ps1" />
   </files>
 </package>
