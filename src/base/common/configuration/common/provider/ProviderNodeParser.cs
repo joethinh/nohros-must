@@ -41,18 +41,18 @@ namespace Nohros.Configuration
     }
 
     /// <summary>
-    /// Gets the provider options.
+    /// Gets the provider options_.
     /// </summary>
     /// <param name="element">
     /// A <see cref="XmlElement"/> the contains data about the provider to get
-    /// the options for.
+    /// the options_ for.
     /// </param>
     /// <returns>
     /// A <see cref="IDictionary{TKey,TValue}"/> containing the
-    /// options configured for the provider.
+    /// options_ configured for the provider.
     /// </returns>
     /// <remarks>
-    /// If no options was configured for the given provider, this method will
+    /// If no options_ was configured for the given provider, this method will
     /// returns a empty <see cref="IDictionary{TKey,TValue}"/>.
     /// </remarks>
     protected static IDictionary<string, string> GetOptions(XmlElement element) {

@@ -26,6 +26,11 @@ namespace Nohros.Configuration
     /// </summary>
     /// <param name="name">The name of the node.</param>
     protected AbstractConfigurationNode(string name) {
+#if DEBUG
+      if (name == null) {
+        throw new ArgumentNullException("name");
+      }
+#endif
       this.name = name;
     }
     #endregion

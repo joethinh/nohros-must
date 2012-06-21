@@ -114,6 +114,7 @@
     <Compile Include="configuration\common\IRepositoryNode.cs" />
     <Compile Include="configuration\common\auth\LoginModuleNodeParser.cs" />
     <Compile Include="configuration\common\provider\IProvidersNode.cs" />
+    <Compile Include="configuration\common\provider\ProviderNodeBuilder.cs" />
     <Compile Include="configuration\common\provider\ProviderNodeParser.cs" />
     <Compile Include="configuration\common\provider\ProvidersNode.cs" />
     <Compile Include="configuration\common\provider\ProvidersNodeParser.cs" />
@@ -336,7 +337,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

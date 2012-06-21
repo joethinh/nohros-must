@@ -9,23 +9,16 @@ namespace Nohros.Configuration
   public partial class ProviderNode : AbstractConfigurationNode, IProviderNode
   {
     /// <summary>
-    /// The path of the providers's assembly.
-    /// </summary>
-    string location_;
-
-    /// <summary>
-    /// The options configured for this provider.
+    /// The options_ configured for this provider.
     /// </summary>
     /// <remarks>
     /// This should never be a <c>null</c> reference. If a provider does
-    /// not have any configured options this dictionary should be empty.
+    /// not have any configured options_ this dictionary should be empty.
     /// </remarks>
     protected IDictionary<string, string> options;
 
-    /// <summary>
-    /// The provider's assembly-qualified name.
-    /// </summary>
-    string type_;
+    readonly string type_;
+    string location_;
 
     string group_;
 
@@ -58,9 +51,11 @@ namespace Nohros.Configuration
     /// The path to the directory where the provider assembly file is stored.
     /// </param>
     protected ProviderNode(string name, string type, string location) : base(name) {
+#if DEBUG
       if (type == null || location == null) {
         throw new ArgumentNullException(type == null ? "type" : "location");
       }
+#endif
       type_ = type;
       location_ = location;
       options = new Dictionary<string, string>();
