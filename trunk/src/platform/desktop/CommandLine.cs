@@ -468,8 +468,10 @@ namespace Nohros.Desktop
           break;
 
         case '-':
-          if (command_line_string_[command_line_pos_ + 1] == '-') {
-            if (command_line_string_[command_line_pos_ + 2] == ' ') {
+          if (command_line_pos_ + 1 < command_line_length_
+            && command_line_string_[command_line_pos_ + 1] == '-') {
+              if (command_line_pos_ + 2 < command_line_length_
+                && command_line_string_[command_line_pos_ + 2] == ' ') {
               token = new Token(Token.TokenType.STOP_PARSING,
                 command_line_pos_, 3);
               break;
