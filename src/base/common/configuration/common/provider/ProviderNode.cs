@@ -8,6 +8,11 @@ namespace Nohros.Configuration
   /// </summary>
   public partial class ProviderNode : AbstractConfigurationNode, IProviderNode
   {
+    readonly string type_;
+
+    string group_;
+    string location_;
+
     /// <summary>
     /// The options_ configured for this provider.
     /// </summary>
@@ -16,11 +21,6 @@ namespace Nohros.Configuration
     /// not have any configured options_ this dictionary should be empty.
     /// </remarks>
     protected IDictionary<string, string> options;
-
-    readonly string type_;
-    string location_;
-
-    string group_;
 
     #region .ctor
     /// <summary>
@@ -50,7 +50,8 @@ namespace Nohros.Configuration
     /// <param name="location">
     /// The path to the directory where the provider assembly file is stored.
     /// </param>
-    protected ProviderNode(string name, string type, string location) : base(name) {
+    protected ProviderNode(string name, string type, string location)
+      : base(name) {
 #if DEBUG
       if (type == null || location == null) {
         throw new ArgumentNullException(type == null ? "type" : "location");
@@ -58,11 +59,11 @@ namespace Nohros.Configuration
 #endif
       type_ = type;
       location_ = location;
+      group_ = string.Empty;
       options = new Dictionary<string, string>();
     }
     #endregion
 
-    #region IProviderNode Members
     /// <inheritdoc/>
     public string Type {
       get { return type_; }
@@ -77,7 +78,6 @@ namespace Nohros.Configuration
     public IDictionary<string, string> Options {
       get { return options; }
     }
-    #endregion
 
     /// <summary>
     /// Gets the group that this provider belongs to.
