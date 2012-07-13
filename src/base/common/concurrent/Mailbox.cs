@@ -74,6 +74,17 @@ namespace Nohros.Concurrent
     /// <param name="executor">
     /// A <see cref="IExecutor"/> that is used to execute the callback.
     /// </param>
+    /// <remarks>
+    /// The mailbox message processing is single threaded and no more than one
+    /// task will be active at any given time. When a message is
+    /// send to it, it is queued to be processed by the executor. The
+    /// executor runs until the message queue is empty. So, if you are using
+    /// a <see cref="SameThreadExecutor"/> that is no guarantee that a
+    /// message callback is executed by the thread that send the message, if
+    /// there is an thread already executing a callback when a message is sent,
+    /// that thread will be used to process the following messages until the
+    /// message queue is empty.
+    /// </remarks>
     public Mailbox(MailboxReceiveCallback<T> callback, IExecutor executor) {
       mutex_ = new object();
       message_queue_ = new YQueue<T>(16);
