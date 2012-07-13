@@ -6,7 +6,7 @@ namespace Nohros.Concurrent
 {
   /// <summary>
   /// Creates an executor service that runs each task in the thread that
-  /// invokes <see cref="IExecutor{T}.Execute"/>.
+  /// invokes <see cref="IExecutor.Execute"/>.
   /// </summary>
   /// <remarks>
   /// Tasks are immediately executed in the thread that submitted the task.

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace Nohros.Concurrent
 {
@@ -13,11 +14,11 @@ namespace Nohros.Concurrent
 
     /// <summary>
     /// Creates an executor that runs each task in the thread that invokes
-    /// <see cref="IExecutor{T}.Execute"/>.
+    /// <see cref="IExecutor.Execute"/>.
     /// </summary>
     /// <returns>
     /// An executor that runs each task in the thread that invokes
-    /// <see cref="IExecutor{T}.Execute"/>.
+    /// <see cref="IExecutor.Execute"/>.
     /// </returns>
     /// <remarks>
     /// Tasks are immediately executed in the thread that submitted the task.
