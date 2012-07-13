@@ -43,8 +43,26 @@ namespace Nohros.Concurrent
 
     // The synchronization context of the thread that creates the mailbox.
     readonly SynchronizationContext synchronization_context_;
+
+    readonly IExecutor executor_;
  
     #region .ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Mailbox{T}"/> class by
+    /// using the specified receive callback.
+    /// </summary>
+    /// <param name="callback">
+    /// A <see cref="MailboxReceiveCallback{T}"/> delegate that is called to
+    /// process each message sent to the <see cref="Mailbox{T}"/>.
+    /// </param>
+    /// <remarks>
+    /// A <see cref="Thread"/> from the <see cref="ThreadPool"/> is used to
+    /// execute the callback.
+    /// </remarks>
+    public Mailbox(MailboxReceiveCallback<T> callback)
+      : this(callback, Executors.ThreadPoolExecutor()) {
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Mailbox{T}"/> class by
     /// using the specified receive callback and executor.
@@ -53,11 +71,15 @@ namespace Nohros.Concurrent
     /// A <see cref="MailboxReceiveCallback{T}"/> delegate that is called to
     /// process each message sent to the <see cref="Mailbox{T}"/>.
     /// </param>
-    public Mailbox(MailboxReceiveCallback<T> callback) {
+    /// <param name="executor">
+    /// A <see cref="IExecutor"/> that is used to execute the callback.
+    /// </param>
+    public Mailbox(MailboxReceiveCallback<T> callback, IExecutor executor) {
       mutex_ = new object();
       message_queue_ = new YQueue<T>(16);
       callback_ = callback;
       synchronization_context_ = SynchronizationContext.Current;
+      executor_ = executor;
 
       // Get the pipe into passive state. That way, if the user starts by
       // polling on the associated queue, it will be woken up when
@@ -75,24 +97,23 @@ namespace Nohros.Concurrent
     public void Send(T message) {
       lock(mutex_) {
         message_queue_.Enqueue(message);
-
         ScheduleReceive();
       }
     }
 
     /// <summary>
-    /// Schedule the callback method to be executed by a executor.
+    /// Schedule the callback method to be executed by an executor.
     /// </summary>
     void ScheduleReceive() {
       if (!active_) {
         active_ = true;
-        ThreadPool.QueueUserWorkItem(delegate(object state) {
-          if (state == null) {
+        executor_.Execute(delegate () {
+          if (synchronization_context_ == null) {
             Receive();
           } else {
-            Receive(state);
+            Receive(synchronization_context_);
           }
-        }, synchronization_context_);
+        });
       }
     }
 
@@ -114,17 +135,17 @@ namespace Nohros.Concurrent
     /// using the context of the thread that creates the
     /// <see cref="Mailbox{T}"/> object.
     /// </summary>
-    /// <param name="state">
+    /// <param name="context">
     /// The <see cref="SynchronizationContext"/> object of the thread where the
     /// callback will run.
     /// </param>
-    void Receive(object state) {
+    void Receive(SynchronizationContext context)
+    {
 #if DEBUG
-      if (state == null) {
-        throw new ArgumentNullException("state");
+      if (context == null) {
+        throw new ArgumentNullException("context");
       }
 #endif
-      SynchronizationContext context = state as SynchronizationContext;
       T message;
       while (GetMessage(out message)) {
         context.Send(delegate(object o) {
