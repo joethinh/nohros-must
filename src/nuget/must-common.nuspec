@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>must.common</id>
-    <version>0.9.8</version>
+    <version>0.9.9</version>
     <title>Must Framework - Common</title>
     <authors>Nohros Inc</authors>
     <owners>Nohros Inc</owners>
@@ -12,15 +12,6 @@
       This project contains several of Nohros' core .NET libraries that we use
       in our many .NET-based projects. The common package contains the common
       classes that are used by the others packages of the framework.
-      
-      * 0.9.3 - Remove dependency from the log4net library and bug fixes.
-      * 0.9.4 - Small bug fixes.
-      * 0.9.5 - Changed the behavior of the mailbox to ensure its correct usage.
-              - Small bugfixes.
-      * 0.9.6 - Small bug fixes.
-      * 0.9.7 - Small bug fixes.
-      * 0.9.8 - Cahnged the signature of the Mailbox to allow callers to specify
-                the executor that will run the callback.
     </description>
     <summary>The common package of the nohros must framework.</summary>
     <copyright>Nohros Inc</copyright>
@@ -28,6 +19,7 @@
     <tags>csharp framework nohros security</tags>
   </metadata>
   <files>
+    <file src="..\base\common\CHANGES.txt" target="content\CHANGES.txt" />
     <file src="..\bin\release\nohros.dll" target="lib\nohros.dll" />
   </files>
 </package>
