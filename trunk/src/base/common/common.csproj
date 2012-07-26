@@ -129,6 +129,8 @@
     <Compile Include="configuration\IMustConfiguration.cs" />
     <Compile Include="configuration\Strings.cs" />
     <Compile Include="data\CommandBuilder.cs" />
+    <Compile Include="logging\ForwardingLogger.cs" />
+    <Compile Include="logging\IForwardingLogger.cs" />
     <Compile Include="providers\data\ConnectionProviderLoader.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldBoolean.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDecimal.cs" />

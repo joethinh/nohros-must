@@ -1,0 +1,12 @@
+
+Version 0.9.8
+
+  * Added the ForwardingLogger and IForwarderLogger interface.
+
+Version 0.9.5
+
+  * Changed the behavior of the mailbox to ensure its correct usage.
+
+Version 0.9.3:
+
+  * Remove dependency from the log4net library and bug fixes.
