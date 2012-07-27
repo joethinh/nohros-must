@@ -26,7 +26,7 @@ namespace Nohros.Logging.log4net
   /// nohros configuration file.
   /// </para>
   /// </remarks>
-  public partial class ConsoleLogger: AbstractLogger
+  public class ConsoleLogger: AbstractLogger
   {
     readonly string layout_pattern_;
 

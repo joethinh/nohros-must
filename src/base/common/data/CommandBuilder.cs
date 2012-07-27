@@ -4,13 +4,26 @@ using System.Data;
 namespace Nohros.Data
 {
   /// <summary>
-  /// A class that builds instances of the <see cref="IDbCommand"/> class.
+  /// A helper class used to simplify the instantiantion of objects of the type
+  /// <see cref="IDbCommand"/>.
   /// </summary>
-  public class CommandBuilder
+  /// <remarks>
+  /// The command object is created at constructor and its properties
+  /// manipulated through this class methods. Calling any of the class
+  /// methods will change the properties of the returned object, even after
+  /// <see cref="Build"/> is called.
+  /// <para>
+  /// This class implements the <see cref="IDisposable"/> only to allow
+  /// callers to dispose the associated <see cref="IDbCommand"/> object. Do not
+  /// dispose <see cref="CommandBuilder"/> object if you want to reuse the
+  /// associated <see cref="IDbCommand"/> after class destruction.
+  /// </para>
+  /// </remarks>
+  public class CommandBuilder : IDisposable
   {
-    readonly IDbConnection connection_;
     readonly IDbCommand command_;
 
+    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="CommandBuilder"/> class
     /// by using the specified <see cref="IDbConnection"/> object.
@@ -20,9 +33,9 @@ namespace Nohros.Data
     /// the builded command.
     /// </param>
     public CommandBuilder(IDbConnection connection) {
-      connection_ = connection;
       command_ = connection.CreateCommand();
     }
+    #endregion
 
     /// <summary>
     /// Sets the command text.
@@ -136,7 +149,8 @@ namespace Nohros.Data
     /// created parameter to the <see cref="IDbCommand"/> instance that will
     /// be created on <see cref="Build"/>.
     /// </returns>
-    public CommandBuilder AddParameter(string name, DbType type, int size, object value) {
+    public CommandBuilder AddParameter(string name, DbType type, int size,
+      object value) {
       IDbDataParameter parameter = CreateParameter(name, type);
       parameter.Size = size;
       parameter.Value = value;
@@ -186,11 +200,100 @@ namespace Nohros.Data
       return this;
     }
 
-    IDbDataParameter CreateParameter(string name, DbType type) {
+    /// <summary>
+    /// Creates an <see cref="IDbDataParameter"/> object and add it to the
+    /// collection of parameters of the <see cref="IDbCommand"/> that will
+    /// be built.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the parameter to add.
+    /// </param>
+    /// <param name="type">
+    /// The type of the parameter to add.
+    /// </param>
+    /// <returns>
+    /// The newly created <see cref="IDbDataParameter"/>.
+    /// </returns>
+    public IDbDataParameter CreateParameter(string name, DbType type) {
       IDbDataParameter parameter = command_.CreateParameter();
       parameter.ParameterName = name;
       parameter.DbType = type;
       command_.Parameters.Add(parameter);
+      return parameter;
+    }
+
+    /// <summary>
+    /// Creates an <see cref="IDbDataParameter"/> object and add it to the
+    /// collection of parameters of the <see cref="IDbCommand"/> that will
+    /// be built.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the parameter to add.
+    /// </param>
+    /// <param name="type">
+    /// The type of the parameter to add.
+    /// </param>
+    /// <param name="size">
+    /// The size of the parameter.
+    /// </param>
+    /// <returns>
+    /// The newly created <see cref="IDbDataParameter"/>.
+    /// </returns>
+    public IDbDataParameter CreateParameter(string name, DbType type, int size) {
+      IDbDataParameter parameter = CreateParameter(name, type);
+      parameter.Size = size;
+      return parameter;
+    }
+
+    /// <summary>
+    /// Creates an <see cref="IDbDataParameter"/> object and add it to the
+    /// collection of parameters of the <see cref="IDbCommand"/> that will
+    /// be built.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the parameter to add.
+    /// </param>
+    /// <param name="type">
+    /// The type of the parameter to add.
+    /// </param>
+    /// <param name="size">
+    /// The size of the parameter.
+    /// </param>
+    /// <param name="value">
+    /// The value to be associated with the parameter.
+    /// </param>
+    /// <returns>
+    /// The newly created <see cref="IDbDataParameter"/>.
+    /// </returns>
+    public IDbDataParameter CreateParameter(string name, DbType type, int size,
+      object value) {
+      IDbDataParameter parameter = CreateParameter(name, type);
+      parameter.Size = size;
+      parameter.Value = value;
+      return parameter;
+    }
+
+    /// <summary>
+    /// Creates an <see cref="IDbDataParameter"/> object and add it to the
+    /// collection of parameters of the <see cref="IDbCommand"/> that will
+    /// be built.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the parameter to add.
+    /// </param>
+    /// <param name="type">
+    /// The type of the parameter to add.
+    /// </param>
+    /// <param name="value">
+    /// The value to be associated with the parameter.
+    /// </param>
+    /// <returns>
+    /// The newly created <see cref="IDbDataParameter"/>.
+    /// </returns>
+    public IDbDataParameter CreateParameter(string name, DbType type,
+      object value) {
+      IDbDataParameter parameter = CreateParameter(name, type);
+      parameter.Value = value;
       return parameter;
     }
 
@@ -201,8 +304,21 @@ namespace Nohros.Data
     /// <returns>
     /// The newly created <see cref="IDbCommand"/> object.
     /// </returns>
+    /// <remarks>
+    /// The command object is created at constructor and its properties
+    /// manipulated through this class methods. Calling any of the class
+    /// methods will change the properties of the returned object, even after
+    /// <see cref="Build"/> is called.
+    /// </remarks>
     public IDbCommand Build() {
       return command_;
+    }
+
+    /// <summary>
+    /// Disposes the associated command object.
+    /// </summary>
+    public void Dispose() {
+      command_.Dispose();
     }
   }
 }
