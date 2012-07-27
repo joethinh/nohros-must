@@ -28,7 +28,7 @@ namespace Nohros.Logging.log4net
   /// configuration file.
   /// </para>
   /// </remarks>
-  public partial class FileLogger: AbstractLogger
+  public class FileLogger: AbstractLogger
   {
     readonly string log_file_path_;
     readonly string layout_pattern_;

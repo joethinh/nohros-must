@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Xml;
 using log4net;
 using log4net.Config;
 
 namespace Nohros.Logging.log4net
 {
-  public partial class LegacyLogger : AbstractLogger
+  public class LegacyLogger : AbstractLogger
   {
     readonly XmlElement element_;
     readonly string logger_name_;

@@ -4,16 +4,8 @@ using Nohros.Configuration;
 
 namespace Nohros.Logging.log4net
 {
-  public partial class ConsoleLogger : ILoggerFactory
+  public class ConsoleLoggerFactory : ILoggerFactory
   {
-    #region .ctor
-    /// <summary>
-    /// Constructor required by the <see cref="ILoggerFactory"/> interface.
-    /// </summary>
-    protected ConsoleLogger() {
-    }
-    #endregion
-
     #region ILoggerFactory Members
     /// <summary>
     /// Creates an instance of the <see cref="ConsoleLogger"/> using
@@ -26,10 +18,9 @@ namespace Nohros.Logging.log4net
     /// <returns>
     /// The newly created <see cref="ILogger"/> object.
     /// </returns>
-    public ILogger CreateLogger(IDictionary<string, string> options,
-      IMustConfiguration configuration) {
+    public ILogger CreateLogger(IDictionary<string, string> options) {
       string layout_pattern = ProviderOptions.GetIfExists(options,
-        Strings.kLayoutPattern, kDefaultLogMessagePattern);
+        Strings.kLayoutPattern, AbstractLogger.kDefaultLogMessagePattern);
       ConsoleLogger logger = new ConsoleLogger(layout_pattern);
       logger.Configure();
       return logger;

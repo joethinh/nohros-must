@@ -15,10 +15,10 @@ namespace Nohros.Logging.log4net
     /// <summary>
     /// The default message log pattern.
     /// </summary>
-    protected const string kDefaultLogMessagePattern =
+    protected internal const string kDefaultLogMessagePattern =
       "[%-5level %date] %message%newline%exception";
 
-    protected const string kDefaultLogFileName = "must.log";
+    protected internal const string kDefaultLogFileName = "must.log";
 
     protected ILog logger;
 

@@ -1,12 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using Nohros.Configuration;
+using Nohros.Providers;
 
 namespace Nohros.Logging
 {
   /// <summary>
   /// A factory used to create instances of the <see cref="ILogger"/> class.
   /// </summary>
+  /// <remarks>
+  /// This interfaces implies a constructor taht receive no parameters or
+  /// a constructor that receives a parameter of type
+  /// <see cref="IMustConfiguration"/>.
+  /// <para>
+  /// When instances of the <see cref="ILoggerFactory"/> is dynamically created
+  /// you need to try to build it using the constructor that receives a
+  /// parameter of type <see cref="IMustConfiguration"/> first, and if it fails
+  /// falls back to the constructor that receives no parameters.
+  /// </para>
+  /// </remarks>
   public interface ILoggerFactory
   {
     /// <summary>
@@ -17,15 +29,9 @@ namespace Nohros.Logging
     /// A <see cref="IDictionary{TKey,TValue}"/> object that contains the
     /// options for the logger to be created.
     /// </param>
-    /// <param name="configuration">
-    /// A <see cref="IMustConfiguration"/> object taht can be used to get
-    /// configuration inforamtions related with the logger to be created - such
-    /// as the configuration of a related logger.
-    /// </param>
     /// <returns>
     /// The newly created <see cref="ILogger"/> object.
     /// </returns>
-    ILogger CreateLogger(IDictionary<string, string> options,
-      IMustConfiguration configuration);
+    ILogger CreateLogger(IDictionary<string, string> options);
   }
 }
