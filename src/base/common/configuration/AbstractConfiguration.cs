@@ -264,7 +264,6 @@ namespace Nohros.Configuration
       return false;
     }
 
-
     /// <summary>
     /// Selects the first sibling <see cref="XmlNode"/> of the specified node
     /// that matches the specified name.

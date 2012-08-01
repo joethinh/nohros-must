@@ -106,7 +106,7 @@ namespace Nohros.Logging
     /// <summary>
     /// Gets the backing logger instance that methods are forwarder to.
     /// </summary>
-    public ILogger Logger {
+    public virtual ILogger Logger {
       get { return logger_; }
       set { logger_ = value; }
     }
