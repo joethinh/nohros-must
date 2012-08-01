@@ -8,7 +8,10 @@ namespace Nohros.Logging
   /// </summary>
   public class ForwardingLogger: IForwardingLogger
   {
-    ILogger logger_;
+    /// <summary>
+    /// The backing logger.
+    /// </summary>
+    protected ILogger logger;
 
     #region .ctor
     /// <summary>
@@ -19,96 +22,96 @@ namespace Nohros.Logging
     /// The logger instance that methods are forwarder to.
     /// </param>
     public ForwardingLogger(ILogger logger) {
-      logger_ = logger;
+      this.logger = logger;
     }
     #endregion
 
     /// <inheritdoc />
     public bool IsDebugEnabled {
-      get { return logger_.IsDebugEnabled; }
+      get { return logger.IsDebugEnabled; }
     }
 
     /// <inheritdoc />
     public bool IsErrorEnabled {
-      get { return logger_.IsErrorEnabled; }
+      get { return logger.IsErrorEnabled; }
     }
 
     /// <inheritdoc />
     public bool IsFatalEnabled {
-      get { return logger_.IsFatalEnabled; }
+      get { return logger.IsFatalEnabled; }
     }
 
     /// <inheritdoc />
     public bool IsInfoEnabled {
-      get { return logger_.IsInfoEnabled; }
+      get { return logger.IsInfoEnabled; }
     }
 
     /// <inheritdoc />
     public bool IsWarnEnabled {
-      get { return logger_.IsWarnEnabled; }
+      get { return logger.IsWarnEnabled; }
     }
 
     /// <inheritdoc />
     public bool IsTraceEnabled {
-      get { return logger_.IsTraceEnabled; }
+      get { return logger.IsTraceEnabled; }
     }
 
     /// <inheritdoc />
     public void Debug(string message) {
-      logger_.Debug(message);
+      logger.Debug(message);
     }
 
     /// <inheritdoc />
     public void Debug(string message, Exception exception) {
-      logger_.Debug(message, exception);
+      logger.Debug(message, exception);
     }
 
     /// <inheritdoc />
     public void Error(string message) {
-      logger_.Error(message);
+      logger.Error(message);
     }
 
     /// <inheritdoc />
     public void Error(string message, Exception exception) {
-      logger_.Error(message, exception);
+      logger.Error(message, exception);
     }
 
     /// <inheritdoc />
     public void Fatal(string message) {
-      logger_.Fatal(message);
+      logger.Fatal(message);
     }
 
     /// <inheritdoc />
     public void Fatal(string message, Exception exception) {
-      logger_.Fatal(message, exception);
+      logger.Fatal(message, exception);
     }
 
     /// <inheritdoc />
     public void Info(string message) {
-      logger_.Info(message);
+      logger.Info(message);
     }
 
     /// <inheritdoc />
     public void Info(string message, Exception exception) {
-      logger_.Info(message, exception);
+      logger.Info(message, exception);
     }
 
     /// <inheritdoc />
     public void Warn(string message) {
-      logger_.Warn(message);
+      logger.Warn(message);
     }
 
     /// <inheritdoc />
     public void Warn(string message, Exception exception) {
-      logger_.Warn(message, exception);
+      logger.Warn(message, exception);
     }
 
     /// <summary>
     /// Gets the backing logger instance that methods are forwarder to.
     /// </summary>
     public virtual ILogger Logger {
-      get { return logger_; }
-      set { logger_ = value; }
+      get { return logger; }
+      set { logger = value; }
     }
   }
 }
