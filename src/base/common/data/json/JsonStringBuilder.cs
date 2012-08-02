@@ -19,7 +19,8 @@ namespace Nohros.Data.Json
   public class JsonStringBuilder
   {
     #region State
-    enum State {
+    enum State
+    {
       None = 0,
       ReservedBeginToken = 1,
       ReservedEndToken = 2,
@@ -35,8 +36,15 @@ namespace Nohros.Data.Json
     const string kValueSeparator = ",";
     const string kDefaultNumberFormat = "G";
 
+    const char kLargestEscapableChar = '\\';
+    static readonly char[] escape_chars_ = new char[]
+    {'"', '\n', '\t', '\\', '\f', '\b'};
+
+    readonly StringBuilder string_builder_;
+
     State current_state_;
-    StringBuilder string_builder_ = new StringBuilder();
+    int last_written_token_begin_;
+    int last_written_token_end_;
 
     #region .ctor
     /// <summary>
@@ -437,7 +445,98 @@ namespace Nohros.Data.Json
       return WriteContentToken("\"" + name + "\":" + value.ToString(format));
     }
 
+    /// <summary>
+    /// Escapes a minimal set of characters (\n,\\,\r,\t,",\f,\b) by replacing
+    /// them with their escapes codes.
+    /// </summary>
+    /// <returns>The escaped version of <see cref="token"/></returns>
+    public static string Escape(string token) {
+      StringBuilder escaped = new StringBuilder();
+      for (int i = 0, j = token.Length; i < j; i++) {
+        char c = token[i];
+        if (c < kLargestEscapableChar) {
+          switch(c) {
+            case '\n':
+              escaped.Append("\\n");
+              break;
+
+            case '\r':
+              escaped.Append("\\r");
+              break;
+
+            case '\t':
+              escaped.Append("\\t");
+              break;
+
+            case '"':
+            case '\\':
+              escaped.Append("\\");
+              escaped.Append(c);
+              break;
+
+            case '\f':
+              escaped.Append("\\f");
+              break;
+
+            case '\b':
+              escaped.Append("\\b");
+              break;
+
+            default:
+              escaped.Append(c);
+              break;
+          }
+        } else {
+          escaped.Append(c);
+        }
+      }
+      return escaped.ToString();
+    }
+
+    /// <summary>
+    /// Escapes a minimal set of characters (\n,\\,\r,\t,",\f,\b) by replacing
+    /// them with their escapes codes within the last written token.
+    /// </summary>
+    public JsonStringBuilder Escape() {
+      for (int i = last_written_token_begin_, j = last_written_token_end_ ; i < j; i++) {
+        char c = string_builder_[i];
+        if (c < kLargestEscapableChar) {
+          switch (c) {
+            case '\n':
+              string_builder_.Replace("\n", "\\n", i, 1);
+              break;
+
+            case '\r':
+              string_builder_.Replace("\r", "\\r", i, 1);
+              break;
+
+            case '\t':
+              string_builder_.Replace("\t", "\\t", i, 1);
+              break;
+
+            case '"':
+              string_builder_.Replace("\"", "\\\"", i, 1);
+              break;
+
+            case '\\':
+              string_builder_.Replace("\\", "\\\\", i, 1);
+              break;
+
+            case '\f':
+              string_builder_.Replace("\f", "\\f", i, 1);
+              break;
+
+            case '\b':
+              string_builder_.Replace("\b", "\\b", i, 1);
+              break;
+          }
+        }
+      }
+      return this;
+    }
+
     JsonStringBuilder WriteReservedBeginToken(string token) {
+      last_written_token_begin_ = string_builder_.Length;
       switch (current_state_) {
         case State.None:
         case State.ReservedBeginToken:
@@ -445,20 +544,24 @@ namespace Nohros.Data.Json
           string_builder_.Append(token);
           break;
         case State.ContentToken:
-          string_builder_.Append("," + token);
+          string_builder_.Append(kValueSeparator + token);
           break;
       }
+      last_written_token_end_ = string_builder_.Length;
       current_state_ = State.ReservedBeginToken;
       return this;
     }
 
     JsonStringBuilder WriteReservedEndToken(string token) {
+      last_written_token_begin_ = string_builder_.Length;
       string_builder_.Append(token);
+      last_written_token_end_ = string_builder_.Length;
       current_state_ = State.ReservedEndToken;
       return this;
     }
 
     JsonStringBuilder WriteContentToken(string token) {
+      last_written_token_begin_ = string_builder_.Length;
       switch (current_state_) {
         case State.None:
         case State.ReservedBeginToken:
@@ -466,9 +569,10 @@ namespace Nohros.Data.Json
           break;
         case State.ReservedEndToken:
         case State.ContentToken:
-          string_builder_.Append("," + token);
+          string_builder_.Append(kValueSeparator + token);
           break;
       }
+      last_written_token_end_ = string_builder_.Length;
       current_state_ = State.ContentToken;
       return this;
     }
