@@ -229,7 +229,7 @@
     <Compile Include="type\IValidator.cs" />
     <Compile Include="data\json\JSONReader.cs" />
     <Compile Include="data\transferobjects\TransferQueue.cs" />
-    <Compile Include="data\json\tokens\JsonStringBuilder.cs" />
+    <Compile Include="data\json\JsonStringBuilder.cs" />
     <Compile Include="data\transferobjects\DataTransferObjects.cs" />
     <Compile Include="data\transferobjects\IDataTransferObject.cs" />
     <Compile Include="data\json\collection\JsonTable.cs" />
@@ -340,7 +340,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
