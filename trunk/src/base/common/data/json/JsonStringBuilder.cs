@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Nohros.Data.Json
@@ -28,31 +29,95 @@ namespace Nohros.Data.Json
     }
     #endregion
 
+    #region Token
+    /// <summary>
+    /// Wraps a token and its type into a single object.
+    /// </summary>
+    struct Token
+    {
+      readonly TokenType type_;
+      readonly string value_;
+
+      #region .ctor
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Token"/> class by using
+      /// the token value and type.
+      /// </summary>
+      /// <param name="value">
+      /// The token's values.
+      /// </param>
+      /// <param name="type">
+      /// The type of the token.
+      /// </param>
+      public Token(string value, TokenType type) {
+        value_ = value;
+        type_ = type;
+      }
+      #endregion
+
+      /// <summary>
+      /// Gets the  token's value.
+      /// </summary>
+      public string Value {
+        get { return value_; }
+      }
+
+      /// <summary>
+      /// Gets the type of the token.
+      /// </summary>
+      public TokenType Type {
+        get { return type_; }
+      }
+    }
+    #endregion
+
+    #region TokenType
+    /// <summary>
+    /// Provides a way to identify if a token is a structural token or a
+    /// token whose value was specified by the user.
+    /// </summary>
+    enum TokenType
+    {
+      Structural = 0,
+      Value = 1
+    }
+    #endregion
+
     const string kBeginObject = "{";
     const string kEndObject = "}";
     const string kBeginArray = "[";
     const string kEndArray = "]";
-    const string kNameSeparator = ":";
+    const string kNameValueSeparator = ":";
     const string kValueSeparator = ",";
     const string kDefaultNumberFormat = "G";
+    const string kDoubleQuote = "\"";
 
     const char kLargestEscapableChar = '\\';
+
     static readonly char[] escape_chars_ = new char[]
     {'"', '\n', '\t', '\\', '\f', '\b'};
 
-    readonly StringBuilder string_builder_;
-
+    readonly List<Token> tokens_;
     State current_state_;
-    int last_written_token_begin_;
-    int last_written_token_end_;
+    int last_written_token_position_;
+    string memoized_json_string_;
+
+    // Json numbers uses a format that is culture invariant and is equals to
+    // the numeric format used by US culture.
+    CultureInfo numeric_format_;
 
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonStringBuilder"/> class.
     /// </summary>
     public JsonStringBuilder() {
-      string_builder_ = new StringBuilder();
+      tokens_ = new List<Token>();
       current_state_ = State.None;
+      last_written_token_position_ = 0;
+
+      // Json numbers uses a format that is culture invariant and is equals to
+      // the numeric format used by US culture.
+      numeric_format_ = new CultureInfo("en-US");
     }
     #endregion
 
@@ -60,28 +125,34 @@ namespace Nohros.Data.Json
     /// Appends the begin array token to the current json string.
     /// </summary>
     public JsonStringBuilder WriteBeginArray() {
-      return WriteReservedBeginToken(kBeginArray);
+      ++last_written_token_position_;
+      return
+        WriteReservedBeginToken(new Token(kBeginArray, TokenType.Structural));
     }
 
     /// <summary>
     /// Appends the end array token to the current json string.
     /// </summary>
     public JsonStringBuilder WriteEndArray() {
-      return WriteReservedEndToken(kEndArray);
+      ++last_written_token_position_;
+      return WriteReservedEndToken(new Token(kEndArray, TokenType.Structural));
     }
 
     /// <summary>
     /// Appends the begin object token to the current json string.
     /// </summary>
     public JsonStringBuilder WriteBeginObject() {
-      return WriteReservedBeginToken(kBeginObject);
+      ++last_written_token_position_;
+      return
+        WriteReservedBeginToken(new Token(kBeginObject, TokenType.Structural));
     }
 
     /// <summary>
     /// Appends the end object token to the current json string.
     /// </summary>
     public JsonStringBuilder WriteEndObject() {
-      return WriteReservedEndToken(kEndObject);
+      ++last_written_token_position_;
+      return WriteReservedEndToken(new Token(kEndObject, TokenType.Structural));
     }
 
     /// <summary>
@@ -92,7 +163,11 @@ namespace Nohros.Data.Json
     /// <paramref name="value"/>.
     /// </remarks>
     public JsonStringBuilder WriteString(string value) {
-      return WriteContentToken("\"" + (value ?? "null") + "\"");
+      ++last_written_token_position_;
+      return
+        WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token((value ?? "null"), TokenType.Value))
+          .WriteContentToken(new Token(kDoubleQuote, TokenType.Structural));
     }
 
     /// <summary>
@@ -103,7 +178,8 @@ namespace Nohros.Data.Json
     /// not encloses the string in a double quotes.
     /// </remarks>
     public JsonStringBuilder WriteUnquotedString(string value) {
-      return WriteContentToken(value ?? "null");
+      ++last_written_token_position_;
+      return WriteContentToken(new Token(value ?? "null", TokenType.Value));
     }
 
     public JsonStringBuilder WriteStringArray(string[] data) {
@@ -111,6 +187,12 @@ namespace Nohros.Data.Json
       for (int i = 0, j = data.Length; i < j; i++) {
         WriteString(data[i]);
       }
+      // rewind the pointer to the begining of the JSON array
+      last_written_token_position_ -= data.Length;
+
+      // Write end array advances the pointer, which causes the pointer to
+      // points to the first token after the begin array token. This is ok,
+      // since the begin array token should not be escaped.
       return WriteEndArray();
     }
 
@@ -119,14 +201,27 @@ namespace Nohros.Data.Json
       for (int i = 0, j = tokens.Length; i < j; i++) {
         WriteUnquotedString(tokens[i].AsJson());
       }
+      // rewind the pointer to the begining of the JSON array.
+      last_written_token_position_ -= tokens.Length;
+
+      // Write end array advances the pointer, which causes the pointer to
+      // points to the first token after the begin array token. This is ok,
+      // since the begin array token should not be escaped.
       return WriteEndArray();
     }
 
     public JsonStringBuilder WriteTokenArray(IEnumerable<IJsonToken> tokens) {
       WriteBeginArray();
       foreach (IJsonToken token in tokens) {
+        // Since we do not now the size of the tokens collections we need to
+        // rewind the pointer at each iteration.
+        --last_written_token_position_;
         WriteUnquotedString(token.AsJson());
       }
+
+      // Write end array advances the pointer, which causes the pointer to
+      // points to the first token after the begin array token. This is ok,
+      // since the begin array token should not be escaped.
       return WriteEndArray();
     }
 
@@ -179,7 +274,10 @@ namespace Nohros.Data.Json
     /// format.
     /// </remarks>
     public JsonStringBuilder WriteNumber(int value, string format) {
-      return WriteContentToken(value.ToString(format));
+      ++last_written_token_position_;
+      return
+        WriteContentToken(new Token(value.ToString(format, numeric_format_),
+          TokenType.Value));
     }
 
     /// <summary>
@@ -201,7 +299,10 @@ namespace Nohros.Data.Json
     /// format.
     /// </remarks>
     public JsonStringBuilder WriteNumber(long value, string format) {
-      return WriteContentToken(value.ToString(format));
+      ++last_written_token_position_;
+      return
+        WriteContentToken(new Token(value.ToString(format, numeric_format_),
+          TokenType.Value));
     }
 
     /// <summary>
@@ -223,7 +324,10 @@ namespace Nohros.Data.Json
     /// format.
     /// </remarks>
     public JsonStringBuilder WriteNumber(double value, string format) {
-      return WriteContentToken(value.ToString(format));
+      ++last_written_token_position_;
+      return
+        WriteContentToken(new Token(value.ToString(format, numeric_format_),
+          TokenType.Value));
     }
 
     /// <summary>
@@ -247,8 +351,16 @@ namespace Nohros.Data.Json
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, string value) {
-      return WriteContentToken(
-        "\"" + name + "\"" + kNameSeparator + "\"" + value + "\"");
+      ++last_written_token_position_;
+      return
+        WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(name, TokenType.Value))
+          .WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(kNameValueSeparator,
+            TokenType.Structural))
+          .WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(value, TokenType.Value))
+          .WriteContentToken(new Token(kDoubleQuote, TokenType.Structural));
     }
 
     /// <summary>
@@ -269,8 +381,11 @@ namespace Nohros.Data.Json
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMemberName(string name) {
-      return WriteReservedBeginToken(
-        "\"" + name + "\"" + kNameSeparator);
+      ++last_written_token_position_;
+      return
+        WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(name, TokenType.Value))
+          .WriteContentToken(new Token(kNameValueSeparator, TokenType.Structural));
     }
 
     /// <summary>
@@ -375,7 +490,15 @@ namespace Nohros.Data.Json
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, int value, string format) {
-      return WriteContentToken("\"" + name + "\":" + value.ToString(format));
+      ++last_written_token_position_;
+      return
+        WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(name, TokenType.Value))
+          .WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(kNameValueSeparator,
+            TokenType.Structural))
+          .WriteContentToken(new Token(value.ToString(format, numeric_format_),
+            TokenType.Value));
     }
 
     /// <summary>
@@ -408,7 +531,15 @@ namespace Nohros.Data.Json
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, long value, string format) {
-      return WriteContentToken("\"" + name + "\":" + value.ToString(format));
+      ++last_written_token_position_;
+      return
+        WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(name, TokenType.Value))
+          .WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(kNameValueSeparator,
+            TokenType.Structural))
+          .WriteContentToken(new Token(value.ToString(format, numeric_format_),
+            TokenType.Value));
     }
 
     /// <summary>
@@ -442,7 +573,15 @@ namespace Nohros.Data.Json
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, double value,
       string format) {
-      return WriteContentToken("\"" + name + "\":" + value.ToString(format));
+      ++last_written_token_position_;
+      return
+        WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(name, TokenType.Value))
+          .WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(kNameValueSeparator,
+            TokenType.Structural))
+          .WriteContentToken(new Token(value.ToString(format, numeric_format_),
+            TokenType.Value));
     }
 
     /// <summary>
@@ -455,7 +594,7 @@ namespace Nohros.Data.Json
       for (int i = 0, j = token.Length; i < j; i++) {
         char c = token[i];
         if (c < kLargestEscapableChar) {
-          switch(c) {
+          switch (c) {
             case '\n':
               escaped.Append("\\n");
               break;
@@ -498,81 +637,110 @@ namespace Nohros.Data.Json
     /// them with their escapes codes within the last written token.
     /// </summary>
     public JsonStringBuilder Escape() {
-      for (int i = last_written_token_begin_, j = last_written_token_end_ ; i < j; i++) {
-        char c = string_builder_[i];
-        if (c < kLargestEscapableChar) {
-          switch (c) {
-            case '\n':
-              string_builder_.Replace("\n", "\\n", i, 1);
-              break;
+      for (int i = last_written_token_position_ - 1, j = tokens_.Count;
+           i < j;
+           i++) {
+        Token token = tokens_[i];
 
-            case '\r':
-              string_builder_.Replace("\r", "\\r", i, 1);
-              break;
+        // Structural tokens does should not be escaped.
+        if (token.Type == TokenType.Structural) {
+          continue;
+        }
 
-            case '\t':
-              string_builder_.Replace("\t", "\\t", i, 1);
-              break;
+        string new_token = string.Empty;
+        int last_replace_position = 0;
+        for (int m = 0, n = token.Value.Length; m < n; m++) {
+          char c = token.Value[m];
+          if (c < kLargestEscapableChar) {
+            string escape_string;
+            switch (c) {
+              case '\n':
+                escape_string = "\\n";
+                break;
 
-            case '"':
-              string_builder_.Replace("\"", "\\\"", i, 1);
-              break;
+              case '\r':
+                escape_string = "\\r";
+                break;
 
-            case '\\':
-              string_builder_.Replace("\\", "\\\\", i, 1);
-              break;
+              case '\t':
+                escape_string = "\\t";
+                break;
 
-            case '\f':
-              string_builder_.Replace("\f", "\\f", i, 1);
-              break;
+              case '"':
+                escape_string = "\\\"";
+                break;
 
-            case '\b':
-              string_builder_.Replace("\b", "\\b", i, 1);
-              break;
+              case '\\':
+                escape_string = "\\\\";
+                break;
+
+              case '\f':
+                escape_string = "\\f";
+                break;
+
+              case '\b':
+                escape_string = "\\b";
+                break;
+
+              default:
+                continue;
+            }
+
+            // If we are here, we found some character that needs to be escaped.
+            new_token +=
+              string.Concat(
+                token.Value.Substring(last_replace_position,
+                  m - last_replace_position), escape_string);
+
+            // set the last replace pointer to the location where the
+            // replacement was performed plus 1 escaped character.
+            last_replace_position += (m - last_replace_position + 1);
           }
+        }
+
+        // Replace the old token with the new token if the old one was
+        // modified.
+        if (last_replace_position != 0) {
+          tokens_[i] = new Token(new_token, token.Type);
         }
       }
       return this;
     }
 
-    JsonStringBuilder WriteReservedBeginToken(string token) {
-      last_written_token_begin_ = string_builder_.Length;
+    JsonStringBuilder WriteReservedBeginToken(Token token) {
       switch (current_state_) {
         case State.None:
         case State.ReservedBeginToken:
         case State.ReservedEndToken:
-          string_builder_.Append(token);
+          tokens_.Add(token);
           break;
         case State.ContentToken:
-          string_builder_.Append(kValueSeparator + token);
+          tokens_.Add(new Token(kValueSeparator, TokenType.Structural));
+          tokens_.Add(token);
           break;
       }
-      last_written_token_end_ = string_builder_.Length;
       current_state_ = State.ReservedBeginToken;
       return this;
     }
 
-    JsonStringBuilder WriteReservedEndToken(string token) {
-      last_written_token_begin_ = string_builder_.Length;
-      string_builder_.Append(token);
-      last_written_token_end_ = string_builder_.Length;
+    JsonStringBuilder WriteReservedEndToken(Token token) {
+      tokens_.Add(token);
       current_state_ = State.ReservedEndToken;
       return this;
     }
 
-    JsonStringBuilder WriteContentToken(string token) {
-      last_written_token_begin_ = string_builder_.Length;
+    JsonStringBuilder WriteContentToken(Token token) {
       switch (current_state_) {
         case State.None:
         case State.ReservedBeginToken:
-          string_builder_.Append(token);
+          tokens_.Add(token);
           break;
         case State.ReservedEndToken:
         case State.ContentToken:
-          string_builder_.Append(kValueSeparator + token);
+          tokens_.Add(new Token(kValueSeparator, TokenType.Structural));
+          tokens_.Add(token);
           break;
       }
-      last_written_token_end_ = string_builder_.Length;
       current_state_ = State.ContentToken;
       return this;
     }
@@ -582,7 +750,14 @@ namespace Nohros.Data.Json
     /// this builder.
     /// </summary>
     public override string ToString() {
-      return string_builder_.ToString();
+      if (memoized_json_string_ == null) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0, j = tokens_.Count; i < j; i++) {
+          builder.Append(tokens_[i].Value);
+        }
+        memoized_json_string_ = builder.ToString();
+      }
+      return memoized_json_string_;
     }
   }
 }
