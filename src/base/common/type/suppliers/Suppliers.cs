@@ -1,8 +1,6 @@
 ﻿using System;
 
-using Nohros.Concurrent;
-
-namespace Nohros.type
+namespace Nohros
 {
   /// <summary>
   /// A collection of useful suppliers.
