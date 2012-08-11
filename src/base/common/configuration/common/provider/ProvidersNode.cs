@@ -57,7 +57,7 @@ namespace Nohros.Configuration
       List<IProviderNode> providers = new List<IProviderNode>(ChildNodes.Count);
       foreach (IConfigurationNode node in ChildNodes) {
         IProviderNode provider = node as IProviderNode;
-        if (StringsAreEquals(provider.Group, group)) {
+        if (Strings.AreEquals(provider.Group, group)) {
           providers.Add(provider);
         }
       }

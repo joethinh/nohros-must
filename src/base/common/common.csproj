@@ -127,6 +127,7 @@
     <Compile Include="configuration\common\XmlElementsNodeParser.cs" />
     <Compile Include="configuration\IConfiguration.cs" />
     <Compile Include="configuration\IMustConfiguration.cs" />
+    <Compile Include="configuration\MustConfigurationBuilder.cs" />
     <Compile Include="configuration\Strings.cs" />
     <Compile Include="data\CommandBuilder.cs" />
     <Compile Include="logging\ForwardingLogger.cs" />
@@ -216,7 +217,7 @@
     <Compile Include="type\suppliers\MemoizingSupplier.cs" />
     <Compile Include="type\ParameterizedStringPart.cs" />
     <Compile Include="type\collections\ParameterizedStringPartParameterCollection.cs" />
-    <Compile Include="configuration\AbstractConfiguration.cs" />
+    <Compile Include="configuration\MustConfigurationLoader.cs" />
     <Compile Include="configuration\IConfigurationNode.cs" />
     <Compile Include="configuration\MustConfiguration.cs" />
     <Compile Include="type\StringMap.cs" />

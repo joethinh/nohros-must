@@ -59,7 +59,7 @@ namespace Nohros.Configuration
       IDictionary<string, string> options = new Dictionary<string, string>();
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element &&
-          StringsAreEquals(node.Name, Strings.kOptionsNodeName)) {
+          Strings.AreEquals(node.Name, Strings.kOptionsNodeName)) {
           // at this point we know for sure that the node is a XmlElement, so
           // [node.Attributes] will alwasy not null.
           foreach (XmlAttribute attribute in node.Attributes) {

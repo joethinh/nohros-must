@@ -82,7 +82,7 @@ namespace Nohros.Configuration
       out ILoginModuleNode login_module_node) {
       for (int i = 0, j = login_module_name.Length; i < j; i++) {
         login_module_node = login_module_nodes_[i];
-        if (StringsAreEquals(login_module_name, login_module_node.Name)) {
+        if (Strings.AreEquals(login_module_name, login_module_node.Name)) {
           return true;
         }
       }
