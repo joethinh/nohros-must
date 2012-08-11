@@ -45,7 +45,7 @@ namespace Nohros.Common.data.json
       Assert.AreEqual("\"name\":20.1", json);
 
       json = new JsonStringBuilder()
-        .WriteMember("name", (int)20)
+        .WriteMember("name", (int) 20)
         .ToString();
       Assert.AreEqual("\"name\":20", json);
 
@@ -53,6 +53,46 @@ namespace Nohros.Common.data.json
         .WriteMember("name", (long) 64000)
         .ToString();
       Assert.AreEqual("\"name\":64000", json);
+    }
+
+    [Test]
+    public void ShouldWriteJsonMemberName() {
+      string json = new JsonStringBuilder()
+        .WriteMemberName("name")
+        .ToString();
+      Assert.AreEqual("\"name\":", json);
+
+      json = new JsonStringBuilder()
+        .WriteMemberName("name")
+        .WriteNumber(20)
+        .ToString();
+      Assert.AreEqual("\"name\":20", json);
+
+      json = new JsonStringBuilder()
+        .WriteMemberName("name")
+        .WriteBeginObject()
+        .WriteMember("name", "value")
+        .WriteEndObject()
+        .ToString();
+      Assert.AreEqual("\"name\":{\"name\":\"value\"}", json);
+    }
+
+    [Test]
+    public void ShouldEscapeJsonStructuralCharacters() {
+      string escaped = JsonStringBuilder.Escape("\r\n\r\n");
+      Assert.AreEqual("\\r\\n\\r\\n", escaped);
+
+      escaped = JsonStringBuilder.Escape("escape:\r\n\r\n");
+      Assert.AreEqual("escape:\\r\\n\\r\\n", escaped);
+
+      escaped = JsonStringBuilder.Escape("escape:\b\f\r\n\t");
+      Assert.AreEqual("escape:\\b\\f\\r\\n\\t", escaped);
+    }
+
+    [Test]
+    public void ShouldEscapeunicodeCharacters() {
+      string json = JsonStringBuilder.Escape("C:\\p");
+      Assert.AreEqual("c:\\p", json);
     }
   }
 }
