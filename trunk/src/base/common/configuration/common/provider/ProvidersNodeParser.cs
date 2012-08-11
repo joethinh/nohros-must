@@ -29,7 +29,7 @@ namespace Nohros.Configuration
       ProvidersNode providers = new ProvidersNode();
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element &&
-          StringsAreEquals(node.Name, Strings.kProviderNodeName)) {
+          Strings.AreEquals(node.Name, Strings.kProviderNodeName)) {
           ProviderNode provider = ProviderNode.Parse(
             (XmlElement) node, base_directory);
           providers.AddChildNode(ProviderKey(provider.Name, provider.Group),

@@ -34,7 +34,7 @@ namespace Nohros.Configuration
       RepositoriesNode repositories = new RepositoriesNode(location);
       foreach(XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element &&
-          StringsAreEquals(node.Name, Strings.kRepositoryNodeName)) {
+          Strings.AreEquals(node.Name, Strings.kRepositoryNodeName)) {
           RepositoryNode repository = RepositoryNode.Parse(
             (XmlElement) node, location);
           repositories.AddChildNode(repository);

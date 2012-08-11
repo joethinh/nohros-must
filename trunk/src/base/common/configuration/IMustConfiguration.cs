@@ -1,8 +1,9 @@
 ﻿using System;
+using Nohros.Logging;
 
 namespace Nohros.Configuration
 {
-  public interface IMustConfiguration : IConfiguration
+  public interface IMustConfiguration
   {
     /// <summary>
     /// Gets the repositories that was configured for this application.
@@ -37,6 +38,6 @@ namespace Nohros.Configuration
     /// <summary>
     /// Gets the logging level that was configured for this application.
     /// </summary>
-    Logging.LogLevel LogLevel { get; }
+    LogLevel LogLevel { get; }
   }
 }

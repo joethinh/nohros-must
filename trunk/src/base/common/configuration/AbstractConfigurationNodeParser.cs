@@ -154,25 +154,5 @@ namespace Nohros.Configuration
       value = (att != null) ? att.Value : default_value;
       return (att != null);
     }
-
-    /// <summary>
-    /// Compares two strings for equality.
-    /// </summary>
-    /// <param name="str_a">
-    /// The first string to compare.
-    /// </param>
-    /// <param name="str_b">
-    /// The second string to compare.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if the two specified strings are equals; otherwise,
-    /// <c>false</c>.
-    /// </returns>
-    /// <remarks>
-    /// This method performs a ordinal case-insensitive comparison.
-    /// </remarks>
-    protected static bool StringsAreEquals(string str_a, string str_b) {
-      return AbstractConfiguration.StringsAreEquals(str_a, str_b);
-    }
   }
 }

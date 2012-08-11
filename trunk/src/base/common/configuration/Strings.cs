@@ -10,35 +10,47 @@ namespace Nohros
   /// </summary>
   public sealed class Strings
   {
-    internal const string kNohrosNodeName = "nohros";
-
-    internal const string kBaseDirectoryAttribute = "base-directory";
-    internal const string kNameAttribute = "name";
-    internal const string kLocationAttribute = "location";
-    internal const string kTypeAttribute = "type";
-    internal const string kGroupAttribute = "group";
-
-    internal const string kControlFlagAttribute = "control-flag";
+    public const string kNohrosNodeName = "nohros";
+    public const string kBaseDirectoryAttribute = "base-directory";
+    public const string kNameAttribute = "name";
+    public const string kLocationAttribute = "location";
+    public const string kTypeAttribute = "type";
+    public const string kGroupAttribute = "group";
+    public const string kControlFlagAttribute = "control-flag";
 
     // node names
-    internal const string kCommonNodeName = "common";
-    internal const string kWebNodeName = "common";
-    internal const string kRepositoriesNodeName = "repositories";
-    internal const string kRepositoryNodeName = "repository";
-    internal const string kProvidersNodeName = "providers";
-    internal const string kDataProvidersNodeName = "data";
-    internal const string kCacheProvidersNodeName = "cache";
-    internal const string kSimpleProvidersNodeName = "simple";
-    internal const string kProviderNodeName = "provider";
-    internal const string kOptionsNodeName = "options";
-    internal const string kLoginModulesNodeName = "login-modules";
-    internal const string kLoginModuleNodeName = "module";
-    internal const string kXmlElementsNodeName = "xml-elements";
+    public const string kCommonNodeName = "common";
+    public const string kWebNodeName = "common";
+    public const string kRepositoriesNodeName = "repositories";
+    public const string kRepositoryNodeName = "repository";
+    public const string kProvidersNodeName = "providers";
+    public const string kDataProvidersNodeName = "data";
+    public const string kCacheProvidersNodeName = "cache";
+    public const string kSimpleProvidersNodeName = "simple";
+    public const string kProviderNodeName = "provider";
+    public const string kOptionsNodeName = "options";
+    public const string kLoginModulesNodeName = "login-modules";
+    public const string kLoginModuleNodeName = "module";
+    public const string kXmlElementsNodeName = "xml-elements";
 
     /// <summary>
     /// The key that will be used to store the Xml element that was used to
     /// configure a <see cref="IMustConfiguration"/> object.
     /// </summary>
     public const string kRootXmlElementName = kNohrosNodeName;
+
+    /// <summary>
+    /// Compares two strings for equality using a ordinal string comparison.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <paramref name="str_a"/> is ordinally equals to
+    /// <paramref name="str_b"/>; otherwise, false.
+    /// </returns>
+    /// <remarks>
+    /// This method performs a ordinal case-insensitive comparison.
+    /// </remarks>
+    public static bool AreEquals(string str_a, string str_b) {
+      return string.Compare(str_a, str_b, StringComparison.Ordinal) == 0;
+    }
   }
 }

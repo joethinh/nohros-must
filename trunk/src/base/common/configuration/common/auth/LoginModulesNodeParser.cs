@@ -27,7 +27,7 @@ namespace Nohros.Configuration
       List<LoginModuleNode> login_module_nodes = new List<LoginModuleNode>();
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element &&
-          StringsAreEquals(node.Name, Strings.kLoginModuleNodeName)) {
+          Strings.AreEquals(node.Name, Strings.kLoginModuleNodeName)) {
           login_module_nodes.Add(
             LoginModuleNode.Parse(element, base_directory));
         }
