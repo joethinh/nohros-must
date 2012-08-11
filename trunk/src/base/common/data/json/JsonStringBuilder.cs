@@ -19,7 +19,6 @@ namespace Nohros.Data.Json
   /// </remarks>
   public class JsonStringBuilder
   {
-    #region State
     enum State
     {
       None = 0,
@@ -27,9 +26,7 @@ namespace Nohros.Data.Json
       ReservedEndToken = 2,
       ContentToken = 3
     }
-    #endregion
 
-    #region Token
     /// <summary>
     /// Wraps a token and its type into a single object.
     /// </summary>
@@ -69,9 +66,7 @@ namespace Nohros.Data.Json
         get { return type_; }
       }
     }
-    #endregion
 
-    #region TokenType
     /// <summary>
     /// Provides a way to identify if a token is a structural token or a
     /// token whose value was specified by the user.
@@ -81,7 +76,6 @@ namespace Nohros.Data.Json
       Structural = 0,
       Value = 1
     }
-    #endregion
 
     const string kBeginObject = "{";
     const string kEndObject = "}";
@@ -385,7 +379,9 @@ namespace Nohros.Data.Json
       return
         WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
           .WriteReservedBeginToken(new Token(name, TokenType.Value))
-          .WriteContentToken(new Token(kNameValueSeparator, TokenType.Structural));
+          .WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(kNameValueSeparator,
+            TokenType.Structural));
     }
 
     /// <summary>
@@ -591,43 +587,73 @@ namespace Nohros.Data.Json
     /// <returns>The escaped version of <see cref="token"/></returns>
     public static string Escape(string token) {
       StringBuilder escaped = new StringBuilder();
-      for (int i = 0, j = token.Length; i < j; i++) {
-        char c = token[i];
-        if (c < kLargestEscapableChar) {
-          switch (c) {
-            case '\n':
-              escaped.Append("\\n");
-              break;
+      int last_replace_position = 0;
+      for (int m = 0, n = token.Length; m < n; m++) {
+        char c = token[m];
 
-            case '\r':
-              escaped.Append("\\r");
-              break;
-
-            case '\t':
-              escaped.Append("\\t");
-              break;
-
-            case '"':
-            case '\\':
-              escaped.Append("\\");
-              escaped.Append(c);
-              break;
-
-            case '\f':
-              escaped.Append("\\f");
-              break;
-
-            case '\b':
-              escaped.Append("\\b");
-              break;
-
-            default:
-              escaped.Append(c);
-              break;
-          }
-        } else {
-          escaped.Append(c);
+        // don't escape standard text/numbers except '\' and the text delimiter
+        if (c >= ' ' && c < 128 && c != '\\') {
+          continue;
         }
+
+        string escape_string;
+        switch (c) {
+          case '\n':
+            escape_string = @"\n";
+            break;
+
+          case '\r':
+            escape_string = @"\r";
+            break;
+
+          case '\t':
+            escape_string = @"\t";
+            break;
+
+          case '"':
+            escape_string = "\\\"";
+            break;
+
+          case '\\':
+            escape_string = @"\\";
+            break;
+
+          case '\f':
+            escape_string = @"\f";
+            break;
+
+          case '\b':
+            escape_string = @"\b";
+            break;
+
+          case '\u0085': // Next Line
+            escape_string = @"\u0085";
+            break;
+
+          case '\u2028': // Line Separator
+            escape_string = @"\u2028";
+            break;
+
+          case '\u2029': // Paragraph Separator
+            escape_string = @"\u2029";
+            break;
+
+          default:
+            if (c <= '\u001f') {
+              escape_string = ToCharAsUnicode(c);
+              break;
+            }
+            continue;
+        }
+
+        // If we are here, we found some character that needs to be escaped.
+        escaped.Append(string.Concat(
+          token.Substring(last_replace_position,
+            m - last_replace_position), escape_string));
+
+        // set the last replace pointer to the location where the
+        // replacement was performed plus the size of the escaped character.
+        last_replace_position += (m - last_replace_position + 1);
       }
       return escaped.ToString();
     }
@@ -651,51 +677,71 @@ namespace Nohros.Data.Json
         int last_replace_position = 0;
         for (int m = 0, n = token.Value.Length; m < n; m++) {
           char c = token.Value[m];
-          if (c < kLargestEscapableChar) {
-            string escape_string;
-            switch (c) {
-              case '\n':
-                escape_string = "\\n";
-                break;
 
-              case '\r':
-                escape_string = "\\r";
-                break;
-
-              case '\t':
-                escape_string = "\\t";
-                break;
-
-              case '"':
-                escape_string = "\\\"";
-                break;
-
-              case '\\':
-                escape_string = "\\\\";
-                break;
-
-              case '\f':
-                escape_string = "\\f";
-                break;
-
-              case '\b':
-                escape_string = "\\b";
-                break;
-
-              default:
-                continue;
-            }
-
-            // If we are here, we found some character that needs to be escaped.
-            new_token +=
-              string.Concat(
-                token.Value.Substring(last_replace_position,
-                  m - last_replace_position), escape_string);
-
-            // set the last replace pointer to the location where the
-            // replacement was performed plus 1 escaped character.
-            last_replace_position += (m - last_replace_position + 1);
+          // don't escape standard text/numbers except '\' and the text delimiter
+          if (c >= ' ' && c < 128 && c != '\\') {
+            continue;
           }
+
+          string escape_string;
+          switch (c) {
+            case '\n':
+              escape_string = @"\n";
+              break;
+
+            case '\r':
+              escape_string = @"\r";
+              break;
+
+            case '\t':
+              escape_string = @"\t";
+              break;
+
+            case '"':
+              escape_string = "\\\"";
+              break;
+
+            case '\\':
+              escape_string = @"\\";
+              break;
+
+            case '\f':
+              escape_string = @"\f";
+              break;
+
+            case '\b':
+              escape_string = @"\b";
+              break;
+
+            case '\u0085': // Next Line
+              escape_string = @"\u0085";
+              break;
+
+            case '\u2028': // Line Separator
+              escape_string = @"\u2028";
+              break;
+
+            case '\u2029': // Paragraph Separator
+              escape_string = @"\u2029";
+              break;
+
+            default:
+              if (c <= '\u001f') {
+                escape_string = ToCharAsUnicode(c);
+                break;
+              }
+              continue;
+          }
+
+          // If we are here, we found some character that needs to be escaped.
+          new_token +=
+            string.Concat(
+              token.Value.Substring(last_replace_position,
+                m - last_replace_position), escape_string);
+
+          // set the last replace pointer to the location where the
+          // replacement was performed plus 1 escaped character.
+          last_replace_position += (m - last_replace_position + 1);
         }
 
         // Replace the old token with the new token if the old one was
@@ -705,6 +751,22 @@ namespace Nohros.Data.Json
         }
       }
       return this;
+    }
+
+    static string ToCharAsUnicode(char c) {
+      char h1 = IntToHex((c >> 12) & '\x000f');
+      char h2 = IntToHex((c >> 8) & '\x000f');
+      char h3 = IntToHex((c >> 4) & '\x000f');
+      char h4 = IntToHex(c & '\x000f');
+
+      return new string(new[] {'\\', 'u', h1, h2, h3, h4});
+    }
+
+    static char IntToHex(int n) {
+      if (n <= 9) {
+        return (char) (n + 48);
+      }
+      return (char) ((n - 10) + 97);
     }
 
     JsonStringBuilder WriteReservedBeginToken(Token token) {
