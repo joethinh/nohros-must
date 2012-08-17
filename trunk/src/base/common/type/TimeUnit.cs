@@ -126,7 +126,7 @@ namespace Nohros
     public static long ToUnixTime(DateTime duration)
     {
       DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, duration.Kind);
-      return (long)(duration.Subtract(epoch).Ticks * 0.0001);
+      return (long)(duration.Subtract(epoch).TotalMilliseconds);
     }
 
     /// <summary>

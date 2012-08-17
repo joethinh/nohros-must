@@ -70,6 +70,7 @@
     <Compile Include="type\suppliers\ExpiringMemoizingSupplier.cs" />
     <Compile Include="type\suppliers\MemoizingSupplierTests.cs" />
     <Compile Include="type\suppliers\Mocks.cs" />
+    <Compile Include="type\TimeUnitHelperTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\base\common\common.csproj">

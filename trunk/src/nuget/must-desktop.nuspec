@@ -21,6 +21,7 @@
     </references>
   </metadata>
   <files>
+    <file src="..\platform\desktop\CHANGES.txt" target="CHANGES.txt" />
     <file src="..\bin\release\nohros.desktop.dll" target="lib\nohros.desktop.dll" />
   </files>
 </package>
