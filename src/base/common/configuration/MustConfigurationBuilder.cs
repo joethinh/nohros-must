@@ -125,7 +125,7 @@ namespace Nohros.Configuration
     /// <typeparam name="TFactory"></typeparam>
     /// <typeparam name="TClass"></typeparam>
     /// <returns></returns>
-    public IMustConfiguration Build<TFactory, TClass>()
+    public virtual TClass Build<TFactory, TClass>()
       where TClass : IMustConfiguration
       where TFactory : IMustConfigurationFactory<TClass>, new() {
       return new TFactory().CreateMustConfiguration(this);
