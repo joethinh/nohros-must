@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Xml;
 using System.IO;
 using System.Reflection;
@@ -12,16 +13,40 @@ namespace Nohros.Configuration
   /// A class used to build a <see cref="IMustConfiguration"/> object from
   /// a Xml file.
   /// </summary>
-  public sealed class MustConfigurationLoader<T>
-    where T : MustConfiguration, new()
+  public class MustConfigurationLoader<TFactory, TClass>
+    where TClass : IMustConfiguration
+    where TFactory : IMustConfigurationFactory<TClass>, new()
   {
+    /// <summary>
+    /// Defines a method to handle the
+    /// <see cref="MustConfigurationLoader{TFactory,TClass}.LoadComplete"/> events.
+    /// </summary>
+    /// <param name="configuration">The <see cref="IMustConfiguration"/> that
+    /// has been loaded.</param>
+    public delegate void LoadCompleteEventHandler(
+      IMustConfiguration configuration);
+
+    /// <summary>
+    /// Defines a method to handle the
+    /// <see cref="MustConfigurationLoader{TFactory,TClass}.PreLoad"/> events.
+    /// </summary>
+    /// <param name="factory">The <see cref="IMustConfigurationFactory{T}"/>
+    /// that is used to create instances of the <see cref="MustConfiguration"/>
+    /// class.</param>
+    public delegate void PreLoadEventHandler(TFactory factory);
+
     internal const string kDefaultRootNodeName = "appconfig";
     const string kLogLevel = "log-level";
     const string kConfigurationFileKey = "NohrosConfigurationFile";
 
-    readonly MustConfiguration.Builder builder_;
+    readonly MustConfigurationBuilder builder_;
     FileInfo config_file_;
-    XmlElement element_;
+
+    /// <summary>
+    /// The raw XML element used to load the configuration.
+    /// </summary>
+    protected XmlElement element;
+
     string location_;
     bool remove_hyphen_from_attribute_names_;
     bool use_dynamic_property_assignment_;
@@ -29,16 +54,16 @@ namespace Nohros.Configuration
 
     #region .ctor
     /// <summary>
-    /// Initializezs a new instance of the <see cref="MustConfigurationLoader"/>
+    /// Initializezs a new instance of the <see cref="MustConfigurationLoader{TFactory,TClass}"/>
     /// class.
     /// </summary>
     public MustConfigurationLoader() {
-      element_ = null;
+      element = null;
       location_ = AppDomain.CurrentDomain.BaseDirectory;
       version_ = DateTime.Now;
       use_dynamic_property_assignment_ = true;
       remove_hyphen_from_attribute_names_ = true;
-      builder_ = new MustConfiguration.Builder();
+      builder_ = new MustConfigurationBuilder();
     }
     #endregion
 
@@ -62,7 +87,7 @@ namespace Nohros.Configuration
     /// the the <see cref="element"/> as the node parameter.
     /// </remarks>
     XmlElement GetConfigurationElement(string element_name) {
-      XmlElement local_element = SelectElement(element_, element_name);
+      XmlElement local_element = SelectElement(element, element_name);
       if (local_element == null) {
         throw new ConfigurationException(
           string.Format(
@@ -97,7 +122,7 @@ namespace Nohros.Configuration
     internal bool GetConfigurationElement(string element_name,
       out XmlElement element) {
       XmlNode node;
-      if (SelectNode(element_, element_name, XmlNodeType.Element, out node)) {
+      if (SelectNode(this.element, element_name, XmlNodeType.Element, out node)) {
         element = node as XmlElement;
         return true;
       }
@@ -346,8 +371,8 @@ namespace Nohros.Configuration
     /// </remarks>
     void Watcher_OnChanged(object source, FileSystemEventArgs e) {
       // sanity check the root XML element and configuration file for null
-      if (config_file_ != null && element_ != null)
-        Load(config_file_, element_.Name);
+      if (config_file_ != null && element != null)
+        Load(config_file_, element.Name);
       version_ = DateTime.Now;
     }
 
@@ -366,9 +391,9 @@ namespace Nohros.Configuration
     /// </remarks>
     void Watcher_OnRenamed(object source, RenamedEventArgs e) {
       // sanity check the root XML element for null
-      if (element_ != null) {
+      if (element != null) {
         config_file_ = new FileInfo(e.FullPath);
-        Load(config_file_, element_.Name);
+        Load(config_file_, element.Name);
       }
       version_ = DateTime.Now;
     }
@@ -381,9 +406,9 @@ namespace Nohros.Configuration
     /// <summary>
     /// Raises the <see cref="PreLoad"/> event.
     /// </summary>
-    void OnPreLoad() {
+    protected virtual void OnPreLoad(TFactory factory) {
       Listeners.SafeInvoke(PreLoad,
-        delegate(RunnableDelegate runnable) { runnable(); });
+        delegate(PreLoadEventHandler runnable) { runnable(factory); });
     }
 
     /// <summary>
@@ -399,7 +424,7 @@ namespace Nohros.Configuration
     /// this event will not be raised.
     /// </para>
     /// </remarks>
-    public event RunnableDelegate LoadComplete;
+    public event LoadCompleteEventHandler LoadComplete;
 
     /// <summary>
     /// Loads the configuration values based on the application's configuration
@@ -425,7 +450,7 @@ namespace Nohros.Configuration
     /// This methods watches the nohros configuration file for modifications
     /// and when it is modified the configuration values is reloaded.
     /// </para>
-    public IMustConfiguration LoadAndWatch() {
+    public TClass LoadAndWatch() {
       return Load("nohros", true);
     }
 
@@ -454,7 +479,7 @@ namespace Nohros.Configuration
     /// and when it is modified the configuration values is reloaded.
     /// </para>
     /// </remarks>
-    public IMustConfiguration LoadAndWatch(string root_node_name) {
+    public TClass LoadAndWatch(string root_node_name) {
       return Load(root_node_name, true);
     }
 
@@ -478,7 +503,7 @@ namespace Nohros.Configuration
     /// "nohros" that is descendant of the root node.
     /// </para>
     /// </remarks>
-    public IMustConfiguration Load() {
+    public TClass Load() {
       return Load("nohros", false);
     }
 
@@ -503,7 +528,7 @@ namespace Nohros.Configuration
     /// exists some place on the root nodes tree.
     /// </para>
     /// </remarks>
-    public IMustConfiguration Load(string root_node_name) {
+    public TClass Load(string root_node_name) {
       object element = ConfigurationManager.GetSection(root_node_name);
       if (element == null) {
         throw new ConfigurationException("The " + root_node_name +
@@ -512,7 +537,7 @@ namespace Nohros.Configuration
       return Load((XmlElement) element);
     }
 
-    IMustConfiguration Load(string root_node_name, bool watch) {
+    TClass Load(string root_node_name, bool watch) {
       string config_file_path =
         ConfigurationManager.AppSettings[kConfigurationFileKey];
 
@@ -580,8 +605,10 @@ namespace Nohros.Configuration
     /// configuration node, but a node with name "nohros" must exists on the
     /// node hierarchy.
     /// </remarks>
-    IMustConfiguration Parse(XmlElement element) {
-      ParseProperties(element);
+    TClass Parse(XmlElement element) {
+      TFactory t_factory = new TFactory();
+
+      OnPreLoad(t_factory);
 
       XmlElement root_node = GetRootNode(element);
 
@@ -616,15 +643,18 @@ namespace Nohros.Configuration
         }
       }
 
-      return
-        Activator.CreateInstance(typeof (T),
-          BindingFlags.CreateInstance | BindingFlags.Public |
-            BindingFlags.Instance | BindingFlags.NonPublic, null, builder_, null)
-          as T;
+      TClass configuration = t_factory.CreateMustConfiguration(builder_);
+
+      // Parse the internal defined properties.
+      ParseProperties(element, configuration);
+
+      OnLoadComplete(configuration);
+
+      return configuration;
     }
 
     /// <inheritdoc/>
-    public IMustConfiguration Load(string config_file_name,
+    public TClass Load(string config_file_name,
       string root_node_name) {
       string app_base_directory = AppDomain.CurrentDomain.BaseDirectory;
       string config_file_path = Path.Combine(app_base_directory,
@@ -636,7 +666,7 @@ namespace Nohros.Configuration
     }
 
     /// <inheritdoc/>
-    public IMustConfiguration Load(FileInfo config_file_info,
+    public TClass Load(FileInfo config_file_info,
       string root_node_name) {
       if (config_file_info == null) {
         throw new ArgumentNullException("config_file_info");
@@ -711,7 +741,7 @@ namespace Nohros.Configuration
     }
 
     /// <inheritdoc/>
-    public IMustConfiguration Load(XmlElement element) {
+    public TClass Load(XmlElement element) {
       // This is the main "load" method. This method is called by all the
       // others "load" methods overloads. The null check is done only by this
       // method.
@@ -719,13 +749,13 @@ namespace Nohros.Configuration
         throw new ArgumentNullException("element");
 
       // store the raw xml element into memory.
-      element_ = element;
+      this.element = element;
 
       return Parse(element);
     }
 
     /// <inheritdoc/>
-    public IMustConfiguration LoadAndWatch(string config_file_name,
+    public TClass LoadAndWatch(string config_file_name,
       string root_node_name) {
       FileInfo config_file_info =
         new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
@@ -734,10 +764,10 @@ namespace Nohros.Configuration
     }
 
     /// <inheritdoc/>
-    public IMustConfiguration LoadAndWatch(FileInfo config_file_info,
+    public TClass LoadAndWatch(FileInfo config_file_info,
       string root_node_name) {
       // load the configuration file
-      IMustConfiguration config = Load(config_file_info, root_node_name);
+      TClass config = Load(config_file_info, root_node_name);
 
       // monitor the file and reload the configuration values
       // whenever the config file is modified.
@@ -790,9 +820,9 @@ namespace Nohros.Configuration
     /// <summary>
     /// Raises the <see cref="LoadComplete"/> event.
     /// </summary>
-    void OnLoadComplete() {
+    protected virtual void OnLoadComplete(TClass configuration) {
       Listeners.SafeInvoke(LoadComplete,
-        delegate(RunnableDelegate runnable) { runnable(); });
+        delegate(LoadCompleteEventHandler runnable) { runnable(configuration); });
     }
 
     /// <summary>
@@ -829,19 +859,17 @@ namespace Nohros.Configuration
     /// false.
     /// </para>
     /// </remarks>
-    void ParseProperties(XmlElement element) {
-#if DEBUG
+    public void ParseProperties(XmlElement element, TClass configuration) {
       if (element == null) {
         throw new ArgumentNullException("element");
       }
-#endif
 
       if (!use_dynamic_property_assignment_)
         return;
 
       XmlAttributeCollection attributes = element.Attributes;
 
-      Type type = GetType();
+      Type type = typeof (TClass);
       PropertyInfo[] properties = type.GetProperties();
 
       // loop for each attribute defined in the given element and attempt to
@@ -859,12 +887,12 @@ namespace Nohros.Configuration
           && property.CanWrite) {
           Type property_type = property.PropertyType;
           if (property_type.Name == "String") {
-            property.SetValue(this, property_value, null);
+            property.SetValue(configuration, property_value, null);
           } else if (property_type.IsValueType) {
             // try to convert the attribute value to the type of the property
             System.ValueType value;
             if (ValueTypes.TryParse(property_type, property_value, out value)) {
-              property.SetValue(this, value, null);
+              property.SetValue(configuration, value, null);
             }
           }
         }

@@ -29,7 +29,7 @@ namespace Nohros.Configuration
     /// <summary>
     /// Initializes a new instance of the <see cref="MustConfiguration"/> class.
     /// </summary>
-    public MustConfiguration(Builder builder) {
+    public MustConfiguration(MustConfigurationBuilder builder) {
       properties_ = builder.Properties;
       repositories_ = builder.Repositories;
       providers_ = builder.Providers;
