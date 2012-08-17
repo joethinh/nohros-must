@@ -1,2 +1,4 @@
 Version 1.4.1
   * Make MustConfiguration.Build virtual and changed its return type to TClass.
+
+Version 1.4.2

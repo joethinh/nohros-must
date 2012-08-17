@@ -27,6 +27,18 @@ namespace Nohros.Configuration
 
     #region .ctor
     /// <summary>
+    /// Initializes a new instance of the <see cref="MustConfiguration"/> class
+    /// that is empty.
+    /// </summary>
+    public MustConfiguration() {
+      properties_ = new DictionaryValue();
+      repositories_ = new RepositoriesNode();
+      providers_ = new ProvidersNode();
+      login_modules_ = new LoginModulesNode();
+      xml_elements_ = new XmlElementsNode();
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="MustConfiguration"/> class.
     /// </summary>
     public MustConfiguration(MustConfigurationBuilder builder) {
