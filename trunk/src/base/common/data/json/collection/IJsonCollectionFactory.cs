@@ -11,9 +11,9 @@ namespace Nohros.Data.Json
   /// </summary>
   /// <remarks>
   /// This interface implies a constructor that receives a
-  /// <see cref="IMustConfiguration"/> object or a constructor with no
+  /// <see cref="Nohros.Configuration.IConfiguration"/> object or a constructor with no
   /// parameters. The constructor that receives a
-  /// <see cref="IMustConfiguration"/> should be the preferred constructor to
+  /// <see cref="Nohros.Configuration.IConfiguration"/> should be the preferred constructor to
   /// be use for instantiate the <see cref="IJsonCollectionFactory"/> class.
   /// </remarks>
   public interface IJsonCollectionFactory

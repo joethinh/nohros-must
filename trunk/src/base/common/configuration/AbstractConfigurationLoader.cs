@@ -17,7 +17,7 @@ namespace Nohros.Configuration
   {
     /// <summary>
     /// Creates an instance of the <see cref="T"/> using the configuration
-    /// information contained in <typeparamref name="builder"/>.
+    /// information contained in <paramref name="builder"/>.
     /// </summary>
     /// <param name="builder">
     /// A <see cref="ConfigurationBuilder"/> class that contains the configured
@@ -54,7 +54,7 @@ namespace Nohros.Configuration
     const string kLogLevel = "log-level";
     const string kConfigurationFileKey = "NohrosConfigurationFile";
 
-    readonly ConfigurationBuilder builder_;
+    readonly IConfigurationBuilder<T> builder_;
     FileInfo config_file_;
 
     /// <summary>
@@ -69,24 +69,19 @@ namespace Nohros.Configuration
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="AbstractConfigurationLoader{T}"/>
-    /// class that creates instances of <typeparamref name="T"/> through
-    /// reflection.
+    /// Initializes a new instance of the
+    /// <see cref="AbstractConfigurationLoader{T}"/> class that load the values
+    /// of a XML file into a instance of instances of <typeparamref name="T"/>
+    /// created through <paramref name="builder"/>.
     /// </summary>
-    /// <remarks>
-    /// This constructor implies that <typeparamref name="T"/> implements a
-    /// constructor with the folowing signature:
-    /// <code>
-    /// .ctor(AbstractConfigurationLoader, ConfigurationBuilder)
-    /// </code>
-    /// </remarks>
-    protected AbstractConfigurationLoader() {
+    protected AbstractConfigurationLoader(IConfigurationBuilder<T> builder)
+    {
       element = null;
       location_ = AppDomain.CurrentDomain.BaseDirectory;
       version_ = DateTime.Now;
       use_dynamic_property_assignment_ = true;
       remove_hyphen_from_attribute_names_ = true;
-      builder_ = new ConfigurationBuilder();
+      builder_ = builder;
     }
     #endregion
 
@@ -653,7 +648,7 @@ namespace Nohros.Configuration
           }
         }
       }
-      T configuration = CreateConfiguration(builder_);
+      T configuration = builder_.Build();
 
       OnLoadComplete(configuration);
 

@@ -11,11 +11,11 @@ namespace Nohros.Logging
   /// <remarks>
   /// This interfaces implies a constructor taht receive no parameters or
   /// a constructor that receives a parameter of type
-  /// <see cref="IMustConfiguration"/>.
+  /// <see cref="Nohros.Configuration.IConfiguration"/>.
   /// <para>
   /// When instances of the <see cref="ILoggerFactory"/> is dynamically created
   /// you need to try to build it using the constructor that receives a
-  /// parameter of type <see cref="IMustConfiguration"/> first, and if it fails
+  /// parameter of type <see cref="Nohros.Configuration.IConfiguration"/> first, and if it fails
   /// falls back to the constructor that receives no parameters.
   /// </para>
   /// </remarks>

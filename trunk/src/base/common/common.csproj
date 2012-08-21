@@ -125,12 +125,14 @@
     <Compile Include="configuration\common\IXmlElementsNode.cs" />
     <Compile Include="configuration\common\XmlElementsNode.cs" />
     <Compile Include="configuration\common\XmlElementsNodeParser.cs" />
-    <Compile Include="configuration\IConfiguration.cs" />
+    <Compile Include="configuration\ConfigurationBuilder.cs" />
+    <Compile Include="configuration\ConfigurationLoader.cs" />
+    <Compile Include="configuration\IConfigurationBuilder.cs" />
     <Compile Include="configuration\IMustConfiguration.cs" />
-    <Compile Include="configuration\IMustConfigurationFactory.cs" />
-    <Compile Include="configuration\MustConfigurationBuilder.cs" />
+    <Compile Include="configuration\AbstractConfigurationBuilder.cs" />
     <Compile Include="configuration\Strings.cs" />
     <Compile Include="data\CommandBuilder.cs" />
+    <Compile Include="io\Path.cs" />
     <Compile Include="logging\ForwardingLogger.cs" />
     <Compile Include="logging\IForwardingLogger.cs" />
     <Compile Include="providers\data\ConnectionProviderLoader.cs" />
@@ -177,6 +179,8 @@
     <Compile Include="exception\ConfigurationException.cs" />
     <Compile Include="logging\ILoggerFactory.cs" />
     <Compile Include="providers\data\IConnectionProvider.cs" />
+    <Compile Include="type\events\Callable.cs" />
+    <Compile Include="type\Factories.cs" />
     <Compile Include="Resources\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -218,9 +222,9 @@
     <Compile Include="type\suppliers\MemoizingSupplier.cs" />
     <Compile Include="type\ParameterizedStringPart.cs" />
     <Compile Include="type\collections\ParameterizedStringPartParameterCollection.cs" />
-    <Compile Include="configuration\MustConfigurationLoader.cs" />
+    <Compile Include="configuration\AbstractConfigurationLoader.cs" />
     <Compile Include="configuration\IConfigurationNode.cs" />
-    <Compile Include="configuration\MustConfiguration.cs" />
+    <Compile Include="configuration\Configuration.cs" />
     <Compile Include="type\StringMap.cs" />
     <Compile Include="type\CacheEntry.cs" />
     <Compile Include="type\collections\IInOrderVisitable.cs" />
