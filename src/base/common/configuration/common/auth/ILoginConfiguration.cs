@@ -69,7 +69,7 @@ namespace Nohros.Configuration
   /// respective value.
   /// </para>
   /// </remarks>
-  public interface ILoginConfiguration : IMustConfiguration
+  public interface ILoginConfiguration : IConfiguration
   {
     /// <summary>
     /// Gets the login modules that was configured for this application.

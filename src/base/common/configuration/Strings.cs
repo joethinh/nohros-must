@@ -35,7 +35,7 @@ namespace Nohros
 
     /// <summary>
     /// The key that will be used to store the Xml element that was used to
-    /// configure a <see cref="IMustConfiguration"/> object.
+    /// configure a <see cref="Nohros.Configuration.IConfiguration"/> object.
     /// </summary>
     public const string kRootXmlElementName = kNohrosNodeName;
 

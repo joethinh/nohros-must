@@ -19,7 +19,6 @@ namespace Nohros.Configuration
     }
     #endregion
 
-    #region IProvidersNode Members
     /// <inheritdoc/>
     public bool GetProviderNode(string simple_provider_name,
       out IProviderNode simple_provider) {
@@ -65,8 +64,7 @@ namespace Nohros.Configuration
     }
 
     /// <inheritdoc/>
-    IProviderNode IProvidersNode.this[
-      string provider_name, string provider_group] {
+    public IProviderNode this[string provider_name, string provider_group] {
       get { return GetProviderNode(provider_name, provider_group); }
     }
 
@@ -79,7 +77,6 @@ namespace Nohros.Configuration
     IEnumerator IEnumerable.GetEnumerator() {
       return GetEnumerator();
     }
-    #endregion
 
     static string ProviderKey(string name, string group) {
       return "group:" + group + ",name:" + name;

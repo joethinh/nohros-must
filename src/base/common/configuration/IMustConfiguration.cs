@@ -3,7 +3,7 @@ using Nohros.Logging;
 
 namespace Nohros.Configuration
 {
-  public interface IMustConfiguration
+  public interface IConfiguration
   {
     /// <summary>
     /// Gets the repositories that was configured for this application.
