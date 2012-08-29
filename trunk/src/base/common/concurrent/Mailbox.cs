@@ -29,7 +29,7 @@ namespace Nohros.Concurrent
     readonly YQueue<T> message_queue_;
 
     // There is only one thread receiving from the mailbox, but there is
-    // arbitrary number of threads sending. Given that |pipe| requires
+    // arbitrary number of threads sending. Given that |message_queue_| requires
     // synchronized access on both of its endpoints, we have to synchronize
     // the sending side.
     readonly object mutex_;
@@ -45,7 +45,7 @@ namespace Nohros.Concurrent
     readonly SynchronizationContext synchronization_context_;
 
     readonly IExecutor executor_;
- 
+
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="Mailbox{T}"/> class by

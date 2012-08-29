@@ -7,11 +7,13 @@ using Nohros.Resources;
 namespace Nohros.Concurrent
 {
   /// <summary>
-  /// <see cref="YQueue"/> is an efficient queue implementation ported from
-  /// the zeromq library. <see cref="YQueue"/> allows one thread to use the
+  /// <see cref="YQueue{T}"/> is an efficient queue implementation ported from
+  /// the zeromq library. <see cref="YQueue{T}"/> allows one thread to use the
   /// <see cref="Enqueue"/> function while another one use the
-  /// <see cref="Dequeue"/> function without locking. <typeparam name="T"> is
-  /// the type of the objects in the queue.</typeparam>
+  /// <see cref="Dequeue(out T)"/> function without locking.
+  /// <typeparam name="T">
+  /// The type of the objects in the queue.
+  /// </typeparam>
   /// </summary>
   public class YQueue<T>
   {
@@ -39,7 +41,7 @@ namespace Nohros.Concurrent
     }
     #endregion
 
-    int granularity_;
+    readonly int granularity_;
     volatile Chunk head_chunk_, tail_chunk_, divider_;
 
     // People are likely to produce and consume at similar rates. In this
@@ -124,12 +126,12 @@ namespace Nohros.Concurrent
 
     /// <summary>
     /// Removes and returns the object at the beginning of the
-    /// <see cref="YQueue&lt;T&gt;"/>.
+    /// <see cref="YQueue{T}"/>.
     /// </summary>
     /// <returns><typeparamref name="T"/> The object that is removed from the
-    /// <see cref="YQueue&lt;T&gt;"/></returns>
+    /// <see cref="YQueue{T}"/></returns>
     /// <exception cref="InvalidOperationException">The
-    /// <see cref="YQueue&lt;T&gt;"/> is empty.</exception>
+    /// <see cref="YQueue{T}"/> is empty.</exception>
     public T Dequeue() {
       T t;
       bool ok = Dequeue(out t);
@@ -182,7 +184,7 @@ namespace Nohros.Concurrent
 
           // Here the |head_pos| is less than or equals to |tail_pos|, get
           // the first unconsumed element and increments |head_pos| to publish
-          // that the queue item was removed.
+          // the queue item removal.
           t = current_chunk.values[current_chunk.head_pos++];
           return true;
         }
