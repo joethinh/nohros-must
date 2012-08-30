@@ -18,8 +18,8 @@ namespace Nohros.Configuration
     #endregion
 
     public override Configuration CreateConfiguration(
-      ConfigurationBuilder builder) {
-      return new Configuration(builder);
+      IConfigurationBuilder<Configuration> builder) {
+      return new Configuration(builder as ConfigurationBuilder);
     }
   }
 }

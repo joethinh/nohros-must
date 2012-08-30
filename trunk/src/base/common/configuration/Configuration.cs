@@ -40,7 +40,7 @@ namespace Nohros.Configuration
     /// <summary>
     /// Initializes a new instance of the <see cref="Configuration"/> class.
     /// </summary>
-    public Configuration(ConfigurationBuilder builder) {
+    public Configuration(IConfigurationBuilder<IConfiguration> builder) {
       properties_ = builder.Properties;
       repositories_ = builder.Repositories;
       providers_ = builder.Providers;
