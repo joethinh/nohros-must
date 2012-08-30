@@ -171,7 +171,6 @@ namespace Nohros.Concurrent
           // we have reached the end of the chunk, go to the next.
           if (tail_pos == granularity_ - 1) {
             divider_ = current_chunk;
-            continue;
           } else {
             // we already consume all the available itens.
             t = default(T);
