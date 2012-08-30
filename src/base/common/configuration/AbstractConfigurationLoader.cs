@@ -26,7 +26,7 @@ namespace Nohros.Configuration
     /// <returns>
     /// The newly created object.
     /// </returns>
-    public abstract T CreateConfiguration(ConfigurationBuilder builder);
+    public abstract T CreateConfiguration(IConfigurationBuilder<T> builder);
 
     /// <summary>
     /// Defines a method to handle the
@@ -54,7 +54,11 @@ namespace Nohros.Configuration
     const string kLogLevel = "log-level";
     const string kConfigurationFileKey = "NohrosConfigurationFile";
 
-    readonly IConfigurationBuilder<T> builder_;
+    /// <summary>
+    /// The <see cref="IConfigurationBuilder{T}"/> object specified on
+    /// constructor.
+    /// </summary>
+    protected readonly IConfigurationBuilder<T> builder;
     FileInfo config_file_;
 
     /// <summary>
@@ -81,7 +85,7 @@ namespace Nohros.Configuration
       version_ = DateTime.Now;
       use_dynamic_property_assignment_ = true;
       remove_hyphen_from_attribute_names_ = true;
-      builder_ = builder;
+      this.builder = builder;
     }
     #endregion
 
@@ -617,7 +621,7 @@ namespace Nohros.Configuration
       // could be overloaded by a configuration key. So, we need to do the
       // first logger instantiation here and adjust the threshold level if
       // needed.
-      builder_.SetLogLevel(GetLogLevel(root_node));
+      builder.SetLogLevel(GetLogLevel(root_node));
 
       // parse any internal property
       if (use_dynamic_property_assignment_) {
@@ -629,13 +633,13 @@ namespace Nohros.Configuration
         if (node.NodeType == XmlNodeType.Element) {
           string name = node.Name;
           if (Strings.AreEquals(name, Strings.kRepositoriesNodeName)) {
-            builder_.SetRepositories(RepositoriesNode.Parse((XmlElement) node,
+            builder.SetRepositories(RepositoriesNode.Parse((XmlElement) node,
               location_));
           } else if (Strings.AreEquals(name, Strings.kProvidersNodeName)) {
-            builder_.SetProviders(ProvidersNode.Parse((XmlElement) node,
+            builder.SetProviders(ProvidersNode.Parse((XmlElement) node,
               location_));
           } else if (Strings.AreEquals(name, Strings.kLoginModulesNodeName)) {
-            builder_.SetLoginModules(LoginModulesNode.Parse((XmlElement) node,
+            builder.SetLoginModules(LoginModulesNode.Parse((XmlElement) node,
               location_));
           } else if (Strings.AreEquals(name, Strings.kXmlElementsNodeName)) {
             XmlElementsNode xml_elements =
@@ -644,11 +648,11 @@ namespace Nohros.Configuration
             // Add the element that was used to configure this class to the
             // collection of xml elements nodes.
             xml_elements[Strings.kRootXmlElementName] = element;
-            builder_.SetXmlElements(xml_elements);
+            builder.SetXmlElements(xml_elements);
           }
         }
       }
-      T configuration = builder_.Build();
+      T configuration = builder.Build();
 
       OnLoadComplete(configuration);
 
@@ -737,9 +741,8 @@ namespace Nohros.Configuration
 
           return Load((XmlElement) node);
         }
-      } else {
-        throw new FileNotFoundException(config_file_info.FullName);
       }
+      throw new FileNotFoundException(config_file_info.FullName);
     }
 
     /// <inheritdoc/>
