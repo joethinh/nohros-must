@@ -625,7 +625,7 @@ namespace Nohros.Configuration
 
       // parse any internal property
       if (use_dynamic_property_assignment_) {
-        ParseProperties(root_node, this);
+        ParseProperties(element, this);
       }
 
       // parse the know configuration nodes.
