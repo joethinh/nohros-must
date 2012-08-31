@@ -5,16 +5,16 @@ using NUnit.Framework;
 
 namespace Nohros.Configuration
 {
-  public class MustConfigurationMock : MustConfiguration
+  public class ConfigurationMock : Configuration
   {
     #region .ctor
-    public MustConfigurationMock(Builder builder) : base(builder) {
+    public ConfigurationMock(Builder builder) : base(builder) {
     }
     #endregion
   }
 
-  public class MustConfigurationLoaderTests :
-    MustConfigurationLoader<MustConfigurationMock>
+  public class ConfigurationLoaderTests :
+    ConfigurationLoader<ConfigurationMock>
   {
     string config_file_path_;
 
@@ -27,12 +27,12 @@ namespace Nohros.Configuration
     [Test]
     [ExpectedException(typeof(ConfigurationException))]
     public void ShouldThrowConfigurationExceptionWhenAppConfigKeyIsMissing() {
-      new MustConfigurationLoaderTests().Load();
+      new ConfigurationLoaderTests().Load();
     }
 
     [Test]
     public void ShouldReturnBaseDirectoryWhenLocationIsNotSpecified() {
-      var loader = new MustConfigurationLoaderTests();
+      var loader = new ConfigurationLoaderTests();
       Assert.AreEqual(loader.Location, AppDomain.CurrentDomain.BaseDirectory);
     }
 

@@ -14,7 +14,7 @@ namespace Nohros.Logging.log4net
     /// using the specified logger settings.
     /// </summary>
     /// <param name="settings">
-    /// A <see cref="IMustConfiguration"/> object taht can be used to get
+    /// A <see cref="Nohros.Configuration.IConfiguration"/> object taht can be used to get
     /// configuration inforamtions related with the logger to be created - such
     /// as the configuration of a related logger.
     /// </param>

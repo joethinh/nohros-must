@@ -88,7 +88,7 @@ namespace Nohros.Toolkit.Messaging
     /// </para>
     /// </remarks>
     public MessengerChain CreateMessengerChain(string name,
-      MustConfiguration config) {
+      Configuration.Configuration config) {
 
       MessengerChain messenger_chain = new MessengerChain(name);
 

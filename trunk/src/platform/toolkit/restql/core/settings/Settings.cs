@@ -12,7 +12,7 @@ namespace Nohros.Toolkit.RestQL
   /// <summary>
   /// The application settings.
   /// </summary>
-  public partial class Settings : MustConfiguration, IConfiguration,
+  public partial class Settings : Configuration.Configuration, IConfiguration,
                                   IMustConfiguration, ISettings
   {
     const string kRestQLSettingsFileName = "restql.config";
