@@ -19,7 +19,7 @@ namespace Nohros.Test.Configuration
     public class NohrosConfiguration_
     {
         #region TestingConfiguration
-        public class TestingConfiguration : MustConfiguration
+        public class TestingConfiguration : Nohros.Configuration.Configuration
         {
             string name_;
 
@@ -162,14 +162,14 @@ namespace Nohros.Test.Configuration
 
         [Test]
         public void DefaultConfiguration() {
-            MustConfiguration config = MustConfiguration.DefaultConfiguration;
+            Nohros.Configuration.Configuration config = Nohros.Configuration.Configuration.DefaultConfiguration;
             Assert.IsNotNull(config.CommonNodeParser);
             Assert.IsNotNull(config.WebNode);
         }
 
         [Test]
         public void ChainNode() {
-            MustConfiguration config = MustConfiguration.DefaultConfiguration;
+            Nohros.Configuration.Configuration config = Nohros.Configuration.Configuration.DefaultConfiguration;
             ChainNode pseudo_chain = config.ChainNodes["pseudo-chain"] as ChainNode;
             Assert.IsNotNull(pseudo_chain);
             Assert.AreEqual("SmsMessenger", pseudo_chain.Nodes[0]);
@@ -179,13 +179,13 @@ namespace Nohros.Test.Configuration
         [Test]
         [ExpectedException(typeof(ConfigurationErrorsException))]
         public void LoginModuleWithInvalidFlag() {
-            MustConfiguration config = MustConfiguration.DefaultConfiguration;
+            Nohros.Configuration.Configuration config = Nohros.Configuration.Configuration.DefaultConfiguration;
             config.Load("login-module-flag");
         }
 
         [Test]
         public void LoginModuleNode() {
-            MustConfiguration config = MustConfiguration.DefaultConfiguration;
+            Nohros.Configuration.Configuration config = Nohros.Configuration.Configuration.DefaultConfiguration;
             config.Load("login-module-node");
 
             LoginModuleNode node = config.LoginModuleNodes["auth-login-module"];
@@ -198,7 +198,7 @@ namespace Nohros.Test.Configuration
 
         [Test]
         public void Threshold() {
-            MustConfiguration config = MustConfiguration.DefaultConfiguration;
+            Nohros.Configuration.Configuration config = Nohros.Configuration.Configuration.DefaultConfiguration;
             Assert.AreEqual(log4net.Core.Level.Debug, FileLogger.ForCurrentProcess.Threshold);
             Assert.AreEqual(log4net.Core.Level.Debug, ConsoleLogger.ForCurrentProcess.Threshold);
         }
