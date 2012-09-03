@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Nohros.Logging;
-using Nohros.Resources;
 using Nohros.Configuration;
 
 namespace Nohros.Providers
@@ -21,6 +19,7 @@ namespace Nohros.Providers
   /// parameters.
   /// </para>
   /// </remarks>
+  [Obsolete("This class has been deprecated. Plese use the RuntimeTypeFactory instead.")]
   public sealed class ProviderFactory<T> where T : class
   {
     /// <summary>

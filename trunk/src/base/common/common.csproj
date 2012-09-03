@@ -128,11 +128,14 @@
     <Compile Include="configuration\ConfigurationBuilder.cs" />
     <Compile Include="configuration\ConfigurationLoader.cs" />
     <Compile Include="configuration\IConfigurationBuilder.cs" />
+    <Compile Include="configuration\IConfigurationLoader.cs" />
     <Compile Include="configuration\IMustConfiguration.cs" />
     <Compile Include="configuration\AbstractConfigurationBuilder.cs" />
     <Compile Include="configuration\Strings.cs" />
     <Compile Include="data\CommandBuilder.cs" />
+    <Compile Include="CommandLine.cs" />
     <Compile Include="io\Path.cs" />
+    <Compile Include="IRuntimeType.cs" />
     <Compile Include="logging\ForwardingLogger.cs" />
     <Compile Include="logging\IForwardingLogger.cs" />
     <Compile Include="providers\data\ConnectionProviderLoader.cs" />
@@ -179,8 +182,9 @@
     <Compile Include="exception\ConfigurationException.cs" />
     <Compile Include="logging\ILoggerFactory.cs" />
     <Compile Include="providers\data\IConnectionProvider.cs" />
+    <Compile Include="RuntimeType.cs" />
     <Compile Include="type\events\Callable.cs" />
-    <Compile Include="type\Factories.cs" />
+    <Compile Include="type\RuntimeTypeFactory.cs" />
     <Compile Include="Resources\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -346,7 +350,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

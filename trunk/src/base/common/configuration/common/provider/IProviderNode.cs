@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Configuration
 {
@@ -8,33 +7,8 @@ namespace Nohros.Configuration
   /// Defines the methods and properties that all the configuration nodes that
   /// are related with some type of provider should implements.
   /// </summary>
-  public interface IProviderNode : IConfigurationNode
+  public interface IProviderNode : IConfigurationNode, IRuntimeType
   {
-    /// <summary>
-    /// Gets the assembly-qualified name of the provider type, which includes
-    /// the name of the assembly from which the provider type was loaded.
-    /// </summary>
-    /// <seealso cref="System.Type.AssemblyQualifiedName"/>
-    string Type { get; }
-
-    /// <summary>
-    /// Gets a string representing the fully qualified path to the directory
-    /// where the assembly associated with the provider is located.
-    /// </summary>
-    /// <value>
-    /// The fully qualified path to the folder where the provider assembly is
-    /// stored.
-    /// </value>
-    /// <remarks>
-    /// The assembly location must be an absolute path or a path relative to
-    /// the configuration file.
-    /// <para>
-    /// The default location returned by this property is the application base
-    /// directory.
-    /// </para>
-    /// </remarks>
-    string Location { get; }
-
     /// <summary>
     /// Gets a string that identifies the group that a provider belongs to.
     /// </summary>

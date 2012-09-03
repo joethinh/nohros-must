@@ -236,7 +236,7 @@
     <value>Missing required option "{0}" for provider.</value>
   </data>
   <data name="TypeLoad_CreateInstance" xml:space="preserve">
-    <value>Instance of the requested type could not be created. Check the constructor implied by the {0}.</value>
+    <value>Cannot create an instance of the type {0}.</value>
   </data>
   <data name="SkipList_BadArrayCopyTo" xml:space="preserve">
     <value>An attempt was made to copy the value elements of a SkipList to an array that is too small.</value>
@@ -316,7 +316,7 @@
   <data name="Argument_AddingDuplicateKey" xml:space="preserve">
     <value>An entry with the same key already exists. Key:{0}.</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
+  <data name="Switches_MissingSwitch" xml:space="preserve">
+    <value>Missing required switch {0}.</value>
   </data>
 </root>

@@ -16,6 +16,12 @@ namespace Nohros.Resources
     }
 
     /// <summary>
+    /// Looks up a localized string similar to [Missing required switch {0}].
+    /// </summary>
+    public static string Switches_MissingSwitch {
+      get { return Resources.Switches_MissingSwitch; }
+    }
+    /// <summary>
     /// Looks up a localized string similar to [{0} cannot contain null
     /// elements.].
     /// </summary>
@@ -207,8 +213,8 @@ namespace Nohros.Resources
     }
 
     /// <summary>
-    /// Looks up a localized string similar to [Instance of the requested type
-    /// could not be created. Check the constructor implied by the {0}.].
+    /// Looks up a localized string similar to [Cannot create an instance of
+    /// the type {0}].
     /// </summary>
     public static string TypeLoad_CreateInstance {
       get { return Resources.TypeLoad_CreateInstance; }
