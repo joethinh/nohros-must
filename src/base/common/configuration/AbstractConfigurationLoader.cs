@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Xml;
 using System.IO;
 using System.Reflection;
@@ -13,21 +12,9 @@ namespace Nohros.Configuration
   /// A class used to build a <see cref="IConfiguration"/> object from a XML
   /// file.
   /// </summary>
-  public abstract class AbstractConfigurationLoader<T> where T : IConfiguration
+  public abstract class AbstractConfigurationLoader<T> : IConfigurationLoader<T>
+    where T : IConfiguration
   {
-    /// <summary>
-    /// Creates an instance of the <see cref="T"/> using the configuration
-    /// information contained in <paramref name="builder"/>.
-    /// </summary>
-    /// <param name="builder">
-    /// A <see cref="ConfigurationBuilder"/> class that contains the configured
-    /// data loaded from a XML file.
-    /// </param>
-    /// <returns>
-    /// The newly created object.
-    /// </returns>
-    public abstract T CreateConfiguration(IConfigurationBuilder<T> builder);
-
     /// <summary>
     /// Defines a method to handle the
     /// <see cref="AbstractConfigurationLoader{T}.LoadComplete"/> events.
@@ -59,6 +46,7 @@ namespace Nohros.Configuration
     /// constructor.
     /// </summary>
     protected readonly IConfigurationBuilder<T> builder;
+
     FileInfo config_file_;
 
     /// <summary>
@@ -78,8 +66,7 @@ namespace Nohros.Configuration
     /// of a XML file into a instance of instances of <typeparamref name="T"/>
     /// created through <paramref name="builder"/>.
     /// </summary>
-    protected AbstractConfigurationLoader(IConfigurationBuilder<T> builder)
-    {
+    protected AbstractConfigurationLoader(IConfigurationBuilder<T> builder) {
       element = null;
       location_ = AppDomain.CurrentDomain.BaseDirectory;
       version_ = DateTime.Now;
@@ -88,6 +75,270 @@ namespace Nohros.Configuration
       this.builder = builder;
     }
     #endregion
+
+    /// <summary>
+    /// Creates an instance of the <see cref="T"/> using the configuration
+    /// information contained in <paramref name="builder"/>.
+    /// </summary>
+    /// <param name="builder">
+    /// A <see cref="ConfigurationBuilder"/> class that contains the configured
+    /// data loaded from a XML file.
+    /// </param>
+    /// <returns>
+    /// The newly created object.
+    /// </returns>
+    public abstract T CreateConfiguration(IConfigurationBuilder<T> builder);
+
+    /// <summary>
+    /// Loads the configuration values based on the application's configuration
+    /// settings and watch it for modifications.
+    /// </summary>
+    /// <remarks>
+    /// Each application has a configuration file. This has the same name as
+    /// the application whith ' .config ' appended.
+    /// <para>This file is XML and calling this function prompts the loader to
+    /// look in that file for a key named [NohrosConfigurationFile] that
+    /// contains the path for the configuration file.
+    /// </para>
+    /// <para>
+    /// The value of the [NohrosConfigurationFile] must be absolute or relative
+    /// to the application base directory.
+    /// </para>
+    /// <para>
+    /// The xml document must constains at leats one node with name euqlas to
+    /// "nohros" that is descendant of the root node.
+    /// </para>
+    /// </remarks>
+    /// <para>
+    /// This methods watches the nohros configuration file for modifications
+    /// and when it is modified the configuration values is reloaded.
+    /// </para>
+    public T LoadAndWatch() {
+      return Load("nohros", true);
+    }
+
+    /// <summary>
+    /// Loads the configuration values based on the application's configuration
+    /// settings and watch it for modifications.
+    /// </summary>
+    /// <remarks>
+    /// Each application has a configuration file. This has the same name as
+    /// the application whith ' .config ' appended. This file is XML and
+    /// calling this function prompts the loader to look in that file for a key
+    /// named [NohrosConfigurationFile] that contains the path for the
+    /// configuration file.
+    /// <para>
+    /// The value of the [NohrosConfigurationFile] must be absolute or relative
+    /// to the application base directory.
+    /// </para>
+    /// <para>
+    /// The configuration file must be valid XML. It must contain at least one
+    /// element called <paramref name="root_node_name"/> that contains the
+    /// configuration data. Note that a element with name "nohros" must
+    /// exists some place on the root nodes tree.
+    /// </para>
+    /// <para>
+    /// This methods watches the nohros configuration file for modifications
+    /// and when it is modified the configuration values is reloaded.
+    /// </para>
+    /// </remarks>
+    public T LoadAndWatch(string root_node_name) {
+      return Load(root_node_name, true);
+    }
+
+    /// <summary>
+    /// Loads the configuration values based on the application's configuration
+    /// settings.
+    /// </summary>
+    /// <remarks>
+    /// Each application has a configuration file. This has the same name as
+    /// the application whith ' .config ' appended.
+    /// <para>This file is XML and calling this function prompts the loader to
+    /// look in that file for a key named [NohrosConfigurationFile] that
+    /// contains the path for the configuration file.
+    /// </para>
+    /// <para>
+    /// The value of the [NohrosConfigurationFile] must be absolute or relative
+    /// to the application base directory.
+    /// </para>
+    /// <para>
+    /// The xml document must constains at leats one node with name euqlas to
+    /// "nohros" that is descendant of the root node.
+    /// </para>
+    /// </remarks>
+    public T Load() {
+      return Load("nohros", false);
+    }
+
+    /// <summary>
+    /// Loads the configuration values based on the application's configuration
+    /// settings.
+    /// </summary>
+    /// <remarks>
+    /// Each application has a configuration file. This has the same name as
+    /// the application whith ' .config ' appended. This file is XML and
+    /// calling this function prompts the loader to look in that file for a key
+    /// named [NohrosConfigurationFile] that contains the path for the
+    /// configuration file.
+    /// <para>
+    /// The value of the [NohrosConfigurationFile] must be absolute or relative
+    /// to the application base directory.
+    /// </para>
+    /// <para>
+    /// The configuration file must be valid XML. It must contain at least one
+    /// element called <paramref name="root_node_name"/> that contains the
+    /// configuration data. Note that a element with name "nohros" must
+    /// exists some place on the root nodes tree.
+    /// </para>
+    /// </remarks>
+    public T Load(string root_node_name) {
+      object element = ConfigurationManager.GetSection(root_node_name);
+      if (element == null) {
+        throw new ConfigurationException("The " + root_node_name +
+          " node was not defined.");
+      }
+      return Load((XmlElement) element);
+    }
+
+    /// <inheritdoc/>
+    public T Load(string config_file_name,
+      string root_node_name) {
+      string app_base_directory = AppDomain.CurrentDomain.BaseDirectory;
+      string config_file_path = Path.Combine(app_base_directory,
+        config_file_name);
+
+      FileInfo config_file_info = new FileInfo(config_file_path);
+
+      return Load(config_file_info, root_node_name);
+    }
+
+    /// <inheritdoc/>
+    public T Load(FileInfo config_file_info,
+      string root_node_name) {
+      if (config_file_info == null) {
+        throw new ArgumentNullException("config_file_info");
+      }
+
+      // the root node name could be null, but not a empty string.
+      if (root_node_name != null && root_node_name.Trim() == string.Empty) {
+        throw new ArgumentException(
+          string.Format(
+            StringResources.Arg_KeyNotFound, root_node_name));
+      }
+
+      // have to use File.Exists() rather than config_file_info.Exists()
+      // because config_file_info.Exists() caches the value, not what we want.
+      if (File.Exists(config_file_info.FullName)) {
+        using (FileStream fs = config_file_info.OpenRead()) {
+          // loads the configuration file in memory.
+          XmlDocument doc = new XmlDocument();
+          doc.Load(fs);
+
+          // retrieve the configuration file location
+          location_ = Path.GetDirectoryName(config_file_info.FullName);
+
+          // for backward compatibility this method allows the root_node_name
+          // to be null and when its happen we need to select the first valid
+          // XML element.
+          XmlNode node = null;
+          if (root_node_name != null) {
+            // If a the root_node is explicit bounded to a schema
+            // the XmlDocument.SelectSingleNode(string) will not return the
+            // node correctly. To avoid this we will traverse down the XML
+            // document trying to match a node with name equals to the
+            // specified |root_node_name|, when the SelectSingleNode
+            // node return null.
+            node = doc.SelectSingleNode(root_node_name) ??
+              SelectNode(doc.FirstChild, root_node_name);
+
+            // if the |root_node_name| was specified and the node was not found
+            // we need to throw an exception. The first valid Xml element
+            // must be used only when |root_node_name| is a null reference.
+            if (node == null) {
+              throw new ArgumentException(
+                string.Format(
+                  StringResources.Arg_KeyNotFound, root_node_name));
+            }
+          } else {
+            // If |root_node_name| is  null reference we need to use the
+            // first valid Xml element of the document.
+            foreach (XmlNode n in doc.ChildNodes) {
+              if (n.NodeType == XmlNodeType.Element) {
+                node = n;
+                break;
+              }
+            }
+
+            // sanity check the node again. Its unusual but a Xml could have no
+            // valid elements. Ex. a xml that contains only the line above, does
+            // not have a valid xml element:
+            //   <?xml version="1.0" encoding="utf-8"?>
+            if (node == null) {
+              throw new ConfigurationException(
+                string.Format(StringResources.Configuration_InvalidFormat,
+                  config_file_info.FullName));
+            }
+          }
+
+          return Load((XmlElement) node);
+        }
+      }
+      throw new FileNotFoundException(config_file_info.FullName);
+    }
+
+    /// <inheritdoc/>
+    public T Load(XmlElement element) {
+      // This is the main "load" method. This method is called by all the
+      // others "load" methods overloads. The null check is done only by this
+      // method.
+      if (element == null)
+        throw new ArgumentNullException("element");
+
+      // store the raw xml element into memory.
+      this.element = element;
+
+      return Parse(element);
+    }
+
+    /// <inheritdoc/>
+    public T LoadAndWatch(string config_file_name,
+      string root_node_name) {
+      FileInfo config_file_info =
+        new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+          config_file_name));
+      return Load(config_file_info, root_node_name);
+    }
+
+    /// <inheritdoc/>
+    public T LoadAndWatch(FileInfo config_file_info,
+      string root_node_name) {
+      // load the configuration file
+      T config = Load(config_file_info, root_node_name);
+
+      // monitor the file and reload the configuration values
+      // whenever the config file is modified.
+      Watch(config_file_info);
+
+      return config;
+    }
+
+    /// <summary>
+    /// Gets the directory path where the configuration file is stored.
+    /// </summary>
+    /// <returns>
+    /// An string that represents the location of the configuration file or the
+    /// application base directory if the location could not be retrieved.
+    /// </returns>
+    public string Location {
+      get { return location_; }
+    }
+
+    /// <summary>
+    /// Gets the date and time when one of the Load methods was last called.
+    /// </summary>
+    public DateTime Version {
+      get { return version_; }
+    }
 
     /// <summary>
     /// Gets a <see cref="XmlElement"/> named <paramref name="element_name"/>
@@ -435,117 +686,6 @@ namespace Nohros.Configuration
     /// </remarks>
     public event LoadCompleteEventHandler LoadComplete;
 
-    /// <summary>
-    /// Loads the configuration values based on the application's configuration
-    /// settings and watch it for modifications.
-    /// </summary>
-    /// <remarks>
-    /// Each application has a configuration file. This has the same name as
-    /// the application whith ' .config ' appended.
-    /// <para>This file is XML and calling this function prompts the loader to
-    /// look in that file for a key named [NohrosConfigurationFile] that
-    /// contains the path for the configuration file.
-    /// </para>
-    /// <para>
-    /// The value of the [NohrosConfigurationFile] must be absolute or relative
-    /// to the application base directory.
-    /// </para>
-    /// <para>
-    /// The xml document must constains at leats one node with name euqlas to
-    /// "nohros" that is descendant of the root node.
-    /// </para>
-    /// </remarks>
-    /// <para>
-    /// This methods watches the nohros configuration file for modifications
-    /// and when it is modified the configuration values is reloaded.
-    /// </para>
-    public T LoadAndWatch() {
-      return Load("nohros", true);
-    }
-
-    /// <summary>
-    /// Loads the configuration values based on the application's configuration
-    /// settings and watch it for modifications.
-    /// </summary>
-    /// <remarks>
-    /// Each application has a configuration file. This has the same name as
-    /// the application whith ' .config ' appended. This file is XML and
-    /// calling this function prompts the loader to look in that file for a key
-    /// named [NohrosConfigurationFile] that contains the path for the
-    /// configuration file.
-    /// <para>
-    /// The value of the [NohrosConfigurationFile] must be absolute or relative
-    /// to the application base directory.
-    /// </para>
-    /// <para>
-    /// The configuration file must be valid XML. It must contain at least one
-    /// element called <paramref name="root_node_name"/> that contains the
-    /// configuration data. Note that a element with name "nohros" must
-    /// exists some place on the root nodes tree.
-    /// </para>
-    /// <para>
-    /// This methods watches the nohros configuration file for modifications
-    /// and when it is modified the configuration values is reloaded.
-    /// </para>
-    /// </remarks>
-    public T LoadAndWatch(string root_node_name) {
-      return Load(root_node_name, true);
-    }
-
-    /// <summary>
-    /// Loads the configuration values based on the application's configuration
-    /// settings.
-    /// </summary>
-    /// <remarks>
-    /// Each application has a configuration file. This has the same name as
-    /// the application whith ' .config ' appended.
-    /// <para>This file is XML and calling this function prompts the loader to
-    /// look in that file for a key named [NohrosConfigurationFile] that
-    /// contains the path for the configuration file.
-    /// </para>
-    /// <para>
-    /// The value of the [NohrosConfigurationFile] must be absolute or relative
-    /// to the application base directory.
-    /// </para>
-    /// <para>
-    /// The xml document must constains at leats one node with name euqlas to
-    /// "nohros" that is descendant of the root node.
-    /// </para>
-    /// </remarks>
-    public T Load() {
-      return Load("nohros", false);
-    }
-
-    /// <summary>
-    /// Loads the configuration values based on the application's configuration
-    /// settings.
-    /// </summary>
-    /// <remarks>
-    /// Each application has a configuration file. This has the same name as
-    /// the application whith ' .config ' appended. This file is XML and
-    /// calling this function prompts the loader to look in that file for a key
-    /// named [NohrosConfigurationFile] that contains the path for the
-    /// configuration file.
-    /// <para>
-    /// The value of the [NohrosConfigurationFile] must be absolute or relative
-    /// to the application base directory.
-    /// </para>
-    /// <para>
-    /// The configuration file must be valid XML. It must contain at least one
-    /// element called <paramref name="root_node_name"/> that contains the
-    /// configuration data. Note that a element with name "nohros" must
-    /// exists some place on the root nodes tree.
-    /// </para>
-    /// </remarks>
-    public T Load(string root_node_name) {
-      object element = ConfigurationManager.GetSection(root_node_name);
-      if (element == null) {
-        throw new ConfigurationException("The " + root_node_name +
-          " node was not defined.");
-      }
-      return Load((XmlElement) element);
-    }
-
     T Load(string root_node_name, bool watch) {
       string config_file_path =
         ConfigurationManager.AppSettings[kConfigurationFileKey];
@@ -657,128 +797,6 @@ namespace Nohros.Configuration
       OnLoadComplete(configuration);
 
       return configuration;
-    }
-
-    /// <inheritdoc/>
-    public T Load(string config_file_name,
-      string root_node_name) {
-      string app_base_directory = AppDomain.CurrentDomain.BaseDirectory;
-      string config_file_path = Path.Combine(app_base_directory,
-        config_file_name);
-
-      FileInfo config_file_info = new FileInfo(config_file_path);
-
-      return Load(config_file_info, root_node_name);
-    }
-
-    /// <inheritdoc/>
-    public T Load(FileInfo config_file_info,
-      string root_node_name) {
-      if (config_file_info == null) {
-        throw new ArgumentNullException("config_file_info");
-      }
-
-      // the root node name could be null, but not a empty string.
-      if (root_node_name != null && root_node_name.Trim() == string.Empty) {
-        throw new ArgumentException(
-          string.Format(
-            StringResources.Arg_KeyNotFound, root_node_name));
-      }
-
-      // have to use File.Exists() rather than config_file_info.Exists()
-      // because config_file_info.Exists() caches the value, not what we want.
-      if (File.Exists(config_file_info.FullName)) {
-        using (FileStream fs = config_file_info.OpenRead()) {
-          // loads the configuration file in memory.
-          XmlDocument doc = new XmlDocument();
-          doc.Load(fs);
-
-          // retrieve the configuration file location
-          location_ = Path.GetDirectoryName(config_file_info.FullName);
-
-          // for backward compatibility this method allows the root_node_name
-          // to be null and when its happen we need to select the first valid
-          // XML element.
-          XmlNode node = null;
-          if (root_node_name != null) {
-            // If a the root_node is explicit bounded to a schema
-            // the XmlDocument.SelectSingleNode(string) will not return the
-            // node correctly. To avoid this we will traverse down the XML
-            // document trying to match a node with name equals to the
-            // specified |root_node_name|, when the SelectSingleNode
-            // node return null.
-            node = doc.SelectSingleNode(root_node_name) ??
-              SelectNode(doc.FirstChild, root_node_name);
-
-            // if the |root_node_name| was specified and the node was not found
-            // we need to throw an exception. The first valid Xml element
-            // must be used only when |root_node_name| is a null reference.
-            if (node == null) {
-              throw new ArgumentException(
-                string.Format(
-                  StringResources.Arg_KeyNotFound, root_node_name));
-            }
-          } else {
-            // If |root_node_name| is  null reference we need to use the
-            // first valid Xml element of the document.
-            foreach (XmlNode n in doc.ChildNodes) {
-              if (n.NodeType == XmlNodeType.Element) {
-                node = n;
-                break;
-              }
-            }
-
-            // sanity check the node again. Its unusual but a Xml could have no
-            // valid elements. Ex. a xml that contains only the line above, does
-            // not have a valid xml element:
-            //   <?xml version="1.0" encoding="utf-8"?>
-            if (node == null) {
-              throw new ConfigurationException(
-                string.Format(StringResources.Configuration_InvalidFormat,
-                  config_file_info.FullName));
-            }
-          }
-
-          return Load((XmlElement) node);
-        }
-      }
-      throw new FileNotFoundException(config_file_info.FullName);
-    }
-
-    /// <inheritdoc/>
-    public T Load(XmlElement element) {
-      // This is the main "load" method. This method is called by all the
-      // others "load" methods overloads. The null check is done only by this
-      // method.
-      if (element == null)
-        throw new ArgumentNullException("element");
-
-      // store the raw xml element into memory.
-      this.element = element;
-
-      return Parse(element);
-    }
-
-    /// <inheritdoc/>
-    public T LoadAndWatch(string config_file_name,
-      string root_node_name) {
-      FileInfo config_file_info =
-        new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-          config_file_name));
-      return Load(config_file_info, root_node_name);
-    }
-
-    /// <inheritdoc/>
-    public T LoadAndWatch(FileInfo config_file_info,
-      string root_node_name) {
-      // load the configuration file
-      T config = Load(config_file_info, root_node_name);
-
-      // monitor the file and reload the configuration values
-      // whenever the config file is modified.
-      Watch(config_file_info);
-
-      return config;
     }
 
     /// <summary>
@@ -972,24 +990,6 @@ namespace Nohros.Configuration
         }
       }
       return false;
-    }
-
-    /// <summary>
-    /// Gets the directory path where the configuration file is stored.
-    /// </summary>
-    /// <returns>
-    /// An string that represents the location of the configuration file or the
-    /// application base directory if the location could not be retrieved.
-    /// </returns>
-    public string Location {
-      get { return location_; }
-    }
-
-    /// <summary>
-    /// Gets the date and time when one of the Load methods was last called.
-    /// </summary>
-    public DateTime Version {
-      get { return version_; }
     }
 
     /// <summary>
