@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Nohros.Configuration;
+using Nohros.Data;
 
 namespace Nohros.Generators.Configuration
 {
@@ -32,6 +33,9 @@ namespace Nohros.Generators.Configuration
     /// </param>
     public void Generate(Stream output) {
       Type type = RuntimeType.GetSystemType(runtime_type);
+      PropertyInfo[] properties = type.GetProperties(
+        BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
       code
         .AppendLine("using System;")
         .AppendLine("using Nohros.Configuration;")
@@ -42,14 +46,16 @@ namespace Nohros.Generators.Configuration
         .AppendLine("  {")
         .Append    ("    public class Loader : AbstractConfigurationLoader<").Append(type.Name).AppendLine(">")
         .AppendLine("    {")
-        .AppendLine("      readonly Builder builder_")
-        .Append    ("      public Loader() : base(new Builder()) {")
+        .AppendLine("      readonly Builder builder_;")
+        .AppendLine("      public Loader() : base(new Builder()) {")
         .AppendLine("        builder_ = builder as Builder;")
         .AppendLine("      }")
         .Append    ("      public override ").Append(type.Name).AppendLine(" CreateConfiguration(")
-        .Append    ("        IConfigurationBuilder<").Append(type.Name).AppendLine(" builder) {")
+        .Append    ("        IConfigurationBuilder<").Append(type.Name).AppendLine("> builder) {")
         .AppendLine("        return builder_.Build();")
         .AppendLine("      }");
+
+      GenerateBody(properties, "      ");
 
       code
         .AppendLine("    }")

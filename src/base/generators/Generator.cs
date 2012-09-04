@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using Nohros.Configuration;
 using Nohros.Generators.Configuration;
 using Nohros.Resources;
 
@@ -29,28 +27,32 @@ namespace Nohros.Generators
     #endregion
 
     void GenerateConfiguration() {
-      string assembly = switches_.GetSwitchValue(Strings.kAssemblySwitch);
+      string input = switches_.GetSwitchValue(Strings.kInputSwitch);
       string type = switches_.GetSwitchValue(Strings.kTypeSwitch);
-      if (assembly == string.Empty || type == string.Empty) {
+      if (input == string.Empty || type == string.Empty) {
         Console.WriteLine(StringResources.Switches_MissingSwitch,
-          (assembly == string.Empty)
-            ? Strings.kAssemblySwitch
+          (input == string.Empty)
+            ? Strings.kInputSwitch
             : Strings.kTypeSwitch);
         return;
       }
 
-      string output = switches_.GetSwitchValue(Strings.kOutput);
-      if (output == string.Empty) {
-        output = AppDomain.CurrentDomain.BaseDirectory;
-      }
+      string output =
+        IO.Path.AbsoluteForApplication(
+          switches_.GetSwitchValue(Strings.kOutput));
 
-      RuntimeType runtime_type = new RuntimeType(type, output);
+      RuntimeType runtime_type =
+        new RuntimeType(type, IO.Path.AbsoluteForApplication(input));
+
       Type system_type = runtime_type.GetSystemType();
       if (system_type == null) {
         Console.WriteLine(StringResources.TypeLoad_CreateInstance,
           runtime_type.Type);
         return;
       }
+
+      new ConfigurationGenerator(runtime_type)
+        .GenerateConfiguration(output);
     }
 
     public void Generate() {
