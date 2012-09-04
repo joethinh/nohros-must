@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Nohros.IO;
 using Nohros.Resources;
 
 namespace Nohros.Generators.Configuration
@@ -22,7 +23,7 @@ namespace Nohros.Generators.Configuration
     }
     #endregion
 
-    public void GenerateConfiguration() {
+    public void GenerateConfiguration(string output) {
       Type type = RuntimeType.GetSystemType(runtime_type_);
       if (type == null) {
         Console.WriteLine(StringResources.TypeLoad_CreateInstance,
@@ -30,27 +31,31 @@ namespace Nohros.Generators.Configuration
         return;
       }
 
-      GenerateConfigurationBuilder(type.Name + "Builder"
-        + Strings.kCSharpExtension);
+      GenerateConfigurationBuilder(
+        IO.Path.AbsoluteForApplication(
+          IO.Path.Combine(output, type.Name + "Builder"
+            + Strings.kCSharpExtension)));
 
-      GenerateConfigurationLoader(type.Name + "Loader"
-        + Strings.kCSharpExtension);
+      GenerateConfigurationLoader(
+        IO.Path.AbsoluteForApplication(
+          IO.Path.Combine(output, type.Name + "Loader"
+            + Strings.kCSharpExtension)));
     }
 
-    void GenerateConfigurationBuilder(string file_name) {
-      using (
-        Stream stream =
-          GetOutputStream(Path.Combine(runtime_type_.Location, file_name))) {
+    void GenerateConfigurationBuilder(string output) {
+      using (Stream stream = GetOutputStream(output)) {
+        Console.WriteLine("Generating the Builder class on "
+          + output);
         new ConfigurationBuilderGenerator(runtime_type_)
           .Generate(stream);
         stream.Close();
       }
     }
 
-    void GenerateConfigurationLoader(string file_name) {
-      using (
-        Stream stream =
-          GetOutputStream(Path.Combine(runtime_type_.Location, file_name))) {
+    void GenerateConfigurationLoader(string output) {
+      using (Stream stream = GetOutputStream(output)) {
+        Console.WriteLine("Generating the Loader class on "
+          + output);
         new ConfigurationLoaderGenerator(runtime_type_)
           .Generate(stream);
         stream.Close();
@@ -58,7 +63,8 @@ namespace Nohros.Generators.Configuration
     }
 
     Stream GetOutputStream(string path) {
-      return new FileStream(path, FileMode.Create, FileAccess.Write);
+      return new FileStream(IO.Path.AbsoluteForApplication(path),
+        FileMode.Create, FileAccess.Write);
     }
   }
 }
