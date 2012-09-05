@@ -7,7 +7,7 @@ namespace Nohros.Logging.log4net
 {
   public class LegacyLoggerFactory : ILoggerFactory
   {
-    readonly IMustConfiguration settings_;
+    readonly IConfiguration settings_;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LegacyLogger"/> class
@@ -18,7 +18,7 @@ namespace Nohros.Logging.log4net
     /// configuration inforamtions related with the logger to be created - such
     /// as the configuration of a related logger.
     /// </param>
-    protected LegacyLoggerFactory(IMustConfiguration settings) {
+    protected LegacyLoggerFactory(IConfiguration settings) {
       settings_ = settings;
     }
 
