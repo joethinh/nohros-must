@@ -63,8 +63,8 @@ namespace Nohros.Configuration
     /// <summary>
     /// Initializes a new instance of the
     /// <see cref="AbstractConfigurationLoader{T}"/> class that load the values
-    /// of a XML file into a instance of instances of <typeparamref name="T"/>
-    /// created through <paramref name="builder"/>.
+    /// of a XML file into a instance of <typeparamref name="T"/>
+    /// created using the specified<paramref name="builder"/>.
     /// </summary>
     protected AbstractConfigurationLoader(IConfigurationBuilder<T> builder) {
       element = null;
@@ -75,19 +75,6 @@ namespace Nohros.Configuration
       this.builder = builder;
     }
     #endregion
-
-    /// <summary>
-    /// Creates an instance of the <see cref="T"/> using the configuration
-    /// information contained in <paramref name="builder"/>.
-    /// </summary>
-    /// <param name="builder">
-    /// A <see cref="ConfigurationBuilder"/> class that contains the configured
-    /// data loaded from a XML file.
-    /// </param>
-    /// <returns>
-    /// The newly created object.
-    /// </returns>
-    public abstract T CreateConfiguration(IConfigurationBuilder<T> builder);
 
     /// <summary>
     /// Loads the configuration values based on the application's configuration
@@ -338,6 +325,27 @@ namespace Nohros.Configuration
     /// </summary>
     public DateTime Version {
       get { return version_; }
+    }
+
+    /// <summary>
+    /// Creates an instance of the <see cref="T"/> using the configuration
+    /// information contained in <paramref name="builder"/>.
+    /// </summary>
+    /// <param name="builder">
+    /// A <see cref="ConfigurationBuilder"/> class that contains the configured
+    /// data loaded from a XML file.
+    /// </param>
+    /// <returns>
+    /// The newly created object.
+    /// </returns>
+    /// <remarks>
+    /// This method is called from the Load method in order to create and
+    /// instance of the type <typeparamref name="T"/>. The default
+    /// implementation just call the
+    /// <see cref="IConfigurationBuilder{T}.Build()"/> method.
+    /// </remarks>
+    public virtual T CreateConfiguration(IConfigurationBuilder<T> builder) {
+      return builder.Build();
     }
 
     /// <summary>
@@ -792,7 +800,7 @@ namespace Nohros.Configuration
           }
         }
       }
-      T configuration = builder.Build();
+      T configuration = CreateConfiguration(builder);
 
       OnLoadComplete(configuration);
 

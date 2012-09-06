@@ -19,7 +19,7 @@ namespace Nohros.Configuration
 
     public override Configuration CreateConfiguration(
       IConfigurationBuilder<Configuration> builder) {
-      return new Configuration(builder as ConfigurationBuilder);
+      return new Configuration(builder);
     }
   }
 }
