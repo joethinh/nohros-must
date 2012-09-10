@@ -1,64 +1,73 @@
 ﻿using System;
 using System.IO;
-using Nohros.IO;
-using Nohros.Resources;
+using System.Linq;
+using Roslyn.Compilers.CSharp;
 
 namespace Nohros.Generators.Configuration
 {
   public class ConfigurationGenerator
   {
-    readonly IRuntimeType runtime_type_;
+    readonly string output_;
+    readonly CompilationUnitSyntax root_;
 
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfigurationGenerator"/>
     /// class by using the specified <see cref="IRuntimeType"/> object.
     /// </summary>
-    /// <param name="runtime_type">
-    /// A <see cref="RuntimeType"/> object containing the type associated with
-    /// the configuration classes to be generated.
-    /// </param>
-    public ConfigurationGenerator(IRuntimeType runtime_type) {
-      runtime_type_ = runtime_type;
+    public ConfigurationGenerator(CompilationUnitSyntax root, string output) {
+      root_ = root;
+      output_ = output;
     }
     #endregion
 
-    public void GenerateConfiguration(string output) {
-      Type type = RuntimeType.GetSystemType(runtime_type_);
-      if (type == null) {
-        Console.WriteLine(StringResources.TypeLoad_CreateInstance,
-          runtime_type_.Type);
-        return;
+    public void GenerateConfiguration() {
+      string name_space = null;
+      string interface_type_name = null;
+      foreach (SyntaxNode node in root_.DescendantNodes()) {
+        if (node.Kind == SyntaxKind.NamespaceDeclaration) {
+          name_space = node.GetFirstToken().GetText();
+        } else if (node.Kind == SyntaxKind.InterfaceDeclaration) {
+          interface_type_name =
+            (from token in node.DescendantTokens()
+             where token.Kind == SyntaxKind.IdentifierToken
+             select token.ValueText).First();
+        }
       }
 
-      GenerateConfigurationBuilder(
+      string type_name;
+      if (interface_type_name.StartsWith("I")) {
+        type_name = interface_type_name.Substring(1);
+      } else {
+        type_name = interface_type_name;
+      }
+
+      string builder_type_name = type_name + "Builder";
+      GenerateConfigurationBuilder(name_space, type_name,
         IO.Path.AbsoluteForApplication(
-          IO.Path.Combine(output, type.Name + "Builder"
+          IO.Path.Combine(output_, builder_type_name
             + Strings.kCSharpExtension)));
 
-      GenerateConfigurationLoader(
+      string loader_type_name = type_name + "Loader";
+      GenerateConfigurationLoader(name_space, type_name,
         IO.Path.AbsoluteForApplication(
-          IO.Path.Combine(output, type.Name + "Loader"
+          IO.Path.Combine(output_, loader_type_name
             + Strings.kCSharpExtension)));
     }
 
-    void GenerateConfigurationBuilder(string output) {
+    void GenerateConfigurationBuilder(string name_space,
+      string builder_type_name, string output) {
       using (Stream stream = GetOutputStream(output)) {
-        Console.WriteLine("Generating the Builder class on "
-          + output);
-        new ConfigurationBuilderGenerator(runtime_type_)
-          .Generate(stream);
-        stream.Close();
+        new ConfigurationBuilderGenerator(root_)
+          .Generate(name_space, builder_type_name, stream);
       }
     }
 
-    void GenerateConfigurationLoader(string output) {
+    void GenerateConfigurationLoader(string name_space, string loader_type_name,
+      string output) {
       using (Stream stream = GetOutputStream(output)) {
-        Console.WriteLine("Generating the Loader class on "
-          + output);
-        new ConfigurationLoaderGenerator(runtime_type_)
-          .Generate(stream);
-        stream.Close();
+        new ConfigurationLoaderGenerator(root_)
+          .Generate(name_space, loader_type_name, stream);
       }
     }
 

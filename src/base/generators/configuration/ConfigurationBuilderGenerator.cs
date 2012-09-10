@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
+using System.Linq;
 using Nohros.Configuration;
+using Roslyn.Compilers.CSharp;
 
 namespace Nohros.Generators.Configuration
 {
@@ -18,17 +20,16 @@ namespace Nohros.Generators.Configuration
   /// </remarks>
   public class ConfigurationBuilderGenerator : AbstractGenerator
   {
+    readonly CompilationUnitSyntax root_;
+
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfigurationBuilderGenerator"/>
     /// class using the specified <see cref="IRuntimeType"/>.
     /// </summary>
-    /// <param name="runtime_type">
-    /// A <see cref="IRuntimeType"/> containing information about the
-    /// configuration class.
-    /// </param>
-    public ConfigurationBuilderGenerator(IRuntimeType runtime_type) 
-      : base(runtime_type) { }
+    public ConfigurationBuilderGenerator(CompilationUnitSyntax root) {
+      root_ = root;
+    }
     #endregion
 
     /// <summary>
@@ -37,26 +38,28 @@ namespace Nohros.Generators.Configuration
     /// <param name="output">
     /// A <see cref="Stream"/> object to write to generated code to.
     /// </param>
-    public void Generate(Stream output) {
-      Type type = RuntimeType.GetSystemType(runtime_type);
-      PropertyInfo[] properties = type.GetProperties(
-        BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+    public void Generate(string name_space, string type_name, Stream output) {
+      var properties =
+        root_
+          .DescendantNodes()
+          .OfType<PropertyDeclarationSyntax>()
+          .ToArray();
 
       code
         .AppendLine("using System;")
         .AppendLine("using Nohros.Configuration;")
         .AppendLine()
-        .Append    ("namespace ").AppendLine(type.Namespace)
+        .Append    ("namespace ").AppendLine(name_space)
         .AppendLine("{")
-        .Append    ("  public partial class ").AppendLine(type.Name)
+        .Append    ("  public partial class ").AppendLine(type_name)
         .AppendLine("  {")
-        .Append    ("    public class Builder : AbstractConfigurationBuilder<").Append(type.Name).AppendLine(">")
+        .Append    ("    public class Builder : AbstractConfigurationBuilder<").Append(type_name).AppendLine(">")
         .AppendLine("    {")
         .AppendLine("      public Builder() {")
         .AppendLine("        // Set the default values for the class members.")
         .AppendLine("      }")
-        .Append    ("      public override ").Append(type.Name).AppendLine(" Build() {")
-        .Append    ("        return new ").Append(type.Name).AppendLine("(this);")
+        .Append    ("      public override ").Append(type_name).AppendLine(" Build() {")
+        .Append    ("        return new ").Append(type_name).AppendLine("(this);")
         .AppendLine("      }");
 
       GenerateBody(properties, "      ");
@@ -70,17 +73,18 @@ namespace Nohros.Generators.Configuration
       output.Write(src, 0, src.Length);
     }
 
-    void GenerateBody(PropertyInfo[] properties, string identation) {
-      for (int i = 0, j = properties.Length; i < j; i++) {
-        PropertyInfo property = properties[i];
-        string type_name = GetPropertyTypeName(property);
-        string property_member_name = GetPropertyMemberName(property);
+    void GenerateBody(IEnumerable<PropertyDeclarationSyntax> properties,
+      string identation) {
+      foreach(PropertyDeclarationSyntax property in properties) {
+        string property_type_name = GetPropertyTypeName(property);
+        string property_name = GetPropertyName(property);
+        string property_member_name = GetPropertyMemberName(property_name);
         code
-          .Append(identation).Append(type_name).Append(" ").Append(property_member_name).AppendLine("_;")
-          .Append(identation).Append("public ").Append(type_name).Append(" ").Append(property.Name).AppendLine(" {")
+          .Append(identation).Append(property_name).Append(" ").Append(property_member_name).AppendLine("_;")
+          .Append(identation).Append("public ").Append(property_type_name).Append(" ").Append(property_name).AppendLine(" {")
           .Append(identation).Append("  get { return ").Append(property_member_name).AppendLine("_; }")
           .Append(identation).AppendLine("}")
-          .Append(identation).Append("public Builder Set").Append(property.Name).Append("(").Append(type_name).Append(" ").Append(property_member_name).AppendLine(") {")
+          .Append(identation).Append("public Builder Set").Append(property_name).Append("(").Append(property_type_name).Append(" ").Append(property_member_name).AppendLine(") {")
           .Append(identation).Append("  ").Append(property_member_name).Append("_ = ").Append(property_member_name).AppendLine(";")
           .Append(identation).Append("  ").AppendLine("return this;")
           .Append(identation).AppendLine("}");

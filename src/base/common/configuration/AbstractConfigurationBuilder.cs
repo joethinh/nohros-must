@@ -2,7 +2,7 @@
 using Nohros.Collections;
 using Nohros.Logging;
 
-namespace Nohros.Configuration
+namespace Nohros.Configuration.Builders
 {
   /// <summary>
   /// A class that can be used to incrementally build instances of the

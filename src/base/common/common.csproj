@@ -107,6 +107,8 @@
     <Compile Include="concurrent\IFuture.cs" />
     <Compile Include="concurrent\Mailbox.cs" />
     <Compile Include="configuration\AbstractConfigurationNode.cs" />
+    <Compile Include="configuration\builders\CallableConfigurationBuilder.cs" />
+    <Compile Include="configuration\builders\ThrowableConfigurationBuilder.cs" />
     <Compile Include="configuration\common\auth\ILoginModulesNode.cs" />
     <Compile Include="configuration\common\auth\LoginModulesNode.cs" />
     <Compile Include="configuration\common\auth\LoginModulesNodeParser.cs" />
@@ -125,9 +127,9 @@
     <Compile Include="configuration\common\IXmlElementsNode.cs" />
     <Compile Include="configuration\common\XmlElementsNode.cs" />
     <Compile Include="configuration\common\XmlElementsNodeParser.cs" />
-    <Compile Include="configuration\ConfigurationBuilder.cs" />
+    <Compile Include="configuration\builders\ConfigurationBuilder.cs" />
     <Compile Include="configuration\ConfigurationLoader.cs" />
-    <Compile Include="configuration\IConfigurationBuilder.cs" />
+    <Compile Include="configuration\builders\IConfigurationBuilder.cs" />
     <Compile Include="configuration\IConfigurationLoader.cs" />
     <Compile Include="configuration\IMustConfiguration.cs" />
     <Compile Include="configuration\AbstractConfigurationBuilder.cs" />
@@ -183,7 +185,7 @@
     <Compile Include="logging\ILoggerFactory.cs" />
     <Compile Include="providers\data\IConnectionProvider.cs" />
     <Compile Include="RuntimeType.cs" />
-    <Compile Include="type\events\Callable.cs" />
+    <Compile Include="type\delegates\CallableDelegate.cs" />
     <Compile Include="type\RuntimeTypeFactory.cs" />
     <Compile Include="Resources\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
@@ -195,7 +197,7 @@
     <Compile Include="security\auth\ILoginModuleFactory.cs" />
     <Compile Include="security\auth\ILoginModuleNodePair.cs" />
     <Compile Include="security\auth\LoginModuleNodePair.cs" />
-    <Compile Include="type\events\RunnableDelegate.cs" />
+    <Compile Include="type\delegates\RunnableDelegate.cs" />
     <Compile Include="concurrent\SerialExecutorState.cs" />
     <Compile Include="concurrent\Uninterruptibles.cs" />
     <Compile Include="concurrent\YQueue.cs" />
@@ -218,7 +220,7 @@
     <Compile Include="providers\data\SqlConnectionProvider.cs" />
     <Compile Include="providers\data\SqlConnectionProviderFactory.cs" />
     <Compile Include="type\Clock.cs" />
-    <Compile Include="type\events\Listeners.cs" />
+    <Compile Include="type\delegates\Listeners.cs" />
     <Compile Include="type\ParameterizedStringPartLiteral.cs" />
     <Compile Include="type\ParameterizedStringPartParameter.cs" />
     <Compile Include="type\suppliers\ExpiringMemoizingSupplier.cs" />
@@ -350,7 +352,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Nohros.Generators.Configuration;
-using Nohros.Resources;
+using System.Linq;
+using Roslyn.Compilers.CSharp;
 
 namespace Nohros.Generators
 {
   public class Generator
   {
-    readonly Dictionary<string, RunnableDelegate> generators_;
+    public delegate void GeneratorDelegate(CompilationUnitSyntax root);
+
+    readonly Dictionary<string, GeneratorDelegate> generators_;
     readonly CommandLine switches_;
 
     #region .ctor
@@ -21,49 +25,57 @@ namespace Nohros.Generators
     /// </param>
     public Generator(CommandLine switches) {
       switches_ = switches;
-      generators_ = new Dictionary<string, RunnableDelegate>();
-      generators_.Add("configuration", GenerateConfiguration);
+      generators_ = new Dictionary<string, GeneratorDelegate>
+      {
+        {
+          "IConfiguration", GenerateConfiguration
+        }
+      };
     }
     #endregion
 
-    void GenerateConfiguration() {
-      string input = switches_.GetSwitchValue(Strings.kInputSwitch);
-      string type = switches_.GetSwitchValue(Strings.kTypeSwitch);
-      if (input == string.Empty || type == string.Empty) {
-        Console.WriteLine(StringResources.Switches_MissingSwitch,
-          (input == string.Empty)
-            ? Strings.kInputSwitch
-            : Strings.kTypeSwitch);
-        return;
-      }
-
+    void GenerateConfiguration(CompilationUnitSyntax root) {
       string output =
         IO.Path.AbsoluteForApplication(
           switches_.GetSwitchValue(Strings.kOutput));
-
-      RuntimeType runtime_type =
-        new RuntimeType(type, IO.Path.AbsoluteForApplication(input));
-
-      Type system_type = runtime_type.GetSystemType();
-      if (system_type == null) {
-        Console.WriteLine(StringResources.TypeLoad_CreateInstance,
-          runtime_type.Type);
-        return;
-      }
-
-      new ConfigurationGenerator(runtime_type)
-        .GenerateConfiguration(output);
+      var generator = new ConfigurationGenerator(root, output);
+      generator.GenerateConfiguration();
     }
 
     public void Generate() {
-      string mode = switches_.GetSwitchValue(Strings.kModeSwitch);
-      RunnableDelegate runnable;
-      if (generators_.TryGetValue(mode, out runnable)) {
-        runnable();
+      IList<string> loose_values = switches_.LooseValues;
+      if (loose_values.Count == 0) {
+        Console.WriteLine(Strings.kUsage);
         return;
       }
 
-      Console.WriteLine(Resources.Mode_Unknown);
+      string[] inputs = loose_values[0].Split(new[] {','},
+        StringSplitOptions.RemoveEmptyEntries);
+
+      for (int i = 0, j = inputs.Length; i < j; i++) {
+        GetCode(inputs[i]);
+      }
+    }
+
+    void GetCode(string path) {
+      string code = new StreamReader(path).ReadToEnd();
+      var syntax = SyntaxTree.ParseCompilationUnit(code);
+      var root = (CompilationUnitSyntax) syntax.GetRoot();
+      var interfaces =
+        from i in
+          root
+            .DescendantNodes()
+            .OfType<IdentifierNameSyntax>()
+        where i.Parent.Kind == SyntaxKind.BaseList
+        select i;
+
+      foreach (var i in interfaces) {
+        string name = i.PlainName;
+        GeneratorDelegate method;
+        if (generators_.TryGetValue(name, out method)) {
+          method(root);
+        }
+      }
     }
   }
 }

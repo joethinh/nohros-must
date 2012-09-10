@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Must Class Generators.")]
-[assembly: AssemblyDescription("Nohros Must Framework.")]
+[assembly: AssemblyTitle("nohros.generators.exe")]
+[assembly: AssemblyDescription("Nohros Must Framework")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Nohros Inc.")]
-[assembly: AssemblyProduct("Nohros Must Framework.")]
-[assembly: AssemblyCopyright("Copyright ©  2012 by Nohros Inc.")]
+[assembly: AssemblyCompany("Nohros Inc")]
+[assembly: AssemblyProduct("Nohros Must Framework")]
+[assembly: AssemblyCopyright("Copyright ©  2012 by Nohros Inc")]
 [assembly: AssemblyTrademark("Nohors Inc.")]
 [assembly: AssemblyCulture("")]
 

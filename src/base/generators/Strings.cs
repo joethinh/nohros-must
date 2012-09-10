@@ -9,5 +9,8 @@ namespace Nohros.Generators
     public const string kModeSwitch = "mode";
     public const string kOutput = "out";
     public const string kCSharpExtension = ".cs";
+
+    public const string kUsage =
+      @"";
   }
 }

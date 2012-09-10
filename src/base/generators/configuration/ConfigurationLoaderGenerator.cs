@@ -1,9 +1,9 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Text;
 using Nohros.Configuration;
-using Nohros.Data;
+using Roslyn.Compilers.CSharp;
 
 namespace Nohros.Generators.Configuration
 {
@@ -12,17 +12,16 @@ namespace Nohros.Generators.Configuration
   /// </summary>
   public class ConfigurationLoaderGenerator : AbstractGenerator
   {
+    readonly CompilationUnitSyntax root_;
+
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="ConfigurationLoaderGenerator"/>
     /// class using the specified <see cref="IRuntimeType"/>.
     /// </summary>
-    /// <param name="runtime_type">
-    /// A <see cref="IRuntimeType"/> object containing information about the
-    /// configuration class.
-    /// </param>
-    public ConfigurationLoaderGenerator(IRuntimeType runtime_type)
-      : base(runtime_type) { }
+    public ConfigurationLoaderGenerator(CompilationUnitSyntax root) {
+      root_ = root;
+    }
     #endregion
 
     /// <summary>
@@ -31,27 +30,29 @@ namespace Nohros.Generators.Configuration
     /// <param name="output">
     /// A <see cref="Stream"/> object to write to generated code to.
     /// </param>
-    public void Generate(Stream output) {
-      Type type = RuntimeType.GetSystemType(runtime_type);
-      PropertyInfo[] properties = type.GetProperties(
-        BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+    public void Generate(string name_space, string type_name, Stream output) {
+      var properties =
+        root_
+          .DescendantNodes()
+          .OfType<PropertyDeclarationSyntax>()
+          .ToArray();
 
       code
         .AppendLine("using System;")
         .AppendLine("using Nohros.Configuration;")
         .AppendLine()
-        .Append    ("namespace ").AppendLine(type.Namespace)
+        .Append    ("namespace ").AppendLine(name_space)
         .AppendLine("{")
-        .Append    ("  public partial class ").AppendLine(type.Name)
+        .Append    ("  public partial class ").AppendLine(type_name)
         .AppendLine("  {")
-        .Append    ("    public class Loader : AbstractConfigurationLoader<").Append(type.Name).AppendLine(">")
+        .Append    ("    public class Loader : AbstractConfigurationLoader<").Append(type_name).AppendLine(">")
         .AppendLine("    {")
         .AppendLine("      readonly Builder builder_;")
         .AppendLine("      public Loader() : base(new Builder()) {")
         .AppendLine("        builder_ = builder as Builder;")
         .AppendLine("      }")
-        .Append    ("      public override ").Append(type.Name).AppendLine(" CreateConfiguration(")
-        .Append    ("        IConfigurationBuilder<").Append(type.Name).AppendLine("> builder) {")
+        .Append    ("      public override ").Append(type_name).AppendLine(" CreateConfiguration(")
+        .Append    ("        IConfigurationBuilder<").Append(type_name).AppendLine("> builder) {")
         .AppendLine("        return builder_.Build();")
         .AppendLine("      }");
 
@@ -66,16 +67,17 @@ namespace Nohros.Generators.Configuration
       output.Write(src, 0, src.Length);
     }
 
-    void GenerateBody(PropertyInfo[] properties, string identation) {
-      for (int i = 0, j = properties.Length; i < j; i++) {
-        PropertyInfo property = properties[i];
-        string type_name = GetPropertyTypeName(property);
-        code
-          .Append(identation).Append    ("public ").Append(type_name).Append(" ").Append(property.Name).AppendLine(" {")
-          .Append(identation).Append    ("  get { return builder_.").Append(property.Name).AppendLine("; }")
-          .Append(identation).Append    ("  set { builder_.Set").Append(property.Name).AppendLine("(value); }")
-          .Append(identation).AppendLine("}");
-      }
+    void GenerateBody(IEnumerable<PropertyDeclarationSyntax> properties,
+      string identation) {
+        foreach (PropertyDeclarationSyntax property in properties) {
+          string property_type_name = GetPropertyTypeName(property);
+          string property_name = GetPropertyName(property);
+          code
+            .Append(identation).Append("public ").Append(property_type_name).Append(" ").Append(property_name).AppendLine(" {")
+            .Append(identation).Append("  get { return builder_.").Append(property_name).AppendLine("; }")
+            .Append(identation).Append("  set { builder_.Set").Append(property_name).AppendLine("(value); }")
+            .Append(identation).AppendLine("}");
+        }
     }
   }
 }
