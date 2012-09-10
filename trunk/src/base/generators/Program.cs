@@ -11,7 +11,7 @@ namespace Nohros.Generators
         Debugger.Launch();
       }
 
-      Generator generator = new Generator(CommandLine.ForCurrentProcess);
+      var generator = new Generator(switches);
       generator.Generate();
     }
   }

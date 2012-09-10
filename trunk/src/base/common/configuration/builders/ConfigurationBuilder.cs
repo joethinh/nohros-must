@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.Configuration
+namespace Nohros.Configuration.Builders
 {
   /// <summary>
   /// An implementation of the <see cref="AbstractConfigurationBuilder{T}"/>

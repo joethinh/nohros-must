@@ -3,6 +3,7 @@ using System.Xml;
 using System.IO;
 using System.Reflection;
 using System.Configuration;
+using Nohros.Configuration.Builders;
 using Nohros.Resources;
 using Nohros.Logging;
 
@@ -43,7 +44,12 @@ namespace Nohros.Configuration
 
     /// <summary>
     /// The <see cref="IConfigurationBuilder{T}"/> object specified on
-    /// constructor.
+    /// constructor or a <see cref="IConfigurationBuilder{T}"/> object that
+    /// throws an exception when its
+    /// <see cref="IConfigurationBuilder{T}.Build"/> method is called. NOTE
+    /// that is always safe to pass this object to the
+    /// <see cref="Configuration"/> class constructor, even on the later case (
+    /// When the bulder throws an exceotion when <c>Build</c> is called).
     /// </summary>
     protected readonly IConfigurationBuilder<T> builder;
 
@@ -60,6 +66,21 @@ namespace Nohros.Configuration
     DateTime version_;
 
     #region .ctor
+    /// <summary>
+    /// Initializes a new instance of the
+    /// <see cref="AbstractConfigurationLoader{T}"/>.
+    /// </summary>
+    /// <remarks>
+    /// This class uses a builder that throws an exception when the
+    /// <see cref="IConfigurationBuilder{T}.Build"/> is called and
+    /// should not be used to build an instance of <see cref="T"/> directly.
+    /// However, it is safe to pass it to the <see cref="Configuration"/>
+    /// constructor.
+    /// </remarks>
+    protected AbstractConfigurationLoader()
+      : this(new ThrowableConfigurationBuilder<T>()) {
+    }
+
     /// <summary>
     /// Initializes a new instance of the
     /// <see cref="AbstractConfigurationLoader{T}"/> class that load the values
