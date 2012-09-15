@@ -57,7 +57,7 @@
     <Compile Include="concurrent\AtomicReferenceTests.cs" />
     <Compile Include="concurrent\MailboxTests.cs" />
     <Compile Include="concurrent\YQueueTests.cs" />
-    <Compile Include="configuration\AbstractConfigurationTests.cs" />
+    <Compile Include="data\CommandBuilderTest.cs" />
     <Compile Include="data\json\JsonStringBuilderTest.cs" />
     <Compile Include="GenericTest.cs" />
     <Compile Include="Program.cs" />
@@ -82,6 +82,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="configuration\" />
     <Folder Include="logging\" />
   </ItemGroup>
   <ItemGroup>
