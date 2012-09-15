@@ -10,7 +10,20 @@ namespace Nohros.Concurrent
   /// </summary>
   public sealed class Executors
   {
-    Executors() { }
+    /// <summary>
+    /// Creates an executor that uses a single worker thread, and uses the
+    /// provided <see cref="IThreadFactory"/> to create a new
+    /// <see cref="Thread"/> when needed.
+    /// </summary>
+    /// <param name="thread_factory">
+    /// A <see cref="IThreadFactory"/> to use when creating new threads.
+    /// </param>
+    /// <returns>
+    /// The newly created <see cref="IExecutor"/> thread.
+    /// </returns>
+    public static IExecutor SingleThreadExecutor(IThreadFactory thread_factory) {
+      return new SingleThreadExecutor(thread_factory);
+    }
 
     /// <summary>
     /// Creates an executor that runs each task in the thread that invokes
