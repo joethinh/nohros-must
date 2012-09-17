@@ -20,66 +20,29 @@ namespace Nohros.Configuration
     #endregion
 
     /// <inheritdoc/>
-    public bool GetProviderNode(string simple_provider_name,
-      out IProviderNode simple_provider) {
-      return GetProviderNode(simple_provider_name, string.Empty,
-        out simple_provider);
+    public bool GetProvidersNodeGroup(string name, out IProvidersNodeGroup node) {
+      return GetChildNode(name, out node);
     }
 
     /// <inheritdoc/>
-    public bool GetProviderNode(string simple_provider_name,
-      string simple_provider_group, out IProviderNode simple_provider) {
+    public IProvidersNodeGroup GetProvidersNodeGroup(string name) {
       return
-        GetChildNode(
-          ProviderKey(simple_provider_name, simple_provider_group),
-          out simple_provider);
+        GetChildNode<IProvidersNodeGroup>(name);
     }
 
     /// <inheritdoc/>
-    public IProviderNode GetProviderNode(string name) {
-      return GetProviderNode(name, string.Empty);
+    IProvidersNodeGroup IProvidersNode.this[string name] {
+      get { return GetProvidersNodeGroup(name); }
     }
 
-    /// <inheritdoc/>
-    public IProviderNode GetProviderNode(string name, string group) {
-      return
-        GetChildNode<IProviderNode>(ProviderKey(name, group));
-    }
-
-    /// <inheritdoc/>
-    IProviderNode IProvidersNode.this[string name] {
-      get { return GetProviderNode(name); }
-    }
-
-    /// <inheritdoc/>
-    public IProviderNode[] GetProvidersNode(string group) {
-      List<IProviderNode> providers = new List<IProviderNode>(ChildNodes.Count);
+    public IEnumerator<IProvidersNodeGroup> GetEnumerator() {
       foreach (IConfigurationNode node in ChildNodes) {
-        IProviderNode provider = node as IProviderNode;
-        if (Strings.AreEquals(provider.Group, group)) {
-          providers.Add(provider);
-        }
-      }
-      return providers.ToArray();
-    }
-
-    /// <inheritdoc/>
-    public IProviderNode this[string provider_name, string provider_group] {
-      get { return GetProviderNode(provider_name, provider_group); }
-    }
-
-    public IEnumerator<IProviderNode> GetEnumerator() {
-      foreach (IConfigurationNode node in ChildNodes) {
-        yield return (IProviderNode) node;
+        yield return (IProvidersNodeGroup) node;
       }
     }
 
     IEnumerator IEnumerable.GetEnumerator() {
       return GetEnumerator();
-    }
-
-    static string ProviderKey(string name, string group) {
-      return "group:" + group + ",name:" + name;
     }
   }
 }
