@@ -1,47 +1,111 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 
 namespace Nohros.Logging
 {
   /// <summary>
-  /// A generic logger that logs messages to the console.
+  /// A implementation of the <see cref="ILogger"/> that log all messages
+  /// using the attached <see cref="System.Console"/>.
   /// </summary>
-  /// <remarks>
-  /// This is a generic logger that loads automatically and configures
-  /// itself through the code. The messages are logged to the console window.
-  /// <para>
-  /// The pattern used to log message are:
-  /// . "[%date %-5level/%thread] %message%newline %exception" for the
-  /// non-debug messages.
-  /// </para>
-  /// <para>
-  /// The default threshold level is INFO and could be overloaded on the
-  /// nohros configuration file.
-  /// </para>
-  /// </remarks>
-  public sealed class ConsoleLogger
+  public sealed class ConsoleLogger : ILogger
   {
-    readonly static ILogger current_process_logger_;
+    readonly LogLevel level_;
 
     #region .ctor
     /// <summary>
-    /// Initializes the singleton process's logger instance.
+    /// Initializes a new instance of the <see cref="ConsoleLogger"/> class
+    /// using the specified <see cref="LogLevel"/>.
     /// </summary>
-    static ConsoleLogger() {
-      Log4NetConsoleLogger logger = new Log4NetConsoleLogger();
-      logger.Configure();
-
-      current_process_logger_ = logger as ILogger;
+    /// <param name="level"></param>
+    public ConsoleLogger(LogLevel level) {
+      level_ = level;
     }
     #endregion
 
-    /// <summary>
-    /// Gets the current process logger.
-    /// </summary>
-    public static ILogger ForCurrentProcess {
-      get { return current_process_logger_; }
+    /// <inheritdoc/>
+    public void Debug(string message) {
+      Log(LogLevel.Debug, message);
+    }
+
+    /// <inheritdoc/>
+    public void Debug(string message, Exception exception) {
+      Log(LogLevel.Debug, message, exception);
+    }
+
+    /// <inheritdoc/>
+    public void Error(string message) {
+      Log(LogLevel.Error, message);
+    }
+
+    /// <inheritdoc/>
+    public void Error(string message, Exception exception) {
+      Log(LogLevel.Error, message, exception);
+    }
+
+    /// <inheritdoc/>
+    public void Fatal(string message) {
+      Log(LogLevel.Fatal, message);
+    }
+
+    /// <inheritdoc/>
+    public void Fatal(string message, Exception exception) {
+      Log(LogLevel.Fatal, message, exception);
+    }
+
+    /// <inheritdoc/>
+    public void Info(string message) {
+      Log(LogLevel.Info, message);
+    }
+
+    /// <inheritdoc/>
+    public void Info(string message, Exception exception) {
+      Log(LogLevel.Info, message, exception);
+    }
+
+    /// <inheritdoc/>
+    public void Warn(string message) {
+      Log(LogLevel.Warn, message);
+    }
+
+    /// <inheritdoc/>
+    public void Warn(string message, Exception exception) {
+      Log(LogLevel.Warn, message, exception);
+    }
+
+    public bool IsDebugEnabled {
+      get { return level_ < LogLevel.Debug; }
+    }
+
+    public bool IsErrorEnabled {
+      get { return level_ < LogLevel.Debug; }
+    }
+
+    public bool IsFatalEnabled {
+      get { return level_ < LogLevel.Debug; }
+    }
+
+    public bool IsInfoEnabled {
+      get { return level_ < LogLevel.Debug; }
+    }
+
+    public bool IsWarnEnabled {
+      get { return level_ < LogLevel.Debug; }
+    }
+
+    public bool IsTraceEnabled {
+      get { return level_ < LogLevel.Debug; }
+    }
+
+    void Log(LogLevel level, string message) {
+      if (level_ < level) {
+        Console.WriteLine(message);
+      }
+    }
+
+    void Log(LogLevel level, string message, Exception exception) {
+      if (level_ < level) {
+        Console.WriteLine(message);
+        Console.WriteLine(exception);
+      }
     }
   }
 }
