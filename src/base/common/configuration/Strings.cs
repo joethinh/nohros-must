@@ -24,6 +24,7 @@ namespace Nohros
     public const string kRepositoriesNodeName = "repositories";
     public const string kRepositoryNodeName = "repository";
     public const string kProvidersNodeName = "providers";
+    public const string kProvidersNodeGroupName = "";
     public const string kDataProvidersNodeName = "data";
     public const string kCacheProvidersNodeName = "cache";
     public const string kSimpleProvidersNodeName = "simple";

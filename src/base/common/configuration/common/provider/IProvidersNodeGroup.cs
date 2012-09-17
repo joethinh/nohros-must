@@ -4,10 +4,9 @@ using System.Collections.Generic;
 namespace Nohros.Configuration
 {
   /// <summary>
-  /// A <see cref="IProvidersNode"/> is a collection of
-  /// <see cref="IProvidersNode"/> objects.
+  /// A set of <see cref="IProviderNode"/> that belongs to the same group
   /// </summary>
-  public interface IProvidersNode : IEnumerable<IProvidersNodeGroup>
+  public interface IProvidersNodeGroup : IConfigurationNode
   {
     /// <summary>
     /// Gets a <see cref="IProviderNode"/> node whose name is
@@ -26,7 +25,7 @@ namespace Nohros.Configuration
     /// not found.
     /// </param>
     /// </exception>
-    IProvidersNodeGroup GetProvidersNodeGroup(string name);
+    IProviderNode GetProviderNode(string name);
 
     /// <summary>
     /// Gets a <see cref="IProviderNode"/> whose name is
@@ -35,7 +34,7 @@ namespace Nohros.Configuration
     /// <param name="name">
     /// The name of the provider.
     /// </param>
-    /// <param name="node">
+    /// <param name="provider">
     /// When this method returns contains a <see cref="IProviderNode"/>
     /// object whose name is <paramref name="name"/>.
     /// </param>
@@ -43,7 +42,24 @@ namespace Nohros.Configuration
     /// <c>true</c> when a provider whose name is
     /// <paramref name="name"/> is found; otherwise, <c>false</c>.
     /// </returns>
-    bool GetProvidersNodeGroup(string name, out IProvidersNodeGroup node);
+    bool GetProviderNode(string name, out IProviderNode provider);
+
+    /// <summary>
+    /// Gets an array of <see cref="IProviderNode"/> containing all the
+    /// providers that belongs to the grou <paramref name="group"/>
+    /// </summary>
+    /// <param name="group">
+    /// The name of the group associated with the providers.
+    /// </param>
+    /// <returns>
+    /// An array of <see cref="IProviderNode"/> containing all the providers
+    /// associated with the group <paramref name="group"/>.
+    /// </returns>
+    /// <remarks>
+    /// If there are no providers associated with the group
+    /// <paramref name="group"/> this method will returns an empty array.
+    /// </remarks>
+    IProviderNode[] GetProvidersNode(string group);
 
     /// <summary>
     /// Gets a <see cref="IProviderNode"/> node whose name is
@@ -63,9 +79,9 @@ namespace Nohros.Configuration
     /// </param>
     /// </exception>
     /// <remarks>
-    /// This method is a shortcut of the
-    /// <see cref="GetProvidersNodeGroup(string)"/> method.
+    /// This method is a shortcut for the <see cref="GetProviderNode(string)"/>
+    /// method.
     /// </remarks>
-    IProvidersNodeGroup this[string name] { get; }
+    IProviderNode this[string name] { get; }
   }
 }
