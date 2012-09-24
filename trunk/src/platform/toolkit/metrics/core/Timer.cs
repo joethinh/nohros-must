@@ -8,7 +8,7 @@ namespace Nohros.Toolkit.Metrics
   /// A timer metric which aggregates timing durations and provides duration
   /// statistics, plus throughput statistics via <see cref="Meter"/>.
   /// </summary>
-  public class Timer : IMetered, IStoppable, ISampling, ISummarizable
+  public class Timer : IMetered, ISampling, ISummarizable
   {
     readonly TimeUnit duration_unit_;
     readonly TimeUnit rate_unit_;
@@ -20,15 +20,21 @@ namespace Nohros.Toolkit.Metrics
     /// <summary>
     /// Creates a new <see cref="Timer"/>.
     /// </summary>
-    /// <param name="duration_unit">The scale unit for this timer's duration
-    /// metrics.</param>
-    /// <param name="rate_unit">The scale unit for this timer's rate metrics.
+    /// <param name="duration_unit">
+    /// The scale unit for this timer's duration metrics.
     /// </param>
-    /// <param name="clock">The clock used to calculate duration.</param>
+    /// <param name="rate_unit">
+    /// The scale unit for this timer's rate metrics.
+    /// </param>
+    /// <param name="clock">
+    /// The clock used to calculate duration.
+    /// </param>
     Timer(TimeUnit duration_unit, TimeUnit rate_unit, Clock clock) {
       duration_unit_ = duration_unit;
       rate_unit_ = rate_unit;
+      meter_ = new Meter("calls", rate_unit, clock);
       clock_ = clock;
+      histogram_ = new Histogram(Samples.Biased());
     }
     #endregion
 
@@ -95,9 +101,15 @@ namespace Nohros.Toolkit.Metrics
       }
     }
 
-    /// <inheritdoc/>
-    public void Stop() {
-      meter_.Stop();
+    /// <summary>
+    /// Gets a timing <see cref="TimerContext"/>, which measures an elapsed
+    /// time in nanoseconds.
+    /// </summary>
+    /// <returns>
+    /// A new <see cref="TimerContext"/>.
+    /// </returns>
+    public TimerContext Time() {
+      return new TimerContext(this, clock_);
     }
 
     /// <inheritdoc/>

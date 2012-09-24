@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Toolkit.Metrics
 {
   /// <summary>
   /// A timing context
   /// </summary>
-  /// <seealso cref="Timer.Time"/>
+  /// <seealso cref="Timer.Time{T}"/>
   public class TimerContext
   {
     readonly Timer timer_;
+    readonly Clock clock_;
     readonly long start_time_;
 
     #region .ctor
@@ -21,17 +20,21 @@ namespace Nohros.Toolkit.Metrics
     /// </summary>
     /// <param name="timer">The <see cref="Timer"/> to report elapsed time.
     /// </param>
-    public TimerContext(Timer timer) {
+    public TimerContext(Timer timer, Clock clock) {
       timer_ = timer;
       start_time_ = Clock.NanoTime;
+      clock_ = clock;
     }
     #endregion
 
     /// <summary>
-    /// Stops recording the elapsed time and updates the timer.
+    /// Stops recording the elapsed time, updates the timer and returns the
+    /// elapsed time.
     /// </summary>
-    public void Stop() {
-      timer_.Update(Clock.NanoTime - start_time_, TimeUnit.Nanoseconds);
+    public long Stop() {
+      long elapsed_nanos = clock_.Tick - start_time_;
+      timer_.Update(elapsed_nanos, TimeUnit.Nanoseconds);
+      return elapsed_nanos;
     }
   }
 }

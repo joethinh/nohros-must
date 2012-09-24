@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-
 using Nohros.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
@@ -18,39 +14,12 @@ namespace Nohros.Toolkit.Metrics
   /// </remarks>
   public partial class Histogram : ISummarizable, ISampling, IMetric
   {
-    internal const int kDefaultSampleSize = 1028;
-    internal const double kDefaultAlpha = 0.015;
-
-    enum SampleType
-    {
-      /// <summary>
-      /// A uniform sample of 1028 elements, which offer a 99.9% confidence
-      /// level with 5% margin of error assuming a normal distribution.
-      /// </summary>
-      UNIFORM = 0,
-
-      /// <summary>
-      /// An exponentially decaying sample of 1028 elements, which offers a
-      /// 99.9% confidence level with a 5% margin of error assuming a normal
-      /// distribution, and alpha factor of 0.015, which heavily biases the
-      /// sample to the past 5 minutes of measurements.
-      /// </summary>
-      BIASED = 1
-    }
-
-    [ThreadStatic]
-    /// <summary>
-    /// Cache arrays for the vairance calculation, so as to avoid memory
-    /// allocation.
-    /// </summary>
-    protected static double[] thread_static_initial_values_;
-
     readonly ISample sample_;
-    readonly AtomicLong min_;
-    readonly AtomicLong max_;
-    readonly AtomicLong sum_;
-    readonly AtomicLong count_;
     readonly AtomicReference<double[]> variance_;
+    AtomicLong count_;
+    AtomicLong max_;
+    AtomicLong min_;
+    AtomicLong sum_;
 
     #region .ctor
     /// <summary>
@@ -64,10 +33,37 @@ namespace Nohros.Toolkit.Metrics
       max_ = new AtomicLong();
       sum_ = new AtomicLong();
       count_ = new AtomicLong();
-      variance_ = new AtomicReference<double[]>(new double[] { -1, 0 }); //M,S
-      thread_static_initial_values_ = new double[2];
+      variance_ = new AtomicReference<double[]>(new double[] {-1, 0}); //M,S
     }
     #endregion
+
+    /// <inheritdoc/>
+    public Snapshot Snapshot {
+      get { return sample_.Snapshot; }
+    }
+
+    /// <inheritdoc/>
+    public double Max {
+      get { return (Count > 0) ? max_.Value : 0.0; }
+    }
+
+    /// <inheritdoc/>
+    public double Min {
+      get { return (Count > 0) ? max_.Value : 0.0; }
+    }
+
+    /// <inheritdoc/>
+    public double Mean {
+      get {
+        long count = Count;
+        return (count > 0) ? sum_.Value/(double) count : 0.0;
+      }
+    }
+
+    /// <inheritdoc/>
+    public double StandardDeviation {
+      get { return (Count > 0) ? Math.Sqrt(Variance) : 0.0; }
+    }
 
     /// <summary>
     /// Clears all the recorded values
@@ -78,15 +74,15 @@ namespace Nohros.Toolkit.Metrics
       max_.Exchange(0);
       min_.Exchange(0);
       sum_.Exchange(0);
-      variance_.Exchange(new double[] { -1, 0 });
+      variance_.Exchange(new double[] {-1, 0});
     }
 
     /// <summary>
-    /// Adds a recorded value
+    /// Adds a recorded value.
     /// </summary>
     /// <param name="value">The length of the value.</param>
     public void Update(int value) {
-      Update((long)value);
+      Update((long) value);
     }
 
     /// <summary>
@@ -101,30 +97,30 @@ namespace Nohros.Toolkit.Metrics
       UpdateVariance(value);
     }
 
-    double Variance() {
-      long count = Count;
-      if (count <= 1) {
-        return 0.0;
+    double Variance {
+      get {
+        long count = Count;
+        return (count <= 1) ? 0.0 : variance_.Value[1]/(count - 1);
       }
-      return variance_.Value[1] / (count - 1);
     }
 
     /// <summary>
     /// Set the maximum recorded value value.
     /// </summary>
-    /// <param name="value">The value that is potentially the maximum value.
+    /// <param name="value">
+    /// The value that is potentially the maximum value.
     /// </param>
     void SetMax(long value) {
       bool done = false;
       while (!done) {
-        long current_max = (long)max_;
+        long current_max = (long) max_;
 
         // check if we already have the maximum value.
         done = current_max >= value;
         if (!done) {
           // atomically set the maximum value if it is still the value that we
           // use in the check above.
-          min_.CompareExchange(current_max, value);
+          max_.CompareExchange(current_max, value);
         }
       }
     }
@@ -138,7 +134,7 @@ namespace Nohros.Toolkit.Metrics
     void SetMin(long value) {
       bool done = false;
       while (!done) {
-        long current_min = (long)min_;
+        long current_min = (long) min_;
 
         // check if we already have the minimum value.
         done = current_min <= value;
@@ -158,7 +154,7 @@ namespace Nohros.Toolkit.Metrics
       bool done = false;
       while (!done) {
         double[] old_values = variance_.Value;
-        double[] new_values = thread_static_initial_values_;
+        double[] new_values = new double[2];
         if (old_values[0] == -1) {
           new_values[0] = value;
           new_values[1] = 0;
@@ -166,19 +162,13 @@ namespace Nohros.Toolkit.Metrics
           double old_m = old_values[0];
           double old_s = old_values[1];
 
-          double new_m = old_m + ((value - old_m) / Count);
-          double new_s = old_s + ((value - old_m) * (value - new_m));
+          double new_m = old_m + ((value - old_m)/Count);
+          double new_s = old_s + ((value - old_m)*(value - new_m));
 
           new_values[0] = new_m;
           new_values[1] = new_s;
         }
-        double[] compare_old_values =
-          variance_.CompareExchange(old_values, new_values);
-
-        // if we are done, recycle the old value into the cache.
-        if (done = (compare_old_values == old_values)) {
-          thread_static_initial_values_ = old_values;
-        }
+        done = variance_.CompareSet(old_values, new_values);
       }
     }
 
@@ -187,44 +177,7 @@ namespace Nohros.Toolkit.Metrics
     /// </summary>
     /// <returns>The number of values recorded.</returns>
     public long Count {
-      get { return (long)count_; }
-    }
-
-    /// <inheritdoc/>
-    public double Max {
-      get {
-        return (Count > 0) ? max_.Value : 0.0;
-      }
-    }
-
-    /// <inheritdoc/>
-    public double Min {
-      get {
-        return (Count > 0) ? max_.Value : 0.0;
-      }
-    }
-
-    /// <inheritdoc/>
-    public double Mean {
-      get {
-        long count = Count;
-        if (count > 0) {
-          return sum_.Value / (double)count;
-        }
-        return 0.0;
-      }
-    }
-
-    /// <inheritdoc/>
-    public double StandardDeviation {
-      get {
-        return (Count > 0) ? Math.Sqrt(Variance()) : 0.0;
-      }
-    }
-
-    /// <inheritdoc/>
-    public Snapshot Snapshot {
-      get { return sample_.Snapshot; }
+      get { return (long) count_; }
     }
   }
 }

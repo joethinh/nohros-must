@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 using Nohros.Concurrent;
 
@@ -18,7 +16,7 @@ namespace Nohros.Toolkit.Metrics
     /// Initializes a new instance of the <see cref="Counter"/> class.
     /// </summary>
     public Counter() {
-      this.count_ = new AtomicLong(0);
+      count_ = new AtomicLong(0);
     }
     #endregion
 
