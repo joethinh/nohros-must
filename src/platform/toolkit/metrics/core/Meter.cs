@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Timers;
 
 using Nohros.Concurrent;
 
@@ -16,40 +13,49 @@ namespace Nohros.Toolkit.Metrics
   ///   http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average
   /// </para>
   /// </remarks>
-  public class Meter : IMetered, IStoppable
+  public class Meter : IMetered
   {
-    const long kInterval = 5 * 1000; // 5 seconds in milliseconds
+    const long kTickInterval = 5000000000; // 5 seconds in nanoseconds
 
-    readonly ExponentialWeightedMovingAverage m1Rate;
-    readonly ExponentialWeightedMovingAverage m5Rate;
-    readonly ExponentialWeightedMovingAverage m15Rate;
+    readonly ExponentialWeightedMovingAverage ewma_1_rate_;
+    readonly ExponentialWeightedMovingAverage ewma_5_rate_;
+    readonly ExponentialWeightedMovingAverage ewma_15_rate_;
 
-    readonly AtomicLong count_ = new AtomicLong();
+    AtomicLong count_;
+    AtomicLong last_tick_;
     readonly long start_time_;
     readonly TimeUnit rate_unit_;
     readonly string event_type_;
     readonly Clock clock_;
-    readonly System.Timers.Timer timer_;
 
     /// <summary>
     /// Initializes a new instance of the <see cref=" Meter"/> class by using
     /// the specified meter name, rate unit and clock.
     /// </summary>
-    /// <param name="rate_unit">The rate unit of the new meter.</param>
-    /// <param name="event_type">The plural</param>
-    /// <param name="clock"></param>
-    internal Meter(TimeUnit rate_unit, string event_type, Clock clock) {
+    /// <param name="rate_unit">
+    /// The rate unit of the new meter.
+    /// </param>
+    /// <param name="event_type">
+    /// The plural name of the event meter is measuring
+    /// <example>
+    /// <code>
+    /// "requests"
+    /// </code>
+    /// </example>
+    /// </param>
+    /// <param name="clock">
+    /// The clock to use for the meter ticks.
+    /// </param>
+    internal Meter(string event_type, TimeUnit rate_unit, Clock clock) {
+      count_ = new AtomicLong();
       rate_unit_ = rate_unit;
       event_type_ = event_type;
       clock_ = clock;
       start_time_ = clock_.Tick;
-
-      timer_ = new System.Timers.Timer(kInterval);
-      timer_.Elapsed  += new ElapsedEventHandler(
-        delegate(object sender, ElapsedEventArgs e)
-        {
-          Tick();
-        });
+      last_tick_ = new AtomicLong(start_time_);
+      ewma_1_rate_ = ExponentialWeightedMovingAverages.OneMinute();
+      ewma_5_rate_ = ExponentialWeightedMovingAverages.FiveMinute();
+      ewma_15_rate_ = ExponentialWeightedMovingAverages.FifteenMinute();
     }
 
     /// <inheritdoc/>
@@ -66,9 +72,9 @@ namespace Nohros.Toolkit.Metrics
     /// Updates the moving average.
     /// </summary>
     void Tick() {
-      m1Rate.Tick();
-      m5Rate.Tick();
-      m15Rate.Tick();
+      ewma_1_rate_.Tick();
+      ewma_5_rate_.Tick();
+      ewma_15_rate_.Tick();
     }
 
     /// <summary>
@@ -81,32 +87,47 @@ namespace Nohros.Toolkit.Metrics
     /// <summary>
     /// Mark the occurrence of a given number of events.
     /// </summary>
-    /// <param name="n">The number of events.</param>
+    /// <param name="n">
+    /// The number of events.
+    /// </param>
     public void Mark(long n) {
+      TickIfNecessary();
       count_.Add(n);
-      m1Rate.Update(n);
-      m5Rate.Update(n);
-      m15Rate.Update(n);
+      ewma_1_rate_.Update(n);
+      ewma_5_rate_.Update(n);
+      ewma_15_rate_.Update(n);
+    }
+
+    void TickIfNecessary() {
+      long old_tick = last_tick_.Value;
+      long new_tick = clock_.Tick;
+      long age = new_tick - old_tick;
+      if (age > kTickInterval && last_tick_.CompareSet(old_tick, new_tick)) {
+        long required_ticks = age/kTickInterval;
+        for (long i = 0; i < required_ticks; i++) {
+          Tick();
+        }
+      }
     }
 
     /// <inheritdoc/>
     public long Count {
-      get {
-        return (long)count_;
-      }
+      get { return (long) count_; }
     }
 
     /// <inheritdoc/>
     public double FifteenMinuteRate {
       get {
-        return m15Rate.Rate(rate_unit_);
+        TickIfNecessary();
+        return ewma_15_rate_.Rate(rate_unit_);
       }
     }
 
     /// <inheritdoc/>
     public double FiveMinuteRate {
       get {
-        return m5Rate.Rate(rate_unit_);
+        TickIfNecessary();
+        return ewma_5_rate_.Rate(rate_unit_);
       }
     }
 
@@ -115,36 +136,22 @@ namespace Nohros.Toolkit.Metrics
       get {
         if (Count == 0) {
           return 0.0;
-        } else {
-          long elapsed = clock_.Tick - start_time_;
-          return ConvertNsRate(Count / (double)elapsed);
         }
+        long elapsed = clock_.Tick - start_time_;
+        return ConvertNsRate(Count/(double) elapsed);
       }
     }
 
     /// <inheritdoc/>
     public double OneMinuteRate {
       get {
-        return m1Rate.Rate(rate_unit_);
+        TickIfNecessary();
+        return ewma_1_rate_.Rate(rate_unit_);
       }
     }
 
     double ConvertNsRate(double rate_per_ns) {
       return rate_per_ns * (double)TimeUnitHelper.ToNanos(1, rate_unit_);
-    }
-
-    /// <summary>
-    /// Start updating the rates.
-    /// </summary>
-    /// <remarks>The rates are updated in a background thread at a regular
-    /// interval(5 seconds), until it is stopped.</remarks>
-    public void Start() {
-      timer_.Start();
-    }
-
-    /// <inheritdoc/>
-    public void Stop() {
-      timer_.Stop();
     }
   }
 }

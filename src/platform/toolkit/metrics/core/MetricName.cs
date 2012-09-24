@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Toolkit.Metrics
 {
@@ -11,52 +9,64 @@ namespace Nohros.Toolkit.Metrics
   /// This class provides a unique name for a metric, which consist of four
   /// pieces of information.
   /// <list type="bullet">
-  /// <item>group - The top level grouping of the metric. When a metric
+  /// <item>
+  /// Group - The top level grouping of the metric. When a metric
   /// belongs to a class, this is default to the class's namespace.(e.g.,
   /// nohros.toolkit.metrics).
   /// </item>
-  /// <item>type - The second level grouping of the metric. When a metric
+  /// <item>
+  /// Type - The second level grouping of the metric. When a metric
   /// belongs to a class, this is default to the class's name(e.g.,
   /// MetricName).</item>
-  /// <item>name - A short name describing the metric's purpose(e.g.,
-  /// session-count).</item>
-  /// <item>scope - An optional name describing the metric's scope. Useful for
-  /// when you have multiple instances of a class.</item>
+  /// <item>
+  /// Name - A short name describing the metric's purpose(e.g., session-count).
+  /// </item>
+  /// <item>
+  /// Scope - An optional name describing the metric's scope. Useful for
+  /// when you have multiple instances of a class.
+  /// </item>
   /// </list>
   /// </remarks>
   public class MetricName
   {
-    string group_;
-    string type_;
-    string name_;
-    string scope_;
-    string metric_name_as_string_;
+    readonly string group_;
+    readonly string type_;
+    readonly string name_;
+    readonly string scope_;
+    readonly string metric_name_as_string_;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MetricName"/> without a
     /// scope.
     /// </summary>
-    /// <param name="klass">The type of the class which
-    /// <see cref="IMetric"/> belongs.</param>
-    /// <param name="name">A short name describing the metric's purpose(e.g.,
-    /// session-count).</param>
-    /// <exception cref="ArgumentNullException">klass or name is a null
-    /// reference.</exception>
+    /// <param name="klass">
+    /// The type of the class which <see cref="IMetric"/> belongs.
+    /// </param>
+    /// <param name="name">
+    /// A short name describing the metric's purpose(e.g., session-count).
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// klass or name is a null reference.
+    /// </exception>
     public MetricName(Type klass, string name)
       : this(klass, name, string.Empty) { }
 
     /// <summary>
-    /// Creates a new <see cref="MetricName"/> without using the specified
-    /// metric class, name and scope.
+    /// Creates a new <see cref="MetricName"/> using the specified metric
+    /// class, name and scope.
     /// </summary>
-    /// <param name="klass">The type of the class which
-    /// <see cref="IMetric"/> belongs.</param>
-    /// <param name="name">A short name describing the metric's purpose(e.g.,
-    /// session-count).</param>
-    /// <param name="scope">An string describing the metric's scope. Useful for
+    /// <param name="klass">
+    /// The type of the class which <see cref="IMetric"/> belongs.
+    /// </param>
+    /// <param name="name">
+    /// A short name describing the metric's purpose(e.g., session-count).
+    /// </param>
+    /// <param name="scope">
+    /// An string describing the metric's scope. Useful for
     /// when you have multiple instances of a class.</param>
-    /// <exception cref="ArgumentNullException">klass, name or scope is a
-    /// null reference.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// klass, name or scope is a null reference.
+    /// </exception>
     public MetricName(Type klass, string name, string scope) :
       this((klass == null) ? null : klass.Namespace, name, scope) { }
 
@@ -214,16 +224,16 @@ namespace Nohros.Toolkit.Metrics
       if (other == null) {
         return false;
       }
-      return other.metric_name_as_string_ == this.metric_name_as_string_;
+      return other.metric_name_as_string_ == metric_name_as_string_;
     }
 
     /// <summary>
-    /// Determines whether the specified <see cref="MetricNaname"/> is equals
+    /// Determines whether the specified <see cref="MetricName"/> is equals
     /// to the current <see cref="MetricName"/> object.
     /// </summary>
-    /// <param name="metric_name">The <see cref="MetricNaname"/> to compare
+    /// <param name="metric_name">The <see cref="MetricName"/> to compare
     /// with the current <see cref="MetricName"/> object.</param>
-    /// <returns><c>true</c> if the specified <see cref="MetricNaname"/> is
+    /// <returns><c>true</c> if the specified <see cref="MetricName"/> is
     /// equals to the current <see cref="MetricName"/> object; otherwise,
     /// <c>false</c>.
     /// </returns>
@@ -231,7 +241,7 @@ namespace Nohros.Toolkit.Metrics
       if ((object)metric_name == null) {
         return false;
       }
-      return this.metric_name_as_string_ == metric_name.metric_name_as_string_;
+      return metric_name_as_string_ == metric_name.metric_name_as_string_;
     }
 
     /// <summary>

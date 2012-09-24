@@ -10,7 +10,7 @@ namespace Nohros.Toolkit.Metrics
   /// <para>
   /// <example>
   /// <code>
-
+  /// Queue&lt;string&gt; queue = new Queue&lt;string&gt;();
   /// </code>
   /// </example>
   /// </para>

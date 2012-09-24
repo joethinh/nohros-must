@@ -45,27 +45,30 @@
   <ItemGroup>
     <Compile Include="core\Clock.cs" />
     <Compile Include="core\Counter.cs" />
-    <Compile Include="core\ExponentialWeightedMovingAverage.cs" />
+    <Compile Include="Metrics.cs" />
+    <Compile Include="stats\ExponentialWeightedMovingAverage.cs" />
+    <Compile Include="stats\ExponentialWeightedMovingAverages.cs" />
     <Compile Include="core\Gauge.cs" />
     <Compile Include="core\Histogram.cs" />
     <Compile Include="core\IMetric.cs" />
-    <Compile Include="core\stats\ExponentiallyDecayingSample.cs">
+    <Compile Include="stats\ExponentiallyDecayingSample.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\stats\ISample.cs" />
-    <Compile Include="core\stats\ISampling.cs" />
+    <Compile Include="stats\ISample.cs" />
+    <Compile Include="stats\ISampling.cs" />
     <Compile Include="core\IStoppable.cs" />
     <Compile Include="core\Meter.cs" />
     <Compile Include="core\IMetered.cs" />
     <Compile Include="core\MetricName.cs" />
     <Compile Include="core\MetricsRegistry.cs" />
-    <Compile Include="core\stats\Snapshot.cs" />
+    <Compile Include="stats\Samples.cs" />
+    <Compile Include="stats\Snapshot.cs" />
     <Compile Include="core\ISummarizable.cs" />
     <Compile Include="core\TimedEvent.cs" />
     <Compile Include="core\Timer.cs" />
     <Compile Include="core\TimerContext.cs" />
     <Compile Include="core\TimeUnit.cs" />
-    <Compile Include="core\stats\UniformSample.cs" />
+    <Compile Include="stats\UniformSample.cs" />
     <Compile Include="core\UserTimeClock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">

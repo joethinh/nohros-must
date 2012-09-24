@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Toolkit.Metrics
 {
@@ -10,93 +8,89 @@ namespace Nohros.Toolkit.Metrics
   /// </summary>
   public class MetricsRegistry
   {
-    const int kExpectedMetritCount = 1024;
+    const int kExpectedMetricCount = 1024;
+    readonly Clock clock_;
     readonly Dictionary<MetricName, IMetric> metrics_;
-    readonly object metrics_locker_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="MetricsRegistry"/> class.
+    /// Initializes a new instance of the <see cref="MetricsRegistry"/> class
+    /// that uses the default a <see cref="UserTimeClock"/> as the metrics
+    /// clock.
     /// </summary>
-    public MetricsRegistry() {
-      metrics_locker_ = new object();
+    public MetricsRegistry() : this(new UserTimeClock()) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MetricsRegistry"/> class
+    /// using the specified <see cref="Clock"/> object.
+    /// </summary>
+    /// <param name="clock"></param>
+    public MetricsRegistry(Clock clock) {
+      clock_ = clock;
+      metrics_ = new Dictionary<MetricName, IMetric>();
     }
     #endregion
 
     /// <summary>
-    /// Given a new <see cref="Gauge"/>, register it under the given metric
-    /// name.
+    /// Gets the counter that is associated with the specified
+    /// <see cref="MetricName"/> or create a new one if no association exists.
     /// </summary>
-    /// <typeparam name="T">The type of the value returned by the metric.
-    /// </typeparam>
     /// <param name="name">The name of the metric.</param>
-    /// <param name="metric">The metric to be added.</param>
-    /// <returns><paramref name="metric"/></returns>
-    public Gauge<T> RegisterGauge<T>(MetricName name, Gauge<T> metric) {
-      return GetOrAdd<Gauge<T>>(name, metric);
-    }
-
-    /// <summary>
-    /// Creates a new counter and register it under the given metric name.
-    /// </summary>
-    /// <param name="metric_name">The name of the metric.</param>
     /// <returns>A <see cref="Counter"/> that could be identified by the
-    /// specified <paramref name="metric_name"/>.</returns>
-    public Counter CreateCounter(MetricName metric_name) {
-      return GetOrAdd<Counter>(metric_name, new Counter());
+    /// specified <paramref name="name"/>.</returns>
+    public Counter GetCounter(MetricName name) {
+      Counter counter;
+      if (!TryGetMetric(name, out counter)) {
+        counter = new Counter();
+        Add(name, counter);
+      }
+      return counter;
+    }
+
+    bool TryGetMetric<T>(MetricName name, out T t) {
+      IMetric metric;
+      if (metrics_.TryGetValue(name, out metric)) {
+        if (metric is T) {
+          t = (T) metric;
+          return true;
+        }
+      }
+      t = default(T);
+      return false;
     }
 
     /// <summary>
-    /// Creates a new <see cref="Histogram"/> and register it under the given
-    /// metric name.
+    /// Gets the counter that is associated with the specified
+    /// <see cref="MetricName"/> or create a new one if no association exists.
     /// </summary>
-    /// <param name="metric_name">The name of the metric.</param>
+    /// <param name="name">The name of the metric.</param>
     /// <param name="biased">Whether or not the histogram should be biased.
     /// </param>
     /// <returns>A <see cref="Histogram"/> that could be identified by the
     /// specified <see cref="MetricName"/>.</returns>
-    public Histogram CreateHistogram(MetricName metric_name, bool biased) {
-      ISample sample;
-      if (biased) {
-        sample = new ExponentiallyDecayingSample(
-          Histogram.kDefaultSampleSize, Histogram.kDefaultAlpha);
-      } else {
-        sample = new UniformSample(Histogram.kDefaultSampleSize);
+    public Histogram GetHistogram(MetricName name, bool biased) {
+      Histogram histogram;
+      if (!TryGetMetric(name, out histogram)) {
+        ISample sample = (biased) ? Samples.Biased() : Samples.Uniform();
+        histogram = new Histogram(sample);
+        Add(name, histogram);
       }
-      return GetOrAdd<Histogram>(metric_name, new Histogram(sample));
+      return histogram;
     }
 
     /// <summary>
-    /// Gets any existing metric wich the given name or, if noe exists, adds
-    /// the given metric
+    /// Adds an metric to the metrics collection using the metrics name.
     /// </summary>
-    /// <typeparam name="T">The type of metric.</typeparam>
-    /// <param name="name">The metrics name.</param>
-    /// <param name="metric">The new metric.</param>
-    /// <returns>Either the existing metric or <see cref="metric"/>.</returns>
-    protected T GetOrAdd<T>(MetricName name, T metric) where T: IMetric {
-      IMetric existing_metric;
-      if (!metrics_.TryGetValue(name, out existing_metric)) {
-        lock (metrics_locker_) {
-          if (!metrics_.TryGetValue(name, out existing_metric)) {
-            metrics_[name] = metric;
-
-            // notify the listeneres that a new metric was added to the
-            // collection.
-            OnMetricAdded(metric);
-
-            return metric;
-          }
-
-          // another thread just added the metric to the dictionary, so
-          // restart it if we can.
-          if (metric is IStoppable) {
-            ((IStoppable)metric).Stop();
-            return (T)existing_metric;
-          }
-        }
-      }
-      return (T)existing_metric;
+    /// <param name="name">
+    /// The name of the metric.
+    /// </param>
+    /// <param name="metric">
+    /// The metric to be added.
+    /// </param>
+    protected void Add(MetricName name, IMetric metric) {
+      metrics_.Add(name, metric);
+      OnMetricAdded(metric);
     }
 
     // TODO: implement this

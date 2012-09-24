@@ -26,9 +26,9 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="values">An unordered set of values in the sample.</param>
     public Snapshot(ICollection<long> values) {
       values_ = new double[values.Count];
-      int i=0;
+      int i = 0;
       foreach (double l in values) {
-        values_[i++] = (double)l;
+        values_[i++] = (double) l;
       }
       Array.Sort<double>(values_);
     }
@@ -62,17 +62,17 @@ namespace Nohros.Toolkit.Metrics
     /// <returns>The value in the distribution at <paramref name="quantile"/>.
     /// </returns>
     public double this[double quantile] {
-      get{
+      get {
         if (quantile < 0.0 || quantile > 1.0) {
           throw new ArgumentOutOfRangeException("quantile");
         }
 
         int length = values_.Length;
-        if(length == 0) {
+        if (length == 0) {
           return 0.0;
         }
 
-        double pos = quantile * (length + 1);
+        double pos = quantile*(length + 1);
         if (pos < 1) {
           return values_[0];
         }
@@ -81,9 +81,9 @@ namespace Nohros.Toolkit.Metrics
           return values_[values_.Length - 1];
         }
 
-        double lower = values_[(int)pos - 1];
-        double upper = values_[(int)pos];
-        return lower + (pos - Math.Floor(pos)) * (upper - lower);
+        double lower = values_[(int) pos - 1];
+        double upper = values_[(int) pos];
+        return lower + (pos - Math.Floor(pos))*(upper - lower);
       }
     }
 
@@ -91,18 +91,14 @@ namespace Nohros.Toolkit.Metrics
     /// Gets the number of items in the snapshot.
     /// </summary>
     public int Size {
-      get {
-        return values_.Length;
-      }
+      get { return values_.Length; }
     }
 
     /// <summary>
     /// Gets hte median value in the distribution.
     /// </summary>
     public double Median {
-      get {
-        return this[MEDIAN_Q];
-      }
+      get { return this[MEDIAN_Q]; }
     }
 
     /// <summary>
@@ -110,9 +106,7 @@ namespace Nohros.Toolkit.Metrics
     /// </summary>
     /// <value>The 75th percentile in the distribution.</value>
     public double Percentile75 {
-      get {
-        return this[P75_Q];
-      }
+      get { return this[P75_Q]; }
     }
 
     /// <summary>
@@ -120,9 +114,7 @@ namespace Nohros.Toolkit.Metrics
     /// </summary>
     /// <value>The 95th percentile in the distribution.</value>
     public double Percentile95 {
-      get {
-        return this[P95_Q];
-      }
+      get { return this[P95_Q]; }
     }
 
     /// <summary>
@@ -130,9 +122,7 @@ namespace Nohros.Toolkit.Metrics
     /// </summary>
     /// <value>The 98th percentile in the distribution.</value>
     public double Percentile98 {
-      get {
-        return this[P98_Q];
-      }
+      get { return this[P98_Q]; }
     }
 
     /// <summary>
@@ -140,9 +130,7 @@ namespace Nohros.Toolkit.Metrics
     /// </summary>
     /// <value>The 99th percentile in the distribution.</value>
     public double Percentile99 {
-      get {
-        return this[P99_Q];
-      }
+      get { return this[P99_Q]; }
     }
 
     /// <summary>
@@ -150,9 +138,7 @@ namespace Nohros.Toolkit.Metrics
     /// </summary>
     /// <value>The 99.9th percentile in the distribution.</value>
     public double Percentile999 {
-      get {
-        return this[P999_Q];
-      }
+      get { return this[P999_Q]; }
     }
 
     /// <summary>
