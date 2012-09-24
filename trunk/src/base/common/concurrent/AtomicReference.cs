@@ -39,13 +39,32 @@ namespace Nohros.Concurrent
     /// Atomically set the current value to the spacified updated value if
     /// the current value is equals to the expected value.
     /// </summary>
-    /// <param name="expect">The value that is compared to the currrent
-    /// value.</param>
-    /// <param name="update">The value that replaces the current value if the
-    /// comparison results in equality.</param>
+    /// <param name="expect">
+    /// The value that is compared to the currrent value.</param>
+    /// <param name="update">
+    /// The value that replaces the current value if the comparison results in
+    /// equality.
+    /// </param>
     /// <returns>The original value.</returns>
     public T CompareExchange(T expect, T update) {
-      return Interlocked.CompareExchange<T>(ref value_, update, expect);
+      return Interlocked.CompareExchange(ref value_, update, expect);
+    }
+
+    /// <summary>
+    /// Atomically set the current value to the spacified updated value if
+    /// the current value is equals to the expected value.
+    /// </summary>
+    /// <param name="expect">
+    /// The value that is compared to the currrent value.</param>
+    /// <param name="update">
+    /// The value that replaces the current value if the comparison results in
+    /// equality.
+    /// </param>
+    /// <returns><c>true</c> if successfull.<c>false</c> indicates that the
+    /// actual value is not equals to the expected value.</returns>
+    public bool CompareSet(T expect, T update) {
+      T old_value = Interlocked.CompareExchange(ref value_, update, expect);
+      return old_value != update;
     }
 
     /// <summary>
