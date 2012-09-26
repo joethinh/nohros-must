@@ -32,8 +32,13 @@ namespace Nohros.Configuration
           Strings.AreEquals(node.Name, Strings.kProviderNodeName)) {
           ProviderNode provider = ProviderNode.Parse(
             (XmlElement) node, base_directory);
-          providers.AddChildNode(ProviderKey(provider.Name, provider.Group),
-            provider);
+
+          IProvidersNodeGroup providers_node_group;
+          if (!providers.GetProvidersNodeGroup(provider.Group, out providers_node_group)) {
+            providers_node_group = new ProvidersNodeGroup(provider.Group);
+            providers.Add(providers_node_group);
+          }
+          providers_node_group.Add(provider);
         }
       }
       return providers;
