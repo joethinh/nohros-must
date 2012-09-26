@@ -6,7 +6,8 @@ namespace Nohros.Configuration
   /// <summary>
   /// A set of <see cref="IProviderNode"/> that belongs to the same group
   /// </summary>
-  public interface IProvidersNodeGroup : IConfigurationNode
+  public interface IProvidersNodeGroup : IConfigurationNode,
+                                         IEnumerable<IProviderNode>
   {
     /// <summary>
     /// Gets a <see cref="IProviderNode"/> node whose name is
@@ -62,6 +63,19 @@ namespace Nohros.Configuration
     IProviderNode[] GetProvidersNode(string group);
 
     /// <summary>
+    /// Adds an <see cref="IProviderNode"/> to the
+    /// <see cref="IProvidersNodeGroup"/> collection.
+    /// </summary>
+    /// <param name="node">
+    /// The <see cref="IProviderNode"/> to add.
+    /// </param>
+    /// <remarks>
+    /// The name of the node will be used as a node key and it should be
+    /// the node's uniquely identifier.
+    /// </remarks>
+    void Add(IProviderNode node);
+
+    /// <summary>
     /// Gets a <see cref="IProviderNode"/> node whose name is
     /// <paramref name="name"/> and is associated with the
     /// default group.
@@ -83,5 +97,11 @@ namespace Nohros.Configuration
     /// method.
     /// </remarks>
     IProviderNode this[string name] { get; }
+
+    /// <summary>
+    /// Gets the number of elements that the <see cref="IProvidersNodeGroup"/>
+    /// contain.
+    /// </summary>
+    int Count { get; }
   }
 }

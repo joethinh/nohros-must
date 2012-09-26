@@ -20,8 +20,17 @@ namespace Nohros.Configuration
     #endregion
 
     /// <inheritdoc/>
+    public void Add(IProvidersNodeGroup node) {
+      AddChildNode(node);
+    }
+
+    /// <inheritdoc/>
     public bool GetProvidersNodeGroup(string name, out IProvidersNodeGroup node) {
-      return GetChildNode(name, out node);
+      if (!GetChildNode(name, out node)) {
+        node = new ProvidersNodeGroup();
+        return false;
+      }
+      return true;
     }
 
     /// <inheritdoc/>
@@ -43,6 +52,45 @@ namespace Nohros.Configuration
 
     IEnumerator IEnumerable.GetEnumerator() {
       return GetEnumerator();
+    }
+
+    /// <summary>
+    /// Gets a <see cref="IProviderNode"/> object whose name is
+    /// <paramref name="name"/> and is not associated with any group.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the <see cref="IProviderNode"/> to retrieve.
+    /// </param>
+    /// <remarks>
+    /// This methos is a shortcut of
+    /// the most common variation of the
+    /// <see cref="IProvidersNodeGroup.GetProviderNode(string)"/> method.
+    /// </remarks>
+    public IProviderNode GetProviderNode(string name) {
+      return
+        GetProvidersNodeGroup(string.Empty)
+          .GetProviderNode(name);
+    }
+
+    /// <summary>
+    /// Gets a <see cref="IProviderNode"/> object whose name is
+    /// <paramref name="name"/> and is not associated with any group.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the <see cref="IProviderNode"/> to retrieve.
+    /// </param>
+    /// <remarks>
+    /// This methos is a shortcut of
+    /// the most common variation of the
+    /// <see cref="IProvidersNodeGroup.GetProviderNode(string)"/> method.
+    /// </remarks>
+    public bool GetProviderNode(string name, out IProviderNode node) {
+      IProvidersNodeGroup group;
+      if (GetProvidersNodeGroup(string.Empty, out group)) {
+        return group.GetProviderNode(name, out node);
+      }
+      node = default(IProviderNode);
+      return false;
     }
   }
 }

@@ -33,6 +33,11 @@ namespace Nohros.Configuration
     #endregion
 
     /// <inheritdoc/>
+    public void Add(IProviderNode node) {
+      AddChildNode(node);
+    }
+
+    /// <inheritdoc/>
     public IProviderNode GetProviderNode(string name) {
       return GetChildNode<IProviderNode>(name);
     }
@@ -45,7 +50,7 @@ namespace Nohros.Configuration
     /// <inheritdoc/>
     public IProviderNode[] GetProvidersNode(string name) {
       List<IProviderNode> nodes = new List<IProviderNode>(ChildNodes.Count);
-      foreach(IProviderNode node in ChildNodes) {
+      foreach (IProviderNode node in ChildNodes) {
         nodes.Add(node);
       }
       return nodes.ToArray();

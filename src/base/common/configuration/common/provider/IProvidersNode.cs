@@ -46,6 +46,19 @@ namespace Nohros.Configuration
     bool GetProvidersNodeGroup(string name, out IProvidersNodeGroup node);
 
     /// <summary>
+    /// Adds an <see cref="IProvidersNodeGroup"/> element to the
+    /// <see cref="IProvidersNode"/> collection.
+    /// </summary>
+    /// <param name="node">
+    /// The <see cref="IProvidersNodeGroup"/> to add.
+    /// </param>
+    /// <remarks>
+    /// The name of the node will be used as a node key and it should be
+    /// the node's uniquely identifier.
+    /// </remarks>
+    void Add(IProvidersNodeGroup node);
+
+    /// <summary>
     /// Gets a <see cref="IProviderNode"/> node whose name is
     /// <paramref name="name"/> and is associated with the
     /// default group.
@@ -67,5 +80,11 @@ namespace Nohros.Configuration
     /// <see cref="GetProvidersNodeGroup(string)"/> method.
     /// </remarks>
     IProvidersNodeGroup this[string name] { get; }
+
+    /// <summary>
+    /// Gets the number of elements that the <see cref="IProvidersNode"/>
+    /// contain.
+    /// </summary>
+    int Count { get; }
   }
 }
