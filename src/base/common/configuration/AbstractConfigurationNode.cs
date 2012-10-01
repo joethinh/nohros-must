@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using Nohros.Data;
-using Nohros.Collections;
 
 namespace Nohros.Configuration
 {
@@ -35,7 +30,6 @@ namespace Nohros.Configuration
     }
     #endregion
 
-    #region IConfigurationNode Members
     /// <summary>
     /// Gets the name of the node.
     /// </summary>
@@ -43,6 +37,5 @@ namespace Nohros.Configuration
       get { return name; }
       internal set { name = value; }
     }
-    #endregion
   }
 }

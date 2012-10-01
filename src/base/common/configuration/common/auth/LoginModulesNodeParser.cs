@@ -23,7 +23,8 @@ namespace Nohros.Configuration
     /// <exception cref="DirectoryNotFoundException">
     /// <paramref name="base_directory"/> does not exists.
     /// </exception>
-    public static LoginModulesNode Parse(XmlElement element, string base_directory) {
+    public static LoginModulesNode Parse(XmlElement element,
+      string base_directory) {
       List<LoginModuleNode> login_module_nodes = new List<LoginModuleNode>();
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element &&
