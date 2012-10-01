@@ -17,6 +17,7 @@ namespace Nohros
     public const string kTypeAttribute = "type";
     public const string kGroupAttribute = "group";
     public const string kControlFlagAttribute = "control-flag";
+    public const string kOptionsRefAttribute = "ref";
 
     // node names
     public const string kCommonNodeName = "common";

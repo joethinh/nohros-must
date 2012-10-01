@@ -26,8 +26,7 @@ namespace Nohros.Configuration
     /// class that contains providers associated with a group whose name is
     /// <paramref name="group"/>.
     /// </summary>
-    public ProvidersNodeGroup(string group)
-      : base(Strings.kProvidersNodeGroupName) {
+    public ProvidersNodeGroup(string group) : base(group) {
       group_ = group;
     }
     #endregion

@@ -20,7 +20,7 @@ namespace Nohros.Configuration
     /// This should never be a <c>null</c> reference. If a provider does
     /// not have any configured options_ this dictionary should be empty.
     /// </remarks>
-    protected IDictionary<string, string> options;
+    protected IProviderOptions options;
 
     #region .ctor
     /// <summary>
@@ -60,7 +60,7 @@ namespace Nohros.Configuration
       type_ = type;
       location_ = location;
       group_ = string.Empty;
-      options = new Dictionary<string, string>();
+      options = new ProviderOptionsNode(name);
     }
     #endregion
 
@@ -75,7 +75,7 @@ namespace Nohros.Configuration
     }
 
     /// <inheritdoc/>
-    public IDictionary<string, string> Options {
+    public IProviderOptions Options {
       get { return options; }
     }
 

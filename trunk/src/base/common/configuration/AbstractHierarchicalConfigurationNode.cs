@@ -58,8 +58,7 @@ namespace Nohros.Configuration
     /// <see cref="AbstractHierarchicalConfigurationNode"/>.
     /// </summary>
     /// <param name="node">
-    /// An <see cref="AbstractHierarchicalConfigurationNode"/> to be added to
-    /// the child nodes collection.
+    /// The <see cref="IConfigurationNode"/> element to be added.
     /// </param>
     /// <remarks>
     /// The name of the node will be used as a key that is a unique string that
@@ -151,6 +150,11 @@ namespace Nohros.Configuration
         return node;
       }
       set { child_nodes_[name] = value; }
+    }
+
+    /// <inheritdoc/>
+    public virtual int Count {
+      get { return child_nodes_.Count; }
     }
   }
 }

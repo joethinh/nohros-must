@@ -57,6 +57,6 @@ namespace Nohros.Configuration
     /// </example>
     /// </para>
     /// </remarks>
-    IDictionary<string, string> Options { get; }
+    IProviderOptions Options { get; }
   }
 }

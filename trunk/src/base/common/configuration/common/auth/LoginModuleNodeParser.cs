@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace Nohros.Configuration
@@ -35,7 +36,8 @@ namespace Nohros.Configuration
 
       LoginModuleNode login_module = new LoginModuleNode(name, type,
         control_flag, location);
-      login_module.options = GetOptions(element);
+      IList<string> options_references;
+      login_module.options = GetOptions(name, element, out options_references);
       return login_module;
     }
 

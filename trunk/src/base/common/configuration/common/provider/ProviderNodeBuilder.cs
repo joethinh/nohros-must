@@ -95,7 +95,7 @@ namespace Nohros.Configuration
         if (options == null) {
           throw new ArgumentNullException("options");
         }
-        node_.options = options;
+        node_.options = new ProviderOptionsNode(node_.name, options);
         return this;
       }
 

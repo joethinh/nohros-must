@@ -25,7 +25,8 @@ namespace Nohros.Configuration
     /// <exception cref="ConfigurationException">
     /// The <paramref name="element"/> contains invalid configuration data.
     /// </exception>
-    public static ProviderNode Parse(XmlElement element, string base_directory) {
+    public static ProviderNode Parse(XmlElement element, string base_directory,
+      out IList<string> options_refs) {
       CheckPreconditions(element, base_directory);
       string name = GetAttributeValue(element, Strings.kNameAttribute);
       string type = GetAttributeValue(element, Strings.kTypeAttribute);
@@ -36,38 +37,21 @@ namespace Nohros.Configuration
       ProviderNode provider = new ProviderNode(name, type);
       provider.location_ = location;
       provider.group_ = group;
-      provider.options = GetOptions(element);
+      provider.options = GetOptions(name, element, out options_refs);
       return provider;
     }
 
-    /// <summary>
-    /// Gets the provider options_.
-    /// </summary>
-    /// <param name="element">
-    /// A <see cref="XmlElement"/> the contains data about the provider to get
-    /// the options_ for.
-    /// </param>
-    /// <returns>
-    /// A <see cref="IDictionary{TKey,TValue}"/> containing the
-    /// options_ configured for the provider.
-    /// </returns>
-    /// <remarks>
-    /// If no options_ was configured for the given provider, this method will
-    /// returns a empty <see cref="IDictionary{TKey,TValue}"/>.
-    /// </remarks>
-    protected static IDictionary<string, string> GetOptions(XmlElement element) {
-      IDictionary<string, string> options = new Dictionary<string, string>();
+    protected static ProviderOptionsNode GetOptions(string name,
+      XmlElement element,
+      out IList<string> options_references) {
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element &&
           Strings.AreEquals(node.Name, Strings.kOptionsNodeName)) {
-          // at this point we know for sure that the node is a XmlElement, so
-          // [node.Attributes] will alwasy not null.
-          foreach (XmlAttribute attribute in node.Attributes) {
-            options[attribute.Name] = attribute.Value;
-          }
+          return ProviderOptionsNode.Parse(name, element, out options_references);
         }
       }
-      return options;
+      options_references = new List<string>();
+      return new ProviderOptionsNode(name);
     }
   }
 }

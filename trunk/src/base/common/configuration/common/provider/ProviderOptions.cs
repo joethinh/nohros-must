@@ -7,6 +7,7 @@ namespace Nohros.Configuration
   /// <summary>
   /// A utility class for manage provider options.
   /// </summary>
+  [Obsolete("This class is obsolete. Check the ProviderOptions extensions methods of the Nohros.Extensions assembly.")]
   public sealed class ProviderOptions
   {
     /// <summary>

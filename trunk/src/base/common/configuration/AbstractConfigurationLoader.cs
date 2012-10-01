@@ -3,6 +3,7 @@ using System.Xml;
 using System.IO;
 using System.Reflection;
 using System.Configuration;
+using System.Collections.Generic;
 using Nohros.Configuration.Builders;
 using Nohros.Resources;
 using Nohros.Logging;
