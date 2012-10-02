@@ -41,6 +41,10 @@ namespace Nohros.Configuration
     }
     #endregion
 
+    public int Count {
+      get { return options_.Count; }
+    }
+
     public IEnumerator GetEnumerator() {
       return options_.GetEnumerator();
     }
@@ -50,6 +54,7 @@ namespace Nohros.Configuration
       return options_.GetEnumerator();
     }
 
+    /// <inheritdoc/>
     public bool TryGetString(string key, out string str) {
       return options_.TryGetValue(key, out str);
     }

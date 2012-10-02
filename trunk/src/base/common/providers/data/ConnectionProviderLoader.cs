@@ -70,7 +70,7 @@ namespace Nohros.Data
       IProviderNode provider = providers_[key];
       return ProviderFactory<IConnectionProviderFactory>
         .CreateProviderFactory(provider)
-        .CreateProvider(provider.Options);
+        .CreateProvider(provider.Options.ToDictionary());
     }
   }
 }

@@ -47,7 +47,8 @@ namespace Nohros.Configuration
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element &&
           Strings.AreEquals(node.Name, Strings.kOptionsNodeName)) {
-          return ProviderOptionsNode.Parse(name, element, out options_references);
+          return ProviderOptionsNode
+            .Parse(name, (XmlElement) node, out options_references);
         }
       }
       options_references = new List<string>();

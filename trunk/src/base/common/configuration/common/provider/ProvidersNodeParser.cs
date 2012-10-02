@@ -43,14 +43,16 @@ namespace Nohros.Configuration
       CheckPreconditions(element, base_directory);
       IList<UnresolvedOptions> unresolved_options_references =
         new List<UnresolvedOptions>();
-      IDictionary<string, IProviderOptions> reference_table = null;
+      Dictionary<string, IProviderOptions> reference_table =
+        new Dictionary<string, IProviderOptions>();
       ProvidersNode providers = new ProvidersNode();
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element) {
           IList<string> references = new List<string>();
           if (Strings.AreEquals(node.Name, Strings.kProviderNodeName)) {
-            IProviderNode provider = ProviderNode.Parse(element, base_directory,
-              out references);
+            IProviderNode provider =
+              ProviderNode
+                .Parse((XmlElement) node, base_directory, out references);
 
             IProvidersNodeGroup providers_node_group;
             if (!providers.GetProvidersNodeGroup(provider.Group,
@@ -67,12 +69,16 @@ namespace Nohros.Configuration
                 .Add(new UnresolvedOptions(provider.Options, references));
             }
           } else if (Strings.AreEquals(node.Name, Strings.kOptionsNodeName)) {
-            reference_table = ParseReferenceTable((XmlElement) node,
-              unresolved_options_references);
+            ParseReferenceTable((XmlElement) node,
+              unresolved_options_references, reference_table);
           }
         }
 
-        if (reference_table != null) {
+        if (unresolved_options_references.Count > 0) {
+          if (reference_table.Count  == 0) {
+            throw new ConfigurationException(
+              Resources.Resources.Configuration_providers_missing_reference);
+          }
           ResolveOptionsReferences(unresolved_options_references,
             reference_table);
         }
@@ -80,27 +86,22 @@ namespace Nohros.Configuration
       return providers;
     }
 
-    static IDictionary<string, IProviderOptions> ParseReferenceTable(
-      XmlElement element, IList<UnresolvedOptions> unresolved_options_references) {
-      IDictionary<string, IProviderOptions> reference_table =
-        new Dictionary<string, IProviderOptions>();
-      foreach (XmlNode node in element.ChildNodes) {
-        if (node.NodeType == XmlNodeType.Element &&
-          Strings.AreEquals(node.Name, Strings.kOptionsNodeName)) {
-          IList<string> references;
-          string name = GetAttributeValue(element, Strings.kNameAttribute);
-          ProviderOptionsNode options =
-            ProviderOptionsNode.Parse(name, (XmlElement) node, out references);
+    static void ParseReferenceTable(XmlElement element,
+      IList<UnresolvedOptions> unresolved_options_references,
+      IDictionary<string, IProviderOptions> reference_table) {
+      IList<string> references;
 
-          // Add the provider options to the unresolved options list if it has
-          // references to be resolved.
-          if (references.Count > 0) {
-            unresolved_options_references
-              .Add(new UnresolvedOptions(options, references));
-          }
-        }
+      string name = GetAttributeValue(element, Strings.kNameAttribute);
+      ProviderOptionsNode options =
+        ProviderOptionsNode.Parse(name, element, out references);
+
+      // Add the provider options to the unresolved options list if it has
+      // references to be resolved.
+      if (references.Count > 0) {
+        unresolved_options_references
+          .Add(new UnresolvedOptions(options, references));
       }
-      return reference_table;
+      reference_table.Add(options.Name, options);
     }
 
     static void ResolveOptionsReferences(
@@ -118,6 +119,11 @@ namespace Nohros.Configuration
                 referenced_options) {
               options[referenced_option.Key] = referenced_option.Value;
             }
+          } else {
+            throw new ConfigurationException(
+              string.Format(
+                Resources.Resources.Configuration_providers_unresolved_reference,
+                reference));
           }
         }
       }
