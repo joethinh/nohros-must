@@ -118,10 +118,13 @@
     <Compile Include="configuration\common\IRepositoriesNode.cs" />
     <Compile Include="configuration\common\IRepositoryNode.cs" />
     <Compile Include="configuration\common\auth\LoginModuleNodeParser.cs" />
+    <Compile Include="configuration\common\provider\IProviderOptions.cs" />
     <Compile Include="configuration\common\provider\IProvidersNode.cs" />
     <Compile Include="configuration\common\provider\IProvidersNodeGroup.cs" />
     <Compile Include="configuration\common\provider\ProviderNodeBuilder.cs" />
     <Compile Include="configuration\common\provider\ProviderNodeParser.cs" />
+    <Compile Include="configuration\common\provider\ProviderOptionsNode.cs" />
+    <Compile Include="configuration\common\provider\ProviderOptionsNodeParser.cs" />
     <Compile Include="configuration\common\provider\ProvidersNode.cs" />
     <Compile Include="configuration\common\provider\ProvidersNodeGroup.cs" />
     <Compile Include="configuration\common\provider\ProvidersNodeParser.cs" />
@@ -141,6 +144,8 @@
     <Compile Include="configuration\Strings.cs" />
     <Compile Include="data\CommandBuilder.cs" />
     <Compile Include="CommandLine.cs" />
+    <Compile Include="data\readers\DataReaderReader.cs" />
+    <Compile Include="exception\NotReachedException.cs" />
     <Compile Include="io\Path.cs" />
     <Compile Include="IRuntimeType.cs" />
     <Compile Include="logging\ConsoleLogger.cs" />

@@ -61,7 +61,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of the array {0} should be equals to the length of {1}..
+        ///   Looks up a localized string similar to The length of the array &quot;{0}&quot; should be equals to the length of &quot;{1}&quot;..
         /// </summary>
         internal static string Arg_ArrayLengthDifferFrom {
             get {
@@ -350,7 +350,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The control flag {0} is invalid..
+        ///   Looks up a localized string similar to The control flag &quot;{0}&quot; is invalid..
         /// </summary>
         internal static string Configuration_InvalidLoginModuleControlFlag {
             get {
@@ -359,7 +359,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing configuration information for {0} at {1}..
+        ///   Looks up a localized string similar to Missing configuration information for &quot;{0}&quot; at &quot;{1}&quot;..
         /// </summary>
         internal static string Configuration_Missing {
             get {
@@ -373,6 +373,24 @@ namespace Nohros.Resources {
         internal static string Configuration_MissingNode {
             get {
                 return ResourceManager.GetString("Configuration_MissingNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The options for the provider &quot;{0}&quot; contains references that cannot be resolved..
+        /// </summary>
+        internal static string Configuration_providers_missing_reference {
+            get {
+                return ResourceManager.GetString("Configuration_providers_missing_reference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The options reference &quot;{0}&quot; could not be resolved..
+        /// </summary>
+        internal static string Configuration_providers_unresolved_reference {
+            get {
+                return ResourceManager.GetString("Configuration_providers_unresolved_reference", resourceCulture);
             }
         }
         
@@ -638,7 +656,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing required switch {0}..
+        ///   Looks up a localized string similar to Missing required switch &quot;{0}&quot;..
         /// </summary>
         internal static string Switches_MissingSwitch {
             get {
@@ -647,7 +665,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to cast object of type {0} to type {1}..
+        ///   Looks up a localized string similar to Unable to cast object of type &quot;{0}&quot; to type &quot;{1}&quot;..
         /// </summary>
         internal static string Type_InvalidCastException {
             get {
@@ -656,7 +674,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot create an instance of the type {0}..
+        ///   Looks up a localized string similar to Cannot create an instance of the type &quot;{0}&quot;..
         /// </summary>
         internal static string TypeLoad_CreateInstance {
             get {

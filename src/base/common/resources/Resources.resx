@@ -149,7 +149,7 @@
 </value>
   </data>
   <data name="Configuration_InvalidLoginModuleControlFlag" xml:space="preserve">
-    <value>The control flag {0} is invalid.</value>
+    <value>The control flag "{0}" is invalid.</value>
   </data>
   <data name="Auth_Config_InvalidModuleType" xml:space="preserve">
     <value>The type "{0}" is not valid or it was not correctly specified.</value>
@@ -182,7 +182,7 @@
     <value>The configuration key "{0}" was not found.</value>
   </data>
   <data name="Configuration_Missing" xml:space="preserve">
-    <value>Missing configuration information for {0} at {1}.</value>
+    <value>Missing configuration information for "{0}" at "{1}".</value>
   </data>
   <data name="Arg_PathNotRooted" xml:space="preserve">
     <value>The path {0} is not rooted.</value>
@@ -236,7 +236,7 @@
     <value>Missing required option "{0}" for provider.</value>
   </data>
   <data name="TypeLoad_CreateInstance" xml:space="preserve">
-    <value>Cannot create an instance of the type {0}.</value>
+    <value>Cannot create an instance of the type "{0}".</value>
   </data>
   <data name="SkipList_BadArrayCopyTo" xml:space="preserve">
     <value>An attempt was made to copy the value elements of a SkipList to an array that is too small.</value>
@@ -263,7 +263,7 @@
     <value>An attempt was made to pass a null key to a SkipList.</value>
   </data>
   <data name="Type_InvalidCastException" xml:space="preserve">
-    <value>Unable to cast object of type {0} to type {1}.</value>
+    <value>Unable to cast object of type "{0}" to type "{1}".</value>
   </data>
   <data name="Argument_EmptyString" xml:space="preserve">
     <value>The {0} arugment could not be an empty string.</value>
@@ -299,7 +299,7 @@
     <value>{0} should be of type {1}.</value>
   </data>
   <data name="Arg_ArrayLengthDifferFrom" xml:space="preserve">
-    <value>The length of the array {0} should be equals to the length of {1}.</value>
+    <value>The length of the array "{0}" should be equals to the length of "{1}".</value>
   </data>
   <data name="Arg_ArrayLengthsDiffer" xml:space="preserve">
     <value>Array lengths must be the same.</value>
@@ -317,6 +317,12 @@
     <value>An entry with the same key already exists. Key:{0}.</value>
   </data>
   <data name="Switches_MissingSwitch" xml:space="preserve">
-    <value>Missing required switch {0}.</value>
+    <value>Missing required switch "{0}".</value>
+  </data>
+  <data name="Configuration_providers_missing_reference" xml:space="preserve">
+    <value>The options for the provider "{0}" contains references that cannot be resolved.</value>
+  </data>
+  <data name="Configuration_providers_unresolved_reference" xml:space="preserve">
+    <value>The options reference "{0}" could not be resolved.</value>
   </data>
 </root>

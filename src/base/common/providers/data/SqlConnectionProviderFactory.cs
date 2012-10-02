@@ -12,10 +12,10 @@ namespace Nohros.Data.Providers
     /// Constructor implied by the interface
     /// <see cref="IConnectionProviderFactory"/>.
     /// </summary>
-    SqlConnectionProvider() { }
+    SqlConnectionProvider() {
+    }
     #endregion
 
-    #region IConnectionProviderFactory Members
     /// <inheritdoc/>
     IConnectionProvider IConnectionProviderFactory.CreateProvider(
       IDictionary<string, string> options) {
@@ -40,6 +40,5 @@ namespace Nohros.Data.Providers
       }
       return new SqlConnectionProvider(builder.ConnectionString);
     }
-    #endregion
   }
 }

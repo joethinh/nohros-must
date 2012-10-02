@@ -17,6 +17,8 @@ namespace Nohros.Configuration
     /// </param>
     void Add(string key, string value);
 
+    int Count { get; }
+
     /// <summary>
     /// Checks if the specified options keys exists in the collection.
     /// </summary>
