@@ -10,9 +10,14 @@ namespace Nohros.Toolkit.Metrics
     [Test]
     public void UserTimeClock() {
       UserTimeClock clock = new UserTimeClock();
-      Assert.LessOrEqual(Math.Abs(Math.Abs(clock.Time) - Math.Abs(Clock.CurrentTimeMilis)), 100);
 
-      Assert.LessOrEqual(Math.Abs(Math.Abs(clock.Tick) - Math.Abs(Clock.NanoTime)), 100);
+      Assert.That(
+        Math.Abs(Math.Abs(clock.Time) - Math.Abs(Clock.CurrentTimeMilis)),
+        Is.LessThanOrEqualTo(100));
+
+      Assert.That(
+        Math.Abs(Math.Abs(clock.Tick) - Math.Abs(Clock.NanoTime)),
+        Is.LessThanOrEqualTo(100));
     }
   }
 }
