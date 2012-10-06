@@ -13,7 +13,7 @@ namespace Nohros.Toolkit.Metrics
     readonly TimeUnit duration_unit_;
     readonly TimeUnit rate_unit_;
     readonly Meter meter_;
-    readonly Histogram histogram_;
+    readonly IHistogram histogram_;
     readonly Clock clock_;
 
     #region .ctor
@@ -34,7 +34,7 @@ namespace Nohros.Toolkit.Metrics
       rate_unit_ = rate_unit;
       meter_ = new Meter("calls", rate_unit, clock);
       clock_ = clock;
-      histogram_ = new Histogram(Samples.Biased());
+      histogram_ = Histograms.Biased();
     }
     #endregion
 
@@ -48,13 +48,6 @@ namespace Nohros.Toolkit.Metrics
     /// <inheritdoc/>
     public TimeUnit RateUnit {
       get { return rate_unit_; }
-    }
-
-    /// <summary>
-    /// Clears all the recorded values.
-    /// </summary>
-    public void Clear() {
-      histogram_.Clear();
     }
 
     /// <summary>

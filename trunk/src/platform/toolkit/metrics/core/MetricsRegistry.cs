@@ -67,13 +67,13 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="name">The name of the metric.</param>
     /// <param name="biased">Whether or not the histogram should be biased.
     /// </param>
-    /// <returns>A <see cref="Histogram"/> that could be identified by the
+    /// <returns>A <see cref="AbstractHistogram"/> that could be identified by the
     /// specified <see cref="MetricName"/>.</returns>
-    public Histogram GetHistogram(MetricName name, bool biased) {
-      Histogram histogram;
+    public IHistogram GetHistogram(MetricName name, bool biased)
+    {
+      IHistogram histogram;
       if (!TryGetMetric(name, out histogram)) {
-        ISample sample = (biased) ? Samples.Biased() : Samples.Uniform();
-        histogram = new Histogram(sample);
+        histogram = (biased) ? Histograms.Biased() : Histograms.Uniform();
         Add(name, histogram);
       }
       return histogram;

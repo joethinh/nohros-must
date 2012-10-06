@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Toolkit.Metrics
 {
@@ -10,11 +8,6 @@ namespace Nohros.Toolkit.Metrics
   public interface ISample
   {
     /// <summary>
-    /// Clears all recorded values.
-    /// </summary>
-    void Clear();
-
-    /// <summary>
     /// Gets the number of values recorded.
     /// </summary>
     /// <value>The number of values recorded.</value>
@@ -23,7 +16,12 @@ namespace Nohros.Toolkit.Metrics
     /// <summary>
     /// Adds a new recorded value to the sample.
     /// </summary>
-    /// <param name="value">A new recorded value.</param>
+    /// <param name="value">
+    /// A new recorded value.
+    /// </param>
+    /// <remarks>
+    /// The update operation should be thread-safe.
+    /// </remarks>
     void Update(long value);
 
     /// <summary>
