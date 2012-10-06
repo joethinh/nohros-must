@@ -15,7 +15,8 @@ namespace Nohros.Configuration
       references = new List<string>();
       ProviderOptionsNode options = new ProviderOptionsNode(name);
       foreach (XmlNode node in element.ChildNodes) {
-        if (node.NodeType == XmlNodeType.Element) {
+        if (node.NodeType == XmlNodeType.Element &&
+          Strings.AreEquals(node.Name, Strings.kOptionNodeName)) {
           string reference;
           if (GetAttributeValue((XmlElement) node, Strings.kOptionsRefAttribute,
             out reference)) {
@@ -24,7 +25,11 @@ namespace Nohros.Configuration
             // provider to the provider that we are parsing.
             references.Add(reference);
           } else {
-            options[node.Name] = node.InnerXml;
+            string option_name = GetAttributeValue((XmlElement) node,
+              Strings.kNameAttribute);
+            string opttion_value = GetAttributeValue((XmlElement)node,
+              Strings.kValueAttribute, string.Empty);
+            options[option_name] = opttion_value;
           }
         }
       }
