@@ -2,73 +2,64 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{876848CE-99F0-4AA1-8468-365204B77123}</ProjectGuid>
+    <ProjectGuid>{D0528AEC-8CDD-47FF-AD6C-694121F07C8B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nohros.Toolkit.Metrics</RootNamespace>
-    <AssemblyName>nohros.toolkit.metrics.tests</AssemblyName>
+    <RootNamespace>Nohros.Extensions</RootNamespace>
+    <AssemblyName>nohros.extensions.tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\..\src\</SolutionDir>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>$(SolutionDir)bin\debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>$(SolutionDir)bin\release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ClockTests.cs" />
-    <Compile Include="CounterTest.cs" />
-    <Compile Include="HistogramTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\..\third_party\nunit\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=2.6.1.12217, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
     <Reference Include="Telerik.JustMock, Version=2012.2.813.9, Culture=neutral, PublicKeyToken=8b221631f7271365, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\JustMock.2012.2.813.0\lib\Net35\Telerik.JustMock.dll</HintPath>
+      <HintPath>..\..\packages\JustMock.2012.2.813.0\lib\Net35\Telerik.JustMock.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProviderOptionsTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\base\common\common.csproj">
-      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
-      <Name>common %28%28base%29\common%29</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\platform\toolkit\metrics\metrics.csproj">
-      <Project>{EE140ABF-C917-44D7-B89F-D6946332F507}</Project>
-      <Name>metrics %28%28plataform%29\%28toolkit%29\metrics%29</Name>
-    </ProjectReference>
+    <Content Include="JustMock.Readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="JustMock.Readme.txt" />
+    <ProjectReference Include="..\..\base\extensions\extensions.csproj">
+      <Project>{438798C5-7FC8-4238-9AE4-D6B87012B5E2}</Project>
+      <Name>extensions %28%28base%29\extensions%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
