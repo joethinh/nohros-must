@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Nohros.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
@@ -9,14 +8,35 @@ namespace Nohros.Toolkit.Metrics
   /// </summary>
   public class Counter : IMetric
   {
-    private readonly AtomicLong count_;
+    readonly Mailbox<long> async_update_mailbox_;
+    long count_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="Counter"/> class.
+    /// Initializes a new instance of the <see cref="Counter"/> class that
+    /// uses a thread pool to perform the counter update.
     /// </summary>
-    public Counter() {
-      count_ = new AtomicLong(0);
+    public Counter() : this(Executors.ThreadPoolExecutor()) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Counter"/> class that
+    /// uses the specified executor to perform the counter updates (
+    /// increment/decrement).
+    /// </summary>
+    /// <param name="executor">
+    /// A <see cref="IExecutor"/> that is used to execute the sample updates.
+    /// </param>
+    /// <remarks>
+    /// The use of the executor returned by the method
+    /// <see cref="Executors.SameThreadExecutor"/> is not encouraged, because
+    /// the executor does not returns until the execution list is empty and,
+    /// this can cause significant pauses in the thread that is executing the
+    /// sample update.
+    /// </remarks>
+    public Counter(IExecutor executor) {
+      count_ = 0;
+      async_update_mailbox_ = new Mailbox<long>(AsyncUpdate, executor);
     }
     #endregion
 
@@ -33,7 +53,7 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="n">The amount by which the counter will be increased.
     /// </param>
     public void Increment(long n) {
-      count_.Add(1);
+      async_update_mailbox_.Send(n);
     }
 
     /// <summary>
@@ -49,21 +69,18 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="n">The amount by which the counter will be increased.
     /// </param>
     public void Decrement(long n) {
-      count_.Add(-n);
+      async_update_mailbox_.Send(-n);
+    }
+
+    void AsyncUpdate(long delta) {
+      count_ += delta;
     }
 
     /// <summary>
     /// Gets the counter current value.
     /// </summary>
     public long Count {
-      get { return count_.Value; }
-    }
-
-    /// <summary>
-    /// Resets the couter to zero.
-    /// </summary>
-    public void Clear() {
-      count_.Exchange(0);
+      get { return count_; }
     }
   }
 }

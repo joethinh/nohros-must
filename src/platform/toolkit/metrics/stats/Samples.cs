@@ -24,10 +24,21 @@ namespace Nohros.Toolkit.Metrics
     internal const int kDefaultSampleSize = 1028;
     internal const double kDefaultAlpha = 0.015;
 
-    public static ISample Biased() {
+    /// <summary>
+    /// Creates an <see cref="ExponentiallyDecayingSample"/> that uses a
+    /// <see cref="Clock"/> that measures time in nanoseconds and samples
+    /// using a reservoir of 1028 items with an 0.015 alpha.
+    /// </summary>
+    /// <returns></returns>
+    public static ExponentiallyDecayingSample Biased() {
       return new ExponentiallyDecayingSample(kDefaultSampleSize, kDefaultAlpha);
     }
 
+    /// <summary>
+    /// Creates an <see cref="UniformSample"/> that samples using a reservoir
+    /// of 1028 items.
+    /// </summary>
+    /// <returns></returns>
     public static ISample Uniform() {
       return new UniformSample(kDefaultSampleSize);
     }

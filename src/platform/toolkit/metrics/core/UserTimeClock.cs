@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Toolkit.Metrics
 {
@@ -12,9 +10,7 @@ namespace Nohros.Toolkit.Metrics
   {
     /// <inheritdoc/>
     public override long Tick {
-      get {
-        return Clock.NanoTime;
-      }
+      get { return NanoTime; }
     }
   }
 }

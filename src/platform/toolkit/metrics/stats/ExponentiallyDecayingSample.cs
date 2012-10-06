@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using Nohros.Collections;
 using Nohros.Concurrent;
 
@@ -23,39 +21,137 @@ namespace Nohros.Toolkit.Metrics
   {
     struct Sample
     {
-      long value;
-      long timestamp;
+      public long timestamp;
+      public long value;
+
+      #region .ctor
+      public Sample(long timestamp, long value) {
+        this.timestamp = timestamp;
+        this.value = value;
+      }
+      #endregion
     }
 
     const long kRescaleThreshold = 3600000000000;
     readonly double alpha_;
+    readonly Mailbox<Sample> async_update_mailbox_;
     readonly Clock clock_;
+    readonly AndersonTree<double, int> priorities_;
+    readonly Random rand_;
+    readonly int reservoir_upper_limit_;
+    readonly long[] resevoir_;
     readonly int resevoir_size_;
-    readonly long start_time_;
-    readonly Dictionary<double, long> values_;
-    AtomicLong count_;
-    AtomicLong next_scale_time_;
-    Mailbox<Sample> mailbox_; 
+    int count_;
+    long next_scale_time_;
+    long start_time_;
 
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the
     /// <see cref="ExponentiallyDecayingSample"/> class by using the specified
+    /// resevoir size and exponential decay factor, a clock that measures
+    /// time in nanoseconds and a thread pool executor.
+    /// </summary>
+    /// <param name="resevoir_size">
+    /// The number of samples to keep in the sampling resevoir.
+    /// </param>
+    /// <param name="alpha">
+    /// The exponential decay factor; the higher this is, the more biased the
+    /// sample will be towards newer values.
+    /// </param>
+    public ExponentiallyDecayingSample(int resevoir_size, double alpha)
+      : this(resevoir_size, alpha, new UserTimeClock(),
+        Executors.ThreadPoolExecutor()) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the
+    /// <see cref="ExponentiallyDecayingSample"/> class by using the specified
+    /// resevoir size, exponential decay factor and executor and a clock that
+    /// measures time in nanoseconds and a thread pool executor.
+    /// </summary>
+    /// <param name="resevoir_size">
+    /// The number of samples to keep in the sampling resevoir.
+    /// </param>
+    /// <param name="alpha">
+    /// The exponential decay factor; the higher this is, the more biased the
+    /// sample will be towards newer values.
+    /// </param>
+    /// <param name="executor">
+    /// A <see cref="IExecutor"/> that is used to execute the sample updates.
+    /// </param>
+    /// <remarks>
+    /// The use of the executor returned by the method
+    /// <see cref="Executors.SameThreadExecutor"/> is not encouraged, because
+    /// the executor does not returns until the execution list is empty and,
+    /// this can cause significant pauses in the thread that is executing the
+    /// sample update.
+    /// </remarks>
+    public ExponentiallyDecayingSample(int resevoir_size, double alpha,
+      IExecutor executor)
+      : this(resevoir_size, alpha, new UserTimeClock(), executor) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the
+    /// <see cref="ExponentiallyDecayingSample"/> class by using the specified
+    /// resevoir size, exponential decay factor and clock and a thread pool
+    /// executor.
+    /// </summary>
+    /// <param name="resevoir_size">
+    /// The number of samples to keep in the sampling resevoir.
+    /// </param>
+    /// <param name="alpha">
+    /// The exponential decay factor; the higher this is, the more biased the
+    /// sample will be towards newer values.
+    /// </param>
+    /// <param name="clock">
+    /// The <see cref="Nohros.Clock"/> used to mark the passage of time.
+    /// </param>
+    public ExponentiallyDecayingSample(int resevoir_size, double alpha,
+      Clock clock)
+      : this(resevoir_size, alpha, clock, Executors.ThreadPoolExecutor()) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the
+    /// <see cref="ExponentiallyDecayingSample"/> class by using the specified
     /// resevoir size and exponential decay factor.
     /// </summary>
-    /// <param name="resevoir_size">The number of samples to keep in the
-    /// sampling resevoir.</param>
-    /// <param name="alpha">The exponential decay factor; the higher this is,
-    /// the more biased the sample will be towards newer values.</param>
-    public ExponentiallyDecayingSample(int resevoir_size, double alpha, Clock clock) {
-      count_ = new AtomicLong(0);
-      next_scale_time_ = new AtomicLong(0);
+    /// <param name="resevoir_size">
+    /// The number of samples to keep in the sampling resevoir.
+    /// </param>
+    /// <param name="alpha">
+    /// The exponential decay factor; the higher this is, the more biased the
+    /// sample will be towards newer values.
+    /// </param>
+    /// <param name="clock">
+    /// The <see cref="Nohros.Clock"/> used to mark the passage of time.
+    /// </param>
+    /// <param name="executor">
+    /// A <see cref="IExecutor"/> that is used to execute the sample updates.
+    /// </param>
+    /// <remarks>
+    /// The use of the executor returned by the method
+    /// <see cref="Executors.SameThreadExecutor"/> is not encouraged, because
+    /// the executor does not returns until the execution list is empty and,
+    /// this can cause significant pauses in the thread that is executing the
+    /// sample update.
+    /// </remarks>
+    public ExponentiallyDecayingSample(int resevoir_size, double alpha,
+      Clock clock, IExecutor executor) {
+      count_ = 0;
+      rand_ = new Random();
+      next_scale_time_ = 0;
       alpha_ = alpha;
       resevoir_size_ = resevoir_size;
+      reservoir_upper_limit_ = resevoir_size - 1;
       clock_ = clock;
-      values_ = new Dictionary<double, long>();
-      start_time_ = CurrentTimeInSeconds();
-      next_scale_time_.Value = clock.Tick + kRescaleThreshold;
+      priorities_ = new AndersonTree<double, int>();
+      resevoir_ = new long[resevoir_size];
+      start_time_ = CurrentTimeInSeconds;
+      next_scale_time_ = clock.Tick + kRescaleThreshold;
+      async_update_mailbox_ = new Mailbox<Sample>(AsyncUpdate, executor);
     }
     #endregion
 
@@ -64,17 +160,49 @@ namespace Nohros.Toolkit.Metrics
       Update(value, CurrentTimeInSeconds);
     }
 
-    public long CurrentTimeInSeconds {
-      get { TimeUnitHelper.ToSeconds(clock_.Time, TimeUnit.Miliseconds); }
-    }
-
     public Snapshot Snapshot {
-      get { return new Snapshot(values_.Values); }
+      get {
+        int size = Size;
+        var resevoir = new long[size];
+        Array.Copy(resevoir_, resevoir, size);
+        return new Snapshot(resevoir);
+      }
     }
 
     /// <inheritdoc/>
     public int Size {
-      get { return (int) Math.Min(resevoir_size_, (long) count_); }
+      get { return Math.Min(resevoir_size_, count_); }
+    }
+
+    void AsyncUpdate(Sample sample) {
+      double priority = Priority(sample.timestamp);
+
+      // Fills the resevoir with the first "m" values and keep elements
+      // with the greatest priorities in the resvoir.
+      if (count_ <= reservoir_upper_limit_) {
+        priorities_[priority] = count_;
+        resevoir_[count_++] = sample.value;
+      } else {
+        KeyValuePair<double, int> first = priorities_.First;
+        if (first.Key < priority) {
+          // replace the element associated with the smallest key by the
+          // sampled value.
+          priorities_.Remove(first.Key);
+          priorities_[priority] = first.Value;
+          resevoir_[first.Value] = sample.value;
+        }
+      }
+
+      // If the current landmark becomes old rescale the sample values
+      // using a new landmark.
+      long now = clock_.Tick;
+      if (now >= next_scale_time_) {
+        Rescale(now);
+      }
+    }
+
+    double Priority(long timestamp) {
+      return Weight(timestamp - start_time_)/rand_.NextDouble();
     }
 
     /// <summary>
@@ -84,35 +212,56 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="timestamp">The epoch timestamp of <paramref name="value"/>
     /// in seconds.</param>
     public void Update(long value, long timestamp) {
-      double priority = Weight(timestamp - start_time_)/rand_.NextDouble();
-      long new_count = ++count_;
-      if (new_count <= resevoir_size_) {
-        values_.Add(priority, value);
-      } else {
-        double first = values_.;
-        // TODO: double first = value.FirstKey();
-        if (first < priority) {
-          // TODO:
-          //if (values.putIfAbsent(priority, value) == null) {
-          //while (values.remove(first) == null) {
-          //first = values.firstKey();
-          //}
-          //}
-        }
-      }
-
-      long now = Clock.NanoTime;
-      long next = (long) next_scale_time_;
-      if (now >= next) {
-        Rescale(now, next);
-      }
+      async_update_mailbox_.Send(new Sample(value, timestamp));
     }
 
-    void Rescale(long now, long next) {
+    /// <summary>
+    /// Rescale the sample to a new landmark.
+    /// </summary>
+    /// <param name="now">
+    /// The current time in seconds.
+    /// </param>
+    /// <remarks>
+    /// A common feature if the above thechniques-indeed, the key technique
+    /// that allows us to track the decayed weights efficiently-is that they
+    /// maintain counts and other quantities based on g(ti - L), and only scale
+    /// by g(t - L) at query time. But while g(ti -L)/g(t - L) is guaranteed to
+    /// lie between zero and one, the intermediate values of g(ti - L) could
+    /// become very large. For polynomial functions, these values should not
+    /// grow too large, and should be effectively represented in practice
+    /// by floating point types. For exponential functions, these values could
+    /// grow quite large as new values of (ti - L) become large, and potentially
+    /// exceed the capacity of common floating point types. However, since the
+    /// values stored by the algorithms are linear combinations of g values(
+    /// scaled sums), they can be rescaled relative to a new landmark. That is,
+    /// by the analysis of exponential decay in Section III-A, the choice of L
+    /// does not affect the final result. We can therefore multiply each value
+    /// based on L by the factor of exp(-a(L' - L)), and obtain the correct
+    /// value as if we had instead computed relative to a new landmark L' (and
+    /// then use this new L' ar query time). This can be done with a linear
+    /// pass over whatever data struture is beign used.
+    /// </remarks>
+    void Rescale(long now) {
+      next_scale_time_ = now + kRescaleThreshold;
+      long old_start_time = start_time_;
+      start_time_ = CurrentTimeInSeconds;
+
+      KeyValuePair<double, int>[] priorities = priorities_.ToArray();
+      for (int i = 0, j = priorities.Length; i < j; i++) {
+        KeyValuePair<double, int> priority = priorities[i];
+        priorities_.Remove(priority.Key);
+        double new_priority = priority.Key*
+          Math.Exp(-alpha_*(start_time_ - old_start_time));
+        priorities_.Add(new_priority, priority.Value);
+      }
     }
 
     double Weight(long t) {
       return Math.Exp(alpha_*t);
+    }
+
+    public long CurrentTimeInSeconds {
+      get { return TimeUnitHelper.ToSeconds(clock_.Time, TimeUnit.Miliseconds); }
     }
   }
 }

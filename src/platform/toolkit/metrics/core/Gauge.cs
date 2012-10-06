@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Toolkit.Metrics
 {
@@ -10,7 +8,7 @@ namespace Nohros.Toolkit.Metrics
   /// <para>
   /// <example>
   /// <code>
-  /// Queue&lt;string&gt; queue = new Queue&lt;string&gt;();
+  /// Queue{T} queue = new Queue{T}();
   /// </code>
   /// </example>
   /// </para>
