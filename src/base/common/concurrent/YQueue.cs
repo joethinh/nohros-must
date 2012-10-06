@@ -125,6 +125,28 @@ namespace Nohros.Concurrent
     }
 
     /// <summary>
+    /// Removes all elements from the <see cref="YQueue{T}"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <see cref="Clear"/> removes the elements that are not currently
+    /// present in the queue. Elements added to the queue after
+    /// <see cref="Clear"/> is called and while <see cref="Clear"/> is running,
+    /// will not be cleared.
+    /// </para>
+    /// This operation should be sychronized with the <see cref="Dequeue()"/>
+    /// and <see cref="Dequeue(out T)"/> operations.
+    /// </remarks>
+    public void Clear() {
+      // Save the current tail chunk to ensure that the future elements are
+      // not cleared.
+      Chunk current_tail_chunk = tail_chunk_;
+      while (divider_ != current_tail_chunk) {
+        divider_ = divider_.next;
+      }
+    }
+
+    /// <summary>
     /// Removes and returns the object at the beginning of the
     /// <see cref="YQueue{T}"/>.
     /// </summary>
