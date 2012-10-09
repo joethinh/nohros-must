@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Nohros.Caching;
+using Nohros.Caching.Providers;
 using Nohros.Configuration;
 using Nohros.Data;
 using Nohros.Data.Json;
 using Nohros.Data.Providers;
-using Nohros.Providers;
+using Nohros.Extensions;
 using Nohros.Resources;
 
 namespace Nohros.Toolkit.RestQL
@@ -13,15 +14,14 @@ namespace Nohros.Toolkit.RestQL
   public partial class SqlQueryExecutor : IQueryExecutorFactory
   {
     const string kClassName = "Nohros.Toolkit.RestQL.SqlQueryExecutor";
+    readonly IQuerySettings settings_;
 
-    /// <summary>
-    /// Constructor implied by the <see cref="IQueryExecutorFactory"/>
-    /// interface.
-    /// </summary>
-    protected SqlQueryExecutor() {
+    #region .ctor
+    public SqlQueryExecutor(IQuerySettings settings) {
+      settings_ = settings;
     }
+    #endregion
 
-    #region IQueryExecutorFactory Members
     /// <summary>
     /// Creates a instance of the <see cref="IQueryExecutor"/> class by using
     /// the specified application settings.
@@ -30,47 +30,58 @@ namespace Nohros.Toolkit.RestQL
     /// A <see cref="IDictionary{TKey,TValue}"/> containing the specific
     /// options configured for the query processor.
     /// </param>
-    /// <param name="settings">
-    /// A <see cref="IQuerySettings"/> containing the configuration data for
-    /// the query processor.
-    /// </param>
     /// <returns>
     /// An instance of the <see cref="IQueryExecutor"/> class.
     /// </returns>
     public IQueryExecutor CreateQueryExecutor(
-      IDictionary<string, string> options, IQuerySettings settings) {
+      IDictionary<string, string> options) {
+      IQueryDataProvider query_data_provider = GetQueryDataProvider();
+      ICacheProvider cache_provider = GetCacheProvider();
       ILoadingCache<IConnectionProvider> connection_provider_cache =
-        GetConnectionProviderCache(settings);
+        GetConnectionProviderCache(query_data_provider, cache_provider);
       IJsonCollectionFactory json_collection_factory =
-        GetJsonCollectionFactory(settings);
+        GetJsonCollectionFactory();
       return new SqlQueryExecutor(connection_provider_cache,
         json_collection_factory);
     }
-    #endregion
+
+    IQueryDataProvider GetQueryDataProvider() {
+      IProviderNode provider =
+        settings_.Providers.GetProviderNode(Strings.kQueryDataProviderName);
+      return RuntimeTypeFactory<IQueryDataProviderFactory>
+        .CreateInstanceFallback(provider, settings_)
+        .CreateCommonDataProvider(provider.Options.ToDictionary());
+    }
+
+    ICacheProvider GetCacheProvider() {
+      IProviderNode provider =
+        settings_.Providers.GetProviderNode(Strings.kCacheProviderName);
+      return RuntimeTypeFactory<ICacheProviderFactory>
+        .CreateInstanceFallback(provider, settings_)
+        .CreateCacheProvider(provider.Options.ToDictionary());
+    }
 
     ILoadingCache<IConnectionProvider> GetConnectionProviderCache(
-      IQuerySettings settings) {
-      ICommonDataProvider common_data_provider = settings.CommonDataProvider;
-
+      IQueryDataProvider query_data_provider, ICacheProvider cache_provider) {
       // Merges the application configured connection provider with the
       // list of connection providers fetched from the common data provider.
-      List<IProviderNode> providers = new List<IProviderNode>(settings.Providers);
-      providers.AddRange(common_data_provider.GetConnectionProviders());
+      var providers = new List<IProviderNode>(
+        settings_.Providers[Strings.kQueryExecutorsGroup]);
+      providers.AddRange(query_data_provider.GetConnectionProviders());
 
       return
         new CacheBuilder<IConnectionProvider>()
-          .ExpireAfterAccess(settings.QueryCacheDuration*3, TimeUnit.Seconds)
-          .Build(settings.CacheProvider,
-            new ConnectionProviderLoader(providers));
+          .ExpireAfterAccess(settings_.QueryCacheDuration*3, TimeUnit.Seconds)
+          .Build(cache_provider, new ConnectionProviderLoader(providers));
     }
 
-    IJsonCollectionFactory GetJsonCollectionFactory(IQuerySettings settings) {
+    IJsonCollectionFactory GetJsonCollectionFactory() {
       IProviderNode provider;
-      if (settings.Providers.GetProviderNode(Strings.kJsonCollectionProvider,
+      if (settings_.Providers.GetProviderNode(Strings.kJsonCollectionProvider,
         out provider)) {
         try {
-          return ProviderFactory<IJsonCollectionFactory>
-            .CreateProviderFactoryFallback(provider, settings);
+          return RuntimeTypeFactory<IJsonCollectionFactory>
+            .CreateInstanceFallback(provider, settings_);
         } catch (Exception exception) {
           // log it and ignore
           RestQLLogger.ForCurrentProcess.Error(

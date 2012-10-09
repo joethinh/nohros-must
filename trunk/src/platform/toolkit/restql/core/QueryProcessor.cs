@@ -21,7 +21,6 @@ namespace Nohros.Toolkit.RestQL
     }
     #endregion
 
-    #region IQueryProcessor Members
     /// <inheritdoc/>
     public HttpStatusCode Process(string name,
       IDictionary<string, string> data, out string result) {
@@ -34,6 +33,5 @@ namespace Nohros.Toolkit.RestQL
       result = string.Empty;
       return HttpStatusCode.NotFound;
     }
-    #endregion
   }
 }

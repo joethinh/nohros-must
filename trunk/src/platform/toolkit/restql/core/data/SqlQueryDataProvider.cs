@@ -6,7 +6,7 @@ using Nohros.Data.Providers;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public partial class SqlCommonDataProvider : CommonDataProvider
+  public partial class SqlQueryDataProvider : QueryDataProvider
   {
     readonly IConnectionProvider connection_provider_;
 
@@ -20,7 +20,7 @@ namespace Nohros.Toolkit.RestQL
     /// A <see cref="IConnectionProvider"/> that is used to create connections
     /// and query a SQL server.
     /// </param>
-    public SqlCommonDataProvider(IConnectionProvider connection_provider) {
+    public SqlQueryDataProvider(IConnectionProvider connection_provider) {
 #if DEBUG
       if (connection_provider == null)
         throw new ArgumentException("connection_provider");

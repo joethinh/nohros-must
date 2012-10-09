@@ -33,7 +33,7 @@ namespace Nohros.Toolkit.RestQL
     /// <summary>
     /// The name of the common data provider.
     /// </summary>
-    public const string kCommonDataProviderName= "CommonDataProvider";
+    public const string kQueryDataProviderName = "QueryDataProvider";
 
     /// <summary>
     /// The name of the json collection provider
