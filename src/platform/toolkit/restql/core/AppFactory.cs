@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-
+using Nohros.Caching.Providers;
 using Nohros.Providers;
 using Nohros.Configuration;
 
@@ -41,9 +41,9 @@ namespace Nohros.Toolkit.RestQL
     /// <returns>
     /// The created <see cref="QueryResolver"/> object.
     /// </returns>
-    public QueryResolver CreateQueryResolver(IQuerySettings settings) {
+    public QueryResolver CreateQueryResolver(ICacheProvider cache_provider) {
       QueryResolver.QueryResolverCache query_resolver_cache =
-        new QueryResolver.QueryResolverCache(settings.CacheProvider,
+        new QueryResolver.QueryResolverCache(cache_provider,
           settings.CommonDataProvider, settings);
       return new QueryResolver(GetQueryExecutors(settings), query_resolver_cache);
     }

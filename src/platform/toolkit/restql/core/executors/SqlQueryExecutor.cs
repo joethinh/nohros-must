@@ -23,9 +23,9 @@ namespace Nohros.Toolkit.RestQL
     /// Initializes a new instance of the <see cref="SqlQueryExecutor"/> class
     /// using the specified collection of providers.
     /// </summary>
-    /// <param name="connection_provider_cache">
-    /// A <see cref="ICache{T}"/> object where we can obtain named instances of
-    /// <see cref="IConnectionProvider"/> objects.
+    /// <param name="connection_providers_cache">
+    /// A <see cref="ILoadingCache{T}"/> object where we can obtain named
+    /// instances of <see cref="IConnectionProvider"/> objects.
     /// </param>
     /// <param name="json_collection_factory">
     /// A <see cref="IJsonCollectionFactory"/> object that can be used to
@@ -34,19 +34,18 @@ namespace Nohros.Toolkit.RestQL
     /// <remarks>
     /// </remarks>
     public SqlQueryExecutor(
-      ILoadingCache<IConnectionProvider> connection_provider_cache,
+      ILoadingCache<IConnectionProvider> connection_providers_cache,
       IJsonCollectionFactory json_collection_factory) {
-      if (connection_provider_cache == null || json_collection_factory == null) {
-        throw new ArgumentNullException(connection_provider_cache == null
-          ? "connection_provider_cache"
+      if (connection_providers_cache == null || json_collection_factory == null) {
+        throw new ArgumentNullException(connection_providers_cache == null
+          ? "connection_providers_cache"
           : "json_collection_factory");
       }
-      connection_provider_cache_ = connection_provider_cache;
+      connection_provider_cache_ = connection_providers_cache;
       json_collection_factory_ = json_collection_factory;
     }
     #endregion
 
-    #region IQueryExecutor Members
     /// <inheritdoc/>
     public string Execute(IQuery query, IDictionary<string, string> parameters) {
       if (query == null) {
@@ -86,9 +85,8 @@ namespace Nohros.Toolkit.RestQL
       return
         string.Compare(Strings.kSqlQueryType, query.Type,
           StringComparison.OrdinalIgnoreCase) == 0 &&
-            options.ContainsKey(Strings.kConnectionProviderOption);
+          options.ContainsKey(Strings.kConnectionProviderOption);
     }
-    #endregion
 
     string ExecuteReader(IDbCommand command, IQuery query) {
       IDataReader reader = command.ExecuteReader();

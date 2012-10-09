@@ -1,34 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using Nohros.Configuration;
 using Nohros.Data.Providers;
 using Nohros.Providers;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public partial class SqlCommonDataProvider : ICommonDataProviderFactory
+  public partial class SqlQueryDataProvider : IQueryDataProviderFactory
   {
+    readonly IQuerySettings settings_;
+
     #region .ctor
-    /// <summary>
-    /// Constructor required by the <see cref="ICommonDataProviderFactory"/>
-    /// interface.
-    /// </summary>
-    SqlCommonDataProvider() {
+    public SqlQueryDataProvider(IQuerySettings settings) {
+      settings_ = settings;
     }
     #endregion
 
-    #region ICommonDataProviderFactory Members
-    public ICommonDataProvider CreateCommonDataProvider(
-      IDictionary<string, string> options, ISettings settings) {
-      string provider_name = options[Strings.kConnectionProviderOption];
-      IProviderNode provider = settings.Providers[provider_name];
+    public IQueryDataProvider CreateCommonDataProvider(
+      IDictionary<string, string> options) {
+      SqlConnectionProvider provider = new SqlConnectionProvider()
       IConnectionProvider connection_provider =
         ProviderFactory<IConnectionProviderFactory>
           .CreateProviderFactory(provider)
           .CreateProvider(provider.Options);
-      return new SqlCommonDataProvider(connection_provider);
+      return new SqlQueryDataProvider(connection_provider);
     }
-    #endregion
   }
 }

@@ -3,7 +3,7 @@ using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public interface ICommonDataProvider
+  public interface IQueryDataProvider
   {
     /// <summary>
     /// Gets a <see cref="Query"/> object whose name if <paramref name="name"/>.

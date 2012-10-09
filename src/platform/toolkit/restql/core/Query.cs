@@ -15,7 +15,6 @@ namespace Nohros.Toolkit.RestQL
     readonly string type_;
 
     bool is_parsed_;
-    QueryMethod query_method_;
 
     #region .ctor
     /// <summary>
@@ -82,7 +81,6 @@ namespace Nohros.Toolkit.RestQL
     }
     #endregion
 
-    #region IQuery Members
     /// <inheritdoc/>
     public string Name {
       get { return name_; }
@@ -101,17 +99,12 @@ namespace Nohros.Toolkit.RestQL
     /// will be performed on the data base ( retrieve value, modify data,
     /// modify and retrieve data).
     /// </remarks>
-    public QueryMethod QueryMethod {
-      get { return query_method_; }
-      set { query_method_ = value; }
-    }
-
+    public QueryMethod QueryMethod { get; set; }
 
     /// <inheritdoc/>
     public IDictionary<string, string> Options {
       get { return options_; }
     }
-    #endregion
 
     /// <inheritdoc/>
     public override void Parse() {

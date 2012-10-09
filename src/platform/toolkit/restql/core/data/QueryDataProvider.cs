@@ -5,7 +5,7 @@ using Nohros.Data;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public abstract class CommonDataProvider : ICommonDataProvider
+  public abstract class QueryDataProvider : IQueryDataProvider
   {
     const int kQueryName = 0;
     const int kQueryType = 1;
@@ -23,7 +23,7 @@ namespace Nohros.Toolkit.RestQL
       "optionname", "optionvalue"
     };
 
-    #region ICommonDataProvider Members
+    #region IQueryDataProvider Members
     /// <inheritdoc/>
     public abstract IQuery GetQuery(string name);
 
