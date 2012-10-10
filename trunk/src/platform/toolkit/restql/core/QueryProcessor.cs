@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -22,16 +21,16 @@ namespace Nohros.Toolkit.RestQL
     #endregion
 
     /// <inheritdoc/>
-    public HttpStatusCode Process(string name,
+    public bool Process(string name,
       IDictionary<string, string> data, out string result) {
       IQuery query_to_execute = resolver_.GetQuery(name);
       IQueryExecutor executor = resolver_.GetQueryExecutor(query_to_execute);
       if (!(executor is NoOpQueryExecutor)) {
         result = executor.Execute(query_to_execute, data);
-        return HttpStatusCode.OK;
+        return true;
       }
       result = string.Empty;
-      return HttpStatusCode.NotFound;
+      return false;
     }
   }
 }
