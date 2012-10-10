@@ -2,7 +2,7 @@
 
 namespace Nohros.Toolkit.RestQL
 {
-  public partial class QueryServer
+  public partial class QueryServer : IQueryServer
   {
     readonly IQueryProcessor query_processor_;
     readonly IQuerySettings settings_;

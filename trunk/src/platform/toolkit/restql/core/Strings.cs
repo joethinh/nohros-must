@@ -5,7 +5,7 @@ namespace Nohros.Toolkit.RestQL
   /// <summary>
   /// Defines all the language neutral constant strings used in the restql.
   /// </summary>
-  internal sealed class Strings
+  public sealed class Strings
   {
     public const string kConfigFileName = "restql.config";
 
@@ -27,6 +27,11 @@ namespace Nohros.Toolkit.RestQL
     public const string kQueryNode = "query";
 
     /// <summary>
+    /// The name of the application cache provider.
+    /// </summary>
+    public const string kCacheProviderName = "CacheProvider";
+
+    /// <summary>
     /// The name of the group which the query processor providers should be
     /// associated.
     /// </summary>
@@ -43,11 +48,6 @@ namespace Nohros.Toolkit.RestQL
     /// The name of the json collection provider
     /// </summary>
     public const string kJsonCollectionProvider = "JsonCollectionProvider";
-
-    /// <summary>
-    /// The name of the application cache provider.
-    /// </summary>
-    public const string kCacheProviderName = "CacheProvider";
 
     public const string kQueryStringQueryName = kName;
 

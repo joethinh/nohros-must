@@ -12,6 +12,6 @@ namespace Nohros.Toolkit.RestQL
     /// <summary>
     /// Gets the server's setting.
     /// </summary>
-    ISettings Settings { get; }
+    IQuerySettings QuerySettings { get; }
   }
 }
