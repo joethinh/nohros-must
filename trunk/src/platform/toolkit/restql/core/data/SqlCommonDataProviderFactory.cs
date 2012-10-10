@@ -18,7 +18,7 @@ namespace Nohros.Toolkit.RestQL
 
     public IQueryDataProvider CreateCommonDataProvider(
       IDictionary<string, string> options) {
-      SqlConnectionProvider provider = new SqlConnectionProvider()
+      var provider = new SqlConnectionProvider()
       IConnectionProvider connection_provider =
         ProviderFactory<IConnectionProviderFactory>
           .CreateProviderFactory(provider)

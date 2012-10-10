@@ -7,6 +7,10 @@ namespace Nohros.Toolkit.RestQL
   /// </summary>
   internal sealed class Strings
   {
+    public const string kConfigFileName = "restql.config";
+
+    public const string kConfigRootNode = "restql";
+
     const string kName = "name";
 
     const string kProviderName = "provider-name";

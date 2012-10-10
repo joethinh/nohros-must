@@ -6,13 +6,13 @@ namespace Nohros.Toolkit.RestQL
   /// <summary>
   /// The application settings.
   /// </summary>
-  public partial class Settings : Configuration.Configuration, IConfiguration,
+  public partial class QuerySettings : Configuration.Configuration, IConfiguration,
                                   IQuerySettings
   {
     readonly long query_cache_duration_;
 
     #region .ctor
-    public Settings(Builder builder)
+    public QuerySettings(Builder builder)
       : base(builder) {
       query_cache_duration_ = builder.QueryCacheDuration;
     }
