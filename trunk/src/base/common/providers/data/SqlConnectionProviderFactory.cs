@@ -5,14 +5,19 @@ using Nohros.Configuration;
 
 namespace Nohros.Data.Providers
 {
-  public partial class SqlConnectionProvider : IConnectionProviderFactory
+  public class SqlConnectionProviderFactory : IConnectionProviderFactory
   {
+    const string kConnectionStringOption = "connection-string";
+    const string kServerOption = "server";
+    const string kLoginOption = "login";
+    const string kPasswordOption = "password";
+
     #region .ctor
     /// <summary>
     /// Constructor implied by the interface
     /// <see cref="IConnectionProviderFactory"/>.
     /// </summary>
-    SqlConnectionProvider() {
+    public SqlConnectionProviderFactory() {
     }
     #endregion
 
