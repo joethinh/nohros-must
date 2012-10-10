@@ -8,12 +8,8 @@ namespace Nohros.Data.Providers
   /// A implementation of the <see cref="IConnectionProvider"/> that
   /// provides connections for the Microsoft Sql Server.
   /// </summary>
-  public partial class SqlConnectionProvider : IConnectionProvider
+  public class SqlConnectionProvider : IConnectionProvider
   {
-    const string kConnectionStringOption = "connection-string";
-    const string kServerOption = "server";
-    const string kLoginOption = "login";
-    const string kPasswordOption = "password";
     const string kDefaultSchema = "dbo";
 
     readonly string connection_string_;
