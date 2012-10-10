@@ -1,28 +1,21 @@
 ﻿using System;
+using Nohros.Caching.Providers;
+using Nohros.IO;
 
 namespace Nohros.Toolkit.RestQL
 {
   public partial class QueryServer
   {
-    #region Builder
     /// <summary>
     /// A factory used to create instances of the <see cref="QueryServer"/>
     /// object.
     /// </summary>
     public sealed class Builder
     {
-      readonly AppFactory factory_;
-
       IQueryProcessor processor_;
-      IQuerySettings query_settings_;
       IQueryResolver resolver_;
-      ISettings settings_;
-
-      #region .ctor
-      public Builder() {
-        factory_ = new AppFactory();
-      }
-      #endregion
+      IQuerySettings settings_;
+      ICacheProvider cache_provider_;
 
       /// <summary>
       /// Creates an instance of the <see cref="QueryServer"/> object.
@@ -31,31 +24,28 @@ namespace Nohros.Toolkit.RestQL
       /// The newly created <see cref="QueryServer"/> object.
       /// </returns>
       public QueryServer Build() {
-        AppFactory factory = new AppFactory();
-
-        // order matter.
-        EnsureSettings(factory);
+        IQuerySettings settings = GetSettings();
+        var factory = new AppFactory(settings);
         EnsureQueryResolver(factory);
         EnsureQueryProcessor(factory);
         return new QueryServer(this);
       }
 
-      void EnsureSettings(AppFactory factory) {
-        Settings settings = null;
-        if (settings_ == null || query_settings_ == null) {
-          settings = factory.CreateSettings();
+      IQuerySettings GetSettings() {
+        if (settings_ != null) {
+          return settings_;
         }
-        if (settings_ == null) {
-          settings_ = settings;
-        }
-        if (query_settings_ == null) {
-          query_settings_ = settings;
-        }
+        return new QuerySettings.Loader()
+          .Load(
+            Path.AbsoluteForCallingAssembly(Strings.kConfigFileName),
+            Strings.kConfigRootNode);
       }
 
       void EnsureQueryResolver(AppFactory factory) {
         if (resolver_ == null) {
-          resolver_ = factory.CreateQueryResolver(query_settings_);
+          resolver_ = (cache_provider_ == null)
+            ? factory.CreateQueryResolver()
+            : factory.CreateQueryResolver(cache_provider_);
         }
       }
 
@@ -66,34 +56,34 @@ namespace Nohros.Toolkit.RestQL
       }
 
       /// <summary>
-      /// Sets the <see cref="Settings"/> object to be used.
+      /// Sets the <see cref="IQuerySettings"/> object to be used.
       /// </summary>
       /// <param name="settings">
-      /// The <see cref="Settings"/> object that should be used to build a
+      /// The <see cref="IQuerySettings"/> object that should be used to build a
       /// <see cref="QueryServer"/>.
       /// </param>
       /// <returns>
-      /// A <see cref="Builder"/> that uses <see cref="settings"/> to build
-      /// a <see cref="QueryServer"/> instance.
+      /// A <see cref="Builder"/> that uses <see cref="settings"/> to
+      /// build a <see cref="QueryServer"/> instance.
       /// </returns>
-      public Builder SetSettings(ISettings settings) {
+      public Builder SetQuerySettings(IQuerySettings settings) {
         settings_ = settings;
         return this;
       }
 
       /// <summary>
-      /// Sets the <see cref="IQuerySettings"/> object to be used.
+      /// Sets the <see cref="ICacheProvider"/> object to be used.
       /// </summary>
-      /// <param name="query_settings">
-      /// The <see cref="IQuerySettings"/> object that should be used to build a
-      /// <see cref="QueryServer"/>.
+      /// <param name="provider">
+      /// A <see cref="ICacheProvider"/> object that can be used to cache
+      /// objects.
       /// </param>
       /// <returns>
-      /// A <see cref="Builder"/> that uses <see cref="query_settings"/> to
-      /// build a <see cref="QueryServer"/> instance.
+      /// A <see cref="Builder"/> that uses <paramref name="provider"/> to
+      /// build a <see cref="QueryServer"/>.
       /// </returns>
-      public Builder SetQuerySettings(IQuerySettings query_settings) {
-        query_settings_ = query_settings;
+      public Builder SetCacheProvider(ICacheProvider provider) {
+        cache_provider_ = provider;
         return this;
       }
 
@@ -102,7 +92,7 @@ namespace Nohros.Toolkit.RestQL
       /// a <see cref="QueryServer"/> object.
       /// </summary>
       /// <param name="resolver">
-      /// The <see cref="Settings"/> object that should be used to build a
+      /// The <see cref="QuerySettings"/> object that should be used to build a
       /// <see cref="QueryServer"/>.
       /// </param>
       /// <returns>
@@ -132,7 +122,7 @@ namespace Nohros.Toolkit.RestQL
       }
 
       public IQuerySettings QuerySettings {
-        get { return query_settings_; }
+        get { return settings_; }
       }
 
       public IQueryProcessor QueryProcessor {
@@ -142,11 +132,6 @@ namespace Nohros.Toolkit.RestQL
       public IQueryResolver QueryResolver {
         get { return resolver_; }
       }
-
-      public ISettings Settings {
-        get { return settings_; }
-      }
     }
-    #endregion
   }
 }

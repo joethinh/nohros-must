@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
+using System.Linq;
 using Nohros.Caching.Providers;
-using Nohros.Providers;
+using Nohros.Extensions;
 using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
@@ -12,26 +11,33 @@ namespace Nohros.Toolkit.RestQL
   /// </summary>
   internal class AppFactory
   {
-    const string kRestQLSettingsFileName = "restql.config";
-    const string kRestQLRootNodeName = "restql";
+    readonly IQuerySettings settings_;
 
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="AppFactory"/>.
     /// </summary>
-    public AppFactory() {
+    public AppFactory(IQuerySettings settings) {
+      settings_ = settings;
     }
     #endregion
 
-    public Settings CreateSettings() {
-      string current_assembly_location =
-        Assembly.GetExecutingAssembly().Location;
-      string config_file_name = Path.Combine(current_assembly_location,
-        kRestQLSettingsFileName);
-
-      Settings settings = new Settings();
-      settings.Load();
-      return settings;
+    /// <summary>
+    /// Creates an instance of the <see cref="QueryResolver"/> object using the
+    /// specified cache provider, common data provider and query settings.
+    /// </summary>
+    /// <returns>
+    /// The created <see cref="QueryResolver"/> object.
+    /// </returns>
+    public QueryResolver CreateQueryResolver() {
+      IProviderNode provider = settings_
+        .Providers
+        .GetProviderNode(Strings.kCacheProviderName);
+      ICacheProvider cache_provider =
+        RuntimeTypeFactory<ICacheProviderFactory>
+          .CreateInstanceFallback(provider, settings_)
+          .CreateCacheProvider(provider.Options.ToDictionary());
+      return CreateQueryResolver(cache_provider);
     }
 
     /// <summary>
@@ -41,25 +47,33 @@ namespace Nohros.Toolkit.RestQL
     /// <returns>
     /// The created <see cref="QueryResolver"/> object.
     /// </returns>
-    public QueryResolver CreateQueryResolver(ICacheProvider cache_provider) {
-      QueryResolver.QueryResolverCache query_resolver_cache =
-        new QueryResolver.QueryResolverCache(cache_provider,
-          settings.CommonDataProvider, settings);
-      return new QueryResolver(GetQueryExecutors(settings), query_resolver_cache);
+    public QueryResolver CreateQueryResolver(ICacheProvider provider) {
+      IQueryDataProvider query_data_provider = GetQueryDataProvider();
+      IQueryExecutor[] executors = GetQueryExecutors();
+      return new QueryResolver(executors, query_data_provider);
     }
 
-
-    IQueryExecutor[] GetQueryExecutors(IQuerySettings settings) {
-      IProviderNode[] providers = settings.Executors;
-      int length = providers.Length;
-      IQueryExecutor[] executors = new IQueryExecutor[length];
-      for (int i = 0, j = length; i < j; i++) {
-        IProviderNode provider = providers[i];
-        executors[i] = ProviderFactory<IQueryExecutorFactory>
-          .CreateProviderFactory(provider)
-          .CreateQueryExecutor(provider.Options, settings);
+    IQueryExecutor[] GetQueryExecutors() {
+      IProvidersNodeGroup executors_providers;
+      if (settings_.Providers.GetProvidersNodeGroup(
+        Strings.kQueryExecutorsGroup, out executors_providers)) {
+        return executors_providers
+          .Select(
+            provider => RuntimeTypeFactory<IQueryExecutorFactory>
+              .CreateInstanceFallback(provider, settings_)
+              .CreateQueryExecutor(provider.Options.ToDictionary()))
+          .ToArray();
       }
-      return executors;
+      return new IQueryExecutor[0];
+    }
+
+    IQueryDataProvider GetQueryDataProvider() {
+      IProviderNode provider = settings_
+        .Providers
+        .GetProviderNode(Strings.kQueryDataProviderName);
+      return RuntimeTypeFactory<IQueryDataProviderFactory>
+        .CreateInstanceFallback(provider, settings_)
+        .CreateCommonDataProvider(provider.Options.ToDictionary());
     }
 
     /// <summary>

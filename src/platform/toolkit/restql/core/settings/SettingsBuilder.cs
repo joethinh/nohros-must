@@ -3,9 +3,9 @@ using Nohros.Configuration.Builders;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public partial class Settings
+  public partial class QuerySettings
   {
-    public class Builder : AbstractConfigurationBuilder<Settings>
+    public class Builder : AbstractConfigurationBuilder<QuerySettings>
     {
       long query_cache_duration_;
 
@@ -14,8 +14,8 @@ namespace Nohros.Toolkit.RestQL
         return this;
       }
 
-      public override Settings Build() {
-        return new Settings(this);
+      public override QuerySettings Build() {
+        return new QuerySettings(this);
       }
 
       public long QueryCacheDuration {

@@ -5,9 +5,7 @@ namespace Nohros.Toolkit.RestQL
   public partial class QueryServer
   {
     readonly IQueryProcessor query_processor_;
-
-    readonly IQuerySettings query_settings_;
-    readonly ISettings settings_;
+    readonly IQuerySettings settings_;
 
     #region .ctor
     /// <summary>
@@ -16,17 +14,9 @@ namespace Nohros.Toolkit.RestQL
     /// </summary>
     public QueryServer(Builder builder) {
       query_processor_ = builder.QueryProcessor;
-      settings_ = builder.Settings;
-      query_settings_ = builder.QuerySettings;
+      settings_ = builder.QuerySettings;
     }
     #endregion
-
-    /// <summary>
-    /// Gets the server's query settings.
-    /// </summary>
-    public IQuerySettings QuerySettings {
-      get { return query_settings_; }
-    }
 
     /// <summary>
     /// Gets the server's query principal mapper.
@@ -38,7 +28,7 @@ namespace Nohros.Toolkit.RestQL
     /// <summary>
     /// Gets the server's settings.
     /// </summary>
-    public ISettings Settings {
+    public IQuerySettings QuerySettings {
       get { return settings_; }
     }
   }

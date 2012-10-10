@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using Nohros.Configuration;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public partial class Settings
+  public partial class QuerySettings
   {
-    public class Loader : AbstractConfigurationLoader<Settings>
+    public class Loader : AbstractConfigurationLoader<QuerySettings>
     {
     }
   }

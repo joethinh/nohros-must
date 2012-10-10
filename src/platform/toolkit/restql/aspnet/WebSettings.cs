@@ -7,7 +7,7 @@ namespace Nohros.Toolkit.RestQL
   /// <see cref="WebSettings"/> objtect contains the application
   /// configuration data.
   /// </summary>
-  public class WebSettings : Settings
+  public class WebSettings : QuerySettings
   {
     #region .ctor
     public WebSettings() {
