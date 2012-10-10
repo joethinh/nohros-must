@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -16,17 +15,18 @@ namespace Nohros.Toolkit.RestQL
     /// A string that uniquely identifies the query within an application.
     /// </param>
     /// <param name="options">
-    /// A collection of name value pairs containing the user supplied opition (
-    /// filter and parameters) for the query.
+    /// A collection of name value pairs containing the user supplied options (
+    /// filters and parameters) for the query.
     /// </param>
     /// <param name="result">
-    /// The result of the query processing.
+    /// The result of the query processing, or <see cref="string.Empty"/> if
+    /// the query processing operation fails.
     /// </param>
     /// <returns>
-    /// A <see cref="HttpStatusCode"/> repsenting the status of the query
-    /// processing.
+    /// <c>true</c> if the query was successfully processed; otherwise,
+    /// <c>false</c>.
     /// </returns>
-    HttpStatusCode Process(string name, IDictionary<string, string> options,
+    bool Process(string name, IDictionary<string, string> options,
       out string result);
   }
 }
