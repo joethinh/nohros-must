@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("mongoose")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("RestQL Service")]
+[assembly: AssemblyDescription("norhos.toolkit.restql.service")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Nohros Inc")]
-[assembly: AssemblyProduct("mongoose")]
-[assembly: AssemblyCopyright("Copyright © Nohros Inc 2012")]
+[assembly: AssemblyCompany("Nohros Inc.")]
+[assembly: AssemblyProduct("Nohros Must Toolkit")]
+[assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5678e519-5eb1-4829-8aa8-42207c011c99")]
+[assembly: Guid("e69108c3-3015-4486-bb2a-0aca8cc7edac")]
 
 // Version information for an assembly consists of the following four values:
 //
