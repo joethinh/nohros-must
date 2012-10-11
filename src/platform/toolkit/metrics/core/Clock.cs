@@ -13,7 +13,9 @@ namespace Nohros.Toolkit.Metrics
     /// <summary>
     /// Gets the current time tick.
     /// </summary>
-    /// <value>The current time tick in nanoseconds.</value>
+    /// <value>
+    /// The current time tick in nanoseconds.
+    /// </value>
     /// <remarks>
     /// The smallest unit of time is the tick, which is equals to 100
     /// nanoseconds.
@@ -43,13 +45,15 @@ namespace Nohros.Toolkit.Metrics
     /// typically only microseconds(10ms or 15ms on windows).
     /// </remarks>
     public static long NanoTime {
-      get { return (long)(DateTime.UtcNow.Subtract(epoch_).Ticks); }
+      get { return DateTime.UtcNow.Subtract(epoch_).Ticks; }
     }
 
     /// <summary>
     /// Gets the current time in milliseconds.
     /// </summary>
-    /// <value>The diferrence</value>
+    /// <value>
+    /// The diferrence
+    /// </value>
     /// <remarks>This method should be used only to measure elapsed time
     /// and is not related to any other notion of system or wall-clock time.
     /// The value returned represents miliseconds since some fixed but

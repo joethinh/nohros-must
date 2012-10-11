@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="core\BiasedHistogram.cs" />
+    <Compile Include="core\CallableGauge.cs" />
     <Compile Include="core\Clock.cs" />
     <Compile Include="core\Counter.cs" />
     <Compile Include="core\Histograms.cs" />
