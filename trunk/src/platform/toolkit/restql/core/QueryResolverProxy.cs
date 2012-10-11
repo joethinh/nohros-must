@@ -42,6 +42,14 @@ namespace Nohros.Toolkit.RestQL
         get { return query_.Name; }
       }
 
+      public string[] Parameters {
+        get { return query_.Parameters; }
+      }
+
+      public string QueryText {
+        get { return query_.QueryText; }
+      }
+
       public IQueryExecutor Executor {
         get { return executor_; }
         set { executor_ = value; }

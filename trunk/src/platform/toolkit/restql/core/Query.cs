@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -46,7 +47,7 @@ namespace Nohros.Toolkit.RestQL
     /// a <see cref="Query"/> object through this constructor.
     /// </remarks>
     public Query(string name, string type, string query)
-      : this(name, type, query, "@") {
+      : this(name, type, query, "$") {
       UseSpaceAsTerminator = true;
     }
 
@@ -89,6 +90,22 @@ namespace Nohros.Toolkit.RestQL
     /// <inheritdoc/>
     public string Type {
       get { return type_; }
+    }
+
+    /// <inheritdoc/>
+    string[] IQuery.Parameters {
+      get {
+        var names =
+          from parameter in Parameters
+          where parameter.IsParameter
+          select parameter.Name;
+        return names.ToArray();
+      }
+    }
+
+    /// <inheritdoc/>
+    public string QueryText {
+      get { return flat_string; }
     }
 
     /// <summary>

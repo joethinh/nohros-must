@@ -29,7 +29,7 @@ namespace Nohros.Toolkit.RestQL
     /// query executors.
     /// </remarks>
     IDictionary<string, string> Options { get; }
-      
+
     /// <summary>
     /// Gets the query's method.
     /// </summary>
@@ -41,6 +41,11 @@ namespace Nohros.Toolkit.RestQL
     QueryMethod QueryMethod { get; }
 
     /// <summary>
+    /// Gets the name of the parameters associated with the query.
+    /// </summary>
+    string[] Parameters { get; }
+
+    /// <summary>
     /// Gets or sets a string that identifies the query's type.
     /// </summary>
     string Type { get; }
@@ -49,5 +54,10 @@ namespace Nohros.Toolkit.RestQL
     /// Gets a string that uniquely idenfies the query.
     /// </summary>
     string Name { get; }
+
+    /// <summary>
+    /// Gets the text of the query.
+    /// </summary>
+    string QueryText { get; }
   }
 }
