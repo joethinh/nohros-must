@@ -16,7 +16,8 @@ namespace Nohros.Concurrent
     readonly IThreadFactory factory_;
     readonly ILogger logger_;
     readonly AutoResetEvent signal_;
-    readonly Thread thread_;
+    bool running_;
+    Thread thread_;
 
     #region .ctor
     /// <summary>
@@ -28,13 +29,62 @@ namespace Nohros.Concurrent
     /// <see cref="Thread"/> whenn needed.
     /// </param>
     public SingleThreadExecutor(IThreadFactory factory) {
-      thread_ = factory.CreateThread(ThreadMain);
+      factory_ = factory;
       signal_ = new AutoResetEvent(false);
       logger_ = MustLogger.ForCurrentProcess;
       execution_queue_ = new YQueue<RunnableDelegate>(10);
-      thread_.Start();
+      running_ = false;
     }
     #endregion
+
+    /// <summary>
+    /// Starts the executor thread.
+    /// </summary>
+    /// <remarks>
+    /// If the executor is already started, this method fails silently.
+    /// </remarks>
+    public void Start() {
+      if (running_) {
+        return;
+      }
+
+      thread_ = factory_.CreateThread(ThreadMain);
+      running_ = true;
+      thread_.Start();
+    }
+
+    /// <summary>
+    /// Stops the executor thread.
+    /// </summary>
+    /// <remarks>
+    /// This method discards any task tha was not executed yet. If a task is
+    /// currently running, this method blocks the calling thread until the
+    /// task terminates.
+    /// </remarks>
+    public void Stop() {
+      Stop(0);
+    }
+
+    /// <summary>
+    /// Stops the executor thread.
+    /// </summary>
+    /// <param name="milliseconds_timeout">
+    /// The number of milliseconds to wait for the current running task to
+    /// terminate.
+    /// </param>
+    /// <remarks>
+    /// This method discards any task tha was not executed yet. If a task is
+    /// currently running, this method blocks the calling thread until the
+    /// task terminates ot the specified time elapses.
+    /// </remarks>
+    public void Stop(int milliseconds_timeout) {
+      running_ = false;
+      signal_.Set();
+      if (thread_ != null) {
+        thread_.Join(milliseconds_timeout);
+      }
+      thread_ = null;
+    }
 
     /// <inheritdoc/>
     public void Execute(RunnableDelegate runnable) {
@@ -43,7 +93,7 @@ namespace Nohros.Concurrent
     }
 
     void ThreadMain() {
-      while (true) {
+      while (running_) {
         // A try/catch block is used here to stops the loop
         // when a ThreadInterruptedException and ThreadAbortException
         // is raised and to not stops the Thread when the runnable raises

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using Nohros.Resources;
 
 namespace Nohros.Collections
@@ -29,7 +28,6 @@ namespace Nohros.Collections
     }
     #endregion
 
-    #region ICollection<ParameterizedStringPartParameter> Members
     /// <summary>
     /// Adds the specified <see cref="ParameterizedStringPartParameter"/>
     /// object to this <see cref="ParameterizedStringPartParameterCollection"/>.
@@ -166,7 +164,7 @@ namespace Nohros.Collections
     /// </returns>
     IEnumerator<ParameterizedStringPartParameter>
       IEnumerable<ParameterizedStringPartParameter>.GetEnumerator() {
-      return GetEnumerator();
+      return parameters_.GetEnumerator();
     }
 
     /// <summary>
@@ -177,9 +175,8 @@ namespace Nohros.Collections
     /// An IEnumerator of <see cref="ParameterizedStringPartParameterCollection"/>.
     /// </returns>
     IEnumerator IEnumerable.GetEnumerator() {
-      return GetEnumerator();
+      return parameters_.GetEnumerator();
     }
-    #endregion
 
     /// <summary>
     /// Adds the specified <see cref="ParameterizedStringPartParameter"/>
@@ -254,19 +251,6 @@ namespace Nohros.Collections
         return true;
       }
       return false;
-    }
-
-    /// <summary>
-    /// Returns an enumerator that iterates through the
-    /// <see cref="ParameterizedStringPartParameterCollection"/>
-    /// </summary>
-    /// <returns>
-    /// An IEnumerator of <see cref="ParameterizedStringPartParameterCollection"/>.
-    /// </returns>
-    IEnumerator<ParameterizedStringPartParameter> GetEnumerator() {
-      for (int i = 0, j = parameters_.Count; i < j; i++) {
-        yield return parameters_[i];
-      }
     }
 
     /// <summary>

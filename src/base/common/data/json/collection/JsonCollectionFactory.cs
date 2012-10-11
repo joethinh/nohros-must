@@ -16,16 +16,6 @@ namespace Nohros.Data.Json
     const string kArrayCollection = "array";
     const string kArrayOfObjectsCollection = "array-of-object";
 
-    #region .ctor
-    /// <summary>
-    /// Initializes a new instance of the <see cref="JsonCollectionFactory"/>
-    /// class.
-    /// </summary>
-    public JsonCollectionFactory() {
-    }
-    #endregion
-
-    #region IJsonCollectionFactory Members
     /// <inheritdoc/>
     public IJsonCollection CreateJsonCollection(string name) {
       switch (name) {
@@ -65,7 +55,6 @@ namespace Nohros.Data.Json
             StringResources.NotSupported_CannotCreateType, name));
       }
     }
-    #endregion
 
     /// <summary>
     /// Creates a <see cref="JsonObject"/> containing the data readed from
