@@ -40,9 +40,11 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CallableGaugeTests.cs" />
     <Compile Include="ClockTests.cs" />
     <Compile Include="CounterTest.cs" />
     <Compile Include="HistogramTests.cs" />
+    <Compile Include="MeterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
