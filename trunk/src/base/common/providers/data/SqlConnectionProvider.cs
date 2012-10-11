@@ -36,7 +36,6 @@ namespace Nohros.Data.Providers
     }
     #endregion
 
-    #region IConnectionProvider Members
     /// <inheritdoc/>
     IDbConnection IConnectionProvider.CreateConnection() {
       return CreateConnection();
@@ -51,7 +50,6 @@ namespace Nohros.Data.Providers
     public string Schema {
       get { return schema_; }
     }
-    #endregion
 
     /// <summary>
     /// Creates a new instance of the <see cref="SqlConnection"/> class using
