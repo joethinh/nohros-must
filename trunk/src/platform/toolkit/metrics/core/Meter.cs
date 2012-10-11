@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Nohros.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
@@ -13,21 +12,31 @@ namespace Nohros.Toolkit.Metrics
   ///   http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average
   /// </para>
   /// </remarks>
-  public class Meter : IMetered
+  public class Meter : IMetered, IMetric
   {
+    struct Sample
+    {
+      public readonly long tick;
+      public readonly long value;
+      public Sample(long tick, long value) {
+        this.tick = tick;
+        this.value = value;
+      }
+    }
+
     const long kTickInterval = 5000000000; // 5 seconds in nanoseconds
+    readonly Clock clock_;
+    readonly string event_type_;
+    readonly ExponentialWeightedMovingAverage ewma_15_rate_;
 
     readonly ExponentialWeightedMovingAverage ewma_1_rate_;
     readonly ExponentialWeightedMovingAverage ewma_5_rate_;
-    readonly ExponentialWeightedMovingAverage ewma_15_rate_;
-
-    AtomicLong count_;
-    AtomicLong last_tick_;
-    readonly long start_time_;
     readonly TimeUnit rate_unit_;
-    readonly string event_type_;
-    readonly Clock clock_;
+    readonly long start_time_;
+    long count_;
+    long last_tick_;
 
+    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref=" Meter"/> class by using
     /// the specified meter name, rate unit and clock.
@@ -46,17 +55,18 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="clock">
     /// The clock to use for the meter ticks.
     /// </param>
-    internal Meter(string event_type, TimeUnit rate_unit, Clock clock) {
-      count_ = new AtomicLong();
+    public Meter(string event_type, TimeUnit rate_unit, Clock clock) {
+      count_ = 0;
       rate_unit_ = rate_unit;
       event_type_ = event_type;
       clock_ = clock;
       start_time_ = clock_.Tick;
-      last_tick_ = new AtomicLong(start_time_);
+      last_tick_ = start_time_;
       ewma_1_rate_ = ExponentialWeightedMovingAverages.OneMinute();
       ewma_5_rate_ = ExponentialWeightedMovingAverages.FiveMinute();
       ewma_15_rate_ = ExponentialWeightedMovingAverages.FifteenMinute();
     }
+    #endregion
 
     /// <inheritdoc/>
     public TimeUnit RateUnit {
@@ -68,51 +78,9 @@ namespace Nohros.Toolkit.Metrics
       get { return event_type_; }
     }
 
-    /// <summary>
-    /// Updates the moving average.
-    /// </summary>
-    void Tick() {
-      ewma_1_rate_.Tick();
-      ewma_5_rate_.Tick();
-      ewma_15_rate_.Tick();
-    }
-
-    /// <summary>
-    /// Mark the occurrence of an event.
-    /// </summary>
-    public void Mark() {
-      Mark(1);
-    }
-
-    /// <summary>
-    /// Mark the occurrence of a given number of events.
-    /// </summary>
-    /// <param name="n">
-    /// The number of events.
-    /// </param>
-    public void Mark(long n) {
-      TickIfNecessary();
-      count_.Add(n);
-      ewma_1_rate_.Update(n);
-      ewma_5_rate_.Update(n);
-      ewma_15_rate_.Update(n);
-    }
-
-    void TickIfNecessary() {
-      long old_tick = last_tick_.Value;
-      long new_tick = clock_.Tick;
-      long age = new_tick - old_tick;
-      if (age > kTickInterval && last_tick_.CompareSet(old_tick, new_tick)) {
-        long required_ticks = age/kTickInterval;
-        for (long i = 0; i < required_ticks; i++) {
-          Tick();
-        }
-      }
-    }
-
     /// <inheritdoc/>
     public long Count {
-      get { return (long) count_; }
+      get { return count_; }
     }
 
     /// <inheritdoc/>
@@ -150,8 +118,52 @@ namespace Nohros.Toolkit.Metrics
       }
     }
 
+    /// <summary>
+    /// Updates the moving average.
+    /// </summary>
+    void Tick() {
+      ewma_1_rate_.Tick();
+      ewma_5_rate_.Tick();
+      ewma_15_rate_.Tick();
+    }
+
+    /// <summary>
+    /// Mark the occurrence of an event.
+    /// </summary>
+    public void Mark() {
+      Mark(1);
+    }
+
+    /// <summary>
+    /// Mark the occurrence of a given number of events.
+    /// </summary>
+    /// <param name="n">
+    /// The number of events.
+    /// </param>
+    public void Mark(long n) {
+    }
+
+    public void AsyncMark(Sample sample) {
+      TickIfNecessary(sample.tick);
+      count_ += sample.value;
+      ewma_1_rate_.Update(sample.value);
+      ewma_5_rate_.Update(sample.value);
+      ewma_15_rate_.Update(sample.value);
+    }
+
+    void TickIfNecessary(long now) {
+      long age = now - last_tick_;
+      last_tick_ = now;
+      if (age > kTickInterval) {
+        long required_ticks = age/kTickInterval;
+        for (long i = 0; i < required_ticks; i++) {
+          Tick();
+        }
+      }
+    }
+
     double ConvertNsRate(double rate_per_ns) {
-      return rate_per_ns * (double)TimeUnitHelper.ToNanos(1, rate_unit_);
+      return rate_per_ns*TimeUnitHelper.ToNanos(1, rate_unit_);
     }
   }
 }

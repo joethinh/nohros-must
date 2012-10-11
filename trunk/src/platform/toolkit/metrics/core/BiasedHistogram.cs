@@ -17,7 +17,7 @@ namespace Nohros.Toolkit.Metrics
     /// The number of elements to sample.
     /// </param>
     public BiasedHistogram(int sample_size, double alpha)
-      : this(sample_size, alpha, Executors.ThreadPoolExecutor()) {
+      : this(sample_size, alpha, Executors.SingleThreadExecutor()) {
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ namespace Nohros.Toolkit.Metrics
     /// this can cause significant pauses in the thread that is executing the
     /// sample update.
     /// </remarks>
-    public BiasedHistogram(int sample_size, double alpha, IExecutor executor) {
+    public BiasedHistogram(int sample_size, double alpha, SingleThreadExecutor executor) {
       // the sample should be update in the same thread that is updating the
       // histogram, to guarantee the consistency of the snapshot.
       sample_ = new ExponentiallyDecayingSample(sample_size, alpha,
