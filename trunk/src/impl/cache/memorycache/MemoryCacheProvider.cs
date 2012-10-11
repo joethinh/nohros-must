@@ -6,7 +6,7 @@ namespace Nohros.Caching
 {
   public class MemoryCacheProvider : ICacheProvider
   {
-    System.Runtime.Caching.MemoryCache memory_cache_;
+    readonly MemoryCache memory_cache_;
 
     #region .ctor
     /// <summary>
@@ -24,7 +24,6 @@ namespace Nohros.Caching
     }
     #endregion
 
-    #region ICacheProvider Members
     public T Get<T>(string key) {
       object entry = memory_cache_.Get(key);
       if (entry == null) {
@@ -44,12 +43,12 @@ namespace Nohros.Caching
     }
 
     public void Set(string key, object value) {
-      CacheItemPolicy policy = new CacheItemPolicy();
+      var policy = new CacheItemPolicy();
       memory_cache_.Set(key, value, policy);
     }
 
     public void Set(string key, object value, long duration, TimeUnit unit) {
-      CacheItemPolicy policy = new CacheItemPolicy();
+      var policy = new CacheItemPolicy();
       policy.AbsoluteExpiration =
         DateTimeOffset.Now.AddMilliseconds(
           TimeUnitHelper.ToSeconds(duration, unit));
@@ -57,12 +56,12 @@ namespace Nohros.Caching
     }
 
     public void Add(string key, object value) {
-      CacheItemPolicy policy = new CacheItemPolicy();
+      var policy = new CacheItemPolicy();
       memory_cache_.Add(key, value, policy);
     }
 
     public void Add(string key, object value, long duration, TimeUnit unit) {
-      CacheItemPolicy policy = new CacheItemPolicy();
+      var policy = new CacheItemPolicy();
       policy.AbsoluteExpiration =
         DateTimeOffset.Now.AddMilliseconds(
           TimeUnitHelper.ToSeconds(duration, unit));
@@ -76,6 +75,5 @@ namespace Nohros.Caching
     public void Clear() {
       // do nothing, since memory cache does not have a Clear method.
     }
-    #endregion
   }
 }
