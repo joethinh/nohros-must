@@ -6,7 +6,7 @@ using Nohros.Data.Providers;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public partial class SqlQueryDataProvider : QueryDataProvider
+  public class SqlQueryDataProvider : QueryDataProvider
   {
     readonly IConnectionProvider connection_provider_;
 
