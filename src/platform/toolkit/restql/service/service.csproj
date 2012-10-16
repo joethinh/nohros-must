@@ -33,8 +33,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nohros.ruby.net">
-      <HintPath>..\..\..\..\packages\nohros.ruby.net.0.4.8.1\lib\nohros.ruby.net.dll</HintPath>
+    <Reference Include="Google.ProtocolBuffers">
+      <HintPath>..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net40\Google.ProtocolBuffers.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.ProtocolBuffers.Serialization">
+      <HintPath>..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="nohros.ruby.net, Version=0.5.2.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\nohros.ruby.net.0.5.2.1\lib\nohros.ruby.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,9 +56,17 @@
     <Compile Include="Service.cs" />
     <Compile Include="ServiceFactory.cs" />
     <Compile Include="ServiceStrings.cs" />
+    <Compile Include="..\protos\restql\parsers\csharp\Common.cs" />
+    <Compile Include="..\protos\restql\parsers\csharp\Query.cs" />
+    <Compile Include="..\protos\ruby\parsers\csharp\Control.cs" />
+    <Compile Include="..\protos\ruby\parsers\csharp\Common.cs" />
+    <Compile Include="..\protos\ruby\parsers\csharp\RubyProtos.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="restql.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\base\common\common.csproj">
