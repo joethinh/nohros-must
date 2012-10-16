@@ -16,11 +16,9 @@ namespace Nohros.Caching
     }
     #endregion
 
-    #region ICacheProviderFactory Members
     public ICacheProvider CreateCacheProvider(
       IDictionary<string, string> options) {
       return new MemoryCacheProvider(System.Runtime.Caching.MemoryCache.Default);
     }
-    #endregion
   }
 }
