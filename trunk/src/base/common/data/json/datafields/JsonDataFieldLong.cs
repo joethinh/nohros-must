@@ -22,7 +22,6 @@ namespace Nohros.Data.Json
     }
     #endregion
 
-    #region IJsonDataField Members
     /// <summary>
     /// Gets the a <see cref="IJsonToken{T}"/> object that represents the
     /// the field's value.
@@ -31,9 +30,8 @@ namespace Nohros.Data.Json
     /// A <see cref="IDataReader"/> that can be used to extract a
     /// <see cref="Int64"/> value at the field position.
     /// </param>
-    public IJsonToken GetValue(IDataReader reader) {
+    IJsonToken IDataField<IJsonToken>.GetValue(IDataReader reader) {
       return new JsonLong(base.GetValue(reader));
     }
-    #endregion
   }
 }

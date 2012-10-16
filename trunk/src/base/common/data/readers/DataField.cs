@@ -57,7 +57,6 @@ namespace Nohros.Data
     }
     #endregion
 
-    #region IDataField<T> Members
     /// <inheritdoc/>
     public int Position {
       get { return position; }
@@ -70,6 +69,5 @@ namespace Nohros.Data
 
     /// <inheritdoc/>
     public abstract T GetValue(IDataReader reader);
-    #endregion
   }
 }
