@@ -11,7 +11,7 @@ import "restql/common.proto";
 package nohros.toolkit.restql;
 
 option optimize_for = LITE_RUNTIME;
-
+ 
 message QueryOptionsProto {
   // A string that uniquely identifies the options within an
   // collection of ooptions.
@@ -34,7 +34,8 @@ message QueryResponseMessage {
   // originated this response.
   optional string name = 1;
   
+  optional QueryRequestStatus status_code = 2 [default = kOk];
+  
   // The response returned by the query processor.
-  optional string response = 2;
+  optional string response = 3;
 }
-
