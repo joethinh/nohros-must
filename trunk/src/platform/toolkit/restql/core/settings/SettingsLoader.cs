@@ -16,6 +16,17 @@ namespace Nohros.Toolkit.RestQL
       /// 
       /// </summary>
       public const string kConfigRootNode = Strings.kConfigRootNode;
+
+      #region .ctor
+      public Loader() : base(new Builder()) {
+      }
+      #endregion
+
+      /// <inheritdoc/>
+      public override QuerySettings CreateConfiguration(
+        IConfigurationBuilder<QuerySettings> builder) {
+        return builder.Build();
+      }
     }
   }
 }
