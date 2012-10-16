@@ -8,8 +8,9 @@ namespace Nohros.Data
   /// <see cref="Boolean"/> data type to a concrete <see cref="IDataField{T}"/>
   /// object.
   /// </summary>
-  public class DataFieldBoolean: DataField<bool>
+  public class DataFieldBoolean : DataField<bool>
   {
+    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="DataFieldBoolean"/> class by
     /// using the specified field name and position.
@@ -24,6 +25,7 @@ namespace Nohros.Data
     public DataFieldBoolean(string name, int position)
       : base(name, position) {
     }
+    #endregion
 
     /// <summary>
     /// Gets the value of the field as a <see cref="Boolean"/>
