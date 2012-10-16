@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Nohros.Data.Providers;
-using Nohros.Providers;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public partial class SqlQueryDataProvider : IQueryDataProviderFactory
+  public class SqlQueryDataProviderFactory : IQueryDataProviderFactory
   {
     public IQueryDataProvider CreateCommonDataProvider(
       IDictionary<string, string> options) {
