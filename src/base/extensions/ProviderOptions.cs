@@ -62,13 +62,47 @@ namespace Nohros.Extensions
     /// value of <paramref name="default_value"/> if <paramref name="key"/>
     /// is not found.
     /// </returns>
-    public static string TryGetString(this IDictionary<string, string> options,
+    public static string GetString(this IDictionary<string, string> options,
       string key, string default_value) {
       string value;
       if (!options.TryGetValue(key, out value)) {
         return default_value;
       }
       return value;
+    }
+
+    /// <summary>
+    /// Gets the string value associated with the key
+    /// <paramref name="key"/> and try to convert it to its 32-bit signed
+    /// integer equivalent.
+    /// </summary>
+    /// <param name="options">
+    /// A <see cref="IDictionary{TKey,TValue}"/> to get the value from.
+    /// </param>
+    /// <param name="key">
+    /// The key that is associated with the value to get.
+    /// </param>
+    /// <param name="value">
+    /// When this method returns contains the value associated with the key
+    /// <paramref name="key"/> converted to a 32-bit integer - or- the default
+    /// value for the integer type if the key is not found or cannot be
+    /// converted to an integer.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the value associated with the key
+    /// <paramref name="key"/> is found and is convertible to an 32-bit integer;
+    /// otherwise, <c>false</c>
+    /// </returns>
+    public static bool TryGetInteger(this IDictionary<string, string> options,
+      string key, out int value) {
+      string option;
+      if (options.TryGetValue(key, out option)) {
+        if (int.TryParse(option, out value)) {
+          return true;
+        }
+      }
+      value = default(int);
+      return false;
     }
 
     /// <summary>
@@ -90,7 +124,7 @@ namespace Nohros.Extensions
     /// The value associated with the key <paramref name="key"/> or
     /// <paramref name="default_value"/> if the key was not found.
     /// </returns>
-    public static int TryGetInteger(this IDictionary<string, string> options,
+    public static int GetInteger(this IDictionary<string, string> options,
       string key, int default_value) {
       string option;
       if (options.TryGetValue(key, out option)) {
@@ -113,6 +147,40 @@ namespace Nohros.Extensions
     /// <param name="key">
     /// The key that is associated with the value to get.
     /// </param>
+    /// <param name="value">
+    /// When this method returns contains the value associated with the key
+    /// <paramref name="key"/> converted to a 32-bit integer - or- the default
+    /// value for the integer type if the key is not found or cannot be
+    /// converted to an integer.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the value associated with the key
+    /// <paramref name="key"/> is found and is convertible to an 32-bit integer;
+    /// otherwise, <c>false</c>
+    /// </returns>
+    public static bool TryGetLong(this IDictionary<string, string> options,
+      string key, out long value) {
+      string option;
+      if (options.TryGetValue(key, out option)) {
+        if (long.TryParse(option, out value)) {
+          return true;
+        }
+      }
+      value = default(long);
+      return false;
+    }
+
+    /// <summary>
+    /// Gets the string value associated with the key
+    /// <paramref name="key"/> and try to convert it to its 64-bit signed
+    /// integer equivalent.
+    /// </summary>
+    /// <param name="options">
+    /// A <see cref="IDictionary{TKey,TValue}"/> to get the value from.
+    /// </param>
+    /// <param name="key">
+    /// The key that is associated with the value to get.
+    /// </param>
     /// <param name="default_value">
     /// A 64-bit integer that will be returned when the key
     /// <paramref name="key"/> is not found.
@@ -121,7 +189,7 @@ namespace Nohros.Extensions
     /// The value associated with the key <paramref name="key"/> or
     /// <paramref name="default_value"/> if the key was not found.
     /// </returns>
-    public static long TryGetLong(this IDictionary<string, string> options,
+    public static long GetLong(this IDictionary<string, string> options,
       string key, long default_value) {
       string option;
       if (options.TryGetValue(key, out option)) {
