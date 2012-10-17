@@ -38,10 +38,6 @@ namespace Nohros
   /// </remarks>
   public class CommandLine
   {
-    const string kDefaultSwitchPrefix = "--";
-    const char kDefaultSwitchValueSeparator = ':';
-
-    #region TokenType
     class Token
     {
       public enum TokenType
@@ -71,6 +67,7 @@ namespace Nohros
       /// </summary>
       public TokenType type;
 
+      #region .ctor
       /// <summary>
       /// Initializes a new TOken by using the specified token begin, type and
       /// end.
@@ -80,40 +77,43 @@ namespace Nohros
       /// <param name="end">The end of the token within the current command
       /// line.</param>
       /// <param name="type">The type of teh token.</param>
-      public Token(TokenType t, int b, int len)
-      {
+      public Token(TokenType t, int b, int len) {
         type = t;
         begin = b;
         length = len;
       }
+      #endregion
     }
-    #endregion
+
+    const string kDefaultSwitchPrefix = "--";
+    const char kDefaultSwitchValueSeparator = ':';
 
     static CommandLine current_process_commandline_;
+    int command_line_length_;
+    int command_line_pos_;
 
-    string command_line_string_, program_;
-    Dictionary<string, string> switches_;
+    string command_line_string_;
     List<string> loose_values_;
-
-    int command_line_pos_, command_line_length_;
+    string program_;
+    Dictionary<string, string> switches_;
 
     #region .ctor
     /// <summary>
     /// Singleton constructor.
     /// </summary>
-    static CommandLine()
-    {
+    static CommandLine() {
       current_process_commandline_ = new CommandLine();
       current_process_commandline_.ParseFromString(
         current_process_commandline_.command_line_string_);
     }
+    #endregion
 
+    #region .ctor
     /// <summary>
     /// Constructs a new, empty command line and initializes it.
     /// Used internally.
     /// </summary>
-    CommandLine()
-    {
+    CommandLine() {
       Reset();
       command_line_string_ = Environment.CommandLine;
     }
@@ -123,8 +123,7 @@ namespace Nohros
     /// <param name="program">The name of the program to run.(aka argv[0])
     /// </param>
     /// </summary>
-    public CommandLine(string program)
-    {
+    public CommandLine(string program) {
       Reset();
       program_ = program;
       command_line_string_ = QuoteIfNeed(program_);
@@ -138,8 +137,7 @@ namespace Nohros
     /// <returns>An instance of the CommandLine class.</returns>
     /// <remarks>The program name is assumed to be the item in the
     /// string.</remarks>
-    public static CommandLine FromString(string command_line)
-    {
+    public static CommandLine FromString(string command_line) {
       CommandLine cmd = new CommandLine();
       cmd.ParseFromString(command_line);
       return cmd;
@@ -150,13 +148,12 @@ namespace Nohros
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    string QuoteIfNeed(string value)
-    {
+    string QuoteIfNeed(string value) {
       if ((value != null) &&
-          (value.Trim().Length != 0) &&
-          (value.IndexOf(' ') != -1) &&
-          (value[0] != '"') &&
-          (value[value.Length - 1] != '"'))
+        (value.Trim().Length != 0) &&
+        (value.IndexOf(' ') != -1) &&
+        (value[0] != '"') &&
+        (value[value.Length - 1] != '"'))
         value = string.Concat('"', value, '"');
       return value;
     }
@@ -166,12 +163,11 @@ namespace Nohros
     /// </summary>
     /// <param name="quoted_value"></param>
     /// <returns></returns>
-    string RemoveQuotes(string quoted_value)
-    {
+    string RemoveQuotes(string quoted_value) {
       if ((quoted_value != null) &&
-          (quoted_value.Length > 2) &&
-          (quoted_value[0] == '"') &&
-          (quoted_value[quoted_value.Length - 1] == '"'))
+        (quoted_value.Length > 2) &&
+        (quoted_value[0] == '"') &&
+        (quoted_value[quoted_value.Length - 1] == '"'))
         quoted_value = quoted_value.Substring(1, quoted_value.Length - 2);
       return quoted_value;
     }
@@ -186,10 +182,8 @@ namespace Nohros
     /// <remarks>
     /// Valid switch prefixes are: "-", "--", "/".
     /// </remarks>
-    string GetSwitchPrefix(string switch_prefix)
-    {
-      switch (switch_prefix)
-      {
+    string GetSwitchPrefix(string switch_prefix) {
+      switch (switch_prefix) {
         case "--":
         case "-":
         case "/":
@@ -204,8 +198,7 @@ namespace Nohros
     /// </summary>
     /// <param name="switch_string">The switch string to append.</param>
     /// <param name="switch_prefix">The switch prefix to append.</param>
-    public void AppendSwitch(string switch_string, string switch_prefix)
-    {
+    public void AppendSwitch(string switch_string, string switch_prefix) {
       if (switch_string == null || switch_string.Trim().Length == 0)
         return;
 
@@ -220,16 +213,15 @@ namespace Nohros
     /// prefix) to the given string, with the given value attached.
     /// </summary>
     public void AppendSwitchWithValue(string switch_string,
-      string switch_prefix, string switch_value, char switch_value_separator)
-    {
+      string switch_prefix, string switch_value, char switch_value_separator) {
       if (switch_string == null || switch_string.Trim().Length == 0)
         return;
 
       command_line_string_ += string.Concat(' ',
-          GetSwitchPrefix(switch_prefix),
-          switch_string,
-          switch_value_separator,
-          QuoteIfNeed(switch_value));
+        GetSwitchPrefix(switch_prefix),
+        switch_string,
+        switch_value_separator,
+        QuoteIfNeed(switch_value));
 
       switches_[switch_string] = switch_value;
     }
@@ -238,8 +230,7 @@ namespace Nohros
     /// Append a loose value to the command line.
     /// </summary>
     /// <param name="value"></param>
-    public void AppendLooseValue(string value)
-    {
+    public void AppendLooseValue(string value) {
       command_line_string_ += string.Concat(' ', QuoteIfNeed(value));
       loose_values_.Add(value);
     }
@@ -252,16 +243,14 @@ namespace Nohros
     /// processing and to consider any strings that comes after that as
     /// "loose parameters".
     /// </remarks>
-    public void AppendSwitchParsingStopPrefix()
-    {
+    public void AppendSwitchParsingStopPrefix() {
       command_line_string_ += " --";
     }
 
     /// <summary>
     /// Resets the command line.
     /// </summary>
-    public void Reset()
-    {
+    public void Reset() {
       command_line_string_ = string.Empty;
       program_ = string.Empty;
       command_line_pos_ = 0;
@@ -276,8 +265,7 @@ namespace Nohros
     /// name is assumed to be the first item in the string.
     /// </summary>
     /// <param name="command_line">The command line to parse.</param>
-    public void ParseFromString(string command_line)
-    {
+    public void ParseFromString(string command_line) {
       if (command_line == null)
         return;
 
@@ -293,8 +281,7 @@ namespace Nohros
       i = command_line_string_.IndexOf(
         (command_line_string_[0] == '"') ? '"' : ' ', 1);
 
-      if (i == -1)
-      {
+      if (i == -1) {
         program_ = command_line_string_;
         return; // the command line has no arguments/switches(no spaces).
       }
@@ -309,8 +296,7 @@ namespace Nohros
 
       // removing the white spaces after the program token
       while (command_line_pos_ < command_line_length_)
-        if (command_line_string_[command_line_pos_++] != ' ')
-        {
+        if (command_line_string_[command_line_pos_++] != ' ') {
           --command_line_pos_;
           break;
         }
@@ -320,8 +306,7 @@ namespace Nohros
         return;
 
       Token token;
-      do
-      {
+      do {
         token = ParseToken();
         tokens.Add(token);
         command_line_pos_ += token.length;
@@ -333,28 +318,21 @@ namespace Nohros
 
       i = 0;
       j = tokens.Count;
-      while (i < j)
-      {
+      while (i < j) {
         token = tokens[i];
-        switch (token.type)
-        {
+        switch (token.type) {
           case Token.TokenType.SWITCH_BEGIN:
             begin = token.begin + token.length;
             // everything between a switch begin and a space or a switch value
             // pair separator is a switch string identifier; even if another
             // switch begin is found on the way.
-            while (token.type != Token.TokenType.END_OF_INPUT)
-            {
+            while (token.type != Token.TokenType.END_OF_INPUT) {
               token = tokens[++i];
-              if (token.type == Token.TokenType.SPACE)
-              {
-                if (switch_string != null)
-                {
+              if (token.type == Token.TokenType.SPACE) {
+                if (switch_string != null) {
                   switch_value = command_line_string_.Substring(
                     begin, token.begin - begin);
-                }
-                else
-                {
+                } else {
                   switch_string = command_line_string_.Substring(
                     begin, token.begin - begin);
                   switch_value = string.Empty;
@@ -363,25 +341,17 @@ namespace Nohros
                   RemoveQuotes(switch_value);
                 switch_string = null;
                 break;
-              }
-              else if (token.type ==
-              Token.TokenType.SWITCH_VALUE_PAIR_SEPARATOR
-              && switch_string == null)
-              {
-
+              } else if (token.type ==
+                Token.TokenType.SWITCH_VALUE_PAIR_SEPARATOR
+                && switch_string == null) {
                 switch_string = command_line_string_.Substring(
                   begin, token.begin - begin);
                 begin = token.begin + token.length;
-              }
-              else if (token.type == Token.TokenType.END_OF_INPUT)
-              {
-                if (switch_string != null)
-                {
+              } else if (token.type == Token.TokenType.END_OF_INPUT) {
+                if (switch_string != null) {
                   switch_value = command_line_string_.Substring(begin,
                     token.begin - begin);
-                }
-                else
-                {
+                } else {
                   switch_string = command_line_string_.Substring(begin,
                     token.begin - begin);
                   switch_value = string.Empty;
@@ -393,19 +363,17 @@ namespace Nohros
             }
             break;
 
-          // A switch value separator not preceeded by a switch begin/switch
-          // string is an extra argument(aka loose value).
+            // A switch value separator not preceeded by a switch begin/switch
+            // string is an extra argument(aka loose value).
           case Token.TokenType.SWITCH_VALUE_PAIR_SEPARATOR:
           case Token.TokenType.STRING:
             begin = token.begin;
-            while (token.type != Token.TokenType.END_OF_INPUT)
-            {
+            while (token.type != Token.TokenType.END_OF_INPUT) {
               token = tokens[++i];
               if (token.type == Token.TokenType.SPACE || token.type ==
-                Token.TokenType.END_OF_INPUT)
-              {
+                Token.TokenType.END_OF_INPUT) {
                 loose_values_.Add(
-                    RemoveQuotes(command_line_string_.Substring(
+                  RemoveQuotes(command_line_string_.Substring(
                     begin, token.begin - begin)
                     ));
                 break;
@@ -414,16 +382,14 @@ namespace Nohros
             break;
 
 
-          // an argument of "--"  cause everything after to be considered as
-          // "loose parameters".
+            // an argument of "--"  cause everything after to be considered as
+            // "loose parameters".
           case Token.TokenType.STOP_PARSING:
             begin = token.begin + token.length;
-            while (token.type != Token.TokenType.END_OF_INPUT)
-            {
+            while (token.type != Token.TokenType.END_OF_INPUT) {
               token = tokens[++i];
               if (token.type == Token.TokenType.SPACE || token.type ==
-                Token.TokenType.END_OF_INPUT)
-              {
+                Token.TokenType.END_OF_INPUT) {
                 switch_value = command_line_string_.Substring(
                   begin, token.begin - begin);
                 loose_values_.Add(RemoveQuotes(switch_value));
@@ -446,28 +412,21 @@ namespace Nohros
     /// found.</remarks>
     /// <returns>A Token of the type <see cref="Token.TokenType.STRING"/>
     /// containing the parsed sequence of characters.</returns>
-    Token ParseStringToken()
-    {
+    Token ParseStringToken() {
       Token token = new Token(Token.TokenType.STRING, command_line_pos_, 1);
       int pos = command_line_pos_;
       char c = command_line_string_[pos];
 
-      if (c == '"')
-      {
-        while (++pos < command_line_length_)
-        {
+      if (c == '"') {
+        while (++pos < command_line_length_) {
           ++token.length;
           c = command_line_string_[pos];
           if (c == '"') break;
         }
-      }
-      else
-      {
-        while (++pos < command_line_length_)
-        {
+      } else {
+        while (++pos < command_line_length_) {
           c = command_line_string_[pos];
-          switch (c)
-          {
+          switch (c) {
             case ':':
             case '=':
             case '-':
@@ -490,16 +449,14 @@ namespace Nohros
     /// </summary>
     /// <returns>A token class containing information about the next token
     /// in the command line stream</returns>
-    Token ParseToken()
-    {
+    Token ParseToken() {
       Token token = new Token(Token.TokenType.STRING, 0, 0);
 
       if (command_line_pos_ >= command_line_length_)
         return new Token(Token.TokenType.END_OF_INPUT,
           command_line_length_, 0);
 
-      switch (command_line_string_[command_line_pos_])
-      {
+      switch (command_line_string_[command_line_pos_]) {
         case '=':
         case ':':
           token = new Token(Token.TokenType.SWITCH_VALUE_PAIR_SEPARATOR,
@@ -513,11 +470,9 @@ namespace Nohros
 
         case '-':
           if (command_line_pos_ + 1 < command_line_length_
-            && command_line_string_[command_line_pos_ + 1] == '-')
-          {
+            && command_line_string_[command_line_pos_ + 1] == '-') {
             if (command_line_pos_ + 2 < command_line_length_
-              && command_line_string_[command_line_pos_ + 2] == ' ')
-            {
+              && command_line_string_[command_line_pos_ + 2] == ' ') {
               token = new Token(Token.TokenType.STOP_PARSING,
                 command_line_pos_, 3);
               break;
@@ -551,8 +506,7 @@ namespace Nohros
     /// <param name="switch_string">The switch to verify.</param>
     /// <returns>true if this command line contains the given switch.</returns>
     /// <remarks>Switch names are case-insensitive.</remarks>
-    public bool HasSwitch(string switch_string)
-    {
+    public bool HasSwitch(string switch_string) {
       string switch_value;
       return switches_.TryGetValue(switch_string, out switch_value);
     }
@@ -563,14 +517,56 @@ namespace Nohros
     /// <param name="switch_string">The switch to get the value from.</param>
     /// <returns>The value associated with the specified switch or an empty
     /// string if the switch has no value or isn't present.</returns>
-    public string GetSwitchValue(string switch_string)
-    {
+    public string GetSwitchValue(string switch_string) {
       string switch_value;
-      if (switches_.TryGetValue(switch_string, out switch_value))
-      {
+      if (switches_.TryGetValue(switch_string, out switch_value)) {
         return switch_value;
       }
       return string.Empty;
+    }
+
+    /// <summary>
+    /// Gets the value associated with the specified switch.
+    /// </summary>
+    /// <param name="switch_string">
+    /// The switch to get the value from.
+    /// </param>
+    /// <returns>
+    /// The value associated with the specified switch or <paramref name="def"/>
+    /// if the switch has no value or isn't present.
+    /// </returns>
+    public string GetSwitchValue(string switch_string, string def) {
+      string switch_value;
+      if (switches_.TryGetValue(switch_string, out switch_value)) {
+        return switch_value;
+      }
+      return def;
+    }
+
+    /// <summary>
+    /// Gets the value associated with the specified switch.
+    /// </summary>
+    /// <param name="switch_string">
+    /// The switch to get the value from.
+    /// </param>
+    /// <param name="value">
+    /// When this method returns contains the value associated with the switch
+    /// <param name="switch_string">, or <see cref="string.Empty"/> if the
+    /// switch does not exists.
+    /// </param>
+    /// </param>
+    /// <returns>
+    /// The value associated with the specified switch or an empty string if
+    /// the switch has no value or isn't present.
+    /// </returns>
+    public bool TryGetSwitchValue(string switch_string, out string value) {
+      string switch_value;
+      if (switches_.TryGetValue(switch_string, out switch_value)) {
+        value = switch_value;
+        return true;
+      }
+      value = string.Empty;
+      return false;
     }
 
     /// <summary>
@@ -587,14 +583,11 @@ namespace Nohros
     /// copied and no exception will be throwed.
     /// </para>
     /// </remarks>
-    public void CopySwitchesFrom(CommandLine source, params string[] switches)
-    {
+    public void CopySwitchesFrom(CommandLine source, params string[] switches) {
       int switch_count = switches.Length;
-      for (int i = 0, j = switch_count; i < j; i++)
-      {
+      for (int i = 0, j = switch_count; i < j; i++) {
         string sw = switches[i];
-        if (source.HasSwitch(sw))
-        {
+        if (source.HasSwitch(sw)) {
           AppendSwitchWithValue(sw, kDefaultSwitchPrefix,
             source.GetSwitchValue(sw), kDefaultSwitchValueSeparator);
         }
@@ -606,16 +599,11 @@ namespace Nohros
     /// </summary>
     /// <param name="source">A <see cref="CommandLine"/> object, which the
     /// switches will be copied from.</param>
-    public void CopySwitchesFrom(CommandLine source)
-    {
-      foreach (KeyValuePair<string, string> sw in source.Switches)
-      {
-        if (sw.Value == string.Empty)
-        {
+    public void CopySwitchesFrom(CommandLine source) {
+      foreach (KeyValuePair<string, string> sw in source.Switches) {
+        if (sw.Value == string.Empty) {
           AppendSwitch(sw.Key, sw.Value);
-        }
-        else
-        {
+        } else {
           AppendSwitchWithValue(
             sw.Key, kDefaultSwitchPrefix, sw.Value,
             kDefaultSwitchValueSeparator);
@@ -626,8 +614,7 @@ namespace Nohros
     /// <summary>
     /// Gets the program part of the command line string (the first item).
     /// </summary>
-    public string Program
-    {
+    public string Program {
       get { return program_; }
     }
 
@@ -635,16 +622,14 @@ namespace Nohros
     /// Gets the singleton CommandLine representing the current process's
     /// command line.
     /// </summary>
-    public static CommandLine ForCurrentProcess
-    {
+    public static CommandLine ForCurrentProcess {
       get { return current_process_commandline_; }
     }
 
     /// <summary>
     /// Gets the number of switches in this process.
     /// </summary>
-    public int SwitchCount
-    {
+    public int SwitchCount {
       get { return switches_.Count; }
     }
 
@@ -652,8 +637,7 @@ namespace Nohros
     /// Get a copy of all switches, along with their values.
     /// </summary>
     /// <returns></returns>
-    public IDictionary<string, string> Switches
-    {
+    public IDictionary<string, string> Switches {
       get { return switches_; }
     }
 
@@ -663,16 +647,14 @@ namespace Nohros
     /// </summary>
     /// <returns>An IList&lt;string&gt; containing all the
     /// "loose parameters".</returns>
-    public IList<string> LooseValues
-    {
+    public IList<string> LooseValues {
       get { return loose_values_; }
     }
 
     /// <summary>
     /// Gets the original command line string.
     /// </summary>
-    public string CommandLineString
-    {
+    public string CommandLineString {
       get { return command_line_string_; }
     }
   }
