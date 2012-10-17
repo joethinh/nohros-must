@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Net;
 using System.Web;
+using ZMQ;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -10,7 +12,8 @@ namespace Nohros.Toolkit.RestQL
   /// </summary>
   public class HttpHandler : IHttpHandler
   {
-    #region IHttpHandler Members
+    const string kJsonContentType = "application/json";
+
     /// <summary>
     /// Process the HTTP request.
     /// </summary>
@@ -19,32 +22,29 @@ namespace Nohros.Toolkit.RestQL
     /// intrinsic server objects used to service HTTP requests.
     /// </param>
     public void ProcessRequest(HttpContext context) {
-      // the token information should be is always sent in the request body.
+      HttpResponse response = context.Response;
       string name = context.Request.QueryString["name"];
       if (string.IsNullOrEmpty(name)) {
-        ProcessResponse(context, HttpStatusCode.NotFound, string.Empty);
+        response.ContentType = kJsonContentType;
+        response.StatusCode = (int) HttpStatusCode.NotFound;
+        response.End();
+        return;
       }
 
-      // Since this code is usually called from a javascript, we should never
-      // throw an exception; a error message shoud be sent as response when
-      // a unexpected event occur.
-      try {
-        // Map the token to a principal and resolve the query using the
-        // specified principal.
-        QueryServer server = Global.QueryServer;
+      HttpApplicationState app = context.Application;
+      var settings = (Settings) app[Strings.kSettingsKey];
+      var socket = (Socket) app[Strings.kSocketKey];
+      socket.Connect(Transport.TCP, settings.QueryServerAddress);
 
-        // Attempt to process the query using the supplied parameters.
-        IQueryProcessor processor = server.QueryProcessor;
+      IDictionary<string, string> parameters = GetParameters(context);
+      var processor = new HttpQueryProcessor(socket);
 
-        string result;
-        IDictionary<string, string> data = GetRequestData(context);
-        HttpStatusCode status_code = processor.Process(name, data, out result);
-
-        // Set up the response and send it to the caller.
-        ProcessResponse(context, status_code, result);
-      } catch {
-        // TODO(neylor.silva) Find the right HttpStatusCode to return.
-      }
+      string result;
+      response.StatusCode = (int) processor
+        .Process(name, parameters, settings.ResponseTimeout, out result);
+      response.ContentType = kJsonContentType;
+      response.Write(result);
+      response.End();
     }
 
     /// <summary>
@@ -53,29 +53,22 @@ namespace Nohros.Toolkit.RestQL
     public bool IsReusable {
       get { return true; }
     }
-    #endregion
 
-    IDictionary<string, string> GetRequestData(HttpContext context) {
+    IDictionary<string, string> GetParameters(HttpContext context) {
       HttpRequest request = context.Request;
-      Dictionary<string, string> data = new Dictionary<string, string>();
-      foreach (KeyValuePair<string, string> pair in request.QueryString) {
-        data[pair.Key] = pair.Value;
+      var data = new Dictionary<string, string>();
+      NameValueCollection query_string = request.QueryString;
+      string[] keys = query_string.AllKeys;
+      for (int i = 0, j = keys.Length; i < j; i++) {
+        data[keys[i]] = query_string[i];
       }
 
-      if (context.Request.HttpMethod == "POST") {
-        foreach (KeyValuePair<string, string> pair in request.Form) {
-          data[pair.Key] = pair.Value;
-        }
+      NameValueCollection form = request.QueryString;
+      keys = form.AllKeys;
+      for (int i = 0, j = keys.Length; i < j; i++) {
+        data[keys[i]] = form[i];
       }
       return data;
-    }
-
-    void ProcessResponse(HttpContext context, HttpStatusCode status,
-      string result) {
-      HttpResponse response = context.Response;
-      response.ContentType = "application/json";
-      response.StatusCode = (int) status;
-      response.Write(response);
     }
   }
 }
