@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Web;
+using ZMQ;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public class Global : HttpApplication
+  public class HttpQueryApp
   {
-    static readonly QueryServer server_;
-
     #region .ctor
-    /// <summary>
-    /// Initializes application static variables. This is the application
-    /// main().
-    /// </summary>
-    static Global() {
-      server_ = new QueryServer.Builder().Build();
+    public HttpQueryApp() {
     }
     #endregion
 
+    Configure()
+
     /// <summary>
-    /// Gets a <see cref="QueryProcessor"/> object that can be used to process
-    /// restql queries.
+    /// Gets the <see cref="Context"/> associated with the current
+    /// <see cref="HttpApplication"/> instance.
     /// </summary>
-    public static QueryServer QueryServer {
-      get { return server_; }
+    public Socket QuerySocket {
+      get { return query_socket_; }
     }
   }
 }
