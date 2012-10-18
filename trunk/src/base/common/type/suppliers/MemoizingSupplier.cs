@@ -10,7 +10,7 @@ namespace Nohros
   /// <typeparam name="T">The type of the object that this supplier returns.
   /// </typeparam>
   /// <remarks>The returned supplier is thread-safe.</remarks>
-  internal class MemoizingSupplier<T> : ISupplier<T>
+  public class MemoizingSupplier<T> : ISupplier<T>
   {
     readonly ISupplier<T> supplier_;
     volatile bool initialized_;

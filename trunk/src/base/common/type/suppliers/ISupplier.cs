@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros
 {
@@ -15,6 +13,10 @@ namespace Nohros
     /// Gets an instance of the appropriate type. The returned object may or
     /// not be a new instance, depending on the implementation.
     /// </summary>
+    /// <remarks>
+    /// There is no guaranteee that the supplier will always supplies a valid
+    /// object. This is implementation specific.
+    /// </remarks>
     T Supply();
   }
 }
