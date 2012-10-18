@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros
 {
@@ -11,7 +9,7 @@ namespace Nohros
   /// <see cref="MemoizingSupplier{T}"/>, but instead to create a instance it
   /// uses the instance that is passed to it on the constructor.
   /// </remarks>
-  internal class SupplierOfInstance<T> : ISupplier<T>
+  public class SupplierOfInstance<T> : ISupplier<T>
   {
     readonly T instance_;
 

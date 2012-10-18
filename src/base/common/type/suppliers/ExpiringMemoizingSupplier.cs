@@ -4,7 +4,7 @@ using Nohros.Concurrent;
 
 namespace Nohros
 {
-  internal sealed class ExpiringMemoizingSupplier<T> : ISupplier<T>
+  public sealed class ExpiringMemoizingSupplier<T> : ISupplier<T>
   {
     readonly ISupplier<T> supplier_;
     readonly long duration_nanos_;
