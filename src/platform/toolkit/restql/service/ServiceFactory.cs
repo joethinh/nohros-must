@@ -1,5 +1,6 @@
 ﻿using System;
-using Nohros.Caching;
+using System.Diagnostics;
+using Nohros.IO;
 using Nohros.Ruby;
 
 namespace Nohros.Toolkit.RestQL
@@ -7,6 +8,11 @@ namespace Nohros.Toolkit.RestQL
   public class ServiceFactory : IRubyServiceFactory
   {
     public IRubyService CreateService(string command_line_string) {
+      CommandLine switches = CommandLine.FromString(command_line_string);
+      if (switches.HasSwitch(ServiceStrings.kDebugSwitch)) {
+        Debugger.Launch();
+      }
+
       IQuerySettings settings = GetSettings();
       QueryServer server = new QueryServer.Builder()
         .SetQuerySettings(settings)
@@ -16,7 +22,8 @@ namespace Nohros.Toolkit.RestQL
 
     public IQuerySettings GetSettings() {
       return new QuerySettings.Loader()
-        .Load(Strings.kConfigFileName, Strings.kConfigRootNode);
+        .Load(Path.AbsoluteForCallingAssembly(Strings.kConfigFileName),
+          Strings.kConfigRootNode);
     }
   }
 }

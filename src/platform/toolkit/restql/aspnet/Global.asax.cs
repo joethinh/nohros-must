@@ -21,9 +21,8 @@ namespace Nohros.Toolkit.RestQL
       string config_file_path = Server.MapPath(config_file_name);
       Settings settings = new Settings.Loader()
         .Load(config_file_path, Strings.kConfigRootNodeName);
-      var socket = zmq_context_.Socket(SocketType.REQ);
-      Application[Strings.kSettingsKey] = settings;
-      Application[Strings.kSocketKey] = socket;
+      var factory = new HttpQueryApplicationFactory(settings);
+      Application[Strings.kApplicationKey] = factory.CreateQueryApplication();
     }
 
     protected void Session_Start(object sender, EventArgs e) {

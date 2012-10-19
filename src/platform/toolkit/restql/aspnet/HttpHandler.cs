@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
+using System.Threading;
 using System.Web;
 using ZMQ;
 
@@ -13,6 +14,11 @@ namespace Nohros.Toolkit.RestQL
   public class HttpHandler : IHttpHandler
   {
     const string kJsonContentType = "application/json";
+
+    #region .ctor
+    public HttpHandler() {
+    }
+    #endregion
 
     /// <summary>
     /// Process the HTTP request.
@@ -31,27 +37,28 @@ namespace Nohros.Toolkit.RestQL
         return;
       }
 
-      HttpApplicationState app = context.Application;
-      var settings = (Settings) app[Strings.kSettingsKey];
-      var socket = (Socket) app[Strings.kSocketKey];
-      socket.Connect(Transport.TCP, settings.QueryServerAddress);
-
+      HttpApplicationState state = context.Application;
       IDictionary<string, string> parameters = GetParameters(context);
-      var processor = new HttpQueryProcessor(socket);
+      var app = (HttpQueryApplication) state[Strings.kApplicationKey];
 
       string result;
-      response.StatusCode = (int) processor
-        .Process(name, parameters, settings.ResponseTimeout, out result);
+      response.StatusCode = (int) app.ProcessQuery(name, parameters, out result);
       response.ContentType = kJsonContentType;
       response.Write(result);
-      response.End();
     }
 
     /// <summary>
     /// Gets a value indicationg if this object could be pooled.
     /// </summary>
     public bool IsReusable {
-      get { return true; }
+      get { return false; }
+    }
+
+    void OnQueryResponse(string name, HttpStatusCode status, string result,
+      object state) {
+      var response = (HttpResponse) state;
+      response.ContentType = kJsonContentType;
+      response.Write(result);
     }
 
     IDictionary<string, string> GetParameters(HttpContext context) {

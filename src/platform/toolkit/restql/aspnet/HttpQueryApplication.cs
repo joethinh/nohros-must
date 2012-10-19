@@ -8,26 +8,22 @@ using ZMQ;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public class HttpQueryProcessor
+  public class HttpQueryApplication
   {
+    readonly Context context_;
+    readonly ISettings settings_;
     readonly Socket socket_;
 
     #region .ctor
-    /// <summary>
-    /// Initializes a new instance of the <see cref="HttpQueryProcessor"/>
-    /// class by using the specified <see cref="Socket"/> object.
-    /// </summary>
-    /// <param name="socket">
-    /// A <see cref="Socket"/> object that can be used to send a request to
-    /// a restql query server.
-    /// </param>
-    public HttpQueryProcessor(Socket socket) {
-      socket_ = socket;
+    public HttpQueryApplication(ISettings settings, Context context) {
+      settings_ = settings;
+      socket_ = context.Socket(SocketType.REQ);
     }
     #endregion
 
-    public HttpStatusCode Process(string name,
-      IDictionary<string, string> options, int timeout, out string result) {
+    public HttpStatusCode ProcessQuery(string name,
+      IDictionary<string, string> options,
+      out string result) {
       QueryRequestMessage request = new QueryRequestMessage.Builder()
         .SetName(name)
         .AddRangeOptions(GetQueryOptions(options))
@@ -37,14 +33,18 @@ namespace Nohros.Toolkit.RestQL
       try {
         // send the request and wait for the response.
         socket_.Send(packet.ToByteArray());
-        byte[] response = socket_.Recv(timeout);
-        return ProcessResponse(response, out result);
-      } catch (ZMQ.Exception zmqe) {
+        byte[] response = socket_.Recv(settings_.ResponseTimeout);
+        if (response != null) {
+          return ProcessResponse(response, out result);
+        }
         result = string.Empty;
-        return HttpStatusCode.ServiceUnavailable;
+        return HttpStatusCode.RequestTimeout;
+      } catch (ZMQ.Exception zmqe) {
+        result = zmqe.Message;
+        return HttpStatusCode.InternalServerError;
       } catch (System.Exception e) {
         result = string.Empty;
-        return HttpStatusCode.ServiceUnavailable;
+        return HttpStatusCode.InternalServerError;
       }
     }
 
@@ -88,6 +88,14 @@ namespace Nohros.Toolkit.RestQL
           .Build();
       }
       return list;
+    }
+
+    public void Run() {
+      socket_.Connect(Transport.TCP, settings_.QueryServerAddress);
+    }
+
+    public ISettings Settings {
+      get { return settings_; }
     }
   }
 }

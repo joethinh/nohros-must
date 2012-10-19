@@ -8,5 +8,7 @@ namespace Nohros.Toolkit.RestQL
     /// The name of the application cache provider.
     /// </summary>
     public const string kCacheProviderName = "CacheProvider";
+
+    public const string kDebugSwitch = "debug";
   }
 }
