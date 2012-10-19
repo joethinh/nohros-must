@@ -62,7 +62,7 @@ namespace Nohros.Toolkit.RestQL
           .SetText(query.QueryText)
           .SetType(GetCommandType(query.Options))
           .SetTimeout(query.Options
-            .TryGetInteger(Strings.kCommandTimeoutOption, 30));
+            .GetInteger(Strings.kCommandTimeoutOption, 30));
 
         BindParameters(builder, query.Parameters, parameters);
 
@@ -100,7 +100,7 @@ namespace Nohros.Toolkit.RestQL
     string ExecuteReader(IDbCommand command, IQuery query) {
       IDataReader reader = command.ExecuteReader();
       string preferred_json_collection = query.Options
-        .TryGetString(Strings.kJsonCollectionOption,
+        .GetString(Strings.kJsonCollectionOption,
           Strings.kDefaultJsonCollection);
       IJsonCollection json_collection =
         json_collection_factory_
@@ -111,7 +111,7 @@ namespace Nohros.Toolkit.RestQL
     string ExecuteNonQuery(IDbCommand command, IQuery query) {
       int no_of_affected_records = command.ExecuteNonQuery();
       string preferred_json_collection = query.Options
-        .TryGetString(Strings.kJsonCollectionOption,
+        .GetString(Strings.kJsonCollectionOption,
           Strings.kDefaultJsonCollection);
       IJsonCollection json_collection =
         json_collection_factory_
@@ -145,7 +145,7 @@ namespace Nohros.Toolkit.RestQL
 
     CommandType GetCommandType(IDictionary<string, string> options) {
       string command_type_string = options
-        .TryGetString(Strings.kCommandTypeOption, Strings.kTextCommandType);
+        .GetString(Strings.kCommandTypeOption, Strings.kTextCommandType);
       if (command_type_string.CompareOrdinalIgnoreCase(
         Strings.kStoredProcedureCommandType)) {
         return CommandType.StoredProcedure;

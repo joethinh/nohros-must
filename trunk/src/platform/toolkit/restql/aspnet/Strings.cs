@@ -8,5 +8,6 @@ namespace Nohros.Toolkit.RestQL
     public const string kConfigFileNameKey = "configFileName";
     internal const string kSettingsKey = "appSettings";
     internal const string kSocketKey = "appSocket";
+    internal const string kApplicationKey = "app";
   }
 }
