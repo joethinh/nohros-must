@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
 using System.Web;
+using Nohros.Concurrent;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -12,11 +13,6 @@ namespace Nohros.Toolkit.RestQL
   public class HttpHandler : IHttpAsyncHandler
   {
     const string kJsonContentType = "application/json";
-
-    #region .ctor
-    public HttpHandler() {
-    }
-    #endregion
 
     public virtual void ProcessRequest(HttpContext context) {
       throw new NotImplementedException();
@@ -29,45 +25,37 @@ namespace Nohros.Toolkit.RestQL
       get { return false; }
     }
 
-    public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback callback, object state) {
-    }
-
     public void EndProcessRequest(IAsyncResult result) {
+      var future = (IFuture<HttpQueryResponse>) result;
+      var context = (HttpContext) result.AsyncState;
+      try {
+        HttpResponse response = context.Response;
+        HttpQueryResponse value = future.Get(0, TimeUnit.Seconds);
+        response.StatusCode = (int) value.StatusCode;
+        response.ContentType = kJsonContentType;
+        response.Write(value.Response);
+      } catch {
+        context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+        context.Response.ContentType = kJsonContentType;
+      }
     }
 
-    /// <summary>
-    /// Process the HTTP request.
-    /// </summary>
-    /// <param name="context">
-    /// As <see cref="HttpContext"/> object that provides references to the
-    /// intrinsic server objects used to service HTTP requests.
-    /// </param>
-    public void ProcessRequestAsync(HttpContext context) {
-      IAsyncResult IHttpAsyncHandler.Begin
-      HttpResponse response = context.Response;
+    public IAsyncResult BeginProcessRequest(HttpContext context,
+      AsyncCallback callback, object state) {
       string name = context.Request.QueryString["name"];
       if (string.IsNullOrEmpty(name)) {
-        response.ContentType = kJsonContentType;
-        response.StatusCode = (int) HttpStatusCode.NotFound;
-        response.End();
-        return;
+        return Futures.ImmediateFuture(
+          new HttpQueryResponse {
+            Name = string.Empty,
+            Response = string.Empty,
+            StatusCode = HttpStatusCode.NotFound
+          });
       }
 
-      HttpApplicationState state = context.Application;
       IDictionary<string, string> parameters = GetParameters(context);
-      var app = (HttpQueryApplication) state[Strings.kApplicationKey];
-
-      string result;
-      response.StatusCode = (int) app.ProcessQuery(name, parameters, out result);
-      response.ContentType = kJsonContentType;
-      response.Write(result);
-    }
-
-    void OnQueryResponse(string name, HttpStatusCode status, string result,
-      object state) {
-      var response = (HttpResponse) state;
-      response.ContentType = kJsonContentType;
-      response.Write(result);
+      var app = context
+        .Application[Strings.kApplicationKey] as HttpQueryApplication;
+      return app.ProcessQuery(name, parameters, callback, context);
     }
 
     IDictionary<string, string> GetParameters(HttpContext context) {

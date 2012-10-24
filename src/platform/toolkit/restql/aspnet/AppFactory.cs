@@ -1,4 +1,5 @@
 ﻿using System;
+using Nohros.Concurrent;
 using ZMQ;
 
 namespace Nohros.Toolkit.RestQL
@@ -14,8 +15,10 @@ namespace Nohros.Toolkit.RestQL
     #endregion
 
     public HttpQueryApplication CreateQueryApplication() {
-      var app = new HttpQueryApplication(settings_, new Context(1));
-      app.Run();
+      var background_thread_factory = new BackgroundThreadFactory();
+      var context = new Context();
+      var app = new HttpQueryApplication(settings_, context,
+        background_thread_factory);
       return app;
     }
   }
