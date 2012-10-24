@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
+using Nohros.Resources;
 
 namespace Nohros.Concurrent
 {
@@ -14,7 +13,7 @@ namespace Nohros.Concurrent
   /// protected methods <see cref="Set"/> and
   /// <see cref="SetException(Exception)"/>. Subclasses may also override
   /// <see cref="InterruptTask"/>, which will be invoked automatically if a
-  /// call to <see cref="Cancel(bool)"/> succeeds in canceling he future.
+  /// call to <see cref="Cancel(bool)"/> succeeds in canceling the future.
   /// <para>
   /// The state changing methods all returns a boolean indicating success or
   /// failure in changing the future's state. Valid states are running,
@@ -28,7 +27,7 @@ namespace Nohros.Concurrent
   /// in the execution list but are not necessarily executed in the order in
   /// which they are added (If a listener is added after the
   /// <see cref="IFuture{T}"/> is complete, it will be executed immediately,
-  /// even if earlier listeners have noe been executed. Additionally, executors
+  /// even if earlier listeners have not been executed. Additionally, executors
   /// need not guarantee FIFO execution, or different listeners may run in
   /// different executors).
   /// </para>
@@ -36,11 +35,10 @@ namespace Nohros.Concurrent
   /// <typeparam name="T"></typeparam>
   public abstract class AbstractFuture<T> : IFuture<T>
   {
-    #region FutureState enum
     /// <summary>
     /// The state of the future computation.
     /// </summary>
-    public enum FutureState
+    protected enum FutureState
     {
       /// <summary>
       /// The future computation is running.
@@ -62,12 +60,15 @@ namespace Nohros.Concurrent
       /// </summary>
       Cancelled = 4
     }
-    #endregion
+
+    readonly object async_state_;
 
     readonly ExecutionList execution_list_;
-    readonly object mutex_;
+    readonly ManualResetEvent sync_;
 
     Exception exception_;
+
+    // |state_| was declared as an int to allow atomic operation.
     volatile int state_;
     T value_;
 
@@ -78,19 +79,30 @@ namespace Nohros.Concurrent
     /// </summary>
     protected AbstractFuture() {
       execution_list_ = new ExecutionList();
-      mutex_ = new object();
       exception_ = null;
       value_ = default(T);
+      sync_ = new ManualResetEvent(false);
+      async_state_ = null;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AbstractFuture{T}"/>
+    /// class using the specified asynchrnous state.
+    /// </summary>
+    /// <param name="async_state">
+    /// An object representing data to be used bt the future.
+    /// </param>
+    protected AbstractFuture(object async_state) {
+      async_state_ = async_state;
     }
     #endregion
 
-    #region IFuture<T> Members
     WaitHandle IAsyncResult.AsyncWaitHandle {
-      get { throw new NotImplementedException(); }
+      get { return sync_; }
     }
 
-    public object AsyncState {
-      get { throw new NotImplementedException(); }
+    public virtual object AsyncState {
+      get { return async_state_; }
     }
 
     bool IAsyncResult.CompletedSynchronously {
@@ -124,45 +136,45 @@ namespace Nohros.Concurrent
 
     /// <inheritdoc/>
     public T Get() {
-      return GetValue();
+      T result;
+      if (!TryGet(Timeout.Infinite, out result)) {
+        throw new NotReachedException();
+      }
+      return result;
     }
 
     /// <inheritdoc/>
     public T Get(long timeout, TimeUnit unit) {
-      bool acquired = Monitor.TryEnter(mutex_, TimeSpan.FromMilliseconds(
-        TimeUnitHelper.ToMillis(timeout, unit)));
-      if (acquired) {
-        try {
-          return GetValue();
-        } finally {
-          Monitor.Exit(mutex_);
-        }
-      } else {
+      T result;
+      if (!TryGet(timeout, unit, out result)) {
         throw new TimeoutException("Timeout waiting for task");
       }
+      return result;
     }
 
     /// <inheritdoc/>
     public bool TryGet(long timeout, TimeUnit unit, out T result) {
-      bool acquired = Monitor.TryEnter(mutex_, TimeSpan.FromMilliseconds(
-        TimeUnitHelper.ToMillis(timeout, unit)));
-      if (acquired) {
-        try {
-          result = GetValue();
-          return true;
-        } finally {
-          Monitor.Exit(mutex_);
-        }
+      if (timeout < -1) {
+        throw new ArgumentOutOfRangeException("timeout",
+          StringResources.ArgumentOutOfRange_NeedNonNegNum);
       }
-
-      result = default(T);
-      return false;
+      return TryGet((int) TimeUnitHelper.ToMillis(timeout, unit), out result);
     }
 
     public void AddListener(RunnableDelegate listener, IExecutor executor) {
       execution_list_.Add(listener, executor);
     }
-    #endregion
+
+    bool TryGet(int timeout_ms, out T result) {
+      if (!IsCompleted) {
+        if (sync_.WaitOne(timeout_ms)) {
+          result = GetValue();
+          return true;
+        }
+      }
+      result = default(T);
+      return false;
+    }
 
     /// <summary>
     /// Subclasses should invoke this method to set the result of the
@@ -171,17 +183,17 @@ namespace Nohros.Concurrent
     /// successfully changed.
     /// </summary>
     /// <param name="value">
-    /// The value taht was the result of the task.
+    /// The value that was the result of the task.
     /// </param>
     /// <returns>
     /// <c>true</c> if the state was succesfully changed.
     /// </returns>
     protected virtual bool Set(T value) {
-      bool ok = Complete(value, null, FutureState.Completed);
-      if (ok) {
+      bool completed = Complete(value, null, FutureState.Completed);
+      if (completed) {
         execution_list_.Execute();
       }
-      return ok;
+      return completed;
     }
 
     /// <summary>
@@ -197,11 +209,11 @@ namespace Nohros.Concurrent
     /// <c>true</c> if the state was successfully changed.
     /// </returns>
     protected virtual bool SetException(Exception exception) {
-      bool ok = Complete(default(T), exception, FutureState.Completed);
-      if (ok) {
+      bool completed = Complete(default(T), exception, FutureState.Completed);
+      if (completed) {
         execution_list_.Execute();
       }
-      return ok;
+      return completed;
     }
 
     /// <summary>
@@ -227,9 +239,8 @@ namespace Nohros.Concurrent
         case FutureState.Completed:
           if (exception_ != null) {
             throw new ExecutionException(exception_);
-          } else {
-            return value_;
           }
+          return value_;
 
         case FutureState.Cancelled:
           throw new OperationCanceledException("Task was cancelled");
@@ -282,18 +293,22 @@ namespace Nohros.Concurrent
         (int) FutureState.Completing, (int) FutureState.Running);
 
       if (completion == (int) FutureState.Running) {
-        // If this thread succesfully transitioned to kCompleting, set the
+        // If this thread succesfully transitioned to Completing, set the
         // value and exception and then release to the final state.
         value_ = value;
         exception_ = exception;
         state_ = (int) final_state;
+        sync_.Set();
       } else if (state_ == (int) FutureState.Completing) {
-        lock (mutex_) {
-          // If some thread is currently completing the future, block until
-          // they are done so we can guarantee completion.
-        }
+        // If some thread is currently completing the future, block until
+        // they are done so we can guarantee completion.
+        sync_.WaitOne();
       }
       return completion == (int) FutureState.Running;
+    }
+
+    protected FutureState State {
+      get { return (FutureState) state_; }
     }
   }
 }
