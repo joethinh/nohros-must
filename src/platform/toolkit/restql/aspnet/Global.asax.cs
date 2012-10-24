@@ -22,7 +22,9 @@ namespace Nohros.Toolkit.RestQL
       Settings settings = new Settings.Loader()
         .Load(config_file_path, Strings.kConfigRootNodeName);
       var factory = new HttpQueryApplicationFactory(settings);
-      Application[Strings.kApplicationKey] = factory.CreateQueryApplication();
+      HttpQueryApplication app = factory.CreateQueryApplication();
+      Application[Strings.kApplicationKey] = app;
+      app.Start();
     }
 
     protected void Session_Start(object sender, EventArgs e) {
