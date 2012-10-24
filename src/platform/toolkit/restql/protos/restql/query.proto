@@ -34,8 +34,6 @@ message QueryResponseMessage {
   // originated this response.
   optional string name = 1;
   
-  optional QueryRequestStatus status_code = 2 [default = kOk];
-  
   // The response returned by the query processor.
   optional string response = 3;
 }
