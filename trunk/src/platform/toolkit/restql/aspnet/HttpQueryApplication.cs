@@ -1,32 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading;
 using Google.ProtocolBuffers;
 using Nohros.Concurrent;
+using Nohros.Resources;
+using Nohros.Ruby.Extensions;
 using Nohros.Ruby.Protocol;
 using ZMQ;
+using QueryFuture =
+  Nohros.Concurrent.IFuture<Nohros.Toolkit.RestQL.HttpQueryResponse>;
+using AsyncResponseMap =
+  System.Collections.Generic.Dictionary
+    <int,
+      System.Tuple
+        <System.AsyncCallback,
+          Nohros.Concurrent.IFuture<Nohros.Toolkit.RestQL.HttpQueryResponse>>>;
 
 namespace Nohros.Toolkit.RestQL
 {
   public class HttpQueryApplication : IDisposable
   {
+    const string kClassName = "Nohros.Toolkit.RestQL.HttpQueryApplication";
     readonly Context context_;
+    readonly AsyncResponseMap futures_;
+    readonly HttpQueryLogger logger_;
     readonly IThreadFactory receiver_thread_factory_;
     readonly ISettings settings_;
     readonly Socket socket_;
     Thread receiver_thread_;
+    int request_id_;
     bool running_;
 
     #region .ctor
     public HttpQueryApplication(ISettings settings, Context context,
       IThreadFactory receiver_thread_factory) {
       settings_ = settings;
-      socket_ = context.Socket(SocketType.REQ);
+      socket_ = context.Socket(SocketType.DEALER);
       receiver_thread_factory_ = receiver_thread_factory;
       context_ = context;
       running_ = false;
+      futures_ = new AsyncResponseMap();
+      request_id_ = 1;
+      logger_ = HttpQueryLogger.ForCurrentProcess;
     }
     #endregion
 
@@ -36,17 +52,30 @@ namespace Nohros.Toolkit.RestQL
     }
 
     public IFuture<HttpQueryResponse> ProcessQuery(string name,
-      IDictionary<string, string> options) {
+      IDictionary<string, string> options, AsyncCallback callback) {
+      return ProcessQuery(name, options, callback, null);
+    }
+
+    public IFuture<HttpQueryResponse> ProcessQuery(string name,
+      IDictionary<string, string> options, AsyncCallback callback, object state) {
       QueryRequestMessage request = new QueryRequestMessage.Builder()
         .SetName(name)
         .AddRangeOptions(GetQueryOptions(options))
         .Build();
-
-      RubyMessagePacket packet = GetMessagePacket(request.ToByteString());
+      
+      RubyMessagePacket packet = GetMessagePacket(GetNextRequestId(),
+        request.ToByteString());
       try {
-        // send the request and wait for the response.
+        // Send the request and wait for the response. The request should
+        // follow the REQ/REP pattern, which contains the following parts:
+        //   1. [EMPTY FRAME]
+        //   2. [MESSAGE]
+        // 
+        socket_.SendMore();
         socket_.Send(packet.ToByteArray());
-        var future = SettableFuture<HttpQueryResponse>.Create();
+        QueryFuture future = new SettableFuture<HttpQueryResponse>(state);
+        Tuple<AsyncCallback, QueryFuture> tuple = Tuple.Create(callback, future);
+        futures_.Add(request_id_, tuple);
         return future;
       } catch (ZMQ.Exception zmqe) {
         return
@@ -69,21 +98,48 @@ namespace Nohros.Toolkit.RestQL
       };
     }
 
-    HttpStatusCode ProcessResponse(byte[] response) {
-      string result = Encoding.Unicode.GetString(response);
-      return HttpStatusCode.OK;
+    void ProcessResponse(byte[] response) {
+      try {
+        var packet = RubyMessagePacket.ParseFrom(response);
+        QueryResponseMessage message =
+          QueryResponseMessage.ParseFrom(
+            packet
+              .Message
+              .Message.ToByteArray());
+
+        Tuple<AsyncCallback, QueryFuture> tuple;
+        int request_id = packet.Message.Id.ToByteArray().AsInt();
+        if (futures_.TryGetValue(request_id, out tuple)) {
+          tuple.Item1(tuple.Item2);
+        }
+      } catch (System.Exception exception) {
+        logger_.Error(
+          string.Format(StringResources.Log_MethodThrowsException, kClassName),
+          exception);
+      }
     }
 
     void GetResponse() {
       while (running_) {
-        byte[] response = socket_.Recv();
-        ProcessResponse(response);
+        Queue<byte[]> parts = socket_.RecvAll();
+        if (parts.Count != 2) {
+          // The response should follow the REQ/REP pattern, which contains
+          // the following parts.
+          //   1. [EMPTY FRAME]
+          //   2. [MESSAGE]
+          //
+          logger_.Error(Resources.log_received_too_may_parts);
+          socket_.RecvAll();
+        } else {
+          parts.Dequeue();
+          ProcessResponse(parts.Dequeue());
+        }
       }
     }
 
-    RubyMessage GetMessage(ByteString message) {
+    RubyMessage GetMessage(int id, ByteString message) {
       return new RubyMessage.Builder()
-        .SetId(0)
+        .SetId(ByteString.CopyFrom(id.AsBytes()))
         .SetAckType(RubyMessage.Types.AckType.kRubyNoAck)
         .SetType((int) MessageType.kQueryRequestMessage)
         .SetToken("query-request-message")
@@ -91,8 +147,12 @@ namespace Nohros.Toolkit.RestQL
         .Build();
     }
 
-    RubyMessagePacket GetMessagePacket(ByteString message) {
-      RubyMessage msg = GetMessage(message);
+    int GetNextRequestId() {
+      return Interlocked.Increment(ref request_id_);
+    }
+
+    RubyMessagePacket GetMessagePacket(int id, ByteString message) {
+      RubyMessage msg = GetMessage(id, message);
       RubyMessageHeader header = new RubyMessageHeader.Builder()
         .SetId(msg.Id)
         .SetSize(msg.SerializedSize)
@@ -127,6 +187,7 @@ namespace Nohros.Toolkit.RestQL
     }
 
     public void Stop() {
+      futures_.Clear();
       if (receiver_thread_ != null) {
         // forces the socket to close.
         socket_.Dispose();
