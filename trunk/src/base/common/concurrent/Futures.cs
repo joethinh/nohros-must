@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Concurrent
 {
@@ -8,12 +6,10 @@ namespace Nohros.Concurrent
   /// Static utility methods pertaining to the <see cref="IFuture{T}"/>
   /// interface.
   /// </summary>
-  public sealed class Futures
+  public static class Futures
   {
-    private Futures() { }
-    
     /// <summary>
-    /// Creates a <see cref="SettableFuture{T}"/> which has its value set
+    /// Creates a <see cref="IFuture{T}"/> which has its value set
     /// immediately upon construction.
     /// </summary>
     /// <param name="value">The value that the returned future shoud hold.</param>
@@ -26,13 +22,13 @@ namespace Nohros.Concurrent
     /// <c>true</c>.
     /// </remarks>
     public static IFuture<T> ImmediateFuture<T>(T value) {
-      SettableFuture<T> future = SettableFuture<T>.Create();
+      SettableFuture<T> future = new SettableFuture<T>();
       future.Set(value);
       return future;
     }
 
     /// <summary>
-    /// Creates a <see cref="SettableFuture{T}"/> which has an exception set
+    /// Creates a <see cref="IFuture{T}"/> which has an exception set
     /// immediately upon construction.
     /// <c>true</c>.
     /// </summary>
@@ -50,11 +46,33 @@ namespace Nohros.Concurrent
     /// </para>
     /// </remarks>
     public static IFuture<T> ImmediateFailedFuture<T>(Exception exception) {
-      if (exception == null)
+      if (exception == null) {
         throw new ArgumentNullException("exception");
+      }
 
-      SettableFuture<T> future = SettableFuture<T>.Create();
+      SettableFuture<T> future = new SettableFuture<T>();
       future.SetException(exception);
+      return future;
+    }
+
+    /// <summary>
+    /// Creates a <see cref="IFuture{T}"/> which has its value set to the
+    /// value returned by the specified <paramref name="callable"/> immediately
+    /// upon construction.
+    /// </summary>
+    /// <param name="callable">
+    /// The callable task which returning value should be assigned to the
+    /// returned future.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="callable"/> is null
+    /// </exception>
+    /// <remarks>
+    /// </remarks>
+    public static IFuture<T> ImmediateCallableFuture<T>(
+      CallableDelegate<T> callable) {
+      Future<T> future = new Future<T>(callable);
+      future.Run();
       return future;
     }
   }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Threading;
 
 namespace Nohros.Concurrent
@@ -71,21 +69,13 @@ namespace Nohros.Concurrent
     /// whether the thread executing this task should be interrupted in an
     /// attempt to stop the task.
     /// <para>
-    /// After this method returns, subsequent calls to <see cref="IsDone"/>
-    /// will always return <c>true</c>. Subsequent calls to
-    /// <see cref="IsCancelled"/> will alwyas return <c>true</c> if this method
-    /// returned <c>true</c>.
+    /// After this method returns, subsequent calls to
+    /// <see cref=" IAsyncResult.IsCompleted"/> will always return <c>true</c>.
+    /// Subsequent calls to <see cref="IsCancelled"/> will alwyas return
+    /// <c>true</c> if this method returned <c>true</c>.
     /// </para>
     /// </remarks>
     bool Cancel(bool may_interrupt_if_running);
-
-    /// <summary>
-    /// Gets <c>true</c> if this task was cancelled before it completed
-    /// normally.
-    /// </summary>
-    /// <value><c>true</c> if this task was cancelled before it completed.
-    /// </value>
-    bool IsCancelled { get; }
 
     /// <summary>
     /// Waits if nescessary for the computation to complete and then retrieves
@@ -94,14 +84,11 @@ namespace Nohros.Concurrent
     /// <returns>
     /// The computed result.
     /// </returns>
-    /// <exception cref="ThreadInterruptedException">
-    /// If the current thread was interrupted while waiting.
-    /// </exception>
     /// <exception cref="ExecutionException">
     /// If the computation threw an exception.
     /// </exception>
     /// <exception cref="OperationCanceledException">
-    /// If the current thread was interrupted while waiting.
+    /// If the future computation was canceled.
     /// </exception>
     T Get();
 
@@ -110,7 +97,8 @@ namespace Nohros.Concurrent
     /// complete, and then retrieves its result, if available.
     /// </summary>
     /// <param name="timeout">
-    /// The maximum time to wait.
+    /// The maximum time to wait, or <see cref="Timeout.Infinite"/> to wait
+    /// indefinitely.
     /// </param>
     /// <param name="unit">
     /// The time unit of the timeout argument.
@@ -118,16 +106,23 @@ namespace Nohros.Concurrent
     /// <returns>
     /// The result of the computation.
     /// </returns>
-    /// <exception cref="ThreadInterruptedException">
-    /// If the current thread was interrupted while waiting.</exception>
     /// <exception cref="ExecutionException">
-    /// If the computation threw an exception.</exception>
+    /// If the computation threw an exception.
+    /// </exception>
     /// <exception cref="TimeoutException">
     /// If the timer expires.
     /// </exception>
     /// <exception cref="OperationCanceledException">
-    /// If the current thread was interrupted while waiting.
+    /// If the future computation was canceled.
     /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="timeout"/> is a negative number other than -1, which
+    /// represents an infinite time-out.
+    /// </exception>
+    /// <remarks>
+    /// If <paramref name="timeout"/> is zero the method does not block. It
+    /// tests the state of the future and returns imediatelly.
+    /// </remarks>
     T Get(long timeout, TimeUnit unit);
 
     /// <summary>
@@ -136,21 +131,28 @@ namespace Nohros.Concurrent
     /// </summary>
     /// <param name="timeout">The maximum time to wait</param>
     /// <param name="unit">The time unit of the timeout argument.</param>
-    /// <param name="result">The result of the computation, or the default
-    /// value for <typeparamref name="T"/> if the wait timed out.</param>
+    /// <param name="result">
+    /// The result of the computation, or the default value for
+    /// <typeparamref name="T"/> if the wait timed out.
+    /// </param>
     /// <returns>
     /// <c>false</c> if the timer expires, <c>true</c> if the
     /// computation has completed succesfully.
     /// </returns>
-    /// <exception cref="ThreadInterruptedException">
-    /// If the current thread was interrupted while waiting.
-    /// </exception>
     /// <exception cref="ExecutionException">
-    /// if the computation threw an exception.
+    /// If the computation threw an exception.
     /// </exception>
     /// <exception cref="OperationCanceledException">
-    /// If the current thread was interrupted while waiting.
+    /// If the future computation was canceled.
     /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="timeout"/> is a negative number other than -1, which
+    /// represents an infinite time-out.
+    /// </exception>
+    /// <remarks>
+    /// If <paramref name="timeout"/> is zero the method does not block. It
+    /// tests the state of the future and returns imediatelly.
+    /// </remarks>
     bool TryGet(long timeout, TimeUnit unit, out T result);
 
     /// <summary>
@@ -180,5 +182,13 @@ namespace Nohros.Concurrent
     /// </para>
     /// </remarks>
     void AddListener(RunnableDelegate listener, IExecutor executor);
+
+    /// <summary>
+    /// Gets <c>true</c> if this task was cancelled before it completed
+    /// normally.
+    /// </summary>
+    /// <value><c>true</c> if this task was cancelled before it completed.
+    /// </value>
+    bool IsCancelled { get; }
   }
 }
