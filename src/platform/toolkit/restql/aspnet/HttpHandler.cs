@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
-using System.Threading;
 using System.Web;
-using ZMQ;
 
 namespace Nohros.Toolkit.RestQL
 {
   /// <summary>
   /// 
   /// </summary>
-  public class HttpHandler : IHttpHandler
+  public class HttpHandler : IHttpAsyncHandler
   {
     const string kJsonContentType = "application/json";
 
@@ -20,6 +18,23 @@ namespace Nohros.Toolkit.RestQL
     }
     #endregion
 
+    public virtual void ProcessRequest(HttpContext context) {
+      throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Gets a value indicationg if this object could be pooled.
+    /// </summary>
+    public bool IsReusable {
+      get { return false; }
+    }
+
+    public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback callback, object state) {
+    }
+
+    public void EndProcessRequest(IAsyncResult result) {
+    }
+
     /// <summary>
     /// Process the HTTP request.
     /// </summary>
@@ -27,7 +42,8 @@ namespace Nohros.Toolkit.RestQL
     /// As <see cref="HttpContext"/> object that provides references to the
     /// intrinsic server objects used to service HTTP requests.
     /// </param>
-    public void ProcessRequest(HttpContext context) {
+    public void ProcessRequestAsync(HttpContext context) {
+      IAsyncResult IHttpAsyncHandler.Begin
       HttpResponse response = context.Response;
       string name = context.Request.QueryString["name"];
       if (string.IsNullOrEmpty(name)) {
@@ -45,13 +61,6 @@ namespace Nohros.Toolkit.RestQL
       response.StatusCode = (int) app.ProcessQuery(name, parameters, out result);
       response.ContentType = kJsonContentType;
       response.Write(result);
-    }
-
-    /// <summary>
-    /// Gets a value indicationg if this object could be pooled.
-    /// </summary>
-    public bool IsReusable {
-      get { return false; }
     }
 
     void OnQueryResponse(string name, HttpStatusCode status, string result,

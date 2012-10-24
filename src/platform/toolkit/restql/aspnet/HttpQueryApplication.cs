@@ -2,28 +2,41 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Threading;
 using Google.ProtocolBuffers;
+using Nohros.Concurrent;
 using Nohros.Ruby.Protocol;
 using ZMQ;
 
 namespace Nohros.Toolkit.RestQL
 {
-  public class HttpQueryApplication
+  public class HttpQueryApplication : IDisposable
   {
     readonly Context context_;
+    readonly IThreadFactory receiver_thread_factory_;
     readonly ISettings settings_;
     readonly Socket socket_;
+    Thread receiver_thread_;
+    bool running_;
 
     #region .ctor
-    public HttpQueryApplication(ISettings settings, Context context) {
+    public HttpQueryApplication(ISettings settings, Context context,
+      IThreadFactory receiver_thread_factory) {
       settings_ = settings;
       socket_ = context.Socket(SocketType.REQ);
+      receiver_thread_factory_ = receiver_thread_factory;
+      context_ = context;
+      running_ = false;
     }
     #endregion
 
-    public HttpStatusCode ProcessQuery(string name,
-      IDictionary<string, string> options,
-      out string result) {
+    public void Dispose() {
+      Stop();
+      context_.Dispose();
+    }
+
+    public IFuture<HttpQueryResponse> ProcessQuery(string name,
+      IDictionary<string, string> options) {
       QueryRequestMessage request = new QueryRequestMessage.Builder()
         .SetName(name)
         .AddRangeOptions(GetQueryOptions(options))
@@ -33,24 +46,39 @@ namespace Nohros.Toolkit.RestQL
       try {
         // send the request and wait for the response.
         socket_.Send(packet.ToByteArray());
-        byte[] response = socket_.Recv(settings_.ResponseTimeout);
-        if (response != null) {
-          return ProcessResponse(response, out result);
-        }
-        result = string.Empty;
-        return HttpStatusCode.RequestTimeout;
+        var future = SettableFuture<HttpQueryResponse>.Create();
+        return future;
       } catch (ZMQ.Exception zmqe) {
-        result = zmqe.Message;
-        return HttpStatusCode.InternalServerError;
+        return
+          Futures.ImmediateFuture(
+            GetExceptionResponse(name, HttpStatusCode.InternalServerError, zmqe));
       } catch (System.Exception e) {
-        result = string.Empty;
-        return HttpStatusCode.InternalServerError;
+        return
+          Futures.ImmediateFuture(
+            GetExceptionResponse(name, HttpStatusCode.InternalServerError, e));
       }
     }
 
-    HttpStatusCode ProcessResponse(byte[] response, out string result) {
-      result = Encoding.Unicode.GetString(response);
+    HttpQueryResponse GetExceptionResponse(string name, HttpStatusCode status,
+      System.Exception exception) {
+      return new HttpQueryResponse
+      {
+        Name = name,
+        Response = exception.Message,
+        StatusCode = status
+      };
+    }
+
+    HttpStatusCode ProcessResponse(byte[] response) {
+      string result = Encoding.Unicode.GetString(response);
       return HttpStatusCode.OK;
+    }
+
+    void GetResponse() {
+      while (running_) {
+        byte[] response = socket_.Recv();
+        ProcessResponse(response);
+      }
     }
 
     RubyMessage GetMessage(ByteString message) {
@@ -90,8 +118,20 @@ namespace Nohros.Toolkit.RestQL
       return list;
     }
 
-    public void Run() {
+    public void Start() {
       socket_.Connect(Transport.TCP, settings_.QueryServerAddress);
+      receiver_thread_ = receiver_thread_factory_
+        .CreateThread(GetResponse);
+      running_ = true;
+      receiver_thread_.Start();
+    }
+
+    public void Stop() {
+      if (receiver_thread_ != null) {
+        // forces the socket to close.
+        socket_.Dispose();
+        receiver_thread_.Join();
+      }
     }
 
     public ISettings Settings {
