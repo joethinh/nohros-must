@@ -67,7 +67,6 @@ namespace Nohros.Toolkit.RestQL
           .Process(query.Name, parameters, out result);
         if (processed) {
           QueryResponseMessage response = new QueryResponseMessage.Builder()
-            .SetStatusCode(QueryRequestStatus.kOk)
             .SetName(query.Name)
             .SetResponse(result)
             .BuildPartial();

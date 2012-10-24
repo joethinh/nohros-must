@@ -41,10 +41,12 @@ namespace Nohros.Toolkit.RestQL
     }
 
     protected void Application_End(object sender, EventArgs e) {
-      var socket = Application[Strings.kSocketKey] as Socket;
-      if (socket != null) {
-        socket.Dispose();
+      var app = Application[Strings.kApplicationKey] as HttpQueryApplication;
+      if (app != null) {
+        app.Stop();
+        app.Dispose();
       }
+      zmq_context_.Dispose();
     }
   }
 }
