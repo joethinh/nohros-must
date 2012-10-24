@@ -39,9 +39,9 @@
     <Reference Include="Google.ProtocolBuffers.Serialization">
       <HintPath>..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="nohros.ruby.net, Version=0.5.2.1, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="nohros.ruby.net, Version=0.5.2.3, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\nohros.ruby.net.0.5.2.1\lib\nohros.ruby.net.dll</HintPath>
+      <HintPath>..\..\..\..\packages\nohros.ruby.net.0.5.2.3\lib\net20\nohros.ruby.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

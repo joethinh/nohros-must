@@ -53,7 +53,7 @@ namespace Nohros.Toolkit.RestQL
         // TODO: Add specific exception handling.
         logger_.Error(string.Format(R.Log_MethodThrowsException, kClassName), e);
         service_host_
-          .SendError(0, (int) StatusCode.kServerError, e);
+          .SendError(request.Id, (int) StatusCode.kServerError, e);
       }
     }
 
@@ -69,11 +69,13 @@ namespace Nohros.Toolkit.RestQL
           QueryResponseMessage response = new QueryResponseMessage.Builder()
             .SetName(query.Name)
             .SetResponse(result)
-            .BuildPartial();
+            .Build();
           service_host_
             .Send(request.Id, (int) MessageType.kQueryResponseMessage,
               response.ToByteArray());
+        } else {
         }
+      } else {
       }
     }
   }
