@@ -37,7 +37,6 @@ namespace Nohros.Caching
     }
     #endregion
 
-    #region IValueReference<T> Members
     public T WaitForValue() {
       return Uninterruptibles.GetUninterruptibly(this);
     }
@@ -55,7 +54,6 @@ namespace Nohros.Caching
     public T Value {
       get { return old_value_.Value; }
     }
-    #endregion
 
     public IFuture<T> LoadFuture(string key, CacheLoader<T> loader) {
       stopwatch_.Start();
