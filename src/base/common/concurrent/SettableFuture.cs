@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Concurrent
 {
@@ -10,19 +8,21 @@ namespace Nohros.Concurrent
   /// </summary>
   public class SettableFuture<T> : AbstractFuture<T>
   {
+    #region .ctor
     /// <summary>
-    /// Explicit private constructor, use the <see cref="Create"/> factory
-    /// method to create instances of <see cref="SettableFuture{T}"/>.
+    /// Creates a new <see cref="SettableFuture{T}"/> in the default state.
     /// </summary>
-    SettableFuture() { }
+    /// <returns></returns>
+    public SettableFuture() {
+    }
 
     /// <summary>
     /// Creates a new <see cref="SettableFuture{T}"/> in the default state.
     /// </summary>
     /// <returns></returns>
-    public static SettableFuture<T> Create() {
-      return new SettableFuture<T>();
+    public SettableFuture(object state) : base(state) {
     }
+    #endregion
 
     /// <summary>
     /// Sets the value of this future.
