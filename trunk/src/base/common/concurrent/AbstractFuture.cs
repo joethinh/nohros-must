@@ -83,6 +83,7 @@ namespace Nohros.Concurrent
       value_ = default(T);
       sync_ = new ManualResetEvent(false);
       async_state_ = null;
+      state_ = (int) FutureState.Running;
     }
 
     /// <summary>
@@ -92,7 +93,7 @@ namespace Nohros.Concurrent
     /// <param name="async_state">
     /// An object representing data to be used bt the future.
     /// </param>
-    protected AbstractFuture(object async_state) {
+    protected AbstractFuture(object async_state) : this() {
       async_state_ = async_state;
     }
     #endregion
@@ -171,9 +172,11 @@ namespace Nohros.Concurrent
           result = GetValue();
           return true;
         }
+        result = default(T);
+        return false;
       }
-      result = default(T);
-      return false;
+      result = GetValue();
+      return true;
     }
 
     /// <summary>
