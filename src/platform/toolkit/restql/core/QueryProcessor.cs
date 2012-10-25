@@ -29,7 +29,7 @@ namespace Nohros.Toolkit.RestQL
         result = executor.Execute(query_to_execute, data);
         return true;
       }
-      result = string.Empty;
+      result = string.Format(Resources.QueryProcessor_ProcessorNotFound, name);
       return false;
     }
   }

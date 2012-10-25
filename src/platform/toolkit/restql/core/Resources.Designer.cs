@@ -68,5 +68,14 @@ namespace Nohros.Toolkit.RestQL {
                 return ResourceManager.GetString("QueryExecutor_Missing_ParameterValue", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot found a processor that can process the query {0}..
+        /// </summary>
+        internal static string QueryProcessor_ProcessorNotFound {
+            get {
+                return ResourceManager.GetString("QueryProcessor_ProcessorNotFound", resourceCulture);
+            }
+        }
     }
 }
