@@ -29,8 +29,10 @@ namespace Nohros.Toolkit.RestQL
     public override void Start(IRubyServiceHost service_host) {
       logger_.Logger = service_host.Logger;
       start_thread_ = Thread.CurrentThread;
-      start_stop_service_event_.WaitOne();
       service_host_ = service_host;
+
+      // Blocks the current thread and waits the service to stop.
+      start_stop_service_event_.WaitOne();
     }
 
     public override void Stop(IRubyMessage message) {
@@ -51,7 +53,7 @@ namespace Nohros.Toolkit.RestQL
         }
       } catch (Exception e) {
         // TODO: Add specific exception handling.
-        logger_.Error(string.Format(R.Log_MethodThrowsException, kClassName), e);
+        logger_.Error(string.Format(R.Log_MethodThrowsException, "OnMessage", kClassName), e);
         service_host_
           .SendError(request.Id, (int) StatusCode.kServerError, e);
       }
@@ -74,8 +76,14 @@ namespace Nohros.Toolkit.RestQL
             .Send(request.Id, (int) MessageType.kQueryResponseMessage,
               response.ToByteArray());
         } else {
+          service_host_.SendError(request.Id,
+            string.Format(Resources.Service_CannotProcessQuery_Name_Reason,
+              query.Name, result), (int) StatusCode.kBadRequest);
         }
       } else {
+        service_host_.SendError(request.Id,
+          string.Format(Resources.Service_Arg_RequiredIsMissing_Name, "name"),
+          (int) StatusCode.kBadRequest);
       }
     }
   }
