@@ -117,13 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Http_InternalServerError" xml:space="preserve">
-    <value>There is a problem with the query you are trying to execute and it cannot be displayed.</value>
+  <data name="Service_Arg_RequiredIsMissing_Name" xml:space="preserve">
+    <value>The {0} parameter is required and was not specified.</value>
   </data>
-  <data name="log_received_too_may_parts" xml:space="preserve">
-    <value>Received more than one part in for a single request. The request fail and received data will be discarded.</value>
-  </data>
-  <data name="Query_ErrorResponse_Name_Trace" xml:space="preserve">
-    <value>A query completes with an error. Backtrace: {0}</value>
+  <data name="Service_CannotProcessQuery_Name_Reason" xml:space="preserve">
+    <value>The query {0} cannnot be processed for the following reason: "{1}".</value>
   </data>
 </root>

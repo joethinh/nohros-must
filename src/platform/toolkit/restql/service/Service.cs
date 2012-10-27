@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
+using Nohros.Extensions;
 using Nohros.Ruby;
 using Nohros.Ruby.Protocol;
 using R = Nohros.Resources.StringResources;
@@ -53,9 +54,11 @@ namespace Nohros.Toolkit.RestQL
         }
       } catch (Exception e) {
         // TODO: Add specific exception handling.
-        logger_.Error(string.Format(R.Log_MethodThrowsException, "OnMessage", kClassName), e);
+        logger_.Error(
+          string.Format(R.Log_MethodThrowsException, "OnMessage", kClassName), e);
         service_host_
-          .SendError(request.Id, (int) StatusCode.kServerError, e);
+          .SendError(request.Id, (int) StatusCode.kServerError, request.Sender,
+            e);
       }
     }
 
@@ -74,16 +77,16 @@ namespace Nohros.Toolkit.RestQL
             .Build();
           service_host_
             .Send(request.Id, (int) MessageType.kQueryResponseMessage,
-              response.ToByteArray());
+              response.ToByteArray(), request.Sender);
         } else {
-          service_host_.SendError(request.Id,
+          service_host_.SendError(request.Id, (int) StatusCode.kBadRequest,
             string.Format(Resources.Service_CannotProcessQuery_Name_Reason,
-              query.Name, result), (int) StatusCode.kBadRequest);
+              query.Name, result), request.Sender);
         }
       } else {
-        service_host_.SendError(request.Id,
+        service_host_.SendError(request.Id, (int) StatusCode.kBadRequest,
           string.Format(Resources.Service_Arg_RequiredIsMissing_Name, "name"),
-          (int) StatusCode.kBadRequest);
+          request.Sender);
       }
     }
   }

@@ -61,29 +61,20 @@ namespace Nohros.Toolkit.RestQL {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is a problem with the query you are trying to execute and it cannot be displayed..
+        ///   Looks up a localized string similar to The {0} parameter is required and was not specified..
         /// </summary>
-        internal static string Http_InternalServerError {
+        internal static string Service_Arg_RequiredIsMissing_Name {
             get {
-                return ResourceManager.GetString("Http_InternalServerError", resourceCulture);
+                return ResourceManager.GetString("Service_Arg_RequiredIsMissing_Name", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Received more than one part in for a single request. The request fail and received data will be discarded..
+        ///   Looks up a localized string similar to The query {0} cannnot be processed for the following reason: &quot;{1}&quot;..
         /// </summary>
-        internal static string log_received_too_may_parts {
+        internal static string Service_CannotProcessQuery_Name_Reason {
             get {
-                return ResourceManager.GetString("log_received_too_may_parts", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A query completes with an error. Backtrace: {0}.
-        /// </summary>
-        internal static string Query_ErrorResponse_Name_Trace {
-            get {
-                return ResourceManager.GetString("Query_ErrorResponse_Name_Trace", resourceCulture);
+                return ResourceManager.GetString("Service_CannotProcessQuery_Name_Reason", resourceCulture);
             }
         }
     }
