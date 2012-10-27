@@ -55,6 +55,7 @@
     <Compile Include="cache\CacheLoaders.cs" />
     <Compile Include="cache\LoadingCacheTests.cs" />
     <Compile Include="cache\CacheProviderMock.cs" />
+    <Compile Include="concurrent\AbstractFutureTests.cs" />
     <Compile Include="concurrent\AtomicLongArrayTests.cs" />
     <Compile Include="concurrent\AtomicLongTests.cs" />
     <Compile Include="concurrent\AtomicReferenceTests.cs" />
