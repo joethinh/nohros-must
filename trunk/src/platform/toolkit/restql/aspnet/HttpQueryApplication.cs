@@ -2,20 +2,24 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
+using System.Linq;
 using Google.ProtocolBuffers;
+using Nohros.Ruby;
 using Nohros.Concurrent;
 using Nohros.Resources;
 using Nohros.Ruby.Extensions;
 using Nohros.Ruby.Protocol;
+using Nohros.Ruby.Protocol.Control;
 using ZMQ;
 using QueryFuture =
-  Nohros.Concurrent.IFuture<Nohros.Toolkit.RestQL.HttpQueryResponse>;
+  Nohros.Concurrent.SettableFuture<Nohros.Toolkit.RestQL.HttpQueryResponse>;
 using AsyncResponseMap =
   System.Collections.Generic.Dictionary
     <int,
       System.Tuple
         <System.AsyncCallback,
-          Nohros.Concurrent.IFuture<Nohros.Toolkit.RestQL.HttpQueryResponse>>>;
+          Nohros.Concurrent.SettableFuture
+            <Nohros.Toolkit.RestQL.HttpQueryResponse>>>;
 
 namespace Nohros.Toolkit.RestQL
 {
@@ -62,7 +66,7 @@ namespace Nohros.Toolkit.RestQL
         .SetName(name)
         .AddRangeOptions(GetQueryOptions(options))
         .Build();
-      
+
       RubyMessagePacket packet = GetMessagePacket(GetNextRequestId(),
         request.ToByteString());
       try {
@@ -90,8 +94,7 @@ namespace Nohros.Toolkit.RestQL
 
     HttpQueryResponse GetExceptionResponse(string name, HttpStatusCode status,
       System.Exception exception) {
-      return new HttpQueryResponse
-      {
+      return new HttpQueryResponse {
         Name = name,
         Response = exception.Message,
         StatusCode = status
@@ -101,22 +104,53 @@ namespace Nohros.Toolkit.RestQL
     void ProcessResponse(byte[] response) {
       try {
         var packet = RubyMessagePacket.ParseFrom(response);
-        QueryResponseMessage message =
-          QueryResponseMessage.ParseFrom(
-            packet
-              .Message
-              .Message.ToByteArray());
-
         Tuple<AsyncCallback, QueryFuture> tuple;
         int request_id = packet.Message.Id.ToByteArray().AsInt();
         if (futures_.TryGetValue(request_id, out tuple)) {
+          SettableFuture<HttpQueryResponse> future = tuple.Item2;
+          switch (packet.Message.Type) {
+            case (int) MessageType.kQueryResponseMessage:
+              future.Set(GetQueryResponse(packet.Message));
+              break;
+
+            case (int) NodeMessageType.kNodeError:
+              future.Set(GetError(packet.Message));
+              break;
+          }
           tuple.Item1(tuple.Item2);
+          futures_.Remove(request_id_);
         }
       } catch (System.Exception exception) {
         logger_.Error(
-          string.Format(StringResources.Log_MethodThrowsException, kClassName),
-          exception);
+          string.Format(StringResources.Log_MethodThrowsException,
+            "ProcessResponse", kClassName), exception);
       }
+    }
+
+    HttpQueryResponse GetError(RubyMessage error) {
+      ErrorMessage message =
+        ErrorMessage.ParseFrom(error.Message.ToByteArray());
+      int last_error_code = 400;
+      foreach (ExceptionMessage e in message.ErrorsList) {
+        logger_.Error(string.Format(Resources.Query_ErrorResponse_Name_Trace,
+          e.Message));
+        last_error_code = e.Code;
+      }
+      return new HttpQueryResponse {
+        Name = "Error",
+        Response = Resources.Http_InternalServerError,
+        StatusCode = (HttpStatusCode)last_error_code
+      };
+    }
+
+    HttpQueryResponse GetQueryResponse(RubyMessage response) {
+      QueryResponseMessage message =
+        QueryResponseMessage.ParseFrom(response.Message.ToByteArray());
+      return new HttpQueryResponse {
+        Name = message.Name,
+        Response = message.Response,
+        StatusCode = HttpStatusCode.OK
+      };
     }
 
     void GetResponse() {
