@@ -1,0 +1,378 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Nohros</RootNamespace>
+    <AssemblyName>nohros</AssemblyName>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>http://localhost/nohros/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\src\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(SolutionDir)bin\debug\net40</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(SolutionDir)bin\release\net40</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>$(SolutionDir)..\docs\nohros.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.65.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\third_party\sqlite\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="cache\LoadingCache.cs" />
+    <Compile Include="cache\CacheBuilder.cs" />
+    <Compile Include="cache\CacheLoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="cache\CacheLoaderDelegate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="cache\CacheLoaderDelegateToCacheLoader.cs" />
+    <Compile Include="cache\ICache.cs" />
+    <Compile Include="cache\ILoadingCache.cs" />
+    <Compile Include="cache\InvalidCacheLoadException.cs" />
+    <Compile Include="cache\LoadingValueReference.cs" />
+    <Compile Include="cache\IValueReference.cs" />
+    <Compile Include="cache\LocalManualCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="cache\Strength.cs" />
+    <Compile Include="cache\StrengthType.cs" />
+    <Compile Include="cache\StrongValueReference.cs" />
+    <Compile Include="cache\UnsetValueReference.cs" />
+    <Compile Include="concurrent\AbstractFuture.cs" />
+    <Compile Include="concurrent\AtomicLong.cs" />
+    <Compile Include="concurrent\AtomicLongArray.cs" />
+    <Compile Include="concurrent\AtomicReference.cs" />
+    <Compile Include="concurrent\BackgroundThreadFactory.cs" />
+    <Compile Include="concurrent\Executors.cs" />
+    <Compile Include="concurrent\Future.cs" />
+    <Compile Include="concurrent\Futures.cs" />
+    <Compile Include="concurrent\IRunnableFuture.cs" />
+    <Compile Include="concurrent\IThreadFactory.cs" />
+    <Compile Include="concurrent\MailboxReceiveCallback.cs" />
+    <Compile Include="concurrent\NoStateExecutorStateT.cs" />
+    <Compile Include="concurrent\ExecutionList.cs" />
+    <Compile Include="concurrent\SameThreadExecutor.cs" />
+    <Compile Include="concurrent\SettableFuture.cs" />
+    <Compile Include="concurrent\SingleThreadExecutor.cs" />
+    <Compile Include="concurrent\TaskFuture.cs" />
+    <Compile Include="concurrent\ThreadPoolExecutor.cs" />
+    <Compile Include="concurrent\ExecutorState.cs" />
+    <Compile Include="concurrent\IExecutor.cs" />
+    <Compile Include="concurrent\IFuture.cs" />
+    <Compile Include="concurrent\Mailbox.cs" />
+    <Compile Include="configuration\AbstractConfigurationNode.cs" />
+    <Compile Include="configuration\builders\CallableConfigurationBuilder.cs" />
+    <Compile Include="configuration\builders\ThrowableConfigurationBuilder.cs" />
+    <Compile Include="configuration\common\auth\ILoginModulesNode.cs" />
+    <Compile Include="configuration\common\auth\LoginModulesNode.cs" />
+    <Compile Include="configuration\common\auth\LoginModulesNodeParser.cs" />
+    <Compile Include="configuration\common\IRepositoriesNode.cs" />
+    <Compile Include="configuration\common\IRepositoryNode.cs" />
+    <Compile Include="configuration\common\auth\LoginModuleNodeParser.cs" />
+    <Compile Include="configuration\common\provider\IProviderOptions.cs" />
+    <Compile Include="configuration\common\provider\IProvidersNode.cs" />
+    <Compile Include="configuration\common\provider\IProvidersNodeGroup.cs" />
+    <Compile Include="configuration\common\provider\ProviderNodeBuilder.cs" />
+    <Compile Include="configuration\common\provider\ProviderNodeParser.cs" />
+    <Compile Include="configuration\common\provider\ProviderOptionsNode.cs" />
+    <Compile Include="configuration\common\provider\ProviderOptionsNodeParser.cs" />
+    <Compile Include="configuration\common\provider\ProvidersNode.cs" />
+    <Compile Include="configuration\common\provider\ProvidersNodeGroup.cs" />
+    <Compile Include="configuration\common\provider\ProvidersNodeParser.cs" />
+    <Compile Include="configuration\common\RepositoriesNode.cs" />
+    <Compile Include="configuration\common\RepositoryNodeParser.cs" />
+    <Compile Include="configuration\common\RepositoriesNodeParser.cs" />
+    <Compile Include="configuration\AbstractConfigurationNodeParser.cs" />
+    <Compile Include="configuration\common\IXmlElementsNode.cs" />
+    <Compile Include="configuration\common\XmlElementsNode.cs" />
+    <Compile Include="configuration\common\XmlElementsNodeParser.cs" />
+    <Compile Include="configuration\builders\ConfigurationBuilder.cs" />
+    <Compile Include="configuration\ConfigurationLoader.cs" />
+    <Compile Include="configuration\builders\IConfigurationBuilder.cs" />
+    <Compile Include="configuration\IConfigurationLoader.cs" />
+    <Compile Include="configuration\IMustConfiguration.cs" />
+    <Compile Include="configuration\AbstractConfigurationBuilder.cs" />
+    <Compile Include="configuration\Strings.cs" />
+    <Compile Include="data\CommandBuilder.cs" />
+    <Compile Include="CommandLine.cs" />
+    <Compile Include="data\IBucketElement.cs" />
+    <Compile Include="data\readers\DataReaderReader.cs" />
+    <Compile Include="exception\NotReachedException.cs" />
+    <Compile Include="io\Path.cs" />
+    <Compile Include="IRuntimeType.cs" />
+    <Compile Include="logging\ConsoleLogger.cs" />
+    <Compile Include="logging\ForwardingLogger.cs" />
+    <Compile Include="logging\IForwardingLogger.cs" />
+    <Compile Include="providers\data\ConnectionProviderLoader.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldBoolean.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldDecimal.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldDouble.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldFloat.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldInteger.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldLong.cs" />
+    <Compile Include="data\json\datafields\JsonDataFields.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldShort.cs" />
+    <Compile Include="data\json\datafields\JsonDataFieldString.cs" />
+    <Compile Include="data\readers\DataField.cs" />
+    <Compile Include="data\readers\DataFieldBoolean.cs" />
+    <Compile Include="data\readers\DataFieldDecimal.cs" />
+    <Compile Include="data\readers\DataFieldDouble.cs" />
+    <Compile Include="data\readers\DataFieldFloat.cs" />
+    <Compile Include="data\readers\DataFieldInteger.cs" />
+    <Compile Include="data\readers\DataFieldLong.cs" />
+    <Compile Include="data\readers\DataFieldShort.cs" />
+    <Compile Include="data\readers\DataFieldString.cs" />
+    <Compile Include="data\DataParameters.cs" />
+    <Compile Include="data\readers\IDataField.cs" />
+    <Compile Include="data\readers\IDataFieldT.cs" />
+    <Compile Include="data\json\collection\IJsonCollection.cs" />
+    <Compile Include="data\json\collection\IJsonCollectionFactory.cs" />
+    <Compile Include="data\json\collection\JsonCollectionFactory.cs" />
+    <Compile Include="data\json\datafields\IJsonDataField.cs" />
+    <Compile Include="data\json\tokens\IJsonToken.cs" />
+    <Compile Include="data\json\collection\JsonArray.cs" />
+    <Compile Include="data\json\tokens\JsonBoolean.cs" />
+    <Compile Include="data\json\tokens\IJsonTokenT.cs" />
+    <Compile Include="data\json\tokens\JsonDecimal.cs" />
+    <Compile Include="data\json\tokens\JsonDouble.cs" />
+    <Compile Include="data\json\tokens\JsonFloat.cs" />
+    <Compile Include="data\json\tokens\JsonInteger.cs" />
+    <Compile Include="data\json\tokens\JsonLong.cs" />
+    <Compile Include="data\json\tokens\JsonNumber.cs" />
+    <Compile Include="data\json\collection\JsonObject.cs" />
+    <Compile Include="data\json\collection\JsonObjectMember.cs" />
+    <Compile Include="data\json\tokens\JsonShort.cs" />
+    <Compile Include="data\json\tokens\JsonString.cs" />
+    <Compile Include="data\json\tokens\JsonToken.cs" />
+    <Compile Include="exception\ConfigurationException.cs" />
+    <Compile Include="logging\ILoggerFactory.cs" />
+    <Compile Include="providers\data\IConnectionProvider.cs" />
+    <Compile Include="RuntimeType.cs" />
+    <Compile Include="type\collections\Visitor.cs" />
+    <Compile Include="type\collections\VisitorDelegate.cs" />
+    <Compile Include="type\delegates\CallableDelegate.cs" />
+    <Compile Include="type\RuntimeTypeFactory.cs" />
+    <Compile Include="Resources\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="resources\StringResources.cs" />
+    <Compile Include="security\auth\AbstractLoginModule.cs" />
+    <Compile Include="security\auth\ILoginModuleFactory.cs" />
+    <Compile Include="security\auth\ILoginModuleNodePair.cs" />
+    <Compile Include="security\auth\LoginModuleNodePair.cs" />
+    <Compile Include="type\delegates\RunnableDelegate.cs" />
+    <Compile Include="concurrent\SerialExecutorState.cs" />
+    <Compile Include="concurrent\Uninterruptibles.cs" />
+    <Compile Include="concurrent\YQueue.cs" />
+    <Compile Include="cache\CacheEntry.cs" />
+    <Compile Include="configuration\common\provider\ProviderOptions.cs" />
+    <Compile Include="data\readers\DataReaders.cs" />
+    <Compile Include="exception\ExecutionException.cs" />
+    <Compile Include="logging\ChainedLogger.cs" />
+    <Compile Include="logging\MustLogger.cs" />
+    <Compile Include="providers\cache\ICacheProviderFactory.cs" />
+    <Compile Include="providers\cache\RemovalCause.cs" />
+    <Compile Include="configuration\common\provider\ProviderNode.cs" />
+    <Compile Include="configuration\common\provider\ProviderType.cs" />
+    <Compile Include="configuration\common\RepositoryNode.cs" />
+    <Compile Include="configuration\AbstractHierarchicalConfigurationNode.cs" />
+    <Compile Include="configuration\common\provider\IProviderNode.cs" />
+    <Compile Include="configuration\common\auth\LoginModuleNode.cs" />
+    <Compile Include="providers\cache\ICacheProvider.cs" />
+    <Compile Include="providers\data\IConnectionProviderFactory.cs" />
+    <Compile Include="providers\data\SqlConnectionProvider.cs" />
+    <Compile Include="providers\data\SqlConnectionProviderFactory.cs" />
+    <Compile Include="type\Clock.cs" />
+    <Compile Include="type\delegates\Listeners.cs" />
+    <Compile Include="type\ParameterizedStringPartLiteral.cs" />
+    <Compile Include="type\ParameterizedStringPartParameter.cs" />
+    <Compile Include="type\suppliers\ExpiringMemoizingSupplier.cs" />
+    <Compile Include="type\suppliers\ISupplier.cs" />
+    <Compile Include="type\suppliers\MemoizingSupplier.cs" />
+    <Compile Include="type\ParameterizedStringPart.cs" />
+    <Compile Include="type\collections\ParameterizedStringPartParameterCollection.cs" />
+    <Compile Include="configuration\AbstractConfigurationLoader.cs" />
+    <Compile Include="configuration\IConfigurationNode.cs" />
+    <Compile Include="configuration\Configuration.cs" />
+    <Compile Include="type\StringMap.cs" />
+    <Compile Include="type\CacheEntry.cs" />
+    <Compile Include="type\collections\IInOrderVisitable.cs" />
+    <Compile Include="type\collections\InOrderVisitor.cs" />
+    <Compile Include="type\collections\trees\AndersonTree.cs" />
+    <Compile Include="type\collections\trees\AndersonTreeNode.cs" />
+    <Compile Include="type\ComparisonComparer.cs" />
+    <Compile Include="type\IValidator.cs" />
+    <Compile Include="data\json\JSONReader.cs" />
+    <Compile Include="data\transferobjects\TransferQueue.cs" />
+    <Compile Include="data\json\JsonStringBuilder.cs" />
+    <Compile Include="data\transferobjects\DataTransferObjects.cs" />
+    <Compile Include="data\transferobjects\IDataTransferObject.cs" />
+    <Compile Include="data\json\collection\JsonTable.cs" />
+    <Compile Include="providers\data\IDataProvider.cs" />
+    <Compile Include="type\ParameterizedString.cs" />
+    <Compile Include="providers\ProviderFactory.cs" />
+    <Compile Include="type\collections\values\DictionaryValue.cs" />
+    <Compile Include="type\collections\values\DictionaryValueT.cs" />
+    <Compile Include="type\suppliers\ISupplierStream.cs" />
+    <Compile Include="type\suppliers\SupplierOfInstance.cs" />
+    <Compile Include="type\suppliers\Suppliers.cs" />
+    <Compile Include="type\TimeUnit.cs" />
+    <Compile Include="type\values\FundamentalValue.cs" />
+    <Compile Include="type\GenericValue.cs" />
+    <Compile Include="type\collections\values\IDictionaryValue.cs" />
+    <Compile Include="type\values\IValue.cs" />
+    <Compile Include="type\collections\values\ListValue.cs" />
+    <Compile Include="type\values\StringValue.cs" />
+    <Compile Include="type\values\Value.cs" />
+    <Compile Include="type\values\ValueType.cs" />
+    <Compile Include="type\collections\IVisitable.cs" />
+    <Compile Include="type\IPointer.cs" />
+    <Compile Include="type\collections\IVisitor.cs" />
+    <Compile Include="type\Pointer.cs" />
+    <Compile Include="logging\ILogger.cs" />
+    <Compile Include="logging\LogLevel.cs" />
+    <Compile Include="logging\NOPLogger.cs" />
+    <Compile Include="mq\IMessageMiddlewareFactoryG.cs" />
+    <Compile Include="mq\IMessageMiddlewareG.cs" />
+    <Compile Include="mq\IOperationData.cs" />
+    <Compile Include="mq\IMessage.cs" />
+    <Compile Include="mq\IMessageMiddleware.cs" />
+    <Compile Include="exception\ProviderException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="security\auth\BasicPermission.cs" />
+    <Compile Include="security\auth\FieldCallback.cs" />
+    <Compile Include="security\auth\callback\IAuthCallback.cs" />
+    <Compile Include="security\auth\callback\IAuthCallbackHandler.cs" />
+    <Compile Include="configuration\common\auth\ILoginConfiguration.cs" />
+    <Compile Include="security\auth\IPermission.cs" />
+    <Compile Include="security\auth\IPrincipal.cs" />
+    <Compile Include="security\auth\LoginException.cs" />
+    <Compile Include="security\auth\LoginFactory.cs" />
+    <Compile Include="configuration\common\auth\LoginModuleControlFlag.cs" />
+    <Compile Include="configuration\common\auth\ILoginModuleNode.cs" />
+    <Compile Include="security\auth\PermissionBase.cs" />
+    <Compile Include="security\auth\NasUser.cs" />
+    <Compile Include="security\auth\Principal.cs" />
+    <Compile Include="security\auth\sets\ISecureSet.cs" />
+    <Compile Include="security\auth\sets\PermissionSet.cs" />
+    <Compile Include="security\auth\SecurityContextBase.cs" />
+    <Compile Include="security\auth\LoginContext.cs" />
+    <Compile Include="security\auth\ILoginModule.cs" />
+    <Compile Include="security\auth\ModuleActivator.cs" />
+    <Compile Include="security\auth\sets\PrincipalSet.cs" />
+    <Compile Include="security\auth\sets\SecureSet.cs" />
+    <Compile Include="security\auth\SQLite.cs" />
+    <Compile Include="security\auth\Subject.cs" />
+    <Compile Include="NSecurity.cs" />
+    <Compile Include="exception\Thrower.cs" />
+    <Compile Include="type\ValueTypes.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="nas.sqlite" />
+    <EmbeddedResource Include="resources\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="nohros.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="configuration\nohros.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="configuration\nohros.xsx">
+      <DependentUpon>nohros.xsd</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="configuration\web\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+</Project>
