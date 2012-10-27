@@ -48,9 +48,9 @@
       <HintPath>..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="nohros, Version=1.6.7.6, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="nohros, Version=1.6.7.10, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\must.common.1.6.7.6\lib\net40\nohros.dll</HintPath>
+      <HintPath>..\..\..\..\packages\must.common.1.6.7.10\lib\net40\nohros.dll</HintPath>
     </Reference>
     <Reference Include="nohros.ruby.net.extensions">
       <HintPath>..\..\..\..\packages\nohros.ruby.net.extensions.0.0.3.0\lib\net40\nohros.ruby.net.extensions.dll</HintPath>
@@ -107,6 +107,7 @@
     <Compile Include="..\protos\restql\parsers\csharp\Common.cs" />
     <Compile Include="..\protos\restql\parsers\csharp\Query.cs" />
     <Compile Include="..\protos\ruby\parsers\csharp\Common.cs" />
+    <Compile Include="..\protos\ruby\parsers\csharp\Control.cs" />
     <Compile Include="..\protos\ruby\parsers\csharp\RubyProtos.cs" />
   </ItemGroup>
   <ItemGroup>
