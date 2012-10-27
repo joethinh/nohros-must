@@ -19,9 +19,6 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="value">
     /// A new recorded value.
     /// </param>
-    /// <remarks>
-    /// The update operation should be thread-safe.
-    /// </remarks>
     void Update(long value);
 
     /// <summary>

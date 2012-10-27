@@ -19,23 +19,8 @@ namespace Nohros.Toolkit.Metrics
   /// </remarks>
   public class ExponentiallyDecayingSample : ISample
   {
-    struct Sample
-    {
-      public long timestamp;
-      public long value;
-
-      #region .ctor
-      public Sample(long timestamp, long value) {
-        this.timestamp = timestamp;
-        this.value = value;
-      }
-      #endregion
-    }
-
     const long kRescaleThreshold = 3600000000000;
     readonly double alpha_;
-    readonly Mailbox<Sample> async_update_mailbox_;
-    readonly Clock clock_;
     readonly AndersonTree<double, int> priorities_;
     readonly Random rand_;
     readonly int reservoir_upper_limit_;
@@ -49,73 +34,6 @@ namespace Nohros.Toolkit.Metrics
     /// <summary>
     /// Initializes a new instance of the
     /// <see cref="ExponentiallyDecayingSample"/> class by using the specified
-    /// resevoir size and exponential decay factor, a clock that measures
-    /// time in nanoseconds and a thread pool executor.
-    /// </summary>
-    /// <param name="resevoir_size">
-    /// The number of samples to keep in the sampling resevoir.
-    /// </param>
-    /// <param name="alpha">
-    /// The exponential decay factor; the higher this is, the more biased the
-    /// sample will be towards newer values.
-    /// </param>
-    public ExponentiallyDecayingSample(int resevoir_size, double alpha)
-      : this(resevoir_size, alpha, new UserTimeClock(),
-        Executors.ThreadPoolExecutor()) {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the
-    /// <see cref="ExponentiallyDecayingSample"/> class by using the specified
-    /// resevoir size, exponential decay factor and executor and a clock that
-    /// measures time in nanoseconds and a thread pool executor.
-    /// </summary>
-    /// <param name="resevoir_size">
-    /// The number of samples to keep in the sampling resevoir.
-    /// </param>
-    /// <param name="alpha">
-    /// The exponential decay factor; the higher this is, the more biased the
-    /// sample will be towards newer values.
-    /// </param>
-    /// <param name="executor">
-    /// A <see cref="IExecutor"/> that is used to execute the sample updates.
-    /// </param>
-    /// <remarks>
-    /// The use of the executor returned by the method
-    /// <see cref="Executors.SameThreadExecutor"/> is not encouraged, because
-    /// the executor does not returns until the execution list is empty and,
-    /// this can cause significant pauses in the thread that is executing the
-    /// sample update.
-    /// </remarks>
-    public ExponentiallyDecayingSample(int resevoir_size, double alpha,
-      IExecutor executor)
-      : this(resevoir_size, alpha, new UserTimeClock(), executor) {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the
-    /// <see cref="ExponentiallyDecayingSample"/> class by using the specified
-    /// resevoir size, exponential decay factor and clock and a thread pool
-    /// executor.
-    /// </summary>
-    /// <param name="resevoir_size">
-    /// The number of samples to keep in the sampling resevoir.
-    /// </param>
-    /// <param name="alpha">
-    /// The exponential decay factor; the higher this is, the more biased the
-    /// sample will be towards newer values.
-    /// </param>
-    /// <param name="clock">
-    /// The <see cref="Nohros.Clock"/> used to mark the passage of time.
-    /// </param>
-    public ExponentiallyDecayingSample(int resevoir_size, double alpha,
-      Clock clock)
-      : this(resevoir_size, alpha, clock, Executors.ThreadPoolExecutor()) {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the
-    /// <see cref="ExponentiallyDecayingSample"/> class by using the specified
     /// resevoir size and exponential decay factor.
     /// </summary>
     /// <param name="resevoir_size">
@@ -125,12 +43,6 @@ namespace Nohros.Toolkit.Metrics
     /// The exponential decay factor; the higher this is, the more biased the
     /// sample will be towards newer values.
     /// </param>
-    /// <param name="clock">
-    /// The <see cref="Nohros.Clock"/> used to mark the passage of time.
-    /// </param>
-    /// <param name="executor">
-    /// A <see cref="IExecutor"/> that is used to execute the sample updates.
-    /// </param>
     /// <remarks>
     /// The use of the executor returned by the method
     /// <see cref="Executors.SameThreadExecutor"/> is not encouraged, because
@@ -138,20 +50,17 @@ namespace Nohros.Toolkit.Metrics
     /// this can cause significant pauses in the thread that is executing the
     /// sample update.
     /// </remarks>
-    public ExponentiallyDecayingSample(int resevoir_size, double alpha,
-      Clock clock, IExecutor executor) {
+    public ExponentiallyDecayingSample(int resevoir_size, double alpha) {
       count_ = 0;
       rand_ = new Random();
       next_scale_time_ = 0;
       alpha_ = alpha;
       resevoir_size_ = resevoir_size;
       reservoir_upper_limit_ = resevoir_size - 1;
-      clock_ = clock;
       priorities_ = new AndersonTree<double, int>();
       resevoir_ = new long[resevoir_size];
       start_time_ = CurrentTimeInSeconds;
-      next_scale_time_ = clock.Tick + kRescaleThreshold;
-      async_update_mailbox_ = new Mailbox<Sample>(AsyncUpdate, executor);
+      next_scale_time_ = Clock.NanoTime + kRescaleThreshold;
     }
     #endregion
 
@@ -174,37 +83,6 @@ namespace Nohros.Toolkit.Metrics
       get { return Math.Min(resevoir_size_, count_); }
     }
 
-    void AsyncUpdate(Sample sample) {
-      double priority = Priority(sample.timestamp);
-
-      // Fills the resevoir with the first "m" values and keep elements
-      // with the greatest priorities in the resvoir.
-      if (count_ <= reservoir_upper_limit_) {
-        priorities_[priority] = count_;
-        resevoir_[count_++] = sample.value;
-      } else {
-        KeyValuePair<double, int> first = priorities_.First;
-        if (first.Key < priority) {
-          // replace the element associated with the smallest key by the
-          // sampled value.
-          priorities_.Remove(first.Key);
-          priorities_[priority] = first.Value;
-          resevoir_[first.Value] = sample.value;
-        }
-      }
-
-      // If the current landmark becomes old rescale the sample values
-      // using a new landmark.
-      long now = clock_.Tick;
-      if (now >= next_scale_time_) {
-        Rescale(now);
-      }
-    }
-
-    double Priority(long timestamp) {
-      return Weight(timestamp - start_time_)/rand_.NextDouble();
-    }
-
     /// <summary>
     /// Adds an old value with fixed timestamp to the sample.
     /// </summary>
@@ -212,7 +90,34 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="timestamp">The epoch timestamp of <paramref name="value"/>
     /// in seconds.</param>
     public void Update(long value, long timestamp) {
-      async_update_mailbox_.Send(new Sample(value, timestamp));
+      double priority = Priority(timestamp);
+
+      // Fills the resevoir with the first "m" values and keep elements
+      // with the greatest priorities in the resvoir.
+      if (count_ <= reservoir_upper_limit_) {
+        priorities_[priority] = count_;
+        resevoir_[count_++] = value;
+      } else {
+        KeyValuePair<double, int> first = priorities_.First;
+        if (first.Key < priority) {
+          // replace the element associated with the smallest key by the
+          // sampled value.
+          priorities_.Remove(first.Key);
+          priorities_[priority] = first.Value;
+          resevoir_[first.Value] = value;
+        }
+      }
+
+      // If the current landmark becomes old rescale the sample values
+      // using a new landmark.
+      long now = Clock.NanoTime;
+      if (now >= next_scale_time_) {
+        Rescale(now);
+      }
+    }
+
+    double Priority(long timestamp) {
+      return Weight(timestamp - start_time_)/rand_.NextDouble();
     }
 
     /// <summary>
@@ -261,7 +166,10 @@ namespace Nohros.Toolkit.Metrics
     }
 
     public long CurrentTimeInSeconds {
-      get { return TimeUnitHelper.ToSeconds(clock_.Time, TimeUnit.Miliseconds); }
+      get {
+        return TimeUnitHelper.ToSeconds(Clock.CurrentTimeMilis,
+          TimeUnit.Miliseconds);
+      }
     }
   }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using Nohros.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
 {
@@ -10,30 +9,50 @@ namespace Nohros.Toolkit.Metrics
   /// <remarks>
   /// Implementors
   /// </remarks>
-  public abstract class AbstractHistogram : IHistogram
+  public class Histogram : IHistogram
   {
+    readonly ISample sample_;
+    readonly double[] variance_;
     long count_;
     long max_;
     long min_;
     long sum_;
-    readonly double[] variance_;
 
     #region .ctor
     /// <summary>
-    /// Initialize a new instance of the <see cref="AbstractHistogram"/> class by using
+    /// Initialize a new instance of the <see cref="Histogram"/> class by using
     /// the specified sample data.
     /// </summary>
-    protected AbstractHistogram() {
+    protected Histogram(ISample sample) {
       min_ = long.MaxValue;
       max_ = long.MinValue;
       sum_ = 0;
       count_ = 0;
-      variance_ = new double[] { -1, 0 }; //M,S
+      sample_ = sample;
+      variance_ = new double[] {-1, 0}; //M,S
     }
     #endregion
 
+    /// <summary>
+    /// Adds a recorded value.
+    /// </summary>
+    public virtual void Update(long value) {
+      count_++;
+      if (value > max_) {
+        max_ = value;
+      }
+      if (value < min_) {
+        min_ = value;
+      }
+      sum_ += value;
+      UpdateVariance(value);
+      sample_.Update(value);
+    }
+
     /// <inheritdoc/>
-    public abstract Snapshot Snapshot { get; }
+    public Snapshot Snapshot {
+      get { return sample_.Snapshot; }
+    }
 
     /// <inheritdoc/>
     public double Max {
@@ -56,21 +75,6 @@ namespace Nohros.Toolkit.Metrics
     }
 
     /// <summary>
-    /// Adds a recorded value.
-    /// </summary>
-    public virtual void Update(long value) {
-      count_++;
-      if (value > max_) {
-        max_ = value;
-      }
-      if (value < min_) {
-        min_ = value;
-      }
-      sum_ += value;
-      UpdateVariance(value);
-    }
-
-    /// <summary>
     /// Get the number of values recorded.
     /// </summary>
     /// <returns>The number of values recorded.</returns>
@@ -90,8 +94,8 @@ namespace Nohros.Toolkit.Metrics
         variance_[1] = 0;
       } else {
         double old_m = variance_[0];
-        variance_[0] += ((value - variance_[0]) / count_);
-        variance_[1] += ((value - old_m) * (value - variance_[0]));
+        variance_[0] += ((value - variance_[0])/count_);
+        variance_[1] += ((value - old_m)*(value - variance_[0]));
       }
     }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using Nohros.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
 {
@@ -14,21 +13,10 @@ namespace Nohros.Toolkit.Metrics
   /// </remarks>
   public class Meter : IMetered, IMetric
   {
-    struct Sample
-    {
-      public readonly long tick;
-      public readonly long value;
-      public Sample(long tick, long value) {
-        this.tick = tick;
-        this.value = value;
-      }
-    }
-
     const long kTickInterval = 5000000000; // 5 seconds in nanoseconds
     readonly Clock clock_;
     readonly string event_type_;
     readonly ExponentialWeightedMovingAverage ewma_15_rate_;
-
     readonly ExponentialWeightedMovingAverage ewma_1_rate_;
     readonly ExponentialWeightedMovingAverage ewma_5_rate_;
     readonly TimeUnit rate_unit_;
@@ -79,14 +67,9 @@ namespace Nohros.Toolkit.Metrics
     }
 
     /// <inheritdoc/>
-    public long Count {
-      get { return count_; }
-    }
-
-    /// <inheritdoc/>
     public double FifteenMinuteRate {
       get {
-        TickIfNecessary();
+        TickIfNecessary(clock_.Tick);
         return ewma_15_rate_.Rate(rate_unit_);
       }
     }
@@ -94,37 +77,46 @@ namespace Nohros.Toolkit.Metrics
     /// <inheritdoc/>
     public double FiveMinuteRate {
       get {
-        TickIfNecessary();
+        TickIfNecessary(clock_.Tick);
         return ewma_5_rate_.Rate(rate_unit_);
-      }
-    }
-
-    /// <inheritdoc/>
-    public double MeanRate {
-      get {
-        if (Count == 0) {
-          return 0.0;
-        }
-        long elapsed = clock_.Tick - start_time_;
-        return ConvertNsRate(Count/(double) elapsed);
       }
     }
 
     /// <inheritdoc/>
     public double OneMinuteRate {
       get {
-        TickIfNecessary();
+        TickIfNecessary(clock_.Tick);
         return ewma_1_rate_.Rate(rate_unit_);
       }
+    }
+
+    /// <inheritdoc/>
+    public double MeanRate {
+      get {
+        long timestamp = clock_.Tick;
+        if (count_ == 0) {
+          return 0.0;
+        }
+
+        long elapsed = timestamp - start_time_;
+        double rate = count_/(double) elapsed;
+        return ConvertNsRate(rate);
+      }
+    }
+
+    void Run(RunnableDelegate runnable) {
+      runnable();
     }
 
     /// <summary>
     /// Updates the moving average.
     /// </summary>
     void Tick() {
-      ewma_1_rate_.Tick();
-      ewma_5_rate_.Tick();
-      ewma_15_rate_.Tick();
+      async_tasks_mailbox_.Send(() => {
+        ewma_1_rate_.Tick();
+        ewma_5_rate_.Tick();
+        ewma_15_rate_.Tick();
+      });
     }
 
     /// <summary>
@@ -141,14 +133,14 @@ namespace Nohros.Toolkit.Metrics
     /// The number of events.
     /// </param>
     public void Mark(long n) {
-    }
-
-    public void AsyncMark(Sample sample) {
-      TickIfNecessary(sample.tick);
-      count_ += sample.value;
-      ewma_1_rate_.Update(sample.value);
-      ewma_5_rate_.Update(sample.value);
-      ewma_15_rate_.Update(sample.value);
+      long timestamp = clock_.Tick;
+      async_tasks_mailbox_.Send(() => {
+        TickIfNecessary(timestamp);
+        count_ += n;
+        ewma_1_rate_.Update(n);
+        ewma_5_rate_.Update(n);
+        ewma_15_rate_.Update(n);
+      });
     }
 
     void TickIfNecessary(long now) {
@@ -164,6 +156,11 @@ namespace Nohros.Toolkit.Metrics
 
     double ConvertNsRate(double rate_per_ns) {
       return rate_per_ns*TimeUnitHelper.ToNanos(1, rate_unit_);
+    }
+
+    /// <inheritdoc/>
+    public long Count {
+      get { return count_; }
     }
   }
 }
