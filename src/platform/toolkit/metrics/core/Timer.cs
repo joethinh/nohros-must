@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Nohros.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
 {
@@ -10,11 +9,12 @@ namespace Nohros.Toolkit.Metrics
   /// </summary>
   public class Timer : IMetered, ISampling, ISummarizable
   {
-    readonly TimeUnit duration_unit_;
-    readonly TimeUnit rate_unit_;
-    readonly Meter meter_;
-    readonly IHistogram histogram_;
+    readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
     readonly Clock clock_;
+    readonly TimeUnit duration_unit_;
+    readonly IHistogram histogram_;
+    readonly Meter meter_;
+    readonly TimeUnit rate_unit_;
 
     #region .ctor
     /// <summary>
@@ -29,25 +29,120 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="clock">
     /// The clock used to calculate duration.
     /// </param>
-    Timer(TimeUnit duration_unit, TimeUnit rate_unit, Clock clock) {
+    Timer(TimeUnit duration_unit, TimeUnit rate_unit, Clock clock)
+      : this(duration_unit, rate_unit, clock, Executors.ThreadPoolExecutor()) {
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Timer"/>.
+    /// </summary>
+    /// <param name="duration_unit">
+    /// The scale unit for this timer's duration metrics.
+    /// </param>
+    /// <param name="rate_unit">
+    /// The scale unit for this timer's rate metrics.
+    /// </param>
+    /// <param name="clock">
+    /// The clock used to calculate duration.
+    /// </param>
+    Timer(TimeUnit duration_unit, TimeUnit rate_unit, Clock clock,
+      IExecutor executor) {
       duration_unit_ = duration_unit;
       rate_unit_ = rate_unit;
       meter_ = new Meter("calls", rate_unit, clock);
       clock_ = clock;
       histogram_ = Histograms.Biased();
+      async_tasks_mailbox_ = new Mailbox<RunnableDelegate>(Run, executor);
     }
     #endregion
-
-    /// <summary>
-    /// Gets the timer's duration scale unit.
-    /// </summary>
-    public TimeUnit DurationUnit {
-      get { return rate_unit_; }
-    }
 
     /// <inheritdoc/>
     public TimeUnit RateUnit {
       get { return rate_unit_; }
+    }
+
+    public void GetCount(LongMetricCallback callback) {
+      meter_.GetCount(callback);
+    }
+
+    /// <inheritdoc/>
+    public void GetFifteenMinuteRate(DoubleMetricCallback callback) {
+      meter_.GetFifteenMinuteRate(callback);
+    }
+
+    /// <inheritdoc/>
+    public void GetFiveMinuteRate(DoubleMetricCallback callback) {
+      meter_.GetFiveMinuteRate(callback);
+    }
+
+    /// <inheritdoc/>
+    public void GetMeanRate(DoubleMetricCallback callback) {
+      meter_.GetMeanRate(callback);
+    }
+
+    /// <inheritdoc/>
+    public void GetOneMinuteRate(DoubleMetricCallback callback) {
+      meter_.GetOneMinuteRate(callback);
+    }
+
+    /// <inheritdoc/>
+    public string EventType {
+      get { return meter_.EventType; }
+    }
+
+    /// <inheritdoc/>
+    public void GetSnapshot(SnapshotCallback callback) {
+      histogram_.GetSnapshot((snapshot, now) => {
+        double[] values = snapshot.Values;
+        var converted = new double[values.Length];
+        for (int i = 0, j = values.Length; i < j; i++) {
+          converted[i] = ConvertFromNs(values[i]);
+        }
+        callback(new Snapshot(converted), now);
+      });
+    }
+
+
+    /// <summary>
+    /// Gets the shortest recorded duration.
+    /// </summary>
+    /// <value>The shortest recorded duration.</value>
+    public void GetMin(DoubleMetricCallback callback) {
+      histogram_
+        .GetMin((min, now) => callback(ConvertFromNs(min), now));
+    }
+
+    /// <summary>
+    /// Gets the longest recorded duration.
+    /// </summary>
+    /// <value>The longest recorded duration.</value>
+    public void GetMax(DoubleMetricCallback callback) {
+      histogram_
+        .GetMax(
+          (max, now) => callback(ConvertFromNs(max), now));
+    }
+
+    /// <summary>
+    /// Gets the arithmetic mean of all recorded durations.
+    /// </summary>
+    /// <value>The arithmetic mean of all recorded durations.</value>
+    public void GetMean(DoubleMetricCallback callback) {
+      histogram_
+        .GetMean((mean, now) => callback(ConvertFromNs(mean), now));
+    }
+
+    /// <summary>
+    /// Gets the standard deviation of all recorded durations.
+    /// </summary>
+    /// <value>The standard deviation of all recorded durations.</value>
+    public void GetStandardDeviation(DoubleMetricCallback callback) {
+      histogram_
+        .GetStandardDeviation(
+          (stdev, now) => callback(ConvertFromNs(stdev), now));
+    }
+
+    void Run(RunnableDelegate runnable) {
+      runnable();
     }
 
     /// <summary>
@@ -71,7 +166,7 @@ namespace Nohros.Toolkit.Metrics
     }
 
     double ConvertFromNs(double ns) {
-      return ns / TimeUnitHelper.ToNanos(1, duration_unit_);
+      return ns/TimeUnitHelper.ToNanos(1, duration_unit_);
     }
 
     /// <summary>
@@ -85,7 +180,7 @@ namespace Nohros.Toolkit.Metrics
     /// tjrows an <see cref="Exception"/>.</exception>
     public T Time<T>(TimedEvent<T> method) {
       long start_time = clock_.Tick;
-      
+
       // The time should be mensured even if a exception is throwed.
       try {
         return method();
@@ -105,78 +200,11 @@ namespace Nohros.Toolkit.Metrics
       return new TimerContext(this, clock_);
     }
 
-    /// <inheritdoc/>
-    public long Count {
-      get { return histogram_.Count; }
-    }
-
-    /// <inheritdoc/>
-    public double FifteenMinuteRate {
-      get { return meter_.FifteenMinuteRate; }
-    }
-
-    /// <inheritdoc/>
-    public double FiveMinuteRate {
-      get { return meter_.FiveMinuteRate; }
-    }
-
-    /// <inheritdoc/>
-    public double MeanRate {
-      get { return meter_.MeanRate; }
-    }
-
-    /// <inheritdoc/>
-    public double OneMinuteRate {
-      get { return meter_.OneMinuteRate; }
-    }
-
     /// <summary>
-    /// Gets the shortest recorded duration.
+    /// Gets the timer's duration scale unit.
     /// </summary>
-    /// <value>The shortest recorded duration.</value>
-    public double Min {
-      get { return ConvertFromNs(histogram_.Min); }
-    }
-
-    /// <summary>
-    /// Gets the longest recorded duration.
-    /// </summary>
-    /// <value>The longest recorded duration.</value>
-    public double Max {
-      get { return ConvertFromNs(histogram_.Max); }
-    }
-
-    /// <summary>
-    /// Gets the arithmetic mean of all recorded durations.
-    /// </summary>
-    /// <value>The arithmetic mean of all recorded durations.</value>
-    public double Mean {
-      get { return ConvertFromNs(histogram_.Mean); }
-    }
-
-    /// <summary>
-    /// Gets the standard deviation of all recorded durations.
-    /// </summary>
-    /// <value>The standard deviation of all recorded durations.</value>
-    public double StandardDeviation {
-      get { return ConvertFromNs(histogram_.StandardDeviation); }
-    }
-
-    /// <inheritdoc/>
-    public Snapshot Snapshot {
-      get {
-        double[] values = histogram_.Snapshot.Values;
-        double[] converted = new double[values.Length];
-        for (int i = 0, j = values.Length; i < j; i++) {
-          converted[i] = ConvertFromNs(values[i]);
-        }
-        return new Snapshot(converted);
-      }
-    }
-
-    /// <inheritdoc/>
-    public string EventType {
-      get { return meter_.EventType; }
+    public TimeUnit DurationUnit {
+      get { return rate_unit_; }
     }
   }
 }

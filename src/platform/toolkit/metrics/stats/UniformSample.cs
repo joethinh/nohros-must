@@ -14,7 +14,6 @@ namespace Nohros.Toolkit.Metrics
   public class UniformSample : ISample
   {
     const int kBitsPerLong = 63;
-    readonly Mailbox<long> async_update_mailbox_;
     readonly Random rand_;
     readonly long[] resevoir_;
     readonly int resevoir_size_;
@@ -24,26 +23,11 @@ namespace Nohros.Toolkit.Metrics
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="UniformSample"/> class
-    /// that uses a thread pool to execute the update operation and keeps
-    /// <paramref name="resevoir_size"/> elements in its resevoir.
-    /// </summary>
-    /// <param name="resevoir_size">
-    /// The number of samples to keep in the sampling resevoir.
-    /// </param>
-    public UniformSample(int resevoir_size)
-      : this(resevoir_size, Executors.ThreadPoolExecutor()) {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UniformSample"/> class
     /// that uses the specified executor to execute the update operation and
     /// keeps <paramref name="resevoir_size"/> elements in its resevoir.
     /// </summary>
     /// <param name="resevoir_size">
     /// The number of samples to keep in the sampling resevoir.
-    /// </param>
-    /// <param name="executor">
-    /// A <see cref="IExecutor"/> that is used to execute the sample updates.
     /// </param>
     /// <remarks>
     /// The use of the executor returned by the method
@@ -52,12 +36,11 @@ namespace Nohros.Toolkit.Metrics
     /// this can cause significant pauses in the thread that is executing the
     /// sample update.
     /// </remarks>
-    public UniformSample(int resevoir_size, IExecutor executor) {
+    public UniformSample(int resevoir_size) {
       resevoir_ = new long[resevoir_size];
       resevoir_size_ = resevoir_size;
       resevoir_upper_limit_ = resevoir_size - 1;
       rand_ = new Random();
-      async_update_mailbox_ = new Mailbox<long>(AsyncUpdate, executor);
     }
     #endregion
 
@@ -71,14 +54,6 @@ namespace Nohros.Toolkit.Metrics
     }
 
     /// <inheritdoc/>
-    /// <remarks>
-    /// The update operation is performed asynchrounsly and is thread-safe.
-    /// </remarks>
-    public void Update(long value) {
-      async_update_mailbox_.Send(value);
-    }
-
-    /// <inheritdoc/>
     public Snapshot Snapshot {
       get {
         int size = Size;
@@ -88,7 +63,11 @@ namespace Nohros.Toolkit.Metrics
       }
     }
 
-    void AsyncUpdate(long value) {
+    /// <inheritdoc/>
+    /// <remarks>
+    /// The update operation is performed asynchrounsly and is thread-safe.
+    /// </remarks>
+    public void Update(long value) {
       // resevoir_.length is always less thant [long.MaxValue], because the
       // resevoir size is an 32-bit integer. So, count never overflows,
       // because first condition.

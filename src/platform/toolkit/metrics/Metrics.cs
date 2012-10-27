@@ -42,7 +42,7 @@ namespace Nohros.Toolkit.Metrics
     /// Whether or not the histogram should be biased.
     /// </param>
     /// <returns>
-    /// A <see cref="AbstractHistogram"/> that could be identified by the specified
+    /// A <see cref="Histogram"/> that could be identified by the specified
     /// <see cref="MetricName"/>.
     /// </returns>
     public IHistogram GetHistogram(MetricName name, bool biased) {
