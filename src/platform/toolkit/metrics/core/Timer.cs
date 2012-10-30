@@ -9,8 +9,6 @@ namespace Nohros.Toolkit.Metrics
   /// </summary>
   public class Timer : IMetered, ISampling, ISummarizable
   {
-    readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
-    readonly Clock clock_;
     readonly TimeUnit duration_unit_;
     readonly IHistogram histogram_;
     readonly Meter meter_;
@@ -26,33 +24,11 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="rate_unit">
     /// The scale unit for this timer's rate metrics.
     /// </param>
-    /// <param name="clock">
-    /// The clock used to calculate duration.
-    /// </param>
-    Timer(TimeUnit duration_unit, TimeUnit rate_unit, Clock clock)
-      : this(duration_unit, rate_unit, clock, Executors.ThreadPoolExecutor()) {
-    }
-
-    /// <summary>
-    /// Creates a new <see cref="Timer"/>.
-    /// </summary>
-    /// <param name="duration_unit">
-    /// The scale unit for this timer's duration metrics.
-    /// </param>
-    /// <param name="rate_unit">
-    /// The scale unit for this timer's rate metrics.
-    /// </param>
-    /// <param name="clock">
-    /// The clock used to calculate duration.
-    /// </param>
-    Timer(TimeUnit duration_unit, TimeUnit rate_unit, Clock clock,
-      IExecutor executor) {
+    public Timer(TimeUnit duration_unit, TimeUnit rate_unit) {
       duration_unit_ = duration_unit;
       rate_unit_ = rate_unit;
-      meter_ = new Meter("calls", rate_unit, clock);
-      clock_ = clock;
+      meter_ = new Meter("calls", rate_unit);
       histogram_ = Histograms.Biased();
-      async_tasks_mailbox_ = new Mailbox<RunnableDelegate>(Run, executor);
     }
     #endregion
 
@@ -61,45 +37,45 @@ namespace Nohros.Toolkit.Metrics
       get { return rate_unit_; }
     }
 
-    public void GetCount(LongMetricCallback callback) {
-      meter_.GetCount(callback);
-    }
-
-    /// <inheritdoc/>
-    public void GetFifteenMinuteRate(DoubleMetricCallback callback) {
-      meter_.GetFifteenMinuteRate(callback);
-    }
-
-    /// <inheritdoc/>
-    public void GetFiveMinuteRate(DoubleMetricCallback callback) {
-      meter_.GetFiveMinuteRate(callback);
-    }
-
-    /// <inheritdoc/>
-    public void GetMeanRate(DoubleMetricCallback callback) {
-      meter_.GetMeanRate(callback);
-    }
-
-    /// <inheritdoc/>
-    public void GetOneMinuteRate(DoubleMetricCallback callback) {
-      meter_.GetOneMinuteRate(callback);
-    }
-
     /// <inheritdoc/>
     public string EventType {
       get { return meter_.EventType; }
     }
 
+    public double Count {
+      get { return meter_.Count; }
+    }
+
     /// <inheritdoc/>
-    public void GetSnapshot(SnapshotCallback callback) {
-      histogram_.GetSnapshot((snapshot, now) => {
-        double[] values = snapshot.Values;
+    public double FifteenMinuteRate {
+      get { return meter_.FifteenMinuteRate; }
+    }
+
+    /// <inheritdoc/>
+    public double FiveMinuteRate {
+      get { return meter_.FiveMinuteRate; }
+    }
+
+    /// <inheritdoc/>
+    public double MeanRate {
+      get { return meter_.MeanRate; }
+    }
+
+    /// <inheritdoc/>
+    public double OneMinuteRate {
+      get { return meter_.OneMinuteRate; }
+    }
+
+    /// <inheritdoc/>
+    public Snapshot Snapshot {
+      get {
+        double[] values = histogram_.Snapshot.Values;
         var converted = new double[values.Length];
         for (int i = 0, j = values.Length; i < j; i++) {
           converted[i] = ConvertFromNs(values[i]);
         }
-        callback(new Snapshot(converted), now);
-      });
+        return new Snapshot(converted);
+      }
     }
 
 
@@ -107,42 +83,32 @@ namespace Nohros.Toolkit.Metrics
     /// Gets the shortest recorded duration.
     /// </summary>
     /// <value>The shortest recorded duration.</value>
-    public void GetMin(DoubleMetricCallback callback) {
-      histogram_
-        .GetMin((min, now) => callback(ConvertFromNs(min), now));
+    public double Min {
+      get { return ConvertFromNs(histogram_.Min); }
     }
 
     /// <summary>
     /// Gets the longest recorded duration.
     /// </summary>
     /// <value>The longest recorded duration.</value>
-    public void GetMax(DoubleMetricCallback callback) {
-      histogram_
-        .GetMax(
-          (max, now) => callback(ConvertFromNs(max), now));
+    public double Max {
+      get { return ConvertFromNs(histogram_.Max); }
     }
 
     /// <summary>
     /// Gets the arithmetic mean of all recorded durations.
     /// </summary>
     /// <value>The arithmetic mean of all recorded durations.</value>
-    public void GetMean(DoubleMetricCallback callback) {
-      histogram_
-        .GetMean((mean, now) => callback(ConvertFromNs(mean), now));
+    public double Mean {
+      get { return ConvertFromNs(histogram_.Mean); }
     }
 
     /// <summary>
     /// Gets the standard deviation of all recorded durations.
     /// </summary>
     /// <value>The standard deviation of all recorded durations.</value>
-    public void GetStandardDeviation(DoubleMetricCallback callback) {
-      histogram_
-        .GetStandardDeviation(
-          (stdev, now) => callback(ConvertFromNs(stdev), now));
-    }
-
-    void Run(RunnableDelegate runnable) {
-      runnable();
+    public double StandardDeviation {
+      get { return ConvertFromNs(histogram_.StandardDeviation); }
     }
 
     /// <summary>
@@ -179,13 +145,13 @@ namespace Nohros.Toolkit.Metrics
     /// <exception cref="Exception">Exception if <paramref name="method"/>
     /// tjrows an <see cref="Exception"/>.</exception>
     public T Time<T>(TimedEvent<T> method) {
-      long start_time = clock_.Tick;
+      long start_time = Clock.NanoTime;
 
       // The time should be mensured even if a exception is throwed.
       try {
         return method();
       } finally {
-        Update(clock_.Tick - start_time);
+        Update(Clock.NanoTime - start_time);
       }
     }
 
@@ -197,7 +163,7 @@ namespace Nohros.Toolkit.Metrics
     /// A new <see cref="TimerContext"/>.
     /// </returns>
     public TimerContext Time() {
-      return new TimerContext(this, clock_);
+      return new TimerContext(this);
     }
 
     /// <summary>

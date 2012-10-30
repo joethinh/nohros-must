@@ -9,7 +9,6 @@ namespace Nohros.Toolkit.Metrics
   public class TimerContext
   {
     readonly Timer timer_;
-    readonly Clock clock_;
     readonly long start_time_;
 
     #region .ctor
@@ -20,10 +19,9 @@ namespace Nohros.Toolkit.Metrics
     /// </summary>
     /// <param name="timer">The <see cref="Timer"/> to report elapsed time.
     /// </param>
-    public TimerContext(Timer timer, Clock clock) {
+    public TimerContext(Timer timer) {
       timer_ = timer;
       start_time_ = Clock.NanoTime;
-      clock_ = clock;
     }
     #endregion
 
@@ -32,7 +30,7 @@ namespace Nohros.Toolkit.Metrics
     /// elapsed time.
     /// </summary>
     public long Stop() {
-      long elapsed_nanos = clock_.Tick - start_time_;
+      long elapsed_nanos = Clock.NanoTime - start_time_;
       timer_.Update(elapsed_nanos, TimeUnit.Nanoseconds);
       return elapsed_nanos;
     }
