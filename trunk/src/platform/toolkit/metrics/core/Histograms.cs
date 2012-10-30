@@ -6,21 +6,11 @@ namespace Nohros.Toolkit.Metrics
   public sealed class Histograms
   {
     public static IHistogram Uniform() {
-      return new UniformHistogram(Samples.kDefaultSampleSize);
-    }
-
-    public static IHistogram Uniform(IExecutor executor) {
-      return new UniformHistogram(Samples.kDefaultSampleSize, executor);
+      return new UniformHistogram(Samples.Uniform());
     }
 
     public static IHistogram Biased() {
-      return new BiasedHistogram(Samples.kDefaultSampleSize,
-        Samples.kDefaultAlpha);
-    }
-
-    public static IHistogram Biased(IExecutor executor) {
-      return new BiasedHistogram(Samples.kDefaultSampleSize,
-        Samples.kDefaultAlpha, executor);
+      return new BiasedHistogram(Samples.Biased());
     }
   }
 }

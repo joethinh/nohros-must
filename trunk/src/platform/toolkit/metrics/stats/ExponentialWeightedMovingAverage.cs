@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-
 using Nohros.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
@@ -20,12 +19,12 @@ namespace Nohros.Toolkit.Metrics
   /// </remarks>
   public class ExponentialWeightedMovingAverage
   {
+    readonly double alpha_;
+    readonly double interval_;
     volatile bool initialized_ = false;
     double rate_ = 0.0;
 
-    AtomicLong uncounted_;
-    readonly double alpha_;
-    readonly double interval_;
+    long uncounted_;
 
     #region .ctor
     /// <summary>
@@ -41,7 +40,7 @@ namespace Nohros.Toolkit.Metrics
       TimeUnit interval_unit) {
       interval_ = TimeUnitHelper.ToNanos(interval, interval_unit);
       alpha_ = alpha;
-      uncounted_ = new AtomicLong();
+      uncounted_ = 0;
     }
     #endregion
 
@@ -50,29 +49,29 @@ namespace Nohros.Toolkit.Metrics
     /// </summary>
     /// <param name="n">The new value.</param>
     public void Update(long n) {
-      uncounted_.Add(n);
+      uncounted_ += n;
     }
 
     /// <summary>
     /// Mark the passage of time and decay the current rate accordingly.
     /// </summary>
     public void Tick() {
-      long count = uncounted_.Exchange(0);
-      double instant_rate = count / interval_;
+      long count = uncounted_;
+      double instant_rate = count/interval_;
       if (initialized_) {
-        double volatile_rate = Thread.VolatileRead(ref rate_);
-        Thread.VolatileWrite(ref rate_, volatile_rate + (alpha_ * (instant_rate - volatile_rate)));
+        rate_ += alpha_*(instant_rate - rate_);
       } else {
-        Thread.VolatileWrite(ref rate_, instant_rate);
+        rate_ = instant_rate;
         initialized_ = true;
       }
+      uncounted_ = 0;
     }
 
     /// <summary>
     /// Gets the rate in the given units of time
     /// </summary>
     public double Rate(TimeUnit rate_unit) {
-      return Thread.VolatileRead(ref rate_) * (double)TimeUnitHelper.ToNanos(1, rate_unit);
+      return rate_* TimeUnitHelper.ToNanos(1, rate_unit);
     }
   }
 }

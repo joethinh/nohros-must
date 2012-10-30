@@ -3,13 +3,13 @@ using Nohros.Concurrent;
 
 namespace Nohros.Toolkit.Metrics
 {
-  public class AsyncHistogram : IAsyncHistogram
+  public abstract class AbstractAsyncHistogram : IAsyncHistogram
   {
-    readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
-    readonly Histogram histogram_;
+    protected readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
+    readonly IHistogram histogram_;
 
     #region .ctor
-    protected AsyncHistogram(Histogram histogram, IExecutor executor) {
+    protected AbstractAsyncHistogram(IExecutor executor, IHistogram histogram) {
       histogram_ = histogram;
       async_tasks_mailbox_ = new Mailbox<RunnableDelegate>(
         runnable => runnable(), executor);
@@ -17,10 +17,7 @@ namespace Nohros.Toolkit.Metrics
     #endregion
 
     /// <inheritdoc/>
-    public virtual void GetSnapshot(SnapshotCallback callback) {
-      var now = DateTime.Now;
-      async_tasks_mailbox_.Send(() => callback(histogram_.Snapshot, now));
-    }
+    public abstract void GetSnapshot(SnapshotCallback callback);
 
     /// <inheritdoc/>
     public virtual void GetMax(DoubleMetricCallback callback) {
@@ -53,8 +50,7 @@ namespace Nohros.Toolkit.Metrics
       async_tasks_mailbox_.Send(() => callback(histogram_.Count, now));
     }
 
-    public virtual void Update(long value) {
-      async_tasks_mailbox_.Send(() => histogram_.Update(value));
-    }
+    /// <inheritdoc/>
+    public abstract void Update(long value);
   }
 }

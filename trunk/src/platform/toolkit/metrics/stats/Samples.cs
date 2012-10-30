@@ -39,7 +39,7 @@ namespace Nohros.Toolkit.Metrics
     /// of 1028 items.
     /// </summary>
     /// <returns></returns>
-    public static ISample Uniform() {
+    public static UniformSample Uniform() {
       return new UniformSample(kDefaultSampleSize);
     }
   }

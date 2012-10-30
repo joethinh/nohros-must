@@ -43,11 +43,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="core\async\AsyncHistogram.cs" />
+    <Compile Include="core\async\AsyncAbstractHistogram.cs" />
     <Compile Include="core\async\AsyncMeter.cs" />
+    <Compile Include="core\async\AsyncBiasedHistogram.cs" />
+    <Compile Include="core\async\AsyncUniformHistogram.cs" />
     <Compile Include="core\async\IAsyncHistogram.cs" />
     <Compile Include="core\async\IAsyncMetered.cs" />
     <Compile Include="core\async\IAsyncSampling.cs" />
+    <Compile Include="core\BiasedHistogram.cs" />
     <Compile Include="core\CallableGauge.cs" />
     <Compile Include="core\Clock.cs" />
     <Compile Include="core\Counter.cs" />
@@ -55,6 +58,7 @@
     <Compile Include="core\Histograms.cs" />
     <Compile Include="core\async\IAsyncSummarizable.cs" />
     <Compile Include="core\IHistogram.cs" />
+    <Compile Include="core\UniformHistogram.cs" />
     <Compile Include="Metrics.cs" />
     <Compile Include="stats\ExponentialWeightedMovingAverage.cs" />
     <Compile Include="stats\ExponentialWeightedMovingAverages.cs" />

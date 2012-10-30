@@ -4,14 +4,12 @@ namespace Nohros.Toolkit.Metrics
 {
   /// <summary>
   /// An abstract implementation of the <see cref="IHistogram"/> that reduces
-  /// the effort required to implement that interface.
+  /// the effort required to implement that interface. Implementors should
+  /// implement only the <see cref="Snapshot"/> property. The default
+  /// implementation thows a <see cref="NotImplementedException"/>.
   /// </summary>
-  /// <remarks>
-  /// Implementors
-  /// </remarks>
-  public class Histogram : IHistogram
+  public abstract class AbstractHistogram : IHistogram
   {
-    readonly ISample sample_;
     readonly double[] variance_;
     long count_;
     long max_;
@@ -20,15 +18,13 @@ namespace Nohros.Toolkit.Metrics
 
     #region .ctor
     /// <summary>
-    /// Initialize a new instance of the <see cref="Histogram"/> class by using
-    /// the specified sample data.
+    /// Initialize a new instance of the <see cref="AbstractHistogram"/> class.
     /// </summary>
-    protected Histogram(ISample sample) {
+    protected AbstractHistogram() {
       min_ = long.MaxValue;
       max_ = long.MinValue;
       sum_ = 0;
       count_ = 0;
-      sample_ = sample;
       variance_ = new double[] {-1, 0}; //M,S
     }
     #endregion
@@ -46,31 +42,28 @@ namespace Nohros.Toolkit.Metrics
       }
       sum_ += value;
       UpdateVariance(value);
-      sample_.Update(value);
     }
 
     /// <inheritdoc/>
-    public Snapshot Snapshot {
-      get { return sample_.Snapshot; }
-    }
+    public abstract Snapshot Snapshot { get; }
 
     /// <inheritdoc/>
-    public double Max {
+    public virtual double Max {
       get { return (count_ > 0) ? max_ : 0.0; }
     }
 
     /// <inheritdoc/>
-    public double Min {
+    public virtual double Min {
       get { return (count_ > 0) ? min_ : 0.0; }
     }
 
     /// <inheritdoc/>
-    public double Mean {
+    public virtual double Mean {
       get { return (count_ > 0) ? sum_/(double) count_ : 0.0; }
     }
 
     /// <inheritdoc/>
-    public double StandardDeviation {
+    public virtual double StandardDeviation {
       get { return (count_ > 0) ? Math.Sqrt(Variance) : 0.0; }
     }
 
@@ -78,7 +71,7 @@ namespace Nohros.Toolkit.Metrics
     /// Get the number of values recorded.
     /// </summary>
     /// <returns>The number of values recorded.</returns>
-    public long Count {
+    public virtual long Count {
       get { return count_; }
     }
 
