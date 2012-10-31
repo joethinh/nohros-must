@@ -45,6 +45,8 @@
     <Compile Include="CounterTest.cs" />
     <Compile Include="HistogramTests.cs" />
     <Compile Include="MeterTests.cs" />
+    <Compile Include="MetricNameTests.cs" />
+    <Compile Include="TimerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
@@ -66,7 +68,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\platform\toolkit\metrics\metrics.csproj">
       <Project>{EE140ABF-C917-44D7-B89F-D6946332F507}</Project>
-      <Name>metrics %28%28plataform%29\%28toolkit%29\metrics%29</Name>
+      <Name>metrics %28%28plataform%29\%28toolkit%29\%28metrics%29\metrics%29</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

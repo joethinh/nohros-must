@@ -8,8 +8,8 @@
     <ProjectGuid>{EE140ABF-C917-44D7-B89F-D6946332F507}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nohros.Toolkit.Metrics</RootNamespace>
-    <AssemblyName>nohros.toolkit.metrics</AssemblyName>
+    <RootNamespace>Nohros.Metrics</RootNamespace>
+    <AssemblyName>nohros.metrics</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -60,7 +60,6 @@
     <Compile Include="core\async\IAsyncSummarizable.cs" />
     <Compile Include="core\IHistogram.cs" />
     <Compile Include="core\UniformHistogram.cs" />
-    <Compile Include="ITimed.cs" />
     <Compile Include="MetricAddedEventHandler.cs" />
     <Compile Include="Metrics.cs" />
     <Compile Include="stats\ExponentialWeightedMovingAverage.cs" />

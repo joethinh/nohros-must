@@ -1,7 +1,7 @@
 ﻿using System;
 using Nohros.Concurrent;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   public sealed class Histograms
   {

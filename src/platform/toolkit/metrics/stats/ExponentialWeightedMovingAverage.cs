@@ -2,7 +2,7 @@
 using System.Threading;
 using Nohros.Concurrent;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   /// <summary>
   /// An exponentially-weighted moving average.

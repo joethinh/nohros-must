@@ -1,7 +1,7 @@
 ﻿using System;
 using Nohros.Concurrent;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   /// <summary>
   /// An incrementing and decrementing counter metric.
