@@ -24,8 +24,23 @@ namespace Nohros.Toolkit.Metrics
 
     /// <inheritdoc/>
     public override void Update(long value) {
+      long timestamp = TimeUnitHelper
+        .ToSeconds(Clock.CurrentTimeMilis, TimeUnit.Miliseconds);
+      Update(value, timestamp);
+    }
+
+    /// <summary>
+    /// Adds an old value with fixed timestamp to the sample.
+    /// </summary>
+    /// <param name="value">
+    /// The value to be added.
+    /// </param>
+    /// <param name="timestamp">
+    /// The epoch timestamp of <paramref name="value"/> in seconds.
+    /// </param>
+    public void Update(long value, long timestamp) {
       base.Update(value);
-      sample_.Update(value);
+      sample_.Update(value, timestamp);
     }
 
     /// <inheritdoc/>

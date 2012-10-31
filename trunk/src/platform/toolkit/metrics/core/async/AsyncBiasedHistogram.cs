@@ -25,7 +25,8 @@ namespace Nohros.Toolkit.Metrics
 
     /// <inheritdoc/>
     public override void Update(long value) {
-      long timestamp = Clock.NanoTime;
+      long timestamp = TimeUnitHelper
+        .ToSeconds(Clock.CurrentTimeMilis, TimeUnit.Miliseconds);
       async_tasks_mailbox_.Send(() => {
         Update(value);
         sample_.Update(value, timestamp);
