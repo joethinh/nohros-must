@@ -10,9 +10,8 @@ namespace Nohros.Toolkit.Metrics
   public class Timer : IMetered, ISampling, ISummarizable
   {
     readonly TimeUnit duration_unit_;
-    readonly IHistogram histogram_;
+    readonly BiasedHistogram histogram_;
     readonly Meter meter_;
-    readonly TimeUnit rate_unit_;
 
     #region .ctor
     /// <summary>
@@ -21,20 +20,16 @@ namespace Nohros.Toolkit.Metrics
     /// <param name="duration_unit">
     /// The scale unit for this timer's duration metrics.
     /// </param>
-    /// <param name="rate_unit">
-    /// The scale unit for this timer's rate metrics.
-    /// </param>
-    public Timer(TimeUnit duration_unit, TimeUnit rate_unit) {
+    public Timer(TimeUnit duration_unit, Meter meter, BiasedHistogram histogram) {
       duration_unit_ = duration_unit;
-      rate_unit_ = rate_unit;
-      meter_ = new Meter("calls", rate_unit);
-      histogram_ = Histograms.Biased();
+      meter_ = meter;
+      histogram_ = histogram;
     }
     #endregion
 
     /// <inheritdoc/>
     public TimeUnit RateUnit {
-      get { return rate_unit_; }
+      get { return meter_.RateUnit; }
     }
 
     /// <inheritdoc/>
@@ -170,7 +165,7 @@ namespace Nohros.Toolkit.Metrics
     /// Gets the timer's duration scale unit.
     /// </summary>
     public TimeUnit DurationUnit {
-      get { return rate_unit_; }
+      get { return duration_unit_; }
     }
   }
 }

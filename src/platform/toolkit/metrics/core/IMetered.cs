@@ -5,7 +5,7 @@ namespace Nohros.Toolkit.Metrics
   /// <summary>
   /// An object which maintains mean and exponentially-weighted rate.
   /// </summary>
-  public interface IMetered
+  public interface IMetered : IMetric
   {
     /// <summary>
     /// Gets the fifteen-minute exponentially-weighted moving average rate at

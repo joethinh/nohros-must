@@ -30,11 +30,12 @@ namespace Nohros.Toolkit.Metrics
   public class MetricName
   {
     readonly string group_;
-    readonly string type_;
+    readonly string metric_name_as_string_;
     readonly string name_;
     readonly string scope_;
-    readonly string metric_name_as_string_;
+    readonly string type_;
 
+    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="MetricName"/> without a
     /// scope.
@@ -49,7 +50,8 @@ namespace Nohros.Toolkit.Metrics
     /// klass or name is a null reference.
     /// </exception>
     public MetricName(Type klass, string name)
-      : this(klass, name, string.Empty) { }
+      : this(klass, name, string.Empty) {
+    }
 
     /// <summary>
     /// Creates a new <see cref="MetricName"/> using the specified metric
@@ -68,7 +70,10 @@ namespace Nohros.Toolkit.Metrics
     /// klass, name or scope is a null reference.
     /// </exception>
     public MetricName(Type klass, string name, string scope) :
-      this((klass == null) ? null : klass.Namespace, name, scope) { }
+      this(
+      (klass == null) ? null : klass.Namespace,
+      (klass == null) ? null : klass.Name, name, scope) {
+    }
 
     /// <summary>
     /// Creates a new <see cref="MetricName"/> without a scope using the
@@ -85,29 +90,40 @@ namespace Nohros.Toolkit.Metrics
     /// <exception cref="ArgumentNullException">group, type or name is a
     /// null reference.</exception>
     public MetricName(string group, string type, string name)
-      : this(group, type, name, string.Empty) { }
+      : this(group, type, name, string.Empty) {
+    }
 
     /// <summary>
     /// Creates a new <see cref="MetricName"/>.
     /// </summary>
-    /// <param name="group">The top level grouping of the metric. When a metric
+    /// <param name="group">
+    /// The top level grouping of the metric. When a metric
     /// belongs to a class, this is default to the class's namespace.(e.g.,
-    /// nohros.toolkit.metrics).</param>
-    /// <param name="type">The second level grouping of the metric. When a
+    /// nohros.toolkit.metrics).
+    /// </param>
+    /// <param name="type">
+    /// The second level grouping of the metric. When a
     /// metric belongs to a class, this is default to the class's name(e.g.,
-    /// MetricName).</param>
-    /// <param name="name">A short name describing the metric's purpose(e.g.,
-    /// session-count).</param>
-    /// <param name="scope">An string describing the metric's scope. Useful for
-    /// when you have multiple instances of a class.</param>
-    /// <exception cref="ArgumentNullException">group, type, name or scope
-    /// is a null reference.</exception>
+    /// MetricName).
+    /// </param>
+    /// <param name="name">
+    /// A short name describing the metric's purpose(e.g., session-count).
+    /// </param>
+    /// <param name="scope">
+    /// An string describing the metric's scope. Useful for when you have
+    /// multiple instances of a class.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// group, type, name or scope is a null reference.
+    /// </exception>
     public MetricName(string group, string type, string name, string scope) {
       if (group == null || type == null || name == null || scope == null) {
         throw new ArgumentNullException(
-          group == null ? "group" :
-            type == null ? "type" :
-              scope == null ? "scope" : "name");
+          group == null
+            ? "group"
+            : type == null
+              ? "type"
+              : scope == null ? "scope" : "name");
       }
       group_ = group;
       type_ = type;
@@ -115,6 +131,7 @@ namespace Nohros.Toolkit.Metrics
       scope_ = scope;
       metric_name_as_string_ = MetricNameAsString(group, type, name, scope);
     }
+    #endregion
 
     /// <summary>
     /// Builds a string that uniquely represents the metric within an
@@ -133,17 +150,66 @@ namespace Nohros.Toolkit.Metrics
     /// <returns></returns>
     static string MetricNameAsString(string group, string type,
       string name, string scope) {
-
-      string metricname_as_string = string.Concat(group, ":type=", type);
+      string metricname_as_string = string.Concat(group, ".", type, ".", name);
       if (scope.Length > 0) {
-        metricname_as_string += ",scope=" + scope;
-      }
-
-      if (name.Length > 0) {
-        metricname_as_string += ",name=";
-        metricname_as_string += name;
+        metricname_as_string += "." + scope;
       }
       return metricname_as_string;
+    }
+
+    /// <summary>
+    /// Gets the string representation of the <see cref="IMetric"/> identified
+    /// by this metric name.
+    /// </summary>
+    /// <returns>The string representation of the <see cref="IMetric"/>
+    /// identified by this metric.</returns>
+    /// <remarks>The value returned by this method is unique across an
+    /// application and should be used in equality comparison.</remarks>
+    public override string ToString() {
+      return metric_name_as_string_;
+    }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="Object"/> is equals to
+    /// the current <see cref="MetricName"/> object.
+    /// </summary>
+    /// <param name="obj">The <see cref="Object"/> to compare with the current
+    /// <see cref="MetricName"/> object.</param>
+    /// <returns><c>true</c> if the specified <see cref="Object"/> is equals
+    /// to the current <see cref="MetricName"/> object; otherwise, <c>false</c>
+    /// </returns>
+    public override bool Equals(object obj) {
+      MetricName other = obj as MetricName;
+      if (other == null) {
+        return false;
+      }
+      return other.metric_name_as_string_ == metric_name_as_string_;
+    }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="MetricName"/> is equals
+    /// to the current <see cref="MetricName"/> object.
+    /// </summary>
+    /// <param name="metric_name">The <see cref="MetricName"/> to compare
+    /// with the current <see cref="MetricName"/> object.</param>
+    /// <returns><c>true</c> if the specified <see cref="MetricName"/> is
+    /// equals to the current <see cref="MetricName"/> object; otherwise,
+    /// <c>false</c>.
+    /// </returns>
+    public bool Equals(MetricName metric_name) {
+      if ((object) metric_name == null) {
+        return false;
+      }
+      return metric_name_as_string_ == metric_name.metric_name_as_string_;
+    }
+
+    /// <summary>
+    /// Servers as a hash function for the <see cref="MetricName"/> type.
+    /// </summary>
+    /// <returns>A hash code for the current <see cref="MetricName"/> object.
+    /// </returns>
+    public override int GetHashCode() {
+      return metric_name_as_string_.GetHashCode();
     }
 
     /// <summary>
@@ -196,61 +262,6 @@ namespace Nohros.Toolkit.Metrics
     /// constructor, this method will returns, false.</remarks>
     public bool HasScope {
       get { return (scope_ != string.Empty); }
-    }
-
-    /// <summary>
-    /// Gets the string representation of the <see cref="IMetric"/> identified
-    /// by this metric name.
-    /// </summary>
-    /// <returns>The string representation of the <see cref="IMetric"/>
-    /// identified by this metric.</returns>
-    /// <remarks>The value returned by this method is unique across an
-    /// application and should be used in equality comparison.</remarks>
-    public override string ToString() {
-      return metric_name_as_string_;
-    }
-
-    /// <summary>
-    /// Determines whether the specified <see cref="Object"/> is equals to
-    /// the current <see cref="MetricName"/> object.
-    /// </summary>
-    /// <param name="obj">The <see cref="Object"/> to compare with the current
-    /// <see cref="MetricName"/> object.</param>
-    /// <returns><c>true</c> if the specified <see cref="Object"/> is equals
-    /// to the current <see cref="MetricName"/> object; otherwise, <c>false</c>
-    /// </returns>
-    public override bool Equals(object obj) {
-      MetricName other = obj as MetricName;
-      if (other == null) {
-        return false;
-      }
-      return other.metric_name_as_string_ == metric_name_as_string_;
-    }
-
-    /// <summary>
-    /// Determines whether the specified <see cref="MetricName"/> is equals
-    /// to the current <see cref="MetricName"/> object.
-    /// </summary>
-    /// <param name="metric_name">The <see cref="MetricName"/> to compare
-    /// with the current <see cref="MetricName"/> object.</param>
-    /// <returns><c>true</c> if the specified <see cref="MetricName"/> is
-    /// equals to the current <see cref="MetricName"/> object; otherwise,
-    /// <c>false</c>.
-    /// </returns>
-    public bool Equals(MetricName metric_name) {
-      if ((object)metric_name == null) {
-        return false;
-      }
-      return metric_name_as_string_ == metric_name.metric_name_as_string_;
-    }
-
-    /// <summary>
-    /// Servers as a hash function for the <see cref="MetricName"/> type.
-    /// </summary>
-    /// <returns>A hash code for the current <see cref="MetricName"/> object.
-    /// </returns>
-    public override int GetHashCode() {
-      return metric_name_as_string_.GetHashCode();
     }
   }
 }

@@ -46,6 +46,7 @@
     <Compile Include="core\async\AsyncAbstractHistogram.cs" />
     <Compile Include="core\async\AsyncMeter.cs" />
     <Compile Include="core\async\AsyncBiasedHistogram.cs" />
+    <Compile Include="core\async\AsyncTimer.cs" />
     <Compile Include="core\async\AsyncUniformHistogram.cs" />
     <Compile Include="core\async\IAsyncHistogram.cs" />
     <Compile Include="core\async\IAsyncMetered.cs" />
@@ -59,6 +60,8 @@
     <Compile Include="core\async\IAsyncSummarizable.cs" />
     <Compile Include="core\IHistogram.cs" />
     <Compile Include="core\UniformHistogram.cs" />
+    <Compile Include="ITimed.cs" />
+    <Compile Include="MetricAddedEventHandler.cs" />
     <Compile Include="Metrics.cs" />
     <Compile Include="stats\ExponentialWeightedMovingAverage.cs" />
     <Compile Include="stats\ExponentialWeightedMovingAverages.cs" />
@@ -74,14 +77,13 @@
     <Compile Include="core\Meter.cs" />
     <Compile Include="core\IMetered.cs" />
     <Compile Include="core\MetricName.cs" />
-    <Compile Include="core\MetricsRegistry.cs" />
+    <Compile Include="MetricsRegistry.cs" />
     <Compile Include="stats\Samples.cs" />
     <Compile Include="stats\Snapshot.cs" />
     <Compile Include="core\ISummarizable.cs" />
     <Compile Include="core\TimedEvent.cs" />
     <Compile Include="core\Timer.cs" />
     <Compile Include="core\TimerContext.cs" />
-    <Compile Include="core\TimeUnit.cs" />
     <Compile Include="stats\UniformSample.cs" />
     <Compile Include="core\UserTimeClock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

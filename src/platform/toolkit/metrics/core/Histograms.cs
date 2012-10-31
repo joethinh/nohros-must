@@ -5,11 +5,11 @@ namespace Nohros.Toolkit.Metrics
 {
   public sealed class Histograms
   {
-    public static IHistogram Uniform() {
+    public static UniformHistogram Uniform() {
       return new UniformHistogram(Samples.Uniform());
     }
 
-    public static IHistogram Biased() {
+    public static BiasedHistogram Biased() {
       return new BiasedHistogram(Samples.Biased());
     }
   }
