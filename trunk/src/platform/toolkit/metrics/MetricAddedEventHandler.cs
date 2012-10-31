@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   /// <summary>
   /// Method that is called when a new metric is added to a registry.

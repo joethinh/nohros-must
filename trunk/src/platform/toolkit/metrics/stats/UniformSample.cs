@@ -1,7 +1,7 @@
 ﻿using System;
 using Nohros.Concurrent;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   /// <summary>
   /// A ramdom sample of a stream of <see cref="long"/>'s. Uses Vitter's

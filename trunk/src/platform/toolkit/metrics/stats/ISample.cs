@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   /// <summary>
   /// A statistically representative sample of a data stream.

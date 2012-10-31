@@ -2,7 +2,7 @@
 using System.Text;
 using NUnit.Framework;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   [TestFixture]
   public class ClockTest

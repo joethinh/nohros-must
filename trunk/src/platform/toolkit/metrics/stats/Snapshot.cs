@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   /// <summary>
   /// A statistical snapshot of a <see cref="Snapshot"/>.

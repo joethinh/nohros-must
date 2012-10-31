@@ -38,6 +38,12 @@ namespace Nohros.Data.Providers
     /// </summary>
     public const string kPasswordOption = "password";
 
+    /// <summary>
+    /// The key that should be associated with the options that contains the
+    /// initial catalog
+    /// </summary>
+    public const string kInitialCatalogOption = "database";
+
     #region .ctor
     /// <summary>
     /// Constructor implied by the interface
@@ -59,6 +65,7 @@ namespace Nohros.Data.Providers
       builder.DataSource = options[kServerOption];
       builder.UserID = options[kLoginOption];
       builder.Password = options[kPasswordOption];
+      builder.InitialCatalog = options[kInitialCatalogOption];
       return new SqlConnectionProvider(builder.ConnectionString);
     }
   }

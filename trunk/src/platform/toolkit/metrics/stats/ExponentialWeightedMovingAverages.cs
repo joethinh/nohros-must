@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   public sealed class ExponentialWeightedMovingAverages
   {

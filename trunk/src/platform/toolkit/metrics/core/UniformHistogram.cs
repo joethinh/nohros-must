@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   /// <summary>
   /// An <see cref="IHistogram"/> taht uses a ramdon sample of a stream.

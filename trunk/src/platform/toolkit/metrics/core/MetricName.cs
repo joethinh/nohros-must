@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   /// <summary>
   /// A value class encapsulating a metric's owning class and name.

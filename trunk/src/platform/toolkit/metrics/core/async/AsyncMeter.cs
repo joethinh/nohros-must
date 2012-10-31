@@ -1,7 +1,7 @@
 ﻿using System;
 using Nohros.Concurrent;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   /// <summary>
   /// A meter metric which measures mean throughput and one-, five-, and

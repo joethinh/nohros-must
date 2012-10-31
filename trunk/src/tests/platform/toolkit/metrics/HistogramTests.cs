@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Nohros.Concurrent;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   public class HistogramTests
   {
@@ -24,7 +24,7 @@ namespace Nohros.Toolkit.Metrics
 
     [Test]
     public void ShouldCreateHistogramWith1000Elements() {
-      IHistogram histogram = Histograms.Uniform(Executors.SameThreadExecutor());
+      IHistogram histogram = Histograms.Uniform();
 
       for (int i = 1; i <= 1000; i++) {
         histogram.Update(i);

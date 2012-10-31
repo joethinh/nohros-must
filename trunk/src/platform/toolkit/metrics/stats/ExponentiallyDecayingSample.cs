@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Nohros.Collections;
 using Nohros.Concurrent;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   /// <summary>
   /// An exponentially-decaying random sample of longs. Uses Cormode et al's

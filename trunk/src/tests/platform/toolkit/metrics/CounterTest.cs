@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Nohros.Concurrent;
 
-namespace Nohros.Toolkit.Metrics
+namespace Nohros.Metrics
 {
   [TestFixture]
   public class CounterTest
