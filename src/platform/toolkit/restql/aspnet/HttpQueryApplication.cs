@@ -12,20 +12,20 @@ using Nohros.Ruby.Protocol;
 using Nohros.Ruby.Protocol.Control;
 using ZMQ;
 using QueryFuture =
-  Nohros.Concurrent.SettableFuture<Nohros.Toolkit.RestQL.HttpQueryResponse>;
+  Nohros.Concurrent.SettableFuture<Nohros.RestQL.HttpQueryResponse>;
 using AsyncResponseMap =
   System.Collections.Generic.Dictionary
     <int,
       System.Tuple
         <System.AsyncCallback,
           Nohros.Concurrent.SettableFuture
-            <Nohros.Toolkit.RestQL.HttpQueryResponse>>>;
+            <Nohros.RestQL.HttpQueryResponse>>>;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public class HttpQueryApplication : IDisposable
   {
-    const string kClassName = "Nohros.Toolkit.RestQL.HttpQueryApplication";
+    const string kClassName = "Nohros.RestQL.HttpQueryApplication";
     readonly Context context_;
     readonly AsyncResponseMap futures_;
     readonly HttpQueryLogger logger_;

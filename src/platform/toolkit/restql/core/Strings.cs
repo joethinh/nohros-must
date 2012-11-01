@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   /// <summary>
   /// Defines all the language neutral constant strings used in the restql.

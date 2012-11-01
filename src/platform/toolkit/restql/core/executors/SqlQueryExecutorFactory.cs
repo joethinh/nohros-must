@@ -9,11 +9,11 @@ using Nohros.Data.Providers;
 using Nohros.Extensions;
 using Nohros.Resources;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public partial class SqlQueryExecutor : IQueryExecutorFactory
   {
-    const string kClassName = "Nohros.Toolkit.RestQL.SqlQueryExecutor";
+    const string kClassName = "Nohros.RestQL.SqlQueryExecutor";
     readonly IQuerySettings settings_;
 
     #region .ctor

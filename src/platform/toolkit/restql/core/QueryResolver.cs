@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   /// <summary>
   /// The default implementation of the <see cref="IQueryResolver"/> interface.
   /// </summary>
   public class QueryResolver : IQueryResolver
   {
-    readonly IQueryDataProvider query_data_provider_;
     readonly IQueryExecutor[] executors_;
+    readonly IQueryDataProvider query_data_provider_;
 
     #region .ctor
     /// <summary>
@@ -47,7 +47,11 @@ namespace Nohros.Toolkit.RestQL
 
     /// <inheritdoc/>
     public IQuery GetQuery(string name) {
-      return query_data_provider_.GetQuery(name);
+      IQuery query;
+      if (query_data_provider_.GetQuery(name, out query)) {
+        return query;
+      }
+      return Query.EmptyQuery;
     }
   }
 }

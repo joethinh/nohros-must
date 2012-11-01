@@ -4,7 +4,7 @@ using Nohros.Caching.Providers;
 using Nohros.Extensions;
 using Nohros.Configuration;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   /// <summary>
   /// A factory used the created the main application object graph.

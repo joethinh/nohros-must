@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public struct HttpQueryResponse
   {

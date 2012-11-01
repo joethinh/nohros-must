@@ -1,7 +1,7 @@
 ﻿using System;
 using Nohros.Configuration;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   /// <summary>
   /// The application settings.

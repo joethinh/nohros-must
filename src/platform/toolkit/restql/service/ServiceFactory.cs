@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Nohros.IO;
 using Nohros.Ruby;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public class ServiceFactory : IRubyServiceFactory
   {

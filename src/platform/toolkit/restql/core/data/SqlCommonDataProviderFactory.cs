@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Nohros.Data.Providers;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public class SqlQueryDataProviderFactory : IQueryDataProviderFactory
   {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Nohros.Caching;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   /// <summary>
   /// A implementation of <see cref="IQueryResolver"/> class that caches

@@ -2,7 +2,7 @@
 using Nohros.Concurrent;
 using ZMQ;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public class HttpQueryApplicationFactory
   {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Nohros.Configuration;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public interface IQueryDataProvider
   {
@@ -19,7 +19,7 @@ namespace Nohros.Toolkit.RestQL
     /// name does not exists in the database this method should return an
     /// instance of the class <see cref="Query.EmptyQuery"/>.
     /// </remarks>
-    IQuery GetQuery(string name);
+    bool GetQuery(string name, out IQuery query);
 
     /// <summary>
     /// Gets an array of <see cref="IProviderNode"/> objects containing the

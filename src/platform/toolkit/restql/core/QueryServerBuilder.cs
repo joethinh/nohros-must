@@ -2,7 +2,7 @@
 using Nohros.Caching.Providers;
 using Nohros.IO;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public partial class QueryServer
   {

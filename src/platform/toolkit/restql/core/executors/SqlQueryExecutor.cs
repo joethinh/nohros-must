@@ -7,7 +7,7 @@ using Nohros.Data.Json;
 using Nohros.Data.Providers;
 using Nohros.Caching;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   /// <summary>
   /// A implementaion of the <see cref="IQueryExecutor"/> interface that

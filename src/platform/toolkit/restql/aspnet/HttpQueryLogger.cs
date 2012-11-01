@@ -1,7 +1,7 @@
 ﻿using System;
 using Nohros.Logging;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public class HttpQueryLogger : ForwardingLogger
   {
