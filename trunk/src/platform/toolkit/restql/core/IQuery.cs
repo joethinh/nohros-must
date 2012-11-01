@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   /// <summary>
   /// Represents a string that contains data to be passed to a query processor
@@ -48,6 +48,12 @@ namespace Nohros.Toolkit.RestQL
     /// <summary>
     /// Gets or sets a string that identifies the query's type.
     /// </summary>
+    /// <remarks>
+    /// The query's type is on of the criteria that a
+    /// <see cref="IQueryExecutor"/> could use to evaluate if it can execute
+    /// the query. For example the <see cref="SqlQueryExecutor"/> can execute
+    /// queries of which type is "sqlquery".
+    /// </remarks>
     string Type { get; }
 
     /// <summary>

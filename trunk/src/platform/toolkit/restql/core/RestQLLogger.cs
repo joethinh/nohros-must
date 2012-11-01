@@ -1,7 +1,7 @@
 ﻿using System;
 using Nohros.Logging;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   /// <summary>
   /// A implementation of the <see cref="IRestQLLogger"/> that uses the

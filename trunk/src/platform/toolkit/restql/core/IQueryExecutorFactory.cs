@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   /// <summary>
   /// A factory class that is used to create instances of classes that

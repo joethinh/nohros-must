@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public interface IQueryServer
   {

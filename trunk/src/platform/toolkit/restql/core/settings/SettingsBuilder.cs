@@ -1,7 +1,7 @@
 ﻿using System;
 using Nohros.Configuration.Builders;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public partial class QuerySettings
   {

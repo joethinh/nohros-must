@@ -3,7 +3,7 @@ using System.Web;
 using System.Web.Configuration;
 using ZMQ;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public class Global : HttpApplication
   {

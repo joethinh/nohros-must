@@ -7,11 +7,11 @@ using Nohros.Ruby;
 using Nohros.Ruby.Protocol;
 using R = Nohros.Resources.StringResources;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public class Service : AbstractRubyService
   {
-    const string kClassName = "Nohros.Toolkit.RestQL.Service";
+    const string kClassName = "Nohros.RestQL.Service";
     readonly RestQLLogger logger_;
 
     readonly IQueryServer server_;

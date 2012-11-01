@@ -1,1 +1,1 @@
-﻿<%@ Application Inherits="Nohros.Toolkit.RestQL.Global" Language="C#" %>
+﻿<%@ Application Inherits="Nohros.RestQL.Global" Language="C#" %>
