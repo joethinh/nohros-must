@@ -26,99 +26,99 @@ go
  * Script that create the database tables.
  *
  */
-create table rql_querymethod (
-  querymethodid int not null,
-  querymethod varchar(30) not null
+create table rql_query_method (
+  query_method_id int not null,
+  query_method varchar(30) not null
 )
 
-alter table rql_querymethod
-add constraint PK_rql_querymethod
+alter table rql_query_method
+add constraint PK_rql_query_method
 primary key (
-  querymethodid
+  query_method_id
 )
 
-create unique nonclustered index IX_rql_querymethod_natural
-on rql_querymethod (
-  querymethod
+create unique nonclustered index IX_rql_query_method_natural
+on rql_query_method (
+  query_method
 )
 
-create table rql_querytype (
-  querytypeid int identity(1,1) not null,
-  querytype varchar(60) not null
+create table rql_query_type (
+  query_type_id int identity(1,1) not null,
+  query_type varchar(60) not null
 )
 
-alter table rql_querytype
-add constraint PK_rql_querytype
+alter table rql_query_type
+add constraint PK_rql_query_type
 primary key (
-  querytypeid
+  query_type_id
 )
 
-create unique nonclustered index IX_rql_querytype_natural
-on rql_querytype (
-  querytypeid
+create unique nonclustered index IX_rql_query_type_natural
+on rql_query_type (
+  query_type_id
 )
 
 create table rql_query (
-  queryid int identity(1,1) not null,
-  queryname varchar(800) not null,
+  query_id int identity(1,1) not null,
+  query_name varchar(800) not null,
   query varchar(8000) not null,
-  querymethodid int not null,
-  querytypeid int not null
+  query_method_id int not null,
+  query_type_id int not null
 )
 
 alter table rql_query
 add constraint PK_rql_query
 primary key (
-  queryid
+  query_id
 )
 
 alter table rql_query
-add constraint FK_rql_query_querymethod
+add constraint FK_rql_query_query_method
 foreign key (
-  querymethodid
-) references rql_querymethod (
-  querymethodid
+  query_method_id
+) references rql_query_method (
+  query_method_id
 )
 
 alter table rql_query
-add constraint FK_rql_query_querytype
+add constraint FK_rql_query_query_type
 foreign key (
-  querytypeid
-) references rql_querytype (
-  querytypeid
+  query_type_id
+) references rql_query_type (
+  query_type_id
 )
 
-create unique nonclustered index IX_rql_query_get_query
+create unique nonclustered index IX_rql_query_get
 on rql_query (
-  queryname
+  query_name
 ) include (
-  query, querymethodid, querytypeid
+  query, query_method_id, query_type_id
 )
 
-create table rql_queryoption (
-  queryoptionid int identity(1,1) not null,
-  queryid int not null,
-  optionname varchar(80) not null,
-  optionvalue varchar(80) not null
+create table rql_query_option (
+  query_option_id int identity(1,1) not null,
+  query_id int not null,
+  option_name varchar(80) not null,
+  option_value varchar(80) not null
 )
 
-alter table rql_queryoption
-add constraint PK_rql_queryoption
+alter table rql_query_option
+add constraint PK_rql_query_option
 primary key (
-  queryoptionid
+  query_option_id
 )
 
-alter table rql_queryoption
-add constraint FK_rql_queryoption_query
+alter table rql_query_option
+add constraint FK_rql_query_option_query
 foreign key (
-  queryid
+  query_id
 ) references rql_query (
-  queryid
+  query_id
 )
 
-create unique nonclustered index IX_rql_queryoption_natural
-on rql_queryoption (
-  queryid, optionname
+create unique nonclustered index IX_rql_query_option_natural
+on rql_query_option (
+  query_id, option_name
 ) include (
-  optionvalue
+  option_value
 )
