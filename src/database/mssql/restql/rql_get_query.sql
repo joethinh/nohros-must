@@ -9,7 +9,7 @@ declare @continue bit,
   @objectversion int
 
 /* The name of the object related with the script */
-set @objectname = 'rql_get_query'
+set @objectname = 'rql_query_get'
 
 /* The current object version */
 set @objectversion = 1
@@ -39,26 +39,26 @@ go
  *
  * @queryname varchar(800) The name of the query to get information
  */
-alter proc rql_get_query (
-  @queryname varchar(800)
+alter proc rql_query_get (
+  @name varchar(800)
 )
 as
 
-declare @queryid int
+declare @query_id int
 
-select @queryid = queryid
+select @query_id = query_id
 from rql_query q
-where queryname = @queryname
+where query_name = @name
 
-select queryname,
+select query_name,
   query,
-  querytype,
-  querymethodid as querymethod
+  query_type,
+  query_method_id as query_method
 from rql_query q
-  inner join rql_querytype qt on qt.querytypeid = q.querytypeid
-where queryid = @queryid
+  inner join rql_query_type qt on qt.query_type_id = q.query_type_id
+where query_id = @query_id
 
-select optionname
-  ,optionvalue
-from rql_queryoption
-where queryid = @queryid
+select option_name
+  ,option_value
+from rql_query_option
+where query_id = @query_id
