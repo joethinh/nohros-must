@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Telerik.JustMock;
 
-namespace Nohros.Toolkit.RestQL
+namespace Nohros.RestQL
 {
   public class QueryResolverTests
   {
