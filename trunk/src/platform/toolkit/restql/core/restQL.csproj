@@ -8,8 +8,8 @@
     <ProjectGuid>{1A4ED279-F59C-4E37-AE66-D323A89C36ED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nohros.Toolkit.RestQL</RootNamespace>
-    <AssemblyName>nohros.toolkit.restql</AssemblyName>
+    <RootNamespace>Nohros.RestQL</RootNamespace>
+    <AssemblyName>nohros.restql</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

@@ -53,7 +53,7 @@ namespace Nohros.RestQL
 
     public const string kSqlQueryType = "sqlquery";
 
-    public const string kConnectionProviderOption = "connection-provider";
+    public const string kConnectionProviderOption = "connectionProvider";
 
     public const string kDataProviderGroup = "";
 

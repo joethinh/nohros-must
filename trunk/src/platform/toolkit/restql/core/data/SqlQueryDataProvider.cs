@@ -14,7 +14,7 @@ namespace Nohros.RestQL
     const string kClassName = "Nohros.RestQL.SqlQueryDataProvider";
 
     const string kGetConnectionProviders =
-      ".rql_query_get_connections_providers";
+      ".rql_query_get_connection_providers";
 
     const string kGetQuery = ".rql_query_get";
 
