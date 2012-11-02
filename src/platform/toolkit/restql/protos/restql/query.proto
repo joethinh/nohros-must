@@ -4,11 +4,11 @@
 //
 
 import "google/protobuf/csharp_options.proto";
-option (google.protobuf.csharp_file_options).namespace = "Nohros.Toolkit.RestQL";
+option (google.protobuf.csharp_file_options).namespace = "Nohros.RestQL";
 
 import "restql/common.proto";
 
-package nohros.toolkit.restql;
+package nohros.restql;
 
 option optimize_for = LITE_RUNTIME;
  
