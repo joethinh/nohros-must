@@ -77,11 +77,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\base\common\common.csproj">
       <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
-      <Name>common %28%28base%29\common%29</Name>
+      <Name>common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\base\extensions\extensions.csproj">
       <Project>{438798C5-7FC8-4238-9AE4-D6B87012B5E2}</Project>
-      <Name>extensions %28%28base%29\extensions%29</Name>
+      <Name>extensions</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

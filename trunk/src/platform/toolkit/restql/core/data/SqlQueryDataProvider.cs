@@ -33,7 +33,7 @@ namespace Nohros.RestQL
     /// </param>
     public SqlQueryDataProvider(SqlConnectionProvider sql_connection_provider) {
 #if DEBUG
-      if (connection_provider == null)
+      if (sql_connection_provider == null)
         throw new ArgumentException("connection_provider");
 #endif
       sql_connection_provider_ = sql_connection_provider;

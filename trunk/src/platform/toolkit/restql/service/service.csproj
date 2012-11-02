@@ -39,11 +39,11 @@
     <Reference Include="Google.ProtocolBuffers.Serialization">
       <HintPath>..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="nohros, Version=1.6.7.6, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\must.common.1.6.7.6\lib\net40\nohros.dll</HintPath>
+    <Reference Include="nohros">
+      <HintPath>..\..\..\..\packages\must.common.1.6.7.11\lib\net40\nohros.dll</HintPath>
     </Reference>
-    <Reference Include="nohros.extensions, Version=0.0.2.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\must.extensions.0.0.2.8\lib\net40\nohros.extensions.dll</HintPath>
+    <Reference Include="nohros.caching.memorycachee">
+      <HintPath>..\..\..\..\packages\must.caching.memorycache.0.0.2\lib\net40\nohros.caching.memorycachee.dll</HintPath>
     </Reference>
     <Reference Include="nohros.ruby.net, Version=0.5.2.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -80,9 +80,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\impl\cache\memorycache\memorycache.csproj">
-      <Project>{3D43CBC8-F12D-49D9-8A24-84F3DA9AB7FC}</Project>
-      <Name>memorycache</Name>
+    <ProjectReference Include="..\..\..\..\base\extensions\extensions.csproj">
+      <Project>{438798C5-7FC8-4238-9AE4-D6B87012B5E2}</Project>
+      <Name>extensions</Name>
     </ProjectReference>
     <ProjectReference Include="..\core\restQL.csproj">
       <Project>{1A4ED279-F59C-4E37-AE66-D323A89C36ED}</Project>
