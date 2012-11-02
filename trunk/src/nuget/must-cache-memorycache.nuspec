@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>must.caching.memorycache</id>
+    <version>0.0.1</version>
+    <title>Must Caching for MemoryCache</title>
+    <authors>Nohros Inc</authors>
+    <owners>Nohros Inc</owners>
+    <projectUrl>http://code.google.com/p/nohros-must</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This project contains the memory cache implementation of the nohros caching API.</description>
+    <summary>The memory cache implementation of the nohros caching API.</summary>
+    <copyright>Nohros Inc</copyright>
+    <language>en-US</language>
+    <tags>csharp framework nohros memorycache cache</tags>
+    <dependencies>
+      <dependency id="must.common" version="1.6" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\bin\release\caching\nohros.caching.memorycache.dll" target="net40\nohros.caching.memorycachee.dll" />
+  </files>
+</package>
