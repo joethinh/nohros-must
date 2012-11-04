@@ -5,7 +5,7 @@ namespace Nohros.Metrics
   /// <summary>
   /// An object which maintains mean and exponentially-weighted rate.
   /// </summary>
-  public interface IAsyncMetered
+  public interface IAsyncMetered : IMetric
   {
     /// <summary>
     /// Gets the fifteen-minute exponentially-weighted moving average rate at
@@ -46,6 +46,11 @@ namespace Nohros.Metrics
     void GetMeanRate(DoubleMetricCallback callback);
 
     /// <summary>
+    /// Gets the number of events which have been marked.
+    /// </summary>
+    void GetCount(LongMetricCallback callback);
+
+    /// <summary>
     /// Gets the meter's rate unit.
     /// </summary>
     /// <returns></returns>
@@ -55,10 +60,5 @@ namespace Nohros.Metrics
     /// Gets the event type of events the meter is measuring.
     /// </summary>
     string EventType { get; }
-
-    /// <summary>
-    /// Gets the number of events which have been marked.
-    /// </summary>
-    void GetCount(LongMetricCallback callback);
   }
 }

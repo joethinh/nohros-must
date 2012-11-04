@@ -7,7 +7,7 @@ namespace Nohros.Metrics
   /// A timer metric which aggregates timing durations and provides duration
   /// statistics, plus throughput statistics via <see cref="Meter"/>.
   /// </summary>
-  public class AsyncTimer : IAsyncMetered, IAsyncSampling, IAsyncSummarizable
+  public class AsyncTimer : IAsyncTimed
   {
     readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
     readonly TimeUnit duration_unit_;
@@ -119,7 +119,7 @@ namespace Nohros.Metrics
     /// <param name="duration">
     /// The length of the duration.
     /// </param>
-    void Update(long duration) {
+    public void Update(long duration) {
       if (duration >= 0) {
         long timestamp = TimeUnitHelper
           .ToSeconds(Clock.CurrentTimeMilis, TimeUnit.Miliseconds);

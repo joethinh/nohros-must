@@ -7,7 +7,7 @@ namespace Nohros.Metrics
   /// A timer metric which aggregates timing durations and provides duration
   /// statistics, plus throughput statistics via <see cref="Meter"/>.
   /// </summary>
-  public class Timer : IMetered, ISampling, ISummarizable
+  public class Timer : ITimed
   {
     readonly TimeUnit duration_unit_;
     readonly BiasedHistogram histogram_;
@@ -72,7 +72,6 @@ namespace Nohros.Metrics
         return new Snapshot(converted);
       }
     }
-
 
     /// <summary>
     /// Gets the shortest recorded duration.

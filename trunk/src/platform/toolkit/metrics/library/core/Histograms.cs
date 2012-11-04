@@ -12,5 +12,13 @@ namespace Nohros.Metrics
     public static BiasedHistogram Biased() {
       return new BiasedHistogram(Samples.Biased());
     }
+
+    public static AsyncUniformHistogram Uniform(IExecutor executor) {
+      return new AsyncUniformHistogram(Samples.Uniform(), executor);
+    }
+
+    public static AsyncBiasedHistogram Biased(IExecutor executor) {
+      return new AsyncBiasedHistogram(Samples.Biased(), executor);
+    }
   }
 }
