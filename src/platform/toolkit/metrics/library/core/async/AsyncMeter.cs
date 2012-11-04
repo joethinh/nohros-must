@@ -12,7 +12,7 @@ namespace Nohros.Metrics
   ///   http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average
   /// </para>
   /// </remarks>
-  public class AsyncMeter : IAsyncMetered, IMetric
+  public class AsyncMeter : IAsyncMeter
   {
     const long kTickInterval = 5000000000; // 5 seconds in nanoseconds
     readonly string event_type_;

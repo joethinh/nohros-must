@@ -6,40 +6,8 @@ namespace Nohros.Metrics
   /// <summary>
   /// A central registry and factory for metric instances.
   /// </summary>
-  public class MetricsRegistry
+  public class MetricsRegistry : AbstractMetricsRegistry, IMetricsRegistry
   {
-    const int kExpectedMetricCount = 1024;
-    readonly Dictionary<MetricName, IMetric> metrics_;
-
-    #region .ctor
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MetricsRegistry"/> class.
-    /// </summary>
-    public MetricsRegistry() {
-      metrics_ = new Dictionary<MetricName, IMetric>();
-    }
-    #endregion
-
-    /// <summary>
-    /// Gets the counter that is associated with the specified
-    /// <see cref="MetricName"/> or create a new one if no association exists.
-    /// </summary>
-    /// <param name="name">
-    /// The name of the metric.
-    /// </param>
-    /// <returns>
-    /// A <see cref="Counter"/> that could be identified by the specified
-    /// <paramref name="name"/>.
-    /// </returns>
-    public Counter GetCounter(MetricName name) {
-      Counter counter;
-      if (!TryGetMetric(name, out counter)) {
-        counter = new Counter();
-        Add(name, counter);
-      }
-      return counter;
-    }
-
     /// <summary>
     /// Gets the counter that is associated with the specified
     /// <see cref="MetricName"/> or create a new one if no association exists.
@@ -95,25 +63,6 @@ namespace Nohros.Metrics
     }
 
     /// <summary>
-    /// Given a new <see cref="Gauge{T}"/>, registers it under the given metric
-    /// name.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="name">
-    /// The name of the metric.
-    /// </param>
-    /// <param name="metric">
-    /// The gauge metric to be added.
-    /// </param>
-    /// <returns></returns>
-    public void AddGauge<T>(MetricName name, Gauge<T> metric) {
-      Gauge<T> gauge;
-      if (!TryGetMetric(name, out gauge)) {
-        Add(name, gauge);
-      }
-    }
-
-    /// <summary>
     /// Gets the timer that is associated with the specified
     /// <see cref="MetricName"/> or create a new one if no association exists.
     /// </summary>
@@ -158,38 +107,6 @@ namespace Nohros.Metrics
     /// <param name="name">
     /// The name of the metric to get.
     /// </param>
-    /// <param name="gauge">
-    /// When this method returns, contains the gauge associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if a <see cref="Gauge{T}"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
-    /// </returns>
-    public bool TryGetGauge<T>(MetricName name, out Gauge<T> gauge) {
-      return TryGetMetric(name, out gauge);
-    }
-
-    /// <param name="name">
-    /// The name of the metric to get.
-    /// </param>
-    /// <param name="counter">
-    /// When this method returns, contains the counter associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if a <see cref="Counter"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
-    /// </returns>
-    public bool TryGetCounter(MetricName name, out Counter counter) {
-      return TryGetMetric(name, out counter);
-    }
-
-    /// <param name="name">
-    /// The name of the metric to get.
-    /// </param>
     /// <param name="timer">
     /// When this method returns, contains the timer associated with the
     /// specified metric name, if a metric name is found; otherwise, the
@@ -206,30 +123,6 @@ namespace Nohros.Metrics
     /// <param name="name">
     /// The name of the metric to get.
     /// </param>
-    /// <param name="metric">
-    /// When this method returns, contains the timer associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if a <see cref="Counter"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
-    /// </returns>
-    public bool TryGetMetric<T>(MetricName name, out T metric)
-      where T : class, IMetric {
-      IMetric i_metric;
-      if (metrics_.TryGetValue(name, out i_metric)) {
-        metric = i_metric as T;
-        return metric != null;
-      }
-      metric = null;
-      return false;
-    }
-
-
-    /// <param name="name">
-    /// The name of the metric to get.
-    /// </param>
     /// <param name="meter">
     /// When this method returns, contains the meter associated with the
     /// specified metric name, if a metric name is found; otherwise, the
@@ -239,32 +132,8 @@ namespace Nohros.Metrics
     /// <c>true</c> if a <see cref="IMetered"/> associated with the
     /// <paramref name="name"/> exists; otherwise, <c>false</c>.
     /// </returns>
-    public bool TryGetMeter(MetricName name, out IMetered meter) {
+    public bool TryGetMeter(MetricName name, out IMeter meter) {
       return TryGetMetric(name, out meter);
-    }
-
-    /// <summary>
-    /// Adds an metric to the metrics collection using the metrics name.
-    /// </summary>
-    /// <param name="name">
-    /// The name of the metric.
-    /// </param>
-    /// <param name="metric">
-    /// The metric to be added.
-    /// </param>
-    protected void Add(MetricName name, IMetric metric) {
-      metrics_.Add(name, metric);
-      OnMetricAdded(name, metric);
-    }
-
-    /// <summary>
-    /// Raised when a new metric is added to the registry.
-    /// </summary>
-    public event MetricAddedEventHandler MetricAdded;
-
-    void OnMetricAdded(MetricName name, IMetric metric) {
-      Listeners.SafeInvoke(MetricAdded,
-        (MetricAddedEventHandler handler) => handler(name, metric));
     }
   }
 }

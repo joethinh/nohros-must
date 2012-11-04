@@ -43,14 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractMetricsRegistry.cs" />
+    <Compile Include="AsyncMetricsRegistry.cs" />
     <Compile Include="core\async\AsyncAbstractHistogram.cs" />
     <Compile Include="core\async\AsyncMeter.cs" />
     <Compile Include="core\async\AsyncBiasedHistogram.cs" />
     <Compile Include="core\async\AsyncTimer.cs" />
     <Compile Include="core\async\AsyncUniformHistogram.cs" />
     <Compile Include="core\async\IAsyncHistogram.cs" />
+    <Compile Include="core\async\IAsyncMeter.cs" />
     <Compile Include="core\async\IAsyncMetered.cs" />
+    <Compile Include="core\async\IAsyncMetricsRegistry.cs" />
     <Compile Include="core\async\IAsyncSampling.cs" />
+    <Compile Include="core\async\IAsyncTimed.cs" />
     <Compile Include="core\BiasedHistogram.cs" />
     <Compile Include="core\CallableGauge.cs" />
     <Compile Include="core\Clock.cs" />
@@ -59,6 +64,9 @@
     <Compile Include="core\Histograms.cs" />
     <Compile Include="core\async\IAsyncSummarizable.cs" />
     <Compile Include="core\IHistogram.cs" />
+    <Compile Include="core\IMeter.cs" />
+    <Compile Include="core\IMetricsRegistry.cs" />
+    <Compile Include="core\ITimed.cs" />
     <Compile Include="core\UniformHistogram.cs" />
     <Compile Include="MetricAddedEventHandler.cs" />
     <Compile Include="Metrics.cs" />
