@@ -35,7 +35,7 @@ namespace Nohros.RestQL
     /// The name of the group which the query processor providers should be
     /// associated.
     /// </summary>
-    public const string kQueryExecutorsGroup = "query-executors";
+    public const string kQueryExecutorsGroup = "queryExecutors";
 
     public const string kTokenPrincipalMapperNode = "token-principal-mapper";
 

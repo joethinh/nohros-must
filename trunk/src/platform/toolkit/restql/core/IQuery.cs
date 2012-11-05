@@ -51,7 +51,7 @@ namespace Nohros.RestQL
     /// <remarks>
     /// The query's type is on of the criteria that a
     /// <see cref="IQueryExecutor"/> could use to evaluate if it can execute
-    /// the query. For example the <see cref="SqlQueryExecutor"/> can execute
+    /// the query. For example the <see cref="AbstractSqlQueryExecutor"/> can execute
     /// queries of which type is "sqlquery".
     /// </remarks>
     string Type { get; }

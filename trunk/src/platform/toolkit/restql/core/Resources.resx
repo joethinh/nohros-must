@@ -123,4 +123,7 @@
   <data name="QueryProcessor_ProcessorNotFound" xml:space="preserve">
     <value>Cannot found a processor that can process the query {0}.</value>
   </data>
+  <data name="SqlQueryExecutor_ProviderNotFound_Query" xml:space="preserve">
+    <value>The query {0} could not be executed, because the its associated connection provider was not found.</value>
+  </data>
 </root>

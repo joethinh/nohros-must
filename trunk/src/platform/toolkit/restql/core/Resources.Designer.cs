@@ -77,5 +77,14 @@ namespace Nohros.RestQL {
                 return ResourceManager.GetString("QueryProcessor_ProcessorNotFound", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The query {0} could not be executed, because the its associated connection provider was not found..
+        /// </summary>
+        internal static string SqlQueryExecutor_ProviderNotFound_Query {
+            get {
+                return ResourceManager.GetString("SqlQueryExecutor_ProviderNotFound_Query", resourceCulture);
+            }
+        }
     }
 }

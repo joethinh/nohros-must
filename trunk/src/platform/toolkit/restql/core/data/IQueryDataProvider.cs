@@ -20,15 +20,5 @@ namespace Nohros.RestQL
     /// instance of the class <see cref="Query.EmptyQuery"/>.
     /// </remarks>
     bool GetQuery(string name, out IQuery query);
-
-    /// <summary>
-    /// Gets an array of <see cref="IProviderNode"/> objects containing the
-    /// connection providers that was configured on the database side.
-    /// </summary>
-    /// <returns>
-    /// An array of <see cref="IProviderNode"/> containing the connection
-    /// providers that was configured on the database side.
-    /// </returns>
-    IProviderNode[] GetConnectionProviders();
   }
 }

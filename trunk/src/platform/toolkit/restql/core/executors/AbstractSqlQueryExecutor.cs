@@ -13,68 +13,49 @@ namespace Nohros.RestQL
   /// A implementaion of the <see cref="IQueryExecutor"/> interface that
   /// is capable to execute SQL queries.
   /// </summary>
-  public partial class SqlQueryExecutor : IQueryExecutor
+  public abstract class AbstractSqlQueryExecutor : IQueryExecutor
   {
-    readonly ILoadingCache<IConnectionProvider> connection_provider_cache_;
     readonly IJsonCollectionFactory json_collection_factory_;
+    readonly RestQLLogger logger_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="SqlQueryExecutor"/> class
+    /// Initializes a new instance of the <see cref="AbstractSqlQueryExecutor"/> class
     /// using the specified collection of providers.
     /// </summary>
-    /// <param name="connection_providers_cache">
-    /// A <see cref="ILoadingCache{T}"/> object where we can obtain named
-    /// instances of <see cref="IConnectionProvider"/> objects.
-    /// </param>
     /// <param name="json_collection_factory">
     /// A <see cref="IJsonCollectionFactory"/> object that can be used to
     /// create instances of the <see cref="IJsonCollection"/> class.
     /// </param>
-    /// <remarks>
-    /// </remarks>
-    public SqlQueryExecutor(
-      ILoadingCache<IConnectionProvider> connection_providers_cache,
+    protected AbstractSqlQueryExecutor(
       IJsonCollectionFactory json_collection_factory) {
-      if (connection_providers_cache == null || json_collection_factory == null) {
-        throw new ArgumentNullException(connection_providers_cache == null
-          ? "connection_providers_cache"
-          : "json_collection_factory");
+      if (json_collection_factory == null) {
+        throw new ArgumentNullException("json_collection_factory");
       }
-      connection_provider_cache_ = connection_providers_cache;
       json_collection_factory_ = json_collection_factory;
+      logger_ = RestQLLogger.ForCurrentProcess;
     }
     #endregion
 
+    protected internal IJsonCollectionFactory JsonCollectionFactory {
+      get { return json_collection_factory_; }
+    }
+
     /// <inheritdoc/>
-    public string Execute(IQuery query, IDictionary<string, string> parameters) {
+    public virtual string Execute(IQuery query,
+      IDictionary<string, string> parameters) {
       if (query == null) {
         throw new ArgumentNullException("query");
       }
 
-      string provider_name = query.Options[Strings.kConnectionProviderOption];
-      IConnectionProvider connection_provider =
-        connection_provider_cache_.Get(provider_name);
-
-      using (IDbConnection connection = connection_provider.CreateConnection())
-      using (var builder = new CommandBuilder(connection)) {
-        builder
-          .SetText(query.QueryText)
-          .SetType(GetCommandType(query.Options))
-          .SetTimeout(query.Options
-            .GetInteger(Strings.kCommandTimeoutOption, 30));
-
-        BindParameters(builder, query.Parameters, parameters);
-
-        IDbCommand cmd = builder.Build();
-        connection.Open();
-        string response =
-          (query.QueryMethod == QueryMethod.Get)
-            ? ExecuteReader(cmd, query)
-            : ExecuteNonQuery(cmd, query);
-        connection.Close();
-        return response;
+      IConnectionProvider provider;
+      if (GetConnectionProvider(query.Options, out provider)) {
+        return Execute(query, parameters, provider);
       }
+
+      logger_.Warn(string.Format(
+        Resources.SqlQueryExecutor_ProviderNotFound_Query, query.Name));
+      return string.Empty;
     }
 
     /// <summary>
@@ -95,6 +76,32 @@ namespace Nohros.RestQL
         string.Compare(Strings.kSqlQueryType, query.Type,
           StringComparison.OrdinalIgnoreCase) == 0 &&
           options.ContainsKey(Strings.kConnectionProviderOption);
+    }
+
+    public abstract bool GetConnectionProvider(
+      IDictionary<string, string> options, out IConnectionProvider provider);
+
+    protected virtual string Execute(IQuery query,
+      IDictionary<string, string> parameters, IConnectionProvider provider) {
+      using (IDbConnection connection = provider.CreateConnection())
+      using (var builder = new CommandBuilder(connection)) {
+        builder
+          .SetText(query.QueryText)
+          .SetType(GetCommandType(query.Options))
+          .SetTimeout(query.Options
+            .GetInteger(Strings.kCommandTimeoutOption, 30));
+
+        BindParameters(builder, query.Parameters, parameters);
+
+        IDbCommand cmd = builder.Build();
+        connection.Open();
+        string response =
+          (query.QueryMethod == QueryMethod.Get)
+            ? ExecuteReader(cmd, query)
+            : ExecuteNonQuery(cmd, query);
+        connection.Close();
+        return response;
+      }
     }
 
     string ExecuteReader(IDbCommand command, IQuery query) {
@@ -136,7 +143,7 @@ namespace Nohros.RestQL
         string value;
         if (!values.TryGetValue(name, out value)) {
           throw new KeyNotFoundException(
-            string.Format(Resources.QueryExecutor_Missing_ParameterValue));
+            string.Format(Resources.QueryExecutor_Missing_ParameterValue, name));
         }
         builder.AddParameterWithValue(name, value);
       }

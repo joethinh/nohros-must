@@ -44,6 +44,7 @@
     <Compile Include="data\IQueryDataProviderFactory.cs" />
     <Compile Include="data\SqlQueryDataProvider.cs" />
     <Compile Include="data\SqlCommonDataProviderFactory.cs" />
+    <Compile Include="executors\AbstractSqlQueryExecutor.cs" />
     <Compile Include="executors\SqlQueryExecutor.cs" />
     <Compile Include="executors\SqlQueryExecutorFactory.cs" />
     <Compile Include="IQuery.cs" />
