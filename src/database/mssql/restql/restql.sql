@@ -64,6 +64,8 @@ create table rql_query (
   query varchar(8000) not null,
   query_method_id int not null,
   query_type_id int not null
+  query_use_space_as_terminator bit,
+  query_delimiter char(1),
 )
 
 alter table rql_query
@@ -87,6 +89,18 @@ foreign key (
 ) references rql_query_type (
   query_type_id
 )
+
+alter table rql_query
+add constraint DF_rql_query_delimiter
+default (
+  '$'
+) for query_delimiter
+
+alter table rql_query
+add constraint DF_rql_query_use_space_as_terminator
+default (
+  0
+) for query_use_space_as_terminator
 
 create unique nonclustered index IX_rql_query_get
 on rql_query (

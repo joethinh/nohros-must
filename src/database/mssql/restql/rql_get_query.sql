@@ -53,7 +53,9 @@ where query_name = @name
 select query_name,
   query,
   query_type,
-  query_method_id as query_method
+  query_method_id as query_method,
+  query_use_space_as_terminator,
+  query_delimiter
 from rql_query q
   inner join rql_query_type qt on qt.query_type_id = q.query_type_id
 where query_id = @query_id
