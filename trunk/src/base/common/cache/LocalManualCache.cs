@@ -26,7 +26,7 @@ namespace Nohros.Caching
     /// this cache.
     /// </param>
     internal LocalManualCache(ICacheProvider provider, CacheBuilder<T> builder)
-      : base(provider, builder, null) {
+      : base(provider, builder) {
     }
 
     /// <summary>

@@ -82,9 +82,9 @@ namespace Nohros.Caching
     /// </para>
     /// </remarks>
     public ICache<T> Build(ICacheProvider provider) {
-      if (refresh_nanos_ == kUnsetInt) {
+      if (refresh_nanos_ != kUnsetInt) {
         throw new InvalidOperationException(
-          "RefreshAfterWrite requires a ILoadinCache");
+          "RefreshAfterWrite requires a ILoadindCache");
       }
       return new LocalManualCache<T>(provider, this);
     }
