@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>must.caching.memorycache</id>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <title>Must Caching for MemoryCache</title>
     <authors>Nohros Inc</authors>
     <owners>Nohros Inc</owners>
@@ -18,6 +18,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\bin\release\caching\nohros.caching.memorycache.dll" target="lib\net40\nohros.caching.memorycachee.dll" />
+    <file src="..\bin\release\caching\nohros.caching.memorycache.dll" target="lib\net40\nohros.caching.memorycache.dll" />
   </files>
 </package>

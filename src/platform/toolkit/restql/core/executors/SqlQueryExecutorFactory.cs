@@ -11,13 +11,13 @@ using Nohros.Resources;
 
 namespace Nohros.RestQL
 {
-  public partial class SqlQueryExecutor : IQueryExecutorFactory
+  public class SqlQueryExecutorFactory : IQueryExecutorFactory
   {
-    const string kClassName = "Nohros.RestQL.SqlQueryExecutor";
+    const string kClassName = "Nohros.RestQL.AbstractSqlQueryExecutor";
     readonly IQuerySettings settings_;
 
     #region .ctor
-    public SqlQueryExecutor(IQuerySettings settings) {
+    public SqlQueryExecutorFactory(IQuerySettings settings) {
       settings_ = settings;
     }
     #endregion
@@ -35,22 +35,13 @@ namespace Nohros.RestQL
     /// </returns>
     public IQueryExecutor CreateQueryExecutor(
       IDictionary<string, string> options) {
-      IQueryDataProvider query_data_provider = GetQueryDataProvider();
       ICacheProvider cache_provider = GetCacheProvider();
-      ILoadingCache<IConnectionProvider> connection_provider_cache =
-        GetConnectionProviderCache(query_data_provider, cache_provider);
+      ICache<IConnectionProvider> cache = new CacheBuilder<IConnectionProvider>()
+        .ExpireAfterAccess(settings_.QueryCacheDuration*3, TimeUnit.Seconds)
+        .Build(cache_provider);
       IJsonCollectionFactory json_collection_factory =
         GetJsonCollectionFactory();
-      return new SqlQueryExecutor(connection_provider_cache,
-        json_collection_factory);
-    }
-
-    IQueryDataProvider GetQueryDataProvider() {
-      IProviderNode provider =
-        settings_.Providers.GetProviderNode(Strings.kQueryDataProviderName);
-      return RuntimeTypeFactory<IQueryDataProviderFactory>
-        .CreateInstanceFallback(provider, settings_)
-        .CreateCommonDataProvider(provider.Options.ToDictionary());
+      return new SqlQueryExecutor(json_collection_factory, cache);
     }
 
     ICacheProvider GetCacheProvider() {
@@ -59,20 +50,6 @@ namespace Nohros.RestQL
       return RuntimeTypeFactory<ICacheProviderFactory>
         .CreateInstanceFallback(provider, settings_)
         .CreateCacheProvider(provider.Options.ToDictionary());
-    }
-
-    ILoadingCache<IConnectionProvider> GetConnectionProviderCache(
-      IQueryDataProvider query_data_provider, ICacheProvider cache_provider) {
-      // Merges the application configured connection provider with the
-      // list of connection providers fetched from the common data provider.
-      var providers = new List<IProviderNode>(
-        settings_.Providers[Strings.kQueryExecutorsGroup]);
-      providers.AddRange(query_data_provider.GetConnectionProviders());
-
-      return
-        new CacheBuilder<IConnectionProvider>()
-          .ExpireAfterAccess(settings_.QueryCacheDuration*3, TimeUnit.Seconds)
-          .Build(cache_provider, new ConnectionProviderLoader(providers));
     }
 
     IJsonCollectionFactory GetJsonCollectionFactory() {

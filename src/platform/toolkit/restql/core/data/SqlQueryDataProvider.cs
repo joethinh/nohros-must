@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using Nohros.Configuration;
 using Nohros.Data;
 using Nohros.Data.Providers;
 using Nohros.Extensions;
@@ -12,9 +11,6 @@ namespace Nohros.RestQL
   public class SqlQueryDataProvider : IQueryDataProvider
   {
     const string kClassName = "Nohros.RestQL.SqlQueryDataProvider";
-
-    const string kGetConnectionProviders =
-      ".rql_query_get_connection_providers";
 
     const string kGetQuery = ".rql_query_get";
 
@@ -54,7 +50,7 @@ namespace Nohros.RestQL
         try {
           conn.Open();
           using (IDataReader dr = cmd.ExecuteReader()) {
-            query = CreatedQueryFromDataReader(dr);
+            query = CreateQueryFromDataReader(dr);
             return true;
           }
         } catch (SqlException e) {
@@ -65,24 +61,6 @@ namespace Nohros.RestQL
       }
       query = null;
       return false;
-    }
-
-    public IProviderNode[] GetConnectionProviders() {
-      using (SqlConnection conn = sql_connection_provider_.CreateConnection())
-      using (var builder = new CommandBuilder(conn)) {
-        IDbCommand cmd = builder
-          .SetText(sql_connection_provider_.Schema + kGetConnectionProviders)
-          .SetType(CommandType.StoredProcedure)
-          .Build();
-        try {
-          conn.Open();
-        } catch (SqlException e) {
-          logger_.Error(
-            string.Format(StringResources.Log_MethodThrowsException, kClassName,
-              "GetConnectionProviders"), e);
-        }
-      }
-      return new IProviderNode[0];
     }
 
     /// <summary>
@@ -98,29 +76,37 @@ namespace Nohros.RestQL
     /// <see cref="IDataReader"/> is readable; otherwise the value of
     /// <see cref="Query.EmptyQuery"/> property.
     /// </returns>
-    protected IQuery CreatedQueryFromDataReader(IDataReader reader) {
+    protected IQuery CreateQueryFromDataReader(IDataReader reader) {
       if (reader.Read()) {
         int[] ordinals = reader
-          .GetOrdinals("query_name", "query_type", "query", "query_method");
+          .GetOrdinals("query_name", "query_type", "query", "query_method",
+            "query_use_space_as_terminator", "query_delimiter");
 
         const int kQueryName = 0;
         const int kQueryType = 1;
         const int kQuery = 2;
         const int kQueryMethod = 3;
+        const int kUseSpaceTerminator = 4;
+        const int kQueryDelimiter = 5;
 
+        bool use_space_terminator =
+          reader.GetBoolean(ordinals[kUseSpaceTerminator]);
+        string delimiter = reader.GetString(ordinals[kQueryDelimiter]);
         string name = reader.GetString(ordinals[kQueryName]);
         string type = reader.GetString(ordinals[kQueryType]);
         string query_string = reader.GetString(ordinals[kQuery]);
         int method = reader.GetInt32(ordinals[kQueryMethod]);
 
-        var query = new Query(name, type, query_string) {
-          QueryMethod = (QueryMethod) method
+        var query = new Query(name, type, query_string, delimiter) {
+          QueryMethod = (QueryMethod) method,
+          UseSpaceAsTerminator = use_space_terminator
         };
 
         // get the query options
         if (reader.NextResult()) {
           SetQueryOptions(reader, query);
         }
+        query.Parse();
         return query;
       }
       return Query.EmptyQuery;

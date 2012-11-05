@@ -39,8 +39,8 @@
     <Reference Include="Google.ProtocolBuffers.Serialization">
       <HintPath>..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="nohros">
-      <HintPath>..\..\..\..\packages\must.common.1.6.7.11\lib\net40\nohros.dll</HintPath>
+    <Reference Include="nohros, Version=1.6.7.11, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\must.common.1.6.7.13\lib\net40\nohros.dll</HintPath>
     </Reference>
     <Reference Include="nohros.caching.memorycachee">
       <HintPath>..\..\..\..\packages\must.caching.memorycache.0.0.2\lib\net40\nohros.caching.memorycachee.dll</HintPath>
