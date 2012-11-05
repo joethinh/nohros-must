@@ -114,6 +114,17 @@ namespace Nohros.Metrics
       Update(TimeUnitHelper.ToNanos(duration, unit));
     }
 
+    public void Report<T>(MetricReportCallback<T> callback, T context) {
+      histogram_.Report(
+        (h_values, h_context) => meter_.Report(
+          (m_values, m_context) => {
+            var values = new MetricValue[m_values.Length + h_values.Length];
+            Array.Copy(h_values, values, h_values.Length);
+            Array.Copy(m_values, 0, values, h_values.Length, m_values.Length);
+            callback(values, m_context);
+          }, h_context), context);
+    }
+
     /// <summary>
     /// Adds a recorded duration.
     /// </summary>

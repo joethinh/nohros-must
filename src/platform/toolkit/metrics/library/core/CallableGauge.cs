@@ -13,6 +13,7 @@ namespace Nohros.Metrics
   {
     readonly CallableDelegate<T> callable_;
 
+    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="CallableGauge{T}"/>
     /// by using the specified <see cref="CallableDelegate{T}"/>.
@@ -23,6 +24,16 @@ namespace Nohros.Metrics
     /// </param>
     public CallableGauge(CallableDelegate<T> callable) {
       callable_ = callable;
+    }
+    #endregion
+
+    public override void Report<V>(MetricReportCallback<V> callback, V context) {
+      try {
+        callback(new[] {new MetricValue("value", Convert.ToDouble(Value))},
+          context);
+      } catch (InvalidCastException e) {
+        callback(new[] {new MetricValue("value", 0.0)}, context);
+      }
     }
 
     /// <inheritdoc/>

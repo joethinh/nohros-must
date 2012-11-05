@@ -20,5 +20,8 @@ namespace Nohros.Metrics
     /// Gets the metric's current value.
     /// </summary>
     public abstract T Value { get; }
+
+    /// <inheritdoc/>
+    public abstract void Report<V>(MetricReportCallback<V> callback, V context);
   }
 }
