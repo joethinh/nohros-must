@@ -15,6 +15,7 @@ namespace Nohros.Metrics
   public class AsyncMeter : IAsyncMeter
   {
     const long kTickInterval = 5000000000; // 5 seconds in nanoseconds
+    readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
     readonly string event_type_;
     readonly ExponentialWeightedMovingAverage ewma_15_rate_;
     readonly ExponentialWeightedMovingAverage ewma_1_rate_;
@@ -23,7 +24,6 @@ namespace Nohros.Metrics
     readonly long start_time_;
     long count_;
     long last_tick_;
-    readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
 
     #region .ctor
     /// <summary>
@@ -73,7 +73,7 @@ namespace Nohros.Metrics
       long timestamp = Clock.NanoTime;
       async_tasks_mailbox_.Send(() => {
         TickIfNecessary(timestamp);
-        callback(ewma_15_rate_.Rate(rate_unit_), now);
+        callback(FifteenMinuteRate, now);
       });
     }
 
@@ -86,7 +86,7 @@ namespace Nohros.Metrics
       long timestamp = Clock.NanoTime;
       async_tasks_mailbox_.Send(() => {
         TickIfNecessary(timestamp);
-        callback(ewma_5_rate_.Rate(rate_unit_), now);
+        callback(FiveMinuteRate, now);
       });
     }
 
@@ -99,7 +99,7 @@ namespace Nohros.Metrics
       long timestamp = Clock.NanoTime;
       async_tasks_mailbox_.Send(() => {
         TickIfNecessary(timestamp);
-        callback(ewma_1_rate_.Rate(rate_unit_), now);
+        callback(OneMinuteRate, now);
       });
     }
 
@@ -110,16 +110,7 @@ namespace Nohros.Metrics
       // and not the value of it.
       var now = DateTime.Now;
       long timestamp = Clock.NanoTime;
-      async_tasks_mailbox_
-        .Send(() => {
-          if (count_ == 0) {
-            callback(0.0, now);
-          }
-
-          long elapsed = timestamp - start_time_;
-          double rate = count_/(double) elapsed;
-          callback(ConvertNsRate(rate), now);
-        });
+      async_tasks_mailbox_.Send(() => GetMeanRate(timestamp));
     }
 
     /// <inheritdoc/>
@@ -128,20 +119,7 @@ namespace Nohros.Metrics
       // clock tick and count, because the closure will capture the variable
       // and not the value of it.
       var now = DateTime.Now;
-      async_tasks_mailbox_.Send(() => callback(count_, now));
-    }
-
-    void Run(RunnableDelegate runnable) {
-      runnable();
-    }
-
-    /// <summary>
-    /// Updates the moving average.
-    /// </summary>
-    void Tick() {
-      ewma_1_rate_.Tick();
-      ewma_5_rate_.Tick();
-      ewma_15_rate_.Tick();
+      async_tasks_mailbox_.Send(() => callback(Count, now));
     }
 
     /// <summary>
@@ -168,6 +146,35 @@ namespace Nohros.Metrics
       });
     }
 
+    public void Report<T>(MetricReportCallback<T> callback, T context) {
+      var now = DateTime.Now;
+      long timestamp = Clock.NanoTime;
+      async_tasks_mailbox_.Send(() => callback(Report(timestamp), context));
+    }
+
+    double GetMeanRate(long timestamp) {
+      if (count_ == 0) {
+        return 0.0;
+      }
+
+      long elapsed = timestamp - start_time_;
+      double rate = count_/(double) elapsed;
+      return ConvertNsRate(rate);
+    }
+
+    void Run(RunnableDelegate runnable) {
+      runnable();
+    }
+
+    /// <summary>
+    /// Updates the moving average.
+    /// </summary>
+    void Tick() {
+      ewma_1_rate_.Tick();
+      ewma_5_rate_.Tick();
+      ewma_15_rate_.Tick();
+    }
+
     void TickIfNecessary(long now) {
       long age = now - last_tick_;
       last_tick_ = now;
@@ -181,6 +188,32 @@ namespace Nohros.Metrics
 
     double ConvertNsRate(double rate_per_ns) {
       return rate_per_ns*TimeUnitHelper.ToNanos(1, rate_unit_);
+    }
+
+    MetricValue[] Report(long timestamp) {
+      return new[] {
+        new MetricValue("Count", count_),
+        new MetricValue("MeanRate", GetMeanRate(timestamp)),
+        new MetricValue("OneMinuteRate", OneMinuteRate),
+        new MetricValue("FiveMinuteRate", FiveMinuteRate),
+        new MetricValue("FifteenMinuteRate", FifteenMinuteRate)
+      };
+    }
+
+    double FifteenMinuteRate {
+      get { return ewma_15_rate_.Rate(rate_unit_); }
+    }
+
+    double FiveMinuteRate {
+      get { return ewma_5_rate_.Rate(rate_unit_); }
+    }
+
+    double OneMinuteRate {
+      get { return ewma_1_rate_.Rate(rate_unit_); }
+    }
+
+    long Count {
+      get { return count_; }
     }
   }
 }

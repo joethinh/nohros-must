@@ -75,6 +75,10 @@ namespace Nohros.Metrics
       get { return count_; }
     }
 
+    public virtual void Report<T>(MetricReportCallback<T> callback, T context) {
+      callback(Report(), context);
+    }
+
     /// <summary>
     /// Adds the specified long value to the variance calculation.
     /// </summary>
@@ -90,6 +94,22 @@ namespace Nohros.Metrics
         variance_[0] += ((value - variance_[0])/count_);
         variance_[1] += ((value - old_m)*(value - variance_[0]));
       }
+    }
+
+    protected MetricValue[] Report() {
+      Snapshot snapshot = Snapshot;
+      return new[] {
+        new MetricValue("Min", Min),
+        new MetricValue("Max", Max),
+        new MetricValue("Min", Mean),
+        new MetricValue("StandardDeviation", StandardDeviation),
+        new MetricValue("Median", snapshot.Median),
+        new MetricValue("Percentile75", snapshot.Percentile75),
+        new MetricValue("Percentile95", snapshot.Percentile95),
+        new MetricValue("Percentile98", snapshot.Percentile98),
+        new MetricValue("Percentile99", snapshot.Percentile99),
+        new MetricValue("Percentile999", snapshot.Percentile999)
+      };
     }
 
     double Variance {

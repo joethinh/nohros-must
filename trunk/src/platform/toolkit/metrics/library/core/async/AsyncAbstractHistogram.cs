@@ -52,5 +52,25 @@ namespace Nohros.Metrics
 
     /// <inheritdoc/>
     public abstract void Update(long value);
+
+    public virtual void Report<T>(MetricReportCallback<T> callback, T context) {
+      async_tasks_mailbox_.Send(() => callback(Report(), context));
+    }
+
+    protected MetricValue[] Report() {
+      Snapshot snapshot = histogram_.Snapshot;
+      return new[] {
+        new MetricValue("min", histogram_.Min),
+        new MetricValue("max", histogram_.Max),
+        new MetricValue("min", histogram_.Mean),
+        new MetricValue("min", histogram_.StandardDeviation),
+        new MetricValue("median", snapshot.Median),
+        new MetricValue("percentile75", snapshot.Percentile75),
+        new MetricValue("percentile95", snapshot.Percentile95),
+        new MetricValue("percentile98", snapshot.Percentile98),
+        new MetricValue("percentile99", snapshot.Percentile99),
+        new MetricValue("percentile999", snapshot.Percentile999)
+      };
+    }
   }
 }

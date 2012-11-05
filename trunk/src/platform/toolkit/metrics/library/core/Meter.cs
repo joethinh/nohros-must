@@ -104,6 +104,10 @@ namespace Nohros.Metrics
       get { return count_; }
     }
 
+    public void Report<T>(MetricReportCallback<T> callback, T context) {
+      callback(Report(), context);
+    }
+
     /// <summary>
     /// Updates the moving average.
     /// </summary>
@@ -143,6 +147,16 @@ namespace Nohros.Metrics
           Tick();
         }
       }
+    }
+
+    public MetricValue[] Report() {
+      return new[] {
+        new MetricValue("Count", Count),
+        new MetricValue("MeanRate", MeanRate),
+        new MetricValue("OneMinuteRate", OneMinuteRate),
+        new MetricValue("FiveMinuteRate", FiveMinuteRate),
+        new MetricValue("FifteenMinuteRate", FifteenMinuteRate)
+      };
     }
 
     double ConvertNsRate(double rate_per_ns) {

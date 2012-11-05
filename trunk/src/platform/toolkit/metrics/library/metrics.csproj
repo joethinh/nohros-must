@@ -67,6 +67,8 @@
     <Compile Include="core\IMeter.cs" />
     <Compile Include="core\IMetricsRegistry.cs" />
     <Compile Include="core\ITimed.cs" />
+    <Compile Include="core\MetricReportCallback.cs" />
+    <Compile Include="core\MetricValue.cs" />
     <Compile Include="core\UniformHistogram.cs" />
     <Compile Include="MetricAddedEventHandler.cs" />
     <Compile Include="Metrics.cs" />
