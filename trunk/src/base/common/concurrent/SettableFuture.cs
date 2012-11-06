@@ -31,8 +31,12 @@ namespace Nohros.Concurrent
     /// <returns><c>true</c> if the value was successfully set, or
     /// <c>false</c> if the future has already been set or cancelled.
     /// </returns>
-    public new bool Set(T value) {
-      return base.Set(value);
+    /// <remarks>
+    /// A operation is considered synchronously when it runs in the same
+    /// context(Thread) as its initiator.
+    /// </remarks>
+    public new bool Set(T value, bool synchronously) {
+      return base.Set(value, synchronously);
     }
 
     /// <summary>
@@ -44,8 +48,12 @@ namespace Nohros.Concurrent
     /// <returns><c>true</c> if the exception was successfully set, or
     /// <c>false</c> if the future has already been set or cancelled.
     /// </returns>
-    public new bool SetException(Exception exception) {
-      return base.SetException(exception);
+    /// <remarks>
+    /// A operation is considered synchronously when it runs in the same
+    /// context(Thread) as its initiator.
+    /// </remarks>
+    public new bool SetException(Exception exception, bool synchronously) {
+      return base.SetException(exception, synchronously);
     }
   }
 }

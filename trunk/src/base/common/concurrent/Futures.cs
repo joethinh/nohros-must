@@ -23,7 +23,7 @@ namespace Nohros.Concurrent
     /// </remarks>
     public static IFuture<T> ImmediateFuture<T>(T value) {
       SettableFuture<T> future = new SettableFuture<T>();
-      future.Set(value);
+      future.Set(value, true);
       return future;
     }
 
@@ -51,7 +51,7 @@ namespace Nohros.Concurrent
       }
 
       SettableFuture<T> future = new SettableFuture<T>();
-      future.SetException(exception);
+      future.SetException(exception, true);
       return future;
     }
 
@@ -72,7 +72,7 @@ namespace Nohros.Concurrent
     public static IFuture<T> ImmediateCallableFuture<T>(
       CallableDelegate<T> callable) {
       Future<T> future = new Future<T>(callable);
-      future.Run();
+      future.Run(true);
       return future;
     }
   }

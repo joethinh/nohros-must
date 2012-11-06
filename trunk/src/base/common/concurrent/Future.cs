@@ -142,7 +142,26 @@ namespace Nohros.Concurrent
     /// Sets this <see cref="Future{T}"/> to the result of its computation
     /// unless it has been cancelled.
     /// </summary>
+    /// <remarks>
+    /// A operation is considered synchronously when it runs in the same
+    /// context(Thread) as its initiator.
+    /// </remarks>
     public void Run() {
+      Run(false);
+    }
+
+    /// <summary>
+    /// Sets this <see cref="Future{T}"/> to the result of its computation
+    /// unless it has been cancelled.
+    /// </summary>
+    /// <param name="synchronously">
+    /// A value indicating if the operation is running synchronously.
+    /// </param>
+    /// <remarks>
+    /// A operation is considered synchronously when it runs in the same
+    /// context(Thread) as its initiator.
+    /// </remarks>
+    public void Run(bool synchronously) {
       int state = Interlocked.CompareExchange(ref is_running_, 1, 0);
 
       // The future is already running or completed.
@@ -151,9 +170,9 @@ namespace Nohros.Concurrent
       }
 
       try {
-        Set(callable_());
+        Set(callable_(), synchronously);
       } catch (Exception exception) {
-        SetException(exception);
+        SetException(exception, synchronously);
       }
     }
   }
