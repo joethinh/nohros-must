@@ -61,7 +61,7 @@ namespace Nohros.RestQL {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The value for the parameter {0} was not found..
+        ///   Looks up a localized string similar to The value for the parameter &quot;{0}&quot; was not found..
         /// </summary>
         internal static string QueryExecutor_Missing_ParameterValue {
             get {
