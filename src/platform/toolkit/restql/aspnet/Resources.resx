@@ -124,6 +124,6 @@
     <value>Received more than one part in for a single request. The request fail and received data will be discarded.</value>
   </data>
   <data name="Query_ErrorResponse_Name_Trace" xml:space="preserve">
-    <value>A query completes with an error. Backtrace: {0}</value>
+    <value>A query completes with an error. Error:{0}, Backtrace: {1}</value>
   </data>
 </root>

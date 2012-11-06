@@ -70,6 +70,10 @@ namespace Nohros.RestQL
       RubyMessagePacket packet = GetMessagePacket(GetNextRequestId(),
         request.ToByteString());
       try {
+        QueryFuture future = new SettableFuture<HttpQueryResponse>(state);
+        Tuple<AsyncCallback, QueryFuture> tuple = Tuple.Create(callback, future);
+        futures_.Add(request_id_, tuple);
+
         // Send the request and wait for the response. The request should
         // follow the REQ/REP pattern, which contains the following parts:
         //   1. [EMPTY FRAME]
@@ -77,9 +81,6 @@ namespace Nohros.RestQL
         // 
         socket_.SendMore();
         socket_.Send(packet.ToByteArray());
-        QueryFuture future = new SettableFuture<HttpQueryResponse>(state);
-        Tuple<AsyncCallback, QueryFuture> tuple = Tuple.Create(callback, future);
-        futures_.Add(request_id_, tuple);
         return future;
       } catch (ZMQ.Exception zmqe) {
         return
@@ -110,11 +111,11 @@ namespace Nohros.RestQL
           SettableFuture<HttpQueryResponse> future = tuple.Item2;
           switch (packet.Message.Type) {
             case (int) MessageType.kQueryResponseMessage:
-              future.Set(GetQueryResponse(packet.Message));
+              future.Set(GetQueryResponse(packet.Message), false);
               break;
 
             case (int) NodeMessageType.kNodeError:
-              future.Set(GetError(packet.Message));
+              future.Set(GetError(packet.Message), false);
               break;
           }
           tuple.Item1(tuple.Item2);
@@ -133,14 +134,21 @@ namespace Nohros.RestQL
       int last_error_code = 400;
       foreach (ExceptionMessage e in message.ErrorsList) {
         logger_.Error(string.Format(Resources.Query_ErrorResponse_Name_Trace,
-          e.Message));
+          e.Message, GetBacktrace(e)));
         last_error_code = e.Code;
       }
       return new HttpQueryResponse {
         Name = "Error",
         Response = Resources.Http_InternalServerError,
-        StatusCode = (HttpStatusCode)last_error_code
+        StatusCode = (HttpStatusCode) last_error_code
       };
+    }
+
+    public string GetBacktrace(ExceptionMessage e) {
+      var q = from pair in e.DataList
+              where pair.Key == "backtrace"
+              select pair.Value;
+      return (q.FirstOrDefault() ?? string.Empty);
     }
 
     HttpQueryResponse GetQueryResponse(RubyMessage response) {

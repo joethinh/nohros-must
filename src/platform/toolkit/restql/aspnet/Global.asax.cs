@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web;
 using System.Web.Configuration;
+using Nohros.Resources;
 using ZMQ;
 
 namespace Nohros.RestQL
@@ -21,7 +22,17 @@ namespace Nohros.RestQL
       string config_file_path = Server.MapPath(config_file_name);
       Settings settings = new Settings.Loader()
         .Load(config_file_path, Strings.kConfigRootNodeName);
+
       var factory = new HttpQueryApplicationFactory(settings);
+      factory.ConfigureLogger();
+
+      // log any unhandled exception that may occur for futher investigation.
+      AppDomain.CurrentDomain.UnhandledException +=
+        (obj, args) =>
+          HttpQueryLogger.ForCurrentProcess.Error(
+            string.Format(StringResources.Log_ThrowsException, "Application"),
+            (System.Exception) args.ExceptionObject);
+
       HttpQueryApplication app = factory.CreateQueryApplication();
       Application[Strings.kApplicationKey] = app;
       app.Start();
