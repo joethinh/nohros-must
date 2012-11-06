@@ -26,7 +26,11 @@ namespace Nohros.RestQL
       IQuery query_to_execute = resolver_.GetQuery(name);
       IQueryExecutor executor = resolver_.GetQueryExecutor(query_to_execute);
       if (!(executor is NoOpQueryExecutor)) {
-        result = executor.Execute(query_to_execute, data);
+        try {
+          result = executor.Execute(query_to_execute, data);
+        } catch(KeyNotFoundException key_not_found_exception) {
+          result = key_not_found_exception.Message;
+        }
         return true;
       }
       result = string.Format(Resources.QueryProcessor_ProcessorNotFound, name);
