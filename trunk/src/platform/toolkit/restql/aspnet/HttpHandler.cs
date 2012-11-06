@@ -13,6 +13,27 @@ namespace Nohros.RestQL
   /// </summary>
   public class HttpHandler : IHttpAsyncHandler
   {
+    struct AsyncState
+    {
+      readonly HttpContext context_;
+      readonly int id_;
+
+      #region .ctor
+      public AsyncState(int id, HttpContext context) {
+        context_ = context;
+        id_ = id;
+      }
+      #endregion
+
+      public HttpContext HttpContext {
+        get { return context_; }
+      }
+
+      public int ID {
+        get { return id_; }
+      }
+    }
+
     const string kJsonContentType = "application/json";
 
     readonly Dictionary<int, string> pending_request_;
@@ -36,14 +57,14 @@ namespace Nohros.RestQL
 
     public void EndProcessRequest(IAsyncResult result) {
       var future = (IFuture<HttpQueryResponse>) result;
-      var context = (HttpContext) result.AsyncState;
-      int id = context.GetHashCode();
+      var state = (AsyncState) result.AsyncState;
 
       // Checks if the query request is still pending.
-      if (!pending_request_.ContainsKey(id)) {
+      if (!pending_request_.ContainsKey(state.ID)) {
         return;
       }
 
+      HttpContext context = state.HttpContext;
       try {
         HttpResponse response = context.Response;
         HttpQueryResponse value = future.Get(0, TimeUnit.Seconds);
@@ -54,7 +75,7 @@ namespace Nohros.RestQL
         context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
         context.Response.ContentType = kJsonContentType;
       }
-      pending_request_.Remove(id);
+      pending_request_.Remove(state.ID);
     }
 
     public IAsyncResult BeginProcessRequest(HttpContext context,
@@ -72,30 +93,37 @@ namespace Nohros.RestQL
       IDictionary<string, string> parameters = GetParameters(context);
       var app = context
         .Application[Strings.kApplicationKey] as HttpQueryApplication;
+      var async_state = new AsyncState(context.GetHashCode(), context);
       IFuture<HttpQueryResponse> result = app.ProcessQuery(name, parameters,
-        callback, context);
+        callback, async_state);
 
 
-      // Waits the processing to finish if it was not finished yet.
+      // Waits the processing to finish. NOTE that we cannot finish the
+      // request synchrnously, because that is no way to tell ASP.NET
+      // that the request has been completed. If we do this a null reference
+      // exception will be raised when OnAsyncHandlerCompletion runs, because
+      // the HttpContext associated with the request is already released.
       HttpQueryResponse response;
       if (result.TryGet(0, TimeUnit.Seconds, out response)) {
         callback(result);
-      } else {
-        pending_request_[context.GetHashCode()] = name;
-        ThreadPool.RegisterWaitForSingleObject(result.AsyncWaitHandle,
-          (o, @out) => Timeout(@out, callback, result), null,
-          app.Settings.ResponseTimeout, true);
+        return Futures.ImmediateFuture(0);
       }
+
+      pending_request_[async_state.ID] = name;
+      ThreadPool.RegisterWaitForSingleObject(result.AsyncWaitHandle,
+        (o, @out) => Timeout(@out, callback, result), null,
+        app.Settings.ResponseTimeout, true);
       return result;
     }
 
     void Timeout(bool timedout, AsyncCallback callback, IAsyncResult result) {
-      var context = (HttpContext) result.AsyncState;
+      var state = (AsyncState) result.AsyncState;
       if (timedout) {
-        pending_request_.Remove(context.GetHashCode());
-        context.Response.StatusCode = (int) HttpStatusCode.RequestTimeout;
+        pending_request_.Remove(state.ID);
+        state.HttpContext.Response.StatusCode =
+          (int) HttpStatusCode.RequestTimeout;
+        callback(result);
       }
-      callback(result);
     }
 
     IDictionary<string, string> GetParameters(HttpContext context) {

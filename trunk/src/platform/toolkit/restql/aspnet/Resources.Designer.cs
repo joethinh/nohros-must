@@ -79,7 +79,7 @@ namespace Nohros.RestQL {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A query completes with an error. Backtrace: {0}.
+        ///   Looks up a localized string similar to A query completes with an error. Error:{0}, Backtrace: {1}.
         /// </summary>
         internal static string Query_ErrorResponse_Name_Trace {
             get {
