@@ -66,6 +66,9 @@ namespace Nohros.Data.Json
       if (type == typeof (string)) {
         return new JsonDataFieldString(name, position);
       }
+      if(type == typeof(DateTime)) {
+        return new JsonDataFieldDateTime(name, position);
+      }
 
       throw new NotSupportedException(
         string.Format(StringResources.NotSupported_CannotCreateType, type.Name));
