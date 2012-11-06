@@ -11,7 +11,7 @@ namespace Nohros.Concurrent
   /// This class implements all methods in <see cref="IFuture{T}"/>. Subclasses
   /// should provide a way to set the result of the computation through the
   /// protected methods <see cref="Set"/> and
-  /// <see cref="SetException(Exception)"/>. Subclasses may also override
+  /// <see cref="SetException(Exception, bool)"/>. Subclasses may also override
   /// <see cref="InterruptTask"/>, which will be invoked automatically if a
   /// call to <see cref="Cancel(bool)"/> succeeds in canceling the future.
   /// <para>
@@ -65,6 +65,7 @@ namespace Nohros.Concurrent
 
     readonly ExecutionList execution_list_;
     readonly ManualResetEvent sync_;
+    bool completed_synchronously_;
 
     Exception exception_;
 
@@ -84,6 +85,7 @@ namespace Nohros.Concurrent
       sync_ = new ManualResetEvent(false);
       async_state_ = null;
       state_ = (int) FutureState.Running;
+      completed_synchronously_ = false;
     }
 
     /// <summary>
@@ -107,19 +109,7 @@ namespace Nohros.Concurrent
     }
 
     bool IAsyncResult.CompletedSynchronously {
-      get { return false; }
-    }
-
-    /// <inheritdoc/>
-    public bool Cancel(bool may_interrupt_if_running) {
-      if (!Cancel()) {
-        return false;
-      }
-      execution_list_.Execute();
-      if (may_interrupt_if_running) {
-        InterruptTask();
-      }
-      return true;
+      get { return completed_synchronously_; }
     }
 
     /// <inheritdoc/>
@@ -166,6 +156,20 @@ namespace Nohros.Concurrent
       execution_list_.Add(listener, executor);
     }
 
+    /// <inheritdoc/>
+    public bool Cancel(bool may_interrupt_if_running, bool synchronously)
+    {
+      if (!Cancel(synchronously))
+      {
+        return false;
+      }
+      execution_list_.Execute();
+      if (may_interrupt_if_running) {
+        InterruptTask();
+      }
+      return true;
+    }
+
     bool TryGet(int timeout_ms, out T result) {
       if (!IsCompleted) {
         if (sync_.WaitOne(timeout_ms)) {
@@ -188,11 +192,19 @@ namespace Nohros.Concurrent
     /// <param name="value">
     /// The value that was the result of the task.
     /// </param>
+    /// <param name="synchronously">
+    /// A indication of whether the operation completed synchronously.
+    /// </param>
     /// <returns>
     /// <c>true</c> if the state was succesfully changed.
     /// </returns>
-    protected virtual bool Set(T value) {
-      bool completed = Complete(value, null, FutureState.Completed);
+    /// <remarks>
+    /// A operation is considered synchronously when it runs in the same
+    /// context(Thread) as its initiator.
+    /// </remarks>
+    protected virtual bool Set(T value, bool synchronously)
+    {
+      bool completed = Complete(value, null, FutureState.Completed, synchronously);
       if (completed) {
         execution_list_.Execute();
       }
@@ -208,11 +220,20 @@ namespace Nohros.Concurrent
     /// <param name="exception">
     /// The exception that the task failed with.
     /// </param>
+    /// <param name="synchronously">
+    /// A indication of whether the operation completed synchronously.
+    /// </param>
     /// <returns>
     /// <c>true</c> if the state was successfully changed.
     /// </returns>
-    protected virtual bool SetException(Exception exception) {
-      bool completed = Complete(default(T), exception, FutureState.Completed);
+    /// <remarks>
+    /// A operation is considered synchronously when it runs in the same
+    /// context(Thread) as its initiator.
+    /// </remarks>
+    protected virtual bool SetException(Exception exception, bool synchronously)
+    {
+      bool completed = Complete(default(T), exception, FutureState.Completed,
+        synchronously);
       if (completed) {
         execution_list_.Execute();
       }
@@ -222,8 +243,8 @@ namespace Nohros.Concurrent
     /// <summary>
     /// Transition to the CANCELED state.
     /// </summary>
-    bool Cancel() {
-      return Complete(default(T), null, FutureState.Completed);
+    bool Cancel(bool synchronous) {
+      return Complete(default(T), null, FutureState.Completed, synchronous);
     }
 
     /// <summary>
@@ -280,6 +301,9 @@ namespace Nohros.Concurrent
     /// <param name="final_state">
     /// The state to transiton to.
     /// </param>
+    /// <param name="synchronously">
+    /// A indication of whether the operation completed synchronously.
+    /// </param>
     /// <remarks>
     /// Either <see cref="value"/> or <see cref="exception"/> will be set but
     /// not both. The <see cref="final_state"/> is the state to change to from
@@ -291,7 +315,13 @@ namespace Nohros.Concurrent
     /// <c>false</c> if the state is not in the RUNNING state; otherwise,
     /// <c>true</c>.
     /// </returns>
-    bool Complete(T value, Exception exception, FutureState final_state) {
+    /// <remarks>
+    /// A operation is considered synchronously when it runs in the same
+    /// context(Thread) as its initiator.
+    /// </remarks>
+    bool Complete(T value, Exception exception, FutureState final_state,
+      bool synchronously)
+    {
       int completion = Interlocked.CompareExchange(ref state_,
         (int) FutureState.Completing, (int) FutureState.Running);
 
@@ -301,6 +331,7 @@ namespace Nohros.Concurrent
         value_ = value;
         exception_ = exception;
         state_ = (int) final_state;
+        completed_synchronously_ = synchronously;
         sync_.Set();
       } else if (state_ == (int) FutureState.Completing) {
         // If some thread is currently completing the future, block until

@@ -75,7 +75,11 @@ namespace Nohros.Concurrent
     /// <c>true</c> if this method returned <c>true</c>.
     /// </para>
     /// </remarks>
-    bool Cancel(bool may_interrupt_if_running);
+    /// <remarks>
+    /// A operation is considered synchronously when it runs in the same
+    /// context(Thread) as its initiator.
+    /// </remarks>
+    bool Cancel(bool may_interrupt_if_running, bool synchronously);
 
     /// <summary>
     /// Waits if nescessary for the computation to complete and then retrieves

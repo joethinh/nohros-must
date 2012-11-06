@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Nohros.Concurrent
@@ -8,7 +9,8 @@ namespace Nohros.Concurrent
   /// method calls to a <see cref="Task{T}"/>
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  public class TaskFuture<T> : AbstractFuture<T>, IRunnableFuture<T>
+  public class TaskFuture<T> : AbstractFuture<T>, IRunnableFuture<T>,
+                               IAsyncResult
   {
     readonly Task<T> task_;
 
@@ -38,6 +40,14 @@ namespace Nohros.Concurrent
       task_ = task;
     }
     #endregion
+
+    bool IAsyncResult.CompletedSynchronously {
+      get { return ((IAsyncResult) task_).CompletedSynchronously; }
+    }
+
+    WaitHandle IAsyncResult.AsyncWaitHandle {
+      get { return ((IAsyncResult) task_).AsyncWaitHandle; }
+    }
 
     public override object AsyncState {
       get { return task_.AsyncState; }

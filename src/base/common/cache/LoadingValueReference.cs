@@ -85,7 +85,7 @@ namespace Nohros.Caching
     /// if the value has already been set or if the loading was cancelled.
     /// </returns>
     public new bool Set(T value) {
-      return base.Set(value);
+      return base.Set(value, false);
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ namespace Nohros.Caching
     /// <see cref="ExecutionException"/> and thrown from the get methods.
     /// </remarks>
     public new bool SetException(Exception exception) {
-      return base.SetException(exception);
+      return base.SetException(exception, false);
     }
 
     /// <summary>
