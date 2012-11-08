@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 
 namespace Nohros.Data.Json
 {
@@ -49,7 +50,7 @@ namespace Nohros.Data.Json
     /// class.
     /// </returns>
     public override string AsJson() {
-      return value_.ToString(format);
+      return value_.ToString(format, NumberFormatInfo.InvariantInfo);
     }
 
     /// <summary>

@@ -11,10 +11,25 @@ namespace Nohros.Data.Json
   /// </summary>
   public class JsonCollectionFactory : IJsonCollectionFactory
   {
-    const string kJsonTableCollection = "table";
-    const string kJsonObjectCollection = "object";
-    const string kArrayCollection = "array";
-    const string kArrayOfObjectsCollection = "array-of-object";
+    /// <summary>
+    /// The name of the <see cref="JsonTable"/> collection.
+    /// </summary>
+    public const string kJsonTableCollection = "table";
+
+    /// <summary>
+    /// The name of the <see cref="JsonObject"/> collection.
+    /// </summary>
+    public const string kJsonObjectCollection = "object";
+
+    /// <summary>
+    /// The name of the <see cref="JsonArray"/> collection.
+    /// </summary>
+    public const string kJsonArrayCollection = "array";
+
+    /// <summary>
+    /// The name of the aray of <see cref="JsonObject"/> collection.
+    /// </summary>
+    public const string kJsonArrayOfObjectsCollection = "arrayOfObjects";
 
     /// <inheritdoc/>
     public IJsonCollection CreateJsonCollection(string name) {
@@ -22,8 +37,8 @@ namespace Nohros.Data.Json
         case kJsonObjectCollection:
           return new JsonObject();
 
-        case kArrayCollection:
-        case kArrayOfObjectsCollection:
+        case kJsonArrayCollection:
+        case kJsonArrayOfObjectsCollection:
           return new JsonArray();
 
         case kJsonTableCollection:
@@ -41,13 +56,13 @@ namespace Nohros.Data.Json
         case kJsonObjectCollection:
           return CreateJsonObject(reader);
 
-        case kArrayCollection:
+        case kJsonArrayCollection:
           return CreateJsonArray(reader);
 
         case kJsonTableCollection:
           return CreateJsonTable(reader);
 
-        case kArrayOfObjectsCollection:
+        case kJsonArrayOfObjectsCollection:
           return CreateJsonArrayOfObject(reader);
 
         default:
@@ -156,6 +171,7 @@ namespace Nohros.Data.Json
           }
           json_table.Add(json_array);
         } while (reader.Read());
+        return json_table;
       }
       return new JsonTable();
     }

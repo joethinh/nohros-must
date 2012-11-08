@@ -770,17 +770,18 @@ namespace Nohros.Data.Json
     }
 
     JsonStringBuilder WriteReservedBeginToken(Token token) {
-      switch (current_state_) {
+      /*switch (current_state_) {
         case State.None:
         case State.ReservedBeginToken:
-        case State.ReservedEndToken:
           tokens_.Add(token);
           break;
+        case State.ReservedEndToken:
         case State.ContentToken:
           tokens_.Add(new Token(kValueSeparator, TokenType.Structural));
           tokens_.Add(token);
           break;
-      }
+      }*/
+      WriteContentToken(token);
       current_state_ = State.ReservedBeginToken;
       return this;
     }
