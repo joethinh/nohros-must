@@ -62,6 +62,9 @@
     <Compile Include="concurrent\MailboxTests.cs" />
     <Compile Include="concurrent\YQueueTests.cs" />
     <Compile Include="configuration\common\provider\ProvidersNodeParserTests.cs" />
+    <Compile Include="data\json\collection\JsonCollectionFactoryTest.cs" />
+    <Compile Include="data\json\collection\JsonObjectTest.cs" />
+    <Compile Include="data\json\collection\JsonTableTest.cs" />
     <Compile Include="data\json\JsonStringBuilderTest.cs" />
     <Compile Include="GenericTest.cs" />
     <Compile Include="Program.cs" />
