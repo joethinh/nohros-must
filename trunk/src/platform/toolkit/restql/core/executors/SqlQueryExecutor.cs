@@ -23,16 +23,14 @@ namespace Nohros.RestQL
     }
     #endregion
 
-    public override bool GetConnectionProvider(
-      IDictionary<string, string> options, out IConnectionProvider provider) {
+    public override bool GetConnectionProvider(IQuery query,
+      out IConnectionProvider provider) {
       try {
-        string name;
-        if (options.TryGetValue(Strings.kConnectionProviderOption, out name)) {
-          if (!cache_.GetIfPresent(name, out provider)) {
-            provider = CreateConnectionProvider(options);
-          }
-          return true;
+        if (!cache_.GetIfPresent(query.Name, out provider)) {
+          provider = CreateConnectionProvider(query.Options);
+          cache_.Put(query.Name, provider);
         }
+        return true;
       } catch (Exception e) {
         logger_.Error(
           string.Format(StringResources.Log_MethodThrowsException, kClassName,
@@ -45,12 +43,7 @@ namespace Nohros.RestQL
 
     public IConnectionProvider CreateConnectionProvider(
       IDictionary<string, string> options) {
-      string name;
-      if (options.TryGetValue(Strings.kConnectionProviderOption, out name)) {
-        return new SqlConnectionProviderFactory()
-          .CreateProvider(options);
-      }
-      throw new KeyNotFoundException(Strings.kConnectionProviderOption);
+      return new SqlConnectionProviderFactory().CreateProvider(options);
     }
   }
 }
