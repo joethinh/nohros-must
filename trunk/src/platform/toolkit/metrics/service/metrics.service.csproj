@@ -84,7 +84,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\base\extensions\extensions.csproj">
       <Project>{438798C5-7FC8-4238-9AE4-D6B87012B5E2}</Project>
-      <Name>extensions %28%28base%29\extensions%29</Name>
+      <Name>extensions</Name>
     </ProjectReference>
     <ProjectReference Include="..\library\metrics.csproj">
       <Project>{EE140ABF-C917-44D7-B89F-D6946332F507}</Project>

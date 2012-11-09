@@ -51,9 +51,9 @@
       <HintPath>..\..\..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="nohros, Version=1.6.7.17, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="nohros, Version=1.6.7.19, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\must.common.1.6.7.17\lib\net40\nohros.dll</HintPath>
+      <HintPath>..\..\..\..\packages\must.common.1.6.7.19\lib\net40\nohros.dll</HintPath>
     </Reference>
     <Reference Include="nohros.ruby.net.extensions">
       <HintPath>..\..\..\..\packages\nohros.ruby.net.extensions.0.0.3.0\lib\net40\nohros.ruby.net.extensions.dll</HintPath>

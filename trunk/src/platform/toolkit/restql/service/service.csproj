@@ -39,9 +39,9 @@
     <Reference Include="Google.ProtocolBuffers.Serialization">
       <HintPath>..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="nohros, Version=1.6.7.17, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="nohros, Version=1.6.7.19, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\must.common.1.6.7.17\lib\net40\nohros.dll</HintPath>
+      <HintPath>..\..\..\..\packages\must.common.1.6.7.19\lib\net40\nohros.dll</HintPath>
     </Reference>
     <Reference Include="nohros.caching.memorycachee">
       <HintPath>..\..\..\..\packages\must.caching.memorycache.0.0.2\lib\net40\nohros.caching.memorycachee.dll</HintPath>
@@ -87,7 +87,7 @@
     </ProjectReference>
     <ProjectReference Include="..\core\restQL.csproj">
       <Project>{1A4ED279-F59C-4E37-AE66-D323A89C36ED}</Project>
-      <Name>restQL %28%28plataform%29\%28toolkit%29\%28restQL%29\restQL%29</Name>
+      <Name>restQL</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
