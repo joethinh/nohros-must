@@ -90,28 +90,26 @@ namespace Nohros.Data.Json
     /// </returns>
     public string AsJson() {
       if (columns_.Length == 0) {
-        return "{\"columns\":[], \"data\":[]}";
+        return "{\"columns\":[], \"rows\":[[]]}";
       }
 
       const string kColumnNamesMemberName = "columns";
-      const string kDataMemberName = "data";
+      const string kDataMemberName = "rows";
 
       JsonStringBuilder builder = new JsonStringBuilder()
         .WriteBeginObject()
         .WriteMemberName(kColumnNamesMemberName)
         .WriteStringArray(columns_)
-        .WriteMemberName(kDataMemberName);
-
+        .WriteMemberName(kDataMemberName)
+        .WriteBeginArray();
       if (rows_.Count == 0) {
-        builder
-          .WriteBeginArray()
-          .WriteEndArray();
+        builder.WriteBeginArray().WriteEndArray();
       } else {
         for (int i = 0, j = rows_.Count; i < j; i++) {
           builder.WriteUnquotedString(rows_[i].AsJson());
         }
       }
-      return builder.WriteEndObject().ToString();
+      return builder.WriteEndArray().WriteEndObject().ToString();
     }
 
     /// <summary>
