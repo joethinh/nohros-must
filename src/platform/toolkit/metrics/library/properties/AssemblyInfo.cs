@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Metrics Tool.")]
-[assembly: AssemblyDescription("Must Metrics Tool.")]
+[assembly: AssemblyTitle("nohros.metrics")]
+[assembly: AssemblyDescription("nohros.metrics")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nohros Inc.")]
 [assembly: AssemblyProduct("Nohros Must.")]

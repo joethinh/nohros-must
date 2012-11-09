@@ -65,9 +65,9 @@ namespace Nohros.RestQL
 
     public const string kCommandTimeoutOption = "command-timeout";
 
-    public const string kJsonCollectionOption = "json-collection";
+    public const string kJsonCollectionOption = "jsonCollection";
 
-    public const string kDefaultJsonCollection = "array-of-object";
+    public const string kDefaultJsonCollection = "arrayOfObjects";
 
     public const string kResponseAffectedRowsMemberName = "affectedRows";
 

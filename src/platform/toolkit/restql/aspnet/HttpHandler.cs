@@ -68,6 +68,7 @@ namespace Nohros.RestQL
       try {
         HttpResponse response = context.Response;
         HttpQueryResponse value = future.Get(0, TimeUnit.Seconds);
+        response.AddHeader("Access-Control-Allow-Origin", "*");
         response.StatusCode = (int) value.StatusCode;
         response.ContentType = kJsonContentType;
         response.Write(value.Response);
