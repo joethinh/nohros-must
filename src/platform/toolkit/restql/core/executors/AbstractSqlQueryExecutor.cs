@@ -37,10 +37,6 @@ namespace Nohros.RestQL
     }
     #endregion
 
-    protected internal IJsonCollectionFactory JsonCollectionFactory {
-      get { return json_collection_factory_; }
-    }
-
     /// <inheritdoc/>
     public virtual string Execute(IQuery query,
       IDictionary<string, string> parameters) {
@@ -49,7 +45,7 @@ namespace Nohros.RestQL
       }
 
       IConnectionProvider provider;
-      if (GetConnectionProvider(query.Options, out provider)) {
+      if (GetConnectionProvider(query, out provider)) {
         return Execute(query, parameters, provider);
       }
 
@@ -71,15 +67,11 @@ namespace Nohros.RestQL
     /// </returns>
     /// <seealso cref="Query"/>
     public bool CanExecute(IQuery query) {
-      IDictionary<string, string> options = query.Options;
-      return
-        string.Compare(Strings.kSqlQueryType, query.Type,
-          StringComparison.OrdinalIgnoreCase) == 0 &&
-          options.ContainsKey(Strings.kConnectionProviderOption);
+      return Strings.kSqlQueryType.CompareOrdinalIgnoreCase(query.Type);
     }
 
-    public abstract bool GetConnectionProvider(
-      IDictionary<string, string> options, out IConnectionProvider provider);
+    public abstract bool GetConnectionProvider(IQuery query,
+      out IConnectionProvider provider);
 
     protected virtual string Execute(IQuery query,
       IDictionary<string, string> parameters, IConnectionProvider provider) {
@@ -93,33 +85,33 @@ namespace Nohros.RestQL
 
         BindParameters(builder, query.Parameters, parameters);
 
+        string preferred_json_collection = query.Options
+          .GetString(Strings.kJsonCollectionOption,
+            Strings.kDefaultJsonCollection);
+
         IDbCommand cmd = builder.Build();
         connection.Open();
         string response =
           (query.QueryMethod == QueryMethod.Get)
-            ? ExecuteReader(cmd, query)
-            : ExecuteNonQuery(cmd, query);
+            ? ExecuteReader(cmd, query, preferred_json_collection)
+            : ExecuteNonQuery(cmd, query, preferred_json_collection);
         connection.Close();
         return response;
       }
     }
 
-    string ExecuteReader(IDbCommand command, IQuery query) {
+    string ExecuteReader(IDbCommand command, IQuery query,
+      string preferred_json_collection) {
       IDataReader reader = command.ExecuteReader();
-      string preferred_json_collection = query.Options
-        .GetString(Strings.kJsonCollectionOption,
-          Strings.kDefaultJsonCollection);
       IJsonCollection json_collection =
         json_collection_factory_
           .CreateJsonCollection(preferred_json_collection, reader);
       return Serialize(json_collection, json_collection.Count);
     }
 
-    string ExecuteNonQuery(IDbCommand command, IQuery query) {
+    string ExecuteNonQuery(IDbCommand command, IQuery query,
+      string preferred_json_collection) {
       int no_of_affected_records = command.ExecuteNonQuery();
-      string preferred_json_collection = query.Options
-        .GetString(Strings.kJsonCollectionOption,
-          Strings.kDefaultJsonCollection);
       IJsonCollection json_collection =
         json_collection_factory_
           .CreateJsonCollection(preferred_json_collection);
@@ -158,6 +150,10 @@ namespace Nohros.RestQL
         return CommandType.StoredProcedure;
       }
       return CommandType.Text;
+    }
+
+    protected internal IJsonCollectionFactory JsonCollectionFactory {
+      get { return json_collection_factory_; }
     }
   }
 }
