@@ -62,5 +62,7 @@ where query_id = @query_id
 
 select option_name
   ,option_value
-from rql_query_option
+from rql_query_option_crossref cr
+  inner join rql_query_option_group qog on qog.query_option_group_id = cr.query_option_group_id
+  inner join rql_query_option qo on qo.query_option_group_id = qog.query_option_group_id
 where query_id = @query_id
