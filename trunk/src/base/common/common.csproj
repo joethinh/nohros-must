@@ -200,6 +200,9 @@
     <Compile Include="logging\ILoggerFactory.cs" />
     <Compile Include="providers\data\IConnectionProvider.cs" />
     <Compile Include="RuntimeType.cs" />
+    <Compile Include="type\collections\AbstractRingQueue.cs" />
+    <Compile Include="type\collections\IRingQueue.cs" />
+    <Compile Include="type\collections\RingQueue.cs" />
     <Compile Include="type\collections\Visitor.cs" />
     <Compile Include="type\collections\VisitorDelegate.cs" />
     <Compile Include="type\delegates\CallableDelegate.cs" />
@@ -370,7 +373,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

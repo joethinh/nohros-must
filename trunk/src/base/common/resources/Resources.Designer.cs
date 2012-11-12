@@ -440,7 +440,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Queue empty.
+        ///   Looks up a localized string similar to Queue is empty..
         /// </summary>
         internal static string InvalidOperation_EmptyQueue {
             get {
@@ -449,7 +449,7 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Queue full.
+        ///   Looks up a localized string similar to Queue is full..
         /// </summary>
         internal static string InvalidOperation_FullQueue {
             get {
