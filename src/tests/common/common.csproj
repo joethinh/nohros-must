@@ -74,6 +74,8 @@
     <Compile Include="security\auth\sets\PermissionSetTest.cs" />
     <Compile Include="security\auth\sets\PrincipalSetTest.cs" />
     <Compile Include="type\collection\AndersonTreeTests.cs" />
+    <Compile Include="type\collection\AbstractRingQueueTests.cs" />
+    <Compile Include="type\collection\RingQueueTests.cs" />
     <Compile Include="type\json\JSONReaderTests.cs" />
     <Compile Include="type\ParameterizedStringTests.cs" />
     <Compile Include="type\suppliers\ExpiringMemoizingSupplier.cs" />

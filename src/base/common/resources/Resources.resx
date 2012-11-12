@@ -203,10 +203,10 @@
     <value>Syntax error</value>
   </data>
   <data name="InvalidOperation_EmptyQueue" xml:space="preserve">
-    <value>Queue empty</value>
+    <value>Queue is empty.</value>
   </data>
   <data name="InvalidOperation_FullQueue" xml:space="preserve">
-    <value>Queue full</value>
+    <value>Queue is full.</value>
   </data>
   <data name="JSON_BadRootElementType" xml:space="preserve">
     <value>Root value must be an array or object.</value>
