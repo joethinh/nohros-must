@@ -54,7 +54,6 @@
     <Compile Include="core\async\IAsyncTimed.cs" />
     <Compile Include="core\BiasedHistogram.cs" />
     <Compile Include="core\CallableGauge.cs" />
-    <Compile Include="core\Clock.cs" />
     <Compile Include="core\Counter.cs" />
     <Compile Include="core\Callbacks.cs" />
     <Compile Include="core\Histograms.cs" />
@@ -86,7 +85,6 @@
     <Compile Include="stats\Samples.cs" />
     <Compile Include="stats\Snapshot.cs" />
     <Compile Include="core\ISummarizable.cs" />
-    <Compile Include="core\TimedEvent.cs" />
     <Compile Include="core\Timer.cs" />
     <Compile Include="core\TimerContext.cs" />
     <Compile Include="stats\UniformSample.cs" />

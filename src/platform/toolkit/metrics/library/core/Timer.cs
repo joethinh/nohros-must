@@ -8,6 +8,7 @@ namespace Nohros.Metrics
   /// </summary>
   public class Timer : ITimed
   {
+    readonly Clock clock_;
     readonly TimeUnit duration_unit_;
     readonly BiasedHistogram histogram_;
     readonly Meter meter_;
@@ -19,10 +20,16 @@ namespace Nohros.Metrics
     /// <param name="duration_unit">
     /// The scale unit for this timer's duration metrics.
     /// </param>
-    public Timer(TimeUnit duration_unit, Meter meter, BiasedHistogram histogram) {
+    public Timer(TimeUnit duration_unit, Meter meter, BiasedHistogram histogram)
+      : this(duration_unit, meter, histogram, new UserTimeClock()) {
+    }
+
+    public Timer(TimeUnit duration_unit, Meter meter, BiasedHistogram histogram,
+      Clock clock) {
       duration_unit_ = duration_unit;
       meter_ = meter;
       histogram_ = histogram;
+      clock_ = clock;
     }
     #endregion
 
@@ -148,14 +155,14 @@ namespace Nohros.Metrics
     /// <returns>The value returned by <paramref name="method"/>.</returns>
     /// <exception cref="Exception">Exception if <paramref name="method"/>
     /// tjrows an <see cref="Exception"/>.</exception>
-    public T Time<T>(TimedEvent<T> method) {
-      long start_time = Clock.NanoTime;
+    public T Time<T>(CallableDelegate<T> method) {
+      long start_time = clock_.Tick;
 
       // The time should be mensured even if a exception is throwed.
       try {
         return method();
       } finally {
-        Update(Clock.NanoTime - start_time);
+        Update(clock_.Tick - start_time);
       }
     }
 
@@ -167,7 +174,7 @@ namespace Nohros.Metrics
     /// A new <see cref="TimerContext"/>.
     /// </returns>
     public TimerContext Time() {
-      return new TimerContext(this);
+      return new TimerContext(this, clock_);
     }
 
     /// <summary>
