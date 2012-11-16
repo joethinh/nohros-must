@@ -41,9 +41,6 @@
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="Telerik.JustMock, Version=2012.2.813.9, Culture=neutral, PublicKeyToken=8b221631f7271365, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\JustMock.2012.2.813.0\lib\Net35\Telerik.JustMock.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -51,9 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="JustMock.Readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\base\extensions\extensions.csproj">
