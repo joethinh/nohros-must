@@ -19,12 +19,27 @@ namespace Nohros.Concurrent
   /// messages(T). Same way the object can speak to other objects - potentially
   /// running in different threads - by sending them messages.
   /// </para>
+  /// <para>
+  /// The mailbox message processing is single threaded and no more than one
+  /// task will be active at any given time. When a message is
+  /// send to it, it is queued to be processed by the executor. The
+  /// executor runs until the message queue is empty. So, if you are using
+  /// a <see cref="SameThreadExecutor"/> that is no guarantee that a
+  /// message callback is executed by the thread that send the message, if
+  /// there is an thread already executing a callback when a message is sent,
+  /// that thread will be used to process the following messages until the
+  /// message queue is empty.
+  /// </para>
   /// </remarks>
   /// <typeparam name="T">
   /// The type of the messages that the mailbox can receive.
   /// </typeparam>
   public class Mailbox<T>
   {
+    const int kDefaultCapacity = 16;
+    readonly MailboxReceiveCallback<T> callback_;
+    readonly IExecutor executor_;
+
     // The pipe to store actual messages
     readonly YQueue<T> message_queue_;
 
@@ -36,15 +51,10 @@ namespace Nohros.Concurrent
 
     // True if the underlying queue is active, ie. when we are allowed to
     // read command from it.
-    volatile bool active_;
-
-    // Method called for each message that is received by this maibox.
-    readonly MailboxReceiveCallback<T> callback_;
 
     // The synchronization context of the thread that creates the mailbox.
     readonly SynchronizationContext synchronization_context_;
-
-    readonly IExecutor executor_;
+    volatile bool active_;
 
     #region .ctor
     /// <summary>
@@ -60,7 +70,7 @@ namespace Nohros.Concurrent
     /// execute the callback.
     /// </remarks>
     public Mailbox(MailboxReceiveCallback<T> callback)
-      : this(callback, Executors.ThreadPoolExecutor()) {
+      : this(callback, kDefaultCapacity) {
     }
 
     /// <summary>
@@ -74,20 +84,53 @@ namespace Nohros.Concurrent
     /// <param name="executor">
     /// A <see cref="IExecutor"/> that is used to execute the callback.
     /// </param>
+    public Mailbox(MailboxReceiveCallback<T> callback, IExecutor executor)
+      : this(callback, kDefaultCapacity, executor) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Mailbox{T}"/> class by
+    /// using the specified receive callback and initial capacity.
+    /// </summary>
+    /// <param name="callback">
+    /// A <see cref="MailboxReceiveCallback{T}"/> delegate that is called to
+    /// process each message sent to the <see cref="Mailbox{T}"/>.
+    /// </param>
+    /// <param name="capacity">
+    /// The number of messages that the <see cref="Mailbox{T}"/> can initially
+    /// store
+    /// </param>
     /// <remarks>
-    /// The mailbox message processing is single threaded and no more than one
-    /// task will be active at any given time. When a message is
-    /// send to it, it is queued to be processed by the executor. The
-    /// executor runs until the message queue is empty. So, if you are using
-    /// a <see cref="SameThreadExecutor"/> that is no guarantee that a
-    /// message callback is executed by the thread that send the message, if
-    /// there is an thread already executing a callback when a message is sent,
-    /// that thread will be used to process the following messages until the
-    /// message queue is empty.
+    /// A <see cref="Thread"/> from the <see cref="ThreadPool"/> is used to
+    /// execute the callback.
     /// </remarks>
-    public Mailbox(MailboxReceiveCallback<T> callback, IExecutor executor) {
+    public Mailbox(MailboxReceiveCallback<T> callback, int capacity)
+      : this(callback, capacity, Executors.ThreadPoolExecutor()) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Mailbox{T}"/> class by
+    /// using the specified receive callback and initial capacity.
+    /// </summary>
+    /// <param name="callback">
+    /// A <see cref="MailboxReceiveCallback{T}"/> delegate that is called to
+    /// process each message sent to the <see cref="Mailbox{T}"/>.
+    /// </param>
+    /// <param name="capacity">
+    /// The number of messages that the <see cref="Mailbox{T}"/> can initially
+    /// store
+    /// </param>
+    /// <param name="executor">
+    /// A <see cref="IExecutor"/> that is used to execute the callback.
+    /// </param>
+    /// <remarks>
+    /// A <see cref="Thread"/> from the <see cref="ThreadPool"/> is used to
+    /// execute the callback.
+    /// </remarks>
+    public Mailbox(MailboxReceiveCallback<T> callback, int capacity,
+      IExecutor executor) {
       mutex_ = new object();
-      message_queue_ = new YQueue<T>(16);
+      message_queue_ = new YQueue<T>(capacity);
       callback_ = callback;
       synchronization_context_ = SynchronizationContext.Current;
       executor_ = executor;
@@ -106,7 +149,7 @@ namespace Nohros.Concurrent
     /// The message to be sent.
     /// </param>
     public void Send(T message) {
-      lock(mutex_) {
+      lock (mutex_) {
         message_queue_.Enqueue(message);
         ScheduleReceive();
       }
@@ -118,7 +161,7 @@ namespace Nohros.Concurrent
     void ScheduleReceive() {
       if (!active_) {
         active_ = true;
-        executor_.Execute(delegate () {
+        executor_.Execute(delegate() {
           if (synchronization_context_ == null) {
             Receive();
           } else {
@@ -150,8 +193,7 @@ namespace Nohros.Concurrent
     /// The <see cref="SynchronizationContext"/> object of the thread where the
     /// callback will run.
     /// </param>
-    void Receive(SynchronizationContext context)
-    {
+    void Receive(SynchronizationContext context) {
 #if DEBUG
       if (context == null) {
         throw new ArgumentNullException("context");
@@ -159,9 +201,7 @@ namespace Nohros.Concurrent
 #endif
       T message;
       while (GetMessage(out message)) {
-        context.Send(delegate(object o) {
-          callback_((T) o);
-        }, message);
+        context.Send(delegate(object o) { callback_((T) o); }, message);
       }
     }
 
