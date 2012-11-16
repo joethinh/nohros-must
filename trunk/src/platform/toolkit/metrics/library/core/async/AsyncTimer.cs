@@ -158,7 +158,7 @@ namespace Nohros.Metrics
     /// <exception cref="Exception">
     /// The exception throwed by <paramref name="method"/>.
     /// </exception>
-    public T Time<T>(TimedEvent<T> method) {
+    public T Time<T>(CallableDelegate<T> method) {
       long start_time = Clock.NanoTime;
 
       // The time should be mensured even if a exception is throwed.

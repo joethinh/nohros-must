@@ -8,6 +8,28 @@ namespace Nohros.Metrics
   /// </summary>
   public class MetricsRegistry : AbstractMetricsRegistry, IMetricsRegistry
   {
+    readonly Clock clock_;
+
+    #region .ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MetricsRegistry"/> that
+    /// uses the default clock to mark the passage of time.
+    /// </summary>
+    public MetricsRegistry() : this(new UserTimeClock()) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MetricsRegistry"/> that
+    /// uses the given clock to mark the passage of time.
+    /// </summary>
+    /// <param name="clock">
+    /// The <see cref="Clock"/> used to mark the passage of time.
+    /// </param>
+    public MetricsRegistry(Clock clock) {
+      clock_ = clock;
+    }
+    #endregion
+
     /// <summary>
     /// Gets the counter that is associated with the specified
     /// <see cref="MetricName"/> or create a new one if no association exists.
@@ -79,7 +101,7 @@ namespace Nohros.Metrics
       Timer timer;
       if (!TryGetMetric(name, out timer)) {
         timer = new Timer(duration_unit, new Meter("calls", TimeUnit.Seconds),
-          Histograms.Biased());
+          Histograms.Biased(), clock_);
         Add(name, timer);
       }
       return timer;

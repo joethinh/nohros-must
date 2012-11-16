@@ -21,6 +21,7 @@ namespace Nohros.Metrics
   {
     const long kRescaleThreshold = 3600000000000;
     readonly double alpha_;
+    readonly Clock clock_;
     readonly AndersonTree<double, int> priorities_;
     readonly Random rand_;
     readonly int reservoir_upper_limit_;
@@ -50,8 +51,36 @@ namespace Nohros.Metrics
     /// this can cause significant pauses in the thread that is executing the
     /// sample update.
     /// </remarks>
-    public ExponentiallyDecayingSample(int resevoir_size, double alpha) {
+    public ExponentiallyDecayingSample(int resevoir_size, double alpha)
+      : this(resevoir_size, alpha, new UserTimeClock()) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the
+    /// <see cref="ExponentiallyDecayingSample"/> class by using the specified
+    /// resevoir size and exponential decay factor.
+    /// </summary>
+    /// <param name="resevoir_size">
+    /// The number of samples to keep in the sampling resevoir.
+    /// </param>
+    /// <param name="alpha">
+    /// The exponential decay factor; the higher this is, the more biased the
+    /// sample will be towards newer values.
+    /// </param>
+    /// <param name="clock">
+    /// A <see cref="Clock"/> that can be used to mark the passage of time.
+    /// </param>
+    /// <remarks>
+    /// The use of the executor returned by the method
+    /// <see cref="Executors.SameThreadExecutor"/> is not encouraged, because
+    /// the executor does not returns until the execution list is empty and,
+    /// this can cause significant pauses in the thread that is executing the
+    /// sample update.
+    /// </remarks>
+    public ExponentiallyDecayingSample(int resevoir_size, double alpha,
+      Clock clock) {
       count_ = 0;
+      clock_ = clock;
       rand_ = new Random();
       next_scale_time_ = 0;
       alpha_ = alpha;
@@ -60,7 +89,7 @@ namespace Nohros.Metrics
       priorities_ = new AndersonTree<double, int>();
       resevoir_ = new long[resevoir_size];
       start_time_ = CurrentTimeInSeconds;
-      next_scale_time_ = Clock.NanoTime + kRescaleThreshold;
+      next_scale_time_ = clock_.Tick + kRescaleThreshold;
     }
     #endregion
 
@@ -110,7 +139,7 @@ namespace Nohros.Metrics
 
       // If the current landmark becomes old rescale the sample values
       // using a new landmark.
-      long now = Clock.NanoTime;
+      long now = clock_.Tick;
       if (now >= next_scale_time_) {
         Rescale(now);
       }
@@ -166,10 +195,7 @@ namespace Nohros.Metrics
     }
 
     public long CurrentTimeInSeconds {
-      get {
-        return TimeUnitHelper.ToSeconds(Clock.CurrentTimeMilis,
-          TimeUnit.Miliseconds);
-      }
+      get { return TimeUnitHelper.ToSeconds(clock_.Time, TimeUnit.Miliseconds); }
     }
   }
 }

@@ -7,9 +7,6 @@ namespace Nohros
   /// </summary>
   public abstract class Clock
   {
-    protected static readonly DateTime Epoch =
-      new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
     /// <summary>
     /// Gets the current value of the most precise available system timer, in
     /// nanoseconds.
@@ -25,7 +22,7 @@ namespace Nohros
     /// </remarks>
     public static long NanoTime {
       // A single tick represents one hundred nanoseconds.
-      get { return (long) (DateTime.UtcNow.Subtract(Epoch).Ticks*100); }
+      get { return DateTime.UtcNow.Ticks*100; }
     }
 
     /// <summary>
@@ -42,7 +39,7 @@ namespace Nohros
     /// typically only microseconds(10ms or 15ms on windows).
     /// </remarks>
     public static long CurrentTimeMilis {
-      get { return (long)(DateTime.UtcNow.Subtract(Epoch).Ticks * 0.0001); }
+      get { return (long) (NanoTime*0.0001); }
     }
 
     /// <summary>
@@ -68,7 +65,7 @@ namespace Nohros
     /// Gets the current time in milliseconds.
     /// </summary>
     /// <value>Time in milliseconds.</value>
-    public long Time {
+    public virtual long Time {
       get { return CurrentTimeMilis; }
     }
   }

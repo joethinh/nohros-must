@@ -101,7 +101,7 @@ namespace Nohros.Metrics
       return new[] {
         new MetricValue("Min", Min),
         new MetricValue("Max", Max),
-        new MetricValue("Min", Mean),
+        new MetricValue("Mean", Mean),
         new MetricValue("StandardDeviation", StandardDeviation),
         new MetricValue("Median", snapshot.Median),
         new MetricValue("Percentile75", snapshot.Percentile75),
