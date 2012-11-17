@@ -17,13 +17,6 @@ namespace Nohros.Test.Toolkit.Messaging
         }
 
         [Test]
-        [ExpectedException(typeof(ProviderException))]
-        public void CreateInstanceInvalidConstructor() {
-            MessengerProviderNode node = new MessengerProviderNode("SimpleMessenger", "System.String");
-            IMessenger messenger = Messenger.CreateInstance(node);
-        }
-
-        [Test]
         public void CreateInstanceNullOptions() {
             MessengerProviderNode node = new MessengerProviderNode("SimpleMessenger", "Nohros.Test.Toolkit.Messaging.SimpleMessenger, nohros.test.desktop");
             node.Options = null;

@@ -228,21 +228,6 @@ namespace Nohros
       throw new InvalidCastException(string.Format(
         StringResources.InvalidCast_FromTo, from_type, to_type));
     }
-
-    /// <summary>
-    /// Throws a <see cref="ProviderException"/>, using the specified resource name.
-    /// </summary>
-    internal static void ThrowProviderException(ExceptionResource resource) {
-      throw new ProviderException(GetResourceByName(resource));
-    }
-
-    /// <summary>
-    /// Throws a <see cref="ProviderException"/>, using the specified resource name and inner exception.
-    /// </summary>
-    internal static void ThrowProviderException(ExceptionResource resource,
-      System.Exception inner_exception) {
-      throw new ProviderException(GetResourceByName(resource), inner_exception);
-    }
   }
 
   #region Enums
