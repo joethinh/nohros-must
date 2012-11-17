@@ -90,6 +90,14 @@ namespace Nohros
     /// <exception cref="ArgumentNullException">
     /// <paramref name="runtime_type"/> is <c>null</c>.
     /// </exception>
+    /// <exception cref="FileNotFoundException">
+    /// Tje assembly referenced by the <paramref name="runtime_type"/> is not
+    /// found.
+    /// </exception>
+    /// <exception cref="PathTooLongException">
+    /// The path for the assembly referenced by the
+    /// <paramref name="runtime_type"/> is too long.
+    /// </exception>
     /// <remarks>
     /// We try to load the type's assembly using this location defined by the
     /// <see cref="IRuntimeType.Location"/> property of
@@ -127,20 +135,8 @@ namespace Nohros
         string assembly_path =
           Path.Combine(runtime_type.Location, assembly_name);
 
-        if (!File.Exists(assembly_path)) {
-          throw new ProviderException(
-            string.Format(
-              Resources.Resources.Provider_LoadAssembly, assembly_path));
-        }
-
-        try {
-          Assembly assembly = Assembly.LoadFrom(assembly_path);
-          type = assembly.GetType(runtime_type.Type.Substring(0, num));
-        } catch (Exception ex) {
-          throw new ProviderException(
-            string.Format(
-              Resources.Resources.Provider_LoadAssembly, assembly_path), ex);
-        }
+        Assembly assembly = Assembly.LoadFrom(assembly_path);
+        type = assembly.GetType(runtime_type.Type.Substring(0, num));
       }
       return type;
     }
