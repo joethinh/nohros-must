@@ -110,14 +110,33 @@ namespace Nohros.Metrics
     }
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
-      histogram_.Report(
-        (h_values, h_context) => meter_.Report(
-          (m_values, m_context) => {
-            var values = new MetricValue[m_values.Length + h_values.Length];
-            Array.Copy(h_values, values, h_values.Length);
-            Array.Copy(m_values, 0, values, h_values.Length, m_values.Length);
-            callback(values, m_context);
-          }, h_context), context);
+      var now = DateTime.Now;
+      long timestamp = Clock.NanoTime;
+
+      meter_.Report((values, t_context) => {
+        var h_values = Report();
+        var final_values = new MetricValue[values.Length + h_values.Length];
+        Array.Copy(h_values, final_values, h_values.Length);
+        Array.Copy(values, 0, final_values, h_values.Length, values.Length);
+        callback(final_values, t_context);
+      }, context);
+    }
+
+    protected MetricValue[] Report() {
+      Snapshot snapshot = histogram_.Snapshot;
+      return new[] {
+        new MetricValue("Min", ConvertFromNs(histogram_.Min)),
+        new MetricValue("Max", ConvertFromNs(histogram_.Max)),
+        new MetricValue("Mean", ConvertFromNs(histogram_.Mean)),
+        new MetricValue("StandardDeviation",
+          ConvertFromNs(histogram_.StandardDeviation)),
+        new MetricValue("Median", ConvertFromNs(snapshot.Median)),
+        new MetricValue("Percentile75", ConvertFromNs(snapshot.Percentile75)),
+        new MetricValue("Percentile95", ConvertFromNs(snapshot.Percentile95)),
+        new MetricValue("Percentile98", ConvertFromNs(snapshot.Percentile98)),
+        new MetricValue("Percentile99", ConvertFromNs(snapshot.Percentile99)),
+        new MetricValue("Percentile999", ConvertFromNs(snapshot.Percentile999))
+      };
     }
 
     void Run(RunnableDelegate runnable) {

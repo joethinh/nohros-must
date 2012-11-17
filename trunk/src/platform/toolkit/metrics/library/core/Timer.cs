@@ -121,14 +121,28 @@ namespace Nohros.Metrics
     }
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
-      histogram_.Report(
-        (h_values, h_context) => meter_.Report(
-          (m_values, m_context) => {
-            var values = new MetricValue[m_values.Length + h_values.Length];
-            Array.Copy(h_values, values, h_values.Length);
-            Array.Copy(m_values, 0, values, h_values.Length, m_values.Length);
-            callback(values, m_context);
-          }, h_context), context);
+      callback(Report(), context);
+    }
+
+    protected MetricValue[] Report() {
+      Snapshot snapshot = Snapshot;
+      return new[] {
+        new MetricValue("Min", Min),
+        new MetricValue("Max", Max),
+        new MetricValue("Mean", Mean),
+        new MetricValue("StandardDeviation", StandardDeviation),
+        new MetricValue("Median", snapshot.Median),
+        new MetricValue("Percentile75", snapshot.Percentile75),
+        new MetricValue("Percentile95", snapshot.Percentile95),
+        new MetricValue("Percentile98", snapshot.Percentile98),
+        new MetricValue("Percentile99", snapshot.Percentile99),
+        new MetricValue("Percentile999", snapshot.Percentile999),
+        new MetricValue("Count", Count),
+        new MetricValue("MeanRate", MeanRate),
+        new MetricValue("OneMinuteRate", OneMinuteRate),
+        new MetricValue("FiveMinuteRate", FiveMinuteRate),
+        new MetricValue("FifteenMinuteRate", FifteenMinuteRate)
+      };
     }
 
     /// <summary>
