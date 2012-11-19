@@ -86,7 +86,7 @@ namespace Nohros.Configuration
     /// Initializes a new instance of the
     /// <see cref="AbstractConfigurationLoader{T}"/> class that load the values
     /// of a XML file into a instance of <typeparamref name="T"/>
-    /// created using the specified<paramref name="builder"/>.
+    /// created using the specified <paramref name="builder"/>.
     /// </summary>
     protected AbstractConfigurationLoader(IConfigurationBuilder<T> builder) {
       element = null;
