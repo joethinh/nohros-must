@@ -6,7 +6,7 @@
 import "google/protobuf/csharp_options.proto";
 option (google.protobuf.csharp_file_options).namespace = "Nohros.RestQL";
 
-import "restql/common.proto";
+import "restql/restql.proto";
 
 package nohros.restql;
 
