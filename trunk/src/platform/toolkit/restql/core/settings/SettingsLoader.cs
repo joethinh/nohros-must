@@ -17,6 +17,8 @@ namespace Nohros.RestQL
       /// </summary>
       public const string kConfigRootNode = Strings.kConfigRootNode;
 
+      readonly Builder builder_;
+
       #region .ctor
       public Loader() : base(new Builder()) {
       }
