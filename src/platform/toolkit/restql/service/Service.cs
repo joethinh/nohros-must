@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
 using Nohros.Extensions;
+using Nohros.Metrics;
 using Nohros.Ruby;
 using Nohros.Ruby.Protocol;
+using Nohros.Ruby.Protocol.Control;
 using R = Nohros.Resources.StringResources;
 
 namespace Nohros.RestQL
@@ -13,9 +15,10 @@ namespace Nohros.RestQL
   {
     const string kClassName = "Nohros.RestQL.Service";
     readonly RestQLLogger logger_;
-
+    readonly Metrics.Timer requests_timer_;
     readonly IQueryServer server_;
     readonly ManualResetEvent start_stop_service_event_;
+
     IRubyServiceHost service_host_;
     Thread start_thread_;
 
@@ -24,6 +27,10 @@ namespace Nohros.RestQL
       server_ = server;
       start_stop_service_event_ = new ManualResetEvent(false);
       logger_ = RestQLLogger.ForCurrentProcess;
+
+      // Initialize metricss.
+      requests_timer_ = AppMetrics.GetTimer(GetType(), "requests",
+        TimeUnit.Miliseconds);
     }
     #endregion
 
@@ -49,11 +56,10 @@ namespace Nohros.RestQL
           case (int) MessageType.kQueryRequestMessage:
             QueryRequestMessage query =
               QueryRequestMessage.ParseFrom(request.Message);
-            ProcessQuery(request, query);
+            requests_timer_.Time(() => ProcessQuery(request, query));
             break;
         }
       } catch (Exception e) {
-        // TODO: Add specific exception handling.
         logger_.Error(
           string.Format(R.Log_MethodThrowsException, "OnMessage", kClassName), e);
         service_host_
@@ -64,6 +70,8 @@ namespace Nohros.RestQL
 
     void ProcessQuery(IRubyMessage request, QueryRequestMessage query) {
       if (query.HasName) {
+        logger_.Info("Processing query: \"" + query.Name + "\"");
+
         string result;
         IDictionary<string, string> parameters = query.OptionsList
           .ToDictionary(proto => proto.Name, proto => proto.Value);
@@ -75,18 +83,25 @@ namespace Nohros.RestQL
             .SetName(query.Name)
             .SetResponse(result)
             .Build();
-          service_host_
-            .Send(request.Id, (int) MessageType.kQueryResponseMessage,
-              response.ToByteArray(), request.Sender);
+          service_host_.Send(request.Id, (int) MessageType.kQueryResponseMessage,
+            response.ToByteArray(), request.Sender);
         } else {
+          string message = string.Format(
+            Resources.Service_CannotProcessQuery_Name_Reason, query.Name, result);
           service_host_.SendError(request.Id, (int) StatusCode.kBadRequest,
-            string.Format(Resources.Service_CannotProcessQuery_Name_Reason,
-              query.Name, result), request.Sender);
+            message, request.Sender);
+          if (logger_.IsWarnEnabled) {
+            logger_.Warn(message);
+          }
         }
       } else {
+        string message = string.Format(
+          Resources.Service_Arg_RequiredIsMissing_Name, "name");
         service_host_.SendError(request.Id, (int) StatusCode.kBadRequest,
-          string.Format(Resources.Service_Arg_RequiredIsMissing_Name, "name"),
-          request.Sender);
+          message, request.Sender);
+        if (logger_.IsWarnEnabled) {
+          logger_.Warn(message);
+        }
       }
     }
   }

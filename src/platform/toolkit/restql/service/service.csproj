@@ -39,12 +39,16 @@
     <Reference Include="Google.ProtocolBuffers.Serialization">
       <HintPath>..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="nohros, Version=1.6.7.19, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="nohros, Version=1.6.7.27, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\must.common.1.6.7.19\lib\net40\nohros.dll</HintPath>
+      <HintPath>..\..\..\..\packages\must.common.1.6.7.27\lib\net40\nohros.dll</HintPath>
     </Reference>
     <Reference Include="nohros.caching.memorycachee">
       <HintPath>..\..\..\..\packages\must.caching.memorycache.0.0.2\lib\net40\nohros.caching.memorycachee.dll</HintPath>
+    </Reference>
+    <Reference Include="nohros.metrics, Version=0.3.1.4, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\must.metrics.0.3.1.4\lib\net20\nohros.metrics.dll</HintPath>
     </Reference>
     <Reference Include="nohros.ruby.net, Version=0.5.2.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

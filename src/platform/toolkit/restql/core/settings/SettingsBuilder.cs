@@ -20,6 +20,7 @@ namespace Nohros.RestQL
 
       public long QueryCacheDuration {
         get { return query_cache_duration_; }
+        internal set { SetQueryCacheDuration(value); }
       }
     }
   }

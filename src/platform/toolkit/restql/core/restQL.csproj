@@ -34,6 +34,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nohros, Version=1.6.7.27, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\must.common.1.6.7.27\lib\net40\nohros.dll</HintPath>
+    </Reference>
+    <Reference Include="nohros.metrics">
+      <HintPath>..\..\..\..\packages\must.metrics.0.2.0.0\lib\net20\nohros.metrics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
@@ -76,10 +83,6 @@
     <Compile Include="Strings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\base\common\common.csproj">
-      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
-      <Name>common %28%28base%29\common%29</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\base\extensions\extensions.csproj">
       <Project>{438798C5-7FC8-4238-9AE4-D6B87012B5E2}</Project>
       <Name>extensions</Name>
@@ -90,6 +93,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
