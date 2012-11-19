@@ -168,13 +168,33 @@ namespace Nohros.Metrics
     /// <param name="method">A method whose duration should be timed.</param>
     /// <returns>The value returned by <paramref name="method"/>.</returns>
     /// <exception cref="Exception">Exception if <paramref name="method"/>
-    /// tjrows an <see cref="Exception"/>.</exception>
+    /// throws an <see cref="Exception"/>.</exception>
     public T Time<T>(CallableDelegate<T> method) {
       long start_time = clock_.Tick;
 
       // The time should be mensured even if a exception is throwed.
       try {
         return method();
+      } finally {
+        Update(clock_.Tick - start_time);
+      }
+    }
+
+    /// <summary>
+    /// Times and records the duration of event.
+    /// </summary>
+    /// <typeparam name="T">The type of the value returned by
+    /// <paramref name="method"/></typeparam>
+    /// <param name="method">A method whose duration should be timed.</param>
+    /// <returns>The value returned by <paramref name="method"/>.</returns>
+    /// <exception cref="Exception">Exception if <paramref name="method"/>
+    /// throws an <see cref="Exception"/>.</exception>
+    public void Time(RunnableDelegate method) {
+      long start_time = clock_.Tick;
+
+      // The time should be mensured even if a exception is throwed.
+      try {
+        method();
       } finally {
         Update(clock_.Tick - start_time);
       }

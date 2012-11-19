@@ -56,6 +56,25 @@ namespace Nohros.Metrics
       }
     }
 
+    public void AddGauge<T>(Type klass, string name, Gauge<T> metric) {
+      AddGauge(new MetricName(klass, name), metric);
+    }
+
+    public void AddGauge<T>(Type klass, string name, string scope,
+      Gauge<T> metric) {
+      AddGauge(new MetricName(klass, name, scope), metric);
+    }
+
+    public void AddGauge<T>(string group, string type, string name,
+      Gauge<T> metric) {
+      AddGauge(new MetricName(group, type, name), metric);
+    }
+
+    public void AddGauge<T>(string group, string type, string name, string scope,
+      Gauge<T> metric) {
+      AddGauge(new MetricName(group, type, name, scope), metric);
+    }
+
     /// <param name="name">
     /// The name of the metric to get.
     /// </param>
@@ -86,6 +105,42 @@ namespace Nohros.Metrics
     /// </returns>
     public bool TryGetCounter(MetricName name, out Counter counter) {
       return TryGetMetric(name, out counter);
+    }
+
+    public bool TryGetCounter(Type klass, string name, out Counter counter) {
+      return TryGetCounter(new MetricName(klass, name), out counter);
+    }
+
+    public bool TryGetCounter(Type klass, string name, string scope,
+      out Counter counter) {
+      return TryGetCounter(new MetricName(klass, name, scope), out counter);
+    }
+
+    public bool TryGetCounter(string group, string type, string name,
+      out Counter counter) {
+      return TryGetCounter(new MetricName(group, type, name), out counter);
+    }
+
+    public bool TryGetCounter(string group, string type, string name,
+      string scope, out Counter counter) {
+      return TryGetCounter(new MetricName(group, type, name, scope), out counter);
+    }
+
+    public Counter GetCounter(Type klass, string name) {
+      return GetCounter(new MetricName(klass, name));
+    }
+
+    public Counter GetCounter(Type klass, string name, string scope) {
+      return GetCounter(new MetricName(klass, name, scope));
+    }
+
+    public Counter GetCounter(string group, string type, string name) {
+      return GetCounter(new MetricName(group, type, name));
+    }
+
+    public Counter GetCounter(string group, string type, string name,
+      string scope) {
+      return GetCounter(new MetricName(group, type, name, scope));
     }
 
     /// <param name="name">

@@ -157,5 +157,126 @@ namespace Nohros.Metrics
     public bool TryGetMeter(MetricName name, out IMeter meter) {
       return TryGetMetric(name, out meter);
     }
+
+    public IHistogram GetHistogram(Type klass, string name, bool biased) {
+      return GetHistogram(new MetricName(klass, name), biased);
+    }
+
+    public IHistogram GetHistogram(Type klass, string name, string scope,
+      bool biased) {
+      return GetHistogram(new MetricName(klass, name, scope), biased);
+    }
+
+    public IHistogram GetHistogram(string group, string type, string name,
+      bool biased) {
+      return GetHistogram(new MetricName(group, type, name), biased);
+    }
+
+    public IHistogram GetHistogram(string group, string type, string name,
+      string scope, bool biased) {
+      return GetHistogram(new MetricName(group, type, name, scope), biased);
+    }
+
+    public IMetered GetMeter(Type klass, string name, string event_type,
+      TimeUnit rate_unit) {
+      return GetMeter(new MetricName(klass, name), event_type, rate_unit);
+    }
+
+    public IMetered GetMeter(Type klass, string name, string scope,
+      string event_type,
+      TimeUnit rate_unit) {
+      return GetMeter(new MetricName(klass, name, scope), event_type, rate_unit);
+    }
+
+    public IMetered GetMeter(string group, string type, string name,
+      string event_type,
+      TimeUnit rate_unit) {
+      return GetMeter(new MetricName(group, type, name), event_type, rate_unit);
+    }
+
+    public IMetered GetMeter(string group, string type, string name,
+      string scope, string event_type,
+      TimeUnit rate_unit) {
+      return GetMeter(new MetricName(group, type, name, scope), event_type,
+        rate_unit);
+    }
+
+    public Timer GetTimer(Type klass, string name, TimeUnit duration_unit) {
+      return GetTimer(new MetricName(klass, name), duration_unit);
+    }
+
+    public Timer GetTimer(Type klass, string name, string scope,
+      TimeUnit duration_unit) {
+      return GetTimer(new MetricName(klass, name, scope), duration_unit);
+    }
+
+    public Timer GetTimer(string group, string type, string name,
+      TimeUnit duration_unit) {
+      return GetTimer(new MetricName(group, type, name), duration_unit);
+    }
+
+    public Timer GetTimer(string group, string type, string name, string scope,
+      TimeUnit duration_unit) {
+      return GetTimer(new MetricName(group, type, name, scope), duration_unit);
+    }
+
+    public bool TryGetHistogram(Type klass, string name,
+      out IHistogram histogram) {
+      return TryGetHistogram(new MetricName(klass, name), out histogram);
+    }
+
+    public bool TryGetHistogram(Type klass, string name, string scope,
+      out IHistogram histogram) {
+      return TryGetHistogram(new MetricName(klass, name, scope), out histogram);
+    }
+
+    public bool TryGetHistogram(string group, string type, string name,
+      out IHistogram histogram) {
+      return TryGetHistogram(new MetricName(group, type, name), out histogram);
+    }
+
+    public bool TryGetHistogram(string group, string type, string name,
+      string scope, out IHistogram histogram) {
+      return TryGetHistogram(new MetricName(group, type, name, scope),
+        out histogram);
+    }
+
+    public bool TryGetTimer(Type klass, string name, out Timer timer) {
+      return TryGetTimer(new MetricName(klass, name), out timer);
+    }
+
+    public bool TryGetTimer(Type klass, string name, string scope,
+      out Timer timer) {
+      return TryGetTimer(new MetricName(klass, name, scope), out timer);
+    }
+
+    public bool TryGetTimer(string group, string type, string name,
+      out Timer timer) {
+      return TryGetTimer(new MetricName(group, type, name), out timer);
+    }
+
+    public bool TryGetTimer(string group, string type, string name, string scope,
+      out Timer timer) {
+      return TryGetTimer(new MetricName(group, type, name, scope), out timer);
+    }
+
+    public bool TryGetMeter(Type klass, string name, out IMeter timer) {
+      return TryGetMeter(new MetricName(klass, name), out timer);
+    }
+
+    public bool TryGetMeter(Type klass, string name, string scope,
+      out IMeter timer) {
+      return TryGetMeter(new MetricName(klass, name, scope), out timer);
+    }
+
+    public bool TryGetMeter(string group, string type, string name,
+      out IMeter timer) {
+      return TryGetMeter(new MetricName(group, type, name), out timer);
+    }
+
+    public bool TryGetMeter(string group, string type, string name, string scope,
+      out IMeter timer) {
+      return TryGetMeter(new MetricName(group, type, name, scope), out timer);
+    }
   }
 }
