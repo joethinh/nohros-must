@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Text;
 
 namespace Nohros.Extensions
 {
@@ -35,6 +37,19 @@ namespace Nohros.Extensions
 
     public static string Format(this string str, params object[] args) {
       return string.Format(str, args);
+    }
+
+    public static string RemoveDiacritics(this string str) {
+      string normalized_string = str.Normalize(NormalizationForm.FormD);
+      var builder = new StringBuilder(str.Length);
+      for (int i = 0, j = normalized_string.Length; i < j; i++) {
+        UnicodeCategory category =
+          CharUnicodeInfo.GetUnicodeCategory(normalized_string[i]);
+        if(category != UnicodeCategory.NonSpacingMark) {
+          builder.Append(normalized_string[i]);
+        }
+      }
+      return str.ToString();
     }
   }
 }
