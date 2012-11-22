@@ -49,7 +49,7 @@ namespace Nohros.Extensions
           builder.Append(normalized_string[i]);
         }
       }
-      return str.ToString();
+      return builder.ToString();
     }
   }
 }
