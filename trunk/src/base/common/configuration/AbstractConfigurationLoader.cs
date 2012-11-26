@@ -37,7 +37,16 @@ namespace Nohros.Configuration
     /// </param>
     /// <returns></returns>
     public delegate T LoaderFactoryDelegate(
-      AbstractConfigurationLoader<T> loader, ConfigurationBuilder builder);
+      AbstractConfigurationLoader<T> loader, IConfigurationBuilder<T> builder);
+
+    /// <summary>
+    /// Defines a method to handle the <see cref="AbstractConfigurationLoader{T}.ParseComple"/> event.
+    /// </summary>
+    /// <param name="loader">
+    /// The <see cref="IConfigurationLoader{T}"/> associated with the event.
+    /// </param>
+    public delegate void ParseCompleteEventHandler(
+      IConfigurationLoader<T> loader);
 
     internal const string kDefaultRootNodeName = "appconfig";
     const string kLogLevel = "log-level";
@@ -716,6 +725,15 @@ namespace Nohros.Configuration
     /// </remarks>
     public event LoadCompleteEventHandler LoadComplete;
 
+    /// <summary>
+    /// Occurs when the configuration loader finish the parsing step.
+    /// </summary>
+    /// <remarks>
+    /// The end of the parsing step occurs right before the configuration
+    /// class is builded.
+    /// </remarks>
+    public event ParseCompleteEventHandler ParseComplete;
+
     T Load(string root_node_name, bool watch) {
       string config_file_path =
         ConfigurationManager.AppSettings[kConfigurationFileKey];
@@ -796,6 +814,7 @@ namespace Nohros.Configuration
       // parse any internal property
       if (use_dynamic_property_assignment_) {
         ParseProperties(element, this);
+        ParseProperties(element, builder);
       }
 
       // parse the know configuration nodes.
@@ -822,6 +841,9 @@ namespace Nohros.Configuration
           }
         }
       }
+
+      OnParseComplete(this);
+
       T configuration = CreateConfiguration(builder);
 
       OnLoadComplete(configuration);
@@ -876,6 +898,17 @@ namespace Nohros.Configuration
     protected virtual void OnLoadComplete(T configuration) {
       Listeners.SafeInvoke(LoadComplete,
         delegate(LoadCompleteEventHandler runnable) { runnable(configuration); });
+    }
+
+    /// <summary>
+    /// Raises the <see cref="ParseComplete"/> event.
+    /// </summary>
+    /// <param name="loader">
+    /// The loader that raises the event.
+    /// </param>
+    protected virtual void OnParseComplete(IConfigurationLoader<T> loader) {
+      Listeners.SafeInvoke(ParseComplete,
+        delegate(ParseCompleteEventHandler runnable) { runnable(loader); });
     }
 
     /// <summary>
@@ -962,6 +995,7 @@ namespace Nohros.Configuration
 
       if (use_dynamic_property_assignment_) {
         ParseProperties(element, this);
+        ParseProperties(element, builder);
       }
     }
 
