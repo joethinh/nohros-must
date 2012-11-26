@@ -514,31 +514,39 @@ namespace Nohros
     /// <summary>
     /// Gets the value associated with the specified switch.
     /// </summary>
-    /// <param name="switch_string">The switch to get the value from.</param>
-    /// <returns>The value associated with the specified switch or an empty
-    /// string if the switch has no value or isn't present.</returns>
-    public string GetSwitchValue(string switch_string) {
-      string switch_value;
-      if (switches_.TryGetValue(switch_string, out switch_value)) {
-        return switch_value;
+    /// <param name="name">
+    /// The switch to get the value from.
+    /// </param>
+    /// <returns>
+    /// The value associated with the specified switch or an empty string if
+    /// the switch has no value or isn't present.
+    /// </returns>
+    public string GetSwitchValue(string name) {
+      string value;
+      if (TryGetSwitchValue(name, out value)) {
+        return value;
       }
       return string.Empty;
     }
 
+
     /// <summary>
     /// Gets the value associated with the specified switch.
     /// </summary>
-    /// <param name="switch_string">
+    /// <param name="name">
     /// The switch to get the value from.
+    /// </param>
+    /// <param name="def">
+    /// The value that should be returned if the switch is not found.
     /// </param>
     /// <returns>
     /// The value associated with the specified switch or <paramref name="def"/>
-    /// if the switch has no value or isn't present.
+    /// if the switch isn't present.
     /// </returns>
-    public string GetSwitchValue(string switch_string, string def) {
-      string switch_value;
-      if (switches_.TryGetValue(switch_string, out switch_value)) {
-        return switch_value;
+    public string GetSwitchValue(string name, string def) {
+      string value;
+      if (TryGetSwitchValue(name, out value)) {
+        return value;
       }
       return def;
     }
@@ -546,27 +554,78 @@ namespace Nohros
     /// <summary>
     /// Gets the value associated with the specified switch.
     /// </summary>
-    /// <param name="switch_string">
+    /// <param name="name">
     /// The switch to get the value from.
     /// </param>
     /// <param name="value">
     /// When this method returns contains the value associated with the switch
-    /// <param name="switch_string">, or <see cref="string.Empty"/> if the
+    /// <param name="name">, or <c>null</c> if the
     /// switch does not exists.
     /// </param>
     /// </param>
     /// <returns>
-    /// The value associated with the specified switch or an empty string if
-    /// the switch has no value or isn't present.
+    /// <c>true</c> if the value associated with the specified switch is found;
+    /// otherwise, <c>false</c>.
     /// </returns>
-    public bool TryGetSwitchValue(string switch_string, out string value) {
-      string switch_value;
-      if (switches_.TryGetValue(switch_string, out switch_value)) {
-        value = switch_value;
-        return true;
+    public bool TryGetSwitchValue(string name, out string value) {
+      return switches_.TryGetValue(name, out value);
+    }
+
+    /// <summary>
+    /// Gets the value associated with the speified switch and try to convert
+    /// parse it in a signed 32-bit integer.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the switch to get the value.
+    /// </param>
+    /// <param name="value">
+    /// When this method returns, the value of the switch converted to a signed
+    /// 32-bit integer, or 0 if the switch does not exists or cannot be
+    /// conveted to an 32-bit signed integer.
+    /// </param>
+    /// <returns></returns>
+    public bool TryGetSwitchValueAsInt(string name, out int value) {
+      string v;
+      if (TryGetSwitchValue(name, out v)) {
+        return int.TryParse(v, out value);
       }
-      value = string.Empty;
+      value = default(int);
       return false;
+    }
+
+    /// <summary>
+    /// Gets the value associated with the speified switch and try to convert
+    /// parse it in a signed 32-bit integer.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the switch to get the value.
+    /// </param>
+    /// <returns>
+    /// The value of the switch converted to a signed 32-bit integer.
+    /// </returns>
+    public int GetSwitchValueAsInt(string name) {
+      string value = GetSwitchValue(name);
+      return int.Parse(value);
+    }
+
+    /// <summary>
+    /// Gets the value associated with the speified switch and try to convert
+    /// parse it in a signed 32-bit integer.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the switch to get the value.
+    /// </param>
+    /// <returns>
+    /// The value of the switch converted to a signed 32-bit integer, or
+    /// <paramref name="def"/> if the switch does not exists or cannot be
+    /// conveted to an 32-bit signed integer.
+    /// </returns>
+    public int GetSwitchValueAsInt(string name, int def) {
+      int value;
+      if (TryGetSwitchValueAsInt(name, out value)) {
+        return value;
+      }
+      return def;
     }
 
     /// <summary>
