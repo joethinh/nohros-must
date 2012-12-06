@@ -325,4 +325,7 @@
   <data name="Configuration_providers_unresolved_reference" xml:space="preserve">
     <value>The options reference "{0}" could not be resolved.</value>
   </data>
+  <data name="Arg_Type_ShouldBeInterface" xml:space="preserve">
+    <value>"{0}" should be an interface.</value>
+  </data>
 </root>

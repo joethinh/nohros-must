@@ -142,6 +142,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; should be an interface..
+        /// </summary>
+        internal static string Arg_Type_ShouldBeInterface {
+            get {
+                return ResourceManager.GetString("Arg_Type_ShouldBeInterface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} should be of type {1}..
         /// </summary>
         internal static string Arg_WrongType {
