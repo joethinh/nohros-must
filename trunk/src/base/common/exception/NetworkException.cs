@@ -18,7 +18,7 @@ namespace Nohros
     /// <summary>
     /// Creates a new instance of the <see cref="NetworkException"/> class.
     /// </summary>
-    /// <param name="message">A message describing why this
+    /// <param source="message">A message describing why this
     /// <see cref="NetworkException"/>was throw</param>
     public NetworkException(string message) : base(message) {
     }
@@ -26,7 +26,7 @@ namespace Nohros
     /// <summary>
     /// Creates a new instance of the <see cref="NetworkException"/> class.
     /// </summary>
-    /// <param name="inner_exception">
+    /// <param source="inner_exception">
     /// The exception that caused this <see cref="NetworkException"/> to be
     /// throw.
     /// </param>
@@ -36,9 +36,9 @@ namespace Nohros
     /// <summary>
     /// Creates a new instance if the <see cref="NetworkException"/> class.
     /// </summary>
-    /// <param name="info">The object that holds the information to
+    /// <param source="info">The object that holds the information to
     /// deserialize.</param>
-    /// <param name="context">Contextual information about the source or
+    /// <param source="context">Contextual information about the source or
     /// destination.</param>
     protected NetworkException(SerializationInfo info, StreamingContext context)
       : base(info, context) {
@@ -47,9 +47,9 @@ namespace Nohros
     /// <summary>
     /// Creates a new instance of the <see cref="NetworkException"/> class.
     /// </summary>
-    /// <param name="message">A message describing why this
+    /// <param source="message">A message describing why this
     /// <see cref="NetworkException"/>was throw.</param>
-    /// <param name="inner_exception">The exception that caused this
+    /// <param source="inner_exception">The exception that caused this
     /// <see cref="NetworkException"/>to be throw.</param>
     public NetworkException(string message, Exception inner_exception)
       : base(message, inner_exception) {

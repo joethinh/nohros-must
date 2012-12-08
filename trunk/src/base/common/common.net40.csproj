@@ -151,6 +151,8 @@
     <Compile Include="data\DataReaderMapper.cs" />
     <Compile Include="data\IMapper.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDateTime.cs" />
+    <Compile Include="data\Mapper.cs" />
+    <Compile Include="data\Mappers.cs" />
     <Compile Include="data\readers\DataFieldDateTime.cs" />
     <Compile Include="data\readers\DataReaderReader.cs" />
     <Compile Include="exception\NetworkException.cs" />
