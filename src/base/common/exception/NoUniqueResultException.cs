@@ -7,7 +7,7 @@ namespace Nohros
   /// Thrown by a data provider when a query that expects a single results is
   /// executed and there is more than one result from the query.
   /// </summary>
-  public class NoUniqueResultException : ProviderException
+  public class NoUniqueResultException : RepositoryException
   {
     #region .ctor
     /// <summary>

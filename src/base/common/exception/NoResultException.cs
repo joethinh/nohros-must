@@ -7,7 +7,7 @@ namespace Nohros
   /// Thrown by a data provider when a query that expects results is executed
   /// and there is no result to return.
   /// </summary>
-  public class NoResultException : ProviderException
+  public class NoResultException : RepositoryException
   {
     #region .ctor
     /// <summary>
