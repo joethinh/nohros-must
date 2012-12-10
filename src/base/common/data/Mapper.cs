@@ -375,10 +375,10 @@ namespace Nohros.Data
       /// <summary>
       /// Emit the code that initialize the references mappings.
       /// </summary>
-      /// <param source="il">
+      /// <param name="il">
       /// The <see cref="ILGenerator"/> for the constructor method.
       /// </param>
-      /// <param source="reference_fields">
+      /// <param name="reference_fields">
       /// An array containing a map between a reference properties and its
       /// associated private field.
       /// </param>
