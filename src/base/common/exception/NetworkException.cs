@@ -6,7 +6,7 @@ namespace Nohros
   /// <summary>
   /// Thrown if there is a network communication failure.
   /// </summary>
-  public class NetworkException
+  public class NetworkException : Exception
   {
     #region .ctor
     /// <summary>
@@ -30,7 +30,8 @@ namespace Nohros
     /// The exception that caused this <see cref="NetworkException"/> to be
     /// throw.
     /// </param>
-    public NetworkException(Exception inner_exception) : base(inner_exception) {
+    public NetworkException(Exception inner_exception)
+      : base(string.Empty, inner_exception) {
     }
 
     /// <summary>

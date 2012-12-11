@@ -134,7 +134,9 @@ namespace Nohros
       }
 
       if (new_obj == null) {
-        throw new TypeLoadException();
+        throw new TypeLoadException(
+          string.Format(Resources.Resources.TypeLoad_CreateInstance,
+            runtime_type.Type));
       }
       return new_obj;
     }
