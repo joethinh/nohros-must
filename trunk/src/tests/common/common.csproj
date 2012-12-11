@@ -66,6 +66,7 @@
     <Compile Include="data\json\collection\JsonObjectTest.cs" />
     <Compile Include="data\json\collection\JsonTableTest.cs" />
     <Compile Include="data\json\JsonStringBuilderTest.cs" />
+    <Compile Include="data\MapperTests.cs" />
     <Compile Include="GenericTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
