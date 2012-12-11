@@ -26,6 +26,7 @@ namespace Nohros.Data
     /// of <typeparamref name="T"/>.
     /// </param>
     /// <returns></returns>
+    /// <remarks></remarks>
     public static IMapper<T> GetMapper<T>(IDataReader reader,
       KeyValuePair<string, string>[] mapping) {
       return new DataReaderMapper<T>
