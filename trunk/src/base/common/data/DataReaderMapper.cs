@@ -17,7 +17,7 @@ namespace Nohros.Data
   /// <see cref="IDataReader"/> is advanced to the next record.
   /// </para>
   /// </remarks>
-  public abstract partial class DataReaderMapper<T> : IMapper<T>
+  public abstract partial class DataReaderMapper<T> : IMapper<T>, IDisposable
   {
     protected readonly IDataReader reader_;
 
@@ -37,6 +37,11 @@ namespace Nohros.Data
       while (reader_.Read()) {
         yield return Map();
       }
+      reader_.Close();
+    }
+
+    public void Dispose() {
+      reader_.Dispose();
     }
   }
 }

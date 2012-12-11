@@ -176,8 +176,8 @@ namespace Nohros.Data
       /// between source columns and destination properties
       /// </param>
       /// <remarks>
-      /// The <see cref="KeyValuePair{TKey,TValue}.Key"/> is used as the source
-      /// column name and the <see cref="KeyValuePair{TKey,TValue}.Value"/> is
+      /// The <see cref="KeyValuePair{TKey,TValue}.Value"/> is used as the source
+      /// column name and the <see cref="KeyValuePair{TKey,TValue}.Key"/> is
       /// used as the destination property name.
       /// </remarks>
       public Builder(IEnumerable<KeyValuePair<string, string>> mapping)
@@ -200,8 +200,8 @@ namespace Nohros.Data
       /// between source columns and destination properties
       /// </param>
       /// <remarks>
-      /// The <see cref="KeyValuePair{TKey,TValue}.Key"/> is used as the source
-      /// column name and the <see cref="KeyValuePair{TKey,TValue}.Value"/> is
+      /// The <see cref="KeyValuePair{TKey,TValue}.Value"/> is used as the source
+      /// column name and the <see cref="KeyValuePair{TKey,TValue}.Key"/> is
       /// used as the destination property name.
       /// </remarks>
       public Builder(CallableDelegate<KeyValuePair<string, string>[]> mapping)
@@ -408,10 +408,9 @@ namespace Nohros.Data
           });
           object type_instance = Activator.CreateInstance(type_builder);
           Type reference_type = (Type) type_builder
-            .InvokeMember("MakeDynamicType", BindingFlags.InvokeMethod |
+            .InvokeMember("GetDynamicType", BindingFlags.InvokeMethod |
               BindingFlags.NonPublic | BindingFlags.Instance, null,
-              type_instance,
-              new object[] {property.PropertyType.ToString()});
+              type_instance, new object[0]);
           ConstructorInfo reference_type_ctor =
             reference_type.GetConstructor(new Type[] {
               typeof (IDataReader)
@@ -550,25 +549,28 @@ namespace Nohros.Data
         FieldBuilder ordinals, KeyValuePair<string, PropertyInfo>[] fields) {
         KeyValuePair<int, PropertyInfo>[] ordinals_mapping =
           new KeyValuePair<int, PropertyInfo>[fields.Length];
-        MethodInfo get_ordinal_method =
-          Dynamics_.GetDataReaderMethod("GetOrdinal");
 
-        il.Emit(OpCodes.Ldarg_0);
-        il.Emit(OpCodes.Ldc_I4, fields.Length);
-        il.Emit(OpCodes.Newarr, typeof (int));
-        il.Emit(OpCodes.Stfld, ordinals);
+        if (fields.Length > 0) {
+          MethodInfo get_ordinal_method =
+            Dynamics_.GetDataReaderMethod("GetOrdinal");
 
-        for (int i = 0, j = fields.Length; i < j; i++) {
           il.Emit(OpCodes.Ldarg_0);
-          il.Emit(OpCodes.Ldfld, ordinals);
-          il.Emit(OpCodes.Ldc_I4, i);
-          il.Emit(OpCodes.Ldarg_1);
-          il.Emit(OpCodes.Ldstr, fields[i].Key);
-          il.Emit(OpCodes.Callvirt, get_ordinal_method);
-          il.Emit(OpCodes.Stelem_I4);
+          il.Emit(OpCodes.Ldc_I4, fields.Length);
+          il.Emit(OpCodes.Newarr, typeof (int));
+          il.Emit(OpCodes.Stfld, ordinals);
 
-          ordinals_mapping[i] =
-            new KeyValuePair<int, PropertyInfo>(i, fields[i].Value);
+          for (int i = 0, j = fields.Length; i < j; i++) {
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ldfld, ordinals);
+            il.Emit(OpCodes.Ldc_I4, i);
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Ldstr, fields[i].Key);
+            il.Emit(OpCodes.Callvirt, get_ordinal_method);
+            il.Emit(OpCodes.Stelem_I4);
+
+            ordinals_mapping[i] =
+              new KeyValuePair<int, PropertyInfo>(i, fields[i].Value);
+          }
         }
         return ordinals_mapping;
       }
@@ -587,7 +589,7 @@ namespace Nohros.Data
 
       PropertyInfo[] GetProperties() {
         Type[] interfaces = type_t_.GetInterfaces();
-        if(interfaces.Length == 0) {
+        if (interfaces.Length == 0) {
           return type_t_.GetProperties();
         }
 
@@ -597,10 +599,10 @@ namespace Nohros.Data
         List<PropertyInfo> properties = new List<PropertyInfo>(5*6);
         considered.Add(type_t_);
         queue.Enqueue(type_t_);
-        while(queue.Count > 0) {
+        while (queue.Count > 0) {
           Type type = queue.Dequeue();
           foreach (Type t in type.GetInterfaces()) {
-            if(!considered.Contains(t)) {
+            if (!considered.Contains(t)) {
               considered.Add(t);
               queue.Enqueue(t);
             }
