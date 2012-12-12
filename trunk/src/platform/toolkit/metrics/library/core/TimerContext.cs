@@ -8,7 +8,7 @@ namespace Nohros.Metrics
   /// <seealso cref="Timer.Time{T}"/>
   public class TimerContext
   {
-    readonly Timer timer_;
+    readonly ITimer timer_;
     readonly long start_time_;
     readonly Clock clock_;
 
@@ -24,7 +24,7 @@ namespace Nohros.Metrics
     /// <param name="clock">
     /// A <see cref="Clock"/> that can be used to mark the passage of time.
     /// </param>
-    public TimerContext(Timer timer, Clock clock) {
+    public TimerContext(ITimer timer, Clock clock) {
       timer_ = timer;
       clock_ = clock;
       start_time_ = clock.Tick;

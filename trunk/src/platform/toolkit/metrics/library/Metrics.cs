@@ -6,13 +6,18 @@ namespace Nohros.Metrics
   /// A set of factory methods for creating centrally registered metric
   /// instances.
   /// </summary>
+  /// <remarks>
+  /// A <see cref="SyncMetricsRegistry"/> is used as the default metrics
+  /// registry. If you want to use another <see cref="IMetricsRegistry"/>
+  /// implementation, set the value of the property <see cref="Registry"/>.
+  /// </remarks>
   public class AppMetrics
   {
-    static readonly MetricsRegistry registry_;
+    static IMetricsRegistry registry_;
 
     #region .ctor
     static AppMetrics() {
-      registry_ = new MetricsRegistry();
+      registry_ = new SyncMetricsRegistry();
     }
     #endregion
 
@@ -32,20 +37,20 @@ namespace Nohros.Metrics
     }
 
     public static Counter GetCounter(Type klass, string name) {
-      return registry_.GetCounter(klass, name);
+      return GetCounter(new MetricName(klass, name));
     }
 
     public static Counter GetCounter(Type klass, string name, string scope) {
-      return registry_.GetCounter(klass, name, scope);
+      return GetCounter(new MetricName(klass, name, scope));
     }
 
     public static Counter GetCounter(string group, string type, string name) {
-      return registry_.GetCounter(group, type, name);
+      return GetCounter(new MetricName(group, type, name));
     }
 
     public static Counter GetCounter(string group, string type, string name,
       string scope) {
-      return registry_.GetCounter(group, type, name, scope);
+      return GetCounter(new MetricName(group, type, name, scope));
     }
 
     /// <summary>
@@ -64,22 +69,22 @@ namespace Nohros.Metrics
     }
 
     public static void AddGauge<T>(Type klass, string name, Gauge<T> metric) {
-      registry_.AddGauge(klass, name, metric);
+      AddGauge(new MetricName(klass, name), metric);
     }
 
     public static void AddGauge<T>(Type klass, string name, string scope,
       Gauge<T> metric) {
-      registry_.AddGauge(klass, name, scope, metric);
+      AddGauge(new MetricName(klass, name, scope), metric);
     }
 
     public static void AddGauge<T>(string group, string type, string name,
       Gauge<T> metric) {
-      registry_.AddGauge(group, type, name, metric);
+      AddGauge(new MetricName(group, type, name), metric);
     }
 
     public static void AddGauge<T>(string group, string type, string name,
       string scope, Gauge<T> metric) {
-      registry_.AddGauge(group, type, name, scope, metric);
+      AddGauge(new MetricName(group, type, name, scope), metric);
     }
 
     /// <summary>
@@ -101,22 +106,22 @@ namespace Nohros.Metrics
     }
 
     public static IHistogram GetHistogram(Type klass, string name, bool biased) {
-      return registry_.GetHistogram(klass, name, biased);
+      return GetHistogram(new MetricName(klass, name), biased);
     }
 
     public static IHistogram GetHistogram(Type klass, string name, string scope,
       bool biased) {
-      return registry_.GetHistogram(klass, name, scope, biased);
+      return GetHistogram(new MetricName(klass, name, scope), biased);
     }
 
     public static IHistogram GetHistogram(string group, string type, string name,
       bool biased) {
-      return registry_.GetHistogram(group, type, name, biased);
+      return GetHistogram(new MetricName(group, type, name), biased);
     }
 
     public static IHistogram GetHistogram(string group, string type, string name,
       string scope, bool biased) {
-      return registry_.GetHistogram(group, type, name, scope, biased);
+      return GetHistogram(new MetricName(group, type, name, scope), biased);
     }
 
     /// <summary>
@@ -140,29 +145,30 @@ namespace Nohros.Metrics
     /// <returns>
     /// The metered associated with the key <paramref name="name"/>.
     /// </returns>
-    public static IMetered GetMeter(MetricName name, string event_type,
+    public static IMeter GetMeter(MetricName name, string event_type,
       TimeUnit rate_unit) {
       return registry_.GetMeter(name, event_type, rate_unit);
     }
 
-    public static IMetered GetMeter(Type klass, string name, string event_type,
+    public static IMeter GetMeter(Type klass, string name, string event_type,
       TimeUnit rate_unit) {
-      return registry_.GetMeter(klass, name, event_type, rate_unit);
+      return GetMeter(new MetricName(klass, name), event_type, rate_unit);
     }
 
-    public static IMetered GetMeter(Type klass, string name, string scope,
+    public static IMeter GetMeter(Type klass, string name, string scope,
       string event_type, TimeUnit rate_unit) {
-      return registry_.GetMeter(klass, name, scope, event_type, rate_unit);
+      return GetMeter(new MetricName(klass, name, scope), event_type, rate_unit);
     }
 
-    public static IMetered GetMeter(string group, string type, string name,
+    public static IMeter GetMeter(string group, string type, string name,
       string event_type, TimeUnit rate_unit) {
-      return registry_.GetMeter(group, type, name, event_type, rate_unit);
+      return GetMeter(new MetricName(group, type, name), event_type, rate_unit);
     }
 
-    public static IMetered GetMeter(string group, string type, string name,
+    public static IMeter GetMeter(string group, string type, string name,
       string scope, string event_type, TimeUnit rate_unit) {
-      return registry_.GetMeter(group, type, name, scope, event_type, rate_unit);
+      return GetMeter(new MetricName(group, type, name, scope), event_type,
+        rate_unit);
     }
 
     /// <summary>
@@ -178,27 +184,28 @@ namespace Nohros.Metrics
     /// <returns>
     /// The timer associated with the key <paramref name="name"/>.
     /// </returns>
-    public static Timer GetTimer(MetricName name, TimeUnit duration_unit) {
+    public static ITimer GetTimer(MetricName name, TimeUnit duration_unit) {
       return registry_.GetTimer(name, duration_unit);
     }
 
-    public static Timer GetTimer(Type klass, string name, TimeUnit duration_unit) {
-      return registry_.GetTimer(klass, name, duration_unit);
-    }
-
-    public static Timer GetTimer(Type klass, string name, string scope,
+    public static ITimer GetTimer(Type klass, string name,
       TimeUnit duration_unit) {
-      return registry_.GetTimer(klass, name, scope, duration_unit);
+      return GetTimer(new MetricName(klass, name), duration_unit);
     }
 
-    public static Timer GetTimer(string group, string type, string name,
+    public static ITimer GetTimer(Type klass, string name, string scope,
       TimeUnit duration_unit) {
-      return registry_.GetTimer(group, type, name, duration_unit);
+      return GetTimer(new MetricName(klass, name, scope), duration_unit);
     }
 
-    public static Timer GetTimer(string group, string type, string name,
+    public static ITimer GetTimer(string group, string type, string name,
+      TimeUnit duration_unit) {
+      return GetTimer(new MetricName(group, type, name), duration_unit);
+    }
+
+    public static ITimer GetTimer(string group, string type, string name,
       string scope, TimeUnit duration_unit) {
-      return registry_.GetTimer(group, type, name, scope, duration_unit);
+      return GetTimer(new MetricName(group, type, name, scope), duration_unit);
     }
 
     /// <summary>
@@ -261,7 +268,7 @@ namespace Nohros.Metrics
     /// <c>null</c>.
     /// </param>
     /// <returns>
-    /// <c>true</c> if a <see cref="IMetered"/> associated with the
+    /// <c>true</c> if a <see cref="IMeter"/> associated with the
     /// <paramref name="name"/> exists; otherwise, <c>false</c>.
     /// </returns>
     public static bool TryGetMeter(MetricName name, out IMeter meter) {
@@ -277,10 +284,10 @@ namespace Nohros.Metrics
     /// <c>null</c>.
     /// </param>
     /// <returns>
-    /// <c>true</c> if a <see cref="Timer"/> associated with the
+    /// <c>true</c> if a <see cref="ITimer"/> associated with the
     /// <paramref name="name"/> exists; otherwise, <c>false</c>.
     /// </returns>
-    public static bool TryGetTimer(MetricName name, out Timer timer) {
+    public static bool TryGetTimer(MetricName name, out ITimer timer) {
       return registry_.TryGetTimer(name, out timer);
     }
 
@@ -299,6 +306,11 @@ namespace Nohros.Metrics
     public static bool TryGetMetric<T>(MetricName name, out T metric)
       where T : class, IMetric {
       return registry_.TryGetMetric(name, out metric);
+    }
+
+    public static IMetricsRegistry Registry {
+      get { return registry_; }
+      set { registry_ = value; }
     }
   }
 }

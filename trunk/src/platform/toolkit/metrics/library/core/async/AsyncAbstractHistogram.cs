@@ -6,10 +6,11 @@ namespace Nohros.Metrics
   public abstract class AbstractAsyncHistogram : IAsyncHistogram
   {
     protected readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
-    readonly IHistogram histogram_;
+    readonly ISyncHistogram histogram_;
 
     #region .ctor
-    protected AbstractAsyncHistogram(IExecutor executor, IHistogram histogram) {
+    protected AbstractAsyncHistogram(IExecutor executor,
+      ISyncHistogram histogram) {
       histogram_ = histogram;
       async_tasks_mailbox_ = new Mailbox<RunnableDelegate>(
         runnable => runnable(), executor);

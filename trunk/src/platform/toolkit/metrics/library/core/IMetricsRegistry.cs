@@ -56,7 +56,7 @@ namespace Nohros.Metrics
     /// </example>
     /// </param>
     /// <returns></returns>
-    IMetered GetMeter(MetricName name, string event_type, TimeUnit rate_unit);
+    IMeter GetMeter(MetricName name, string event_type, TimeUnit rate_unit);
 
     /// <summary>
     /// Given a new <see cref="Gauge{T}"/>, registers it under the given metric
@@ -85,7 +85,7 @@ namespace Nohros.Metrics
     /// <returns>
     /// The timer associated with the key <paramref name="name"/>.
     /// </returns>
-    Timer GetTimer(MetricName name, TimeUnit duration_unit);
+    ITimer GetTimer(MetricName name, TimeUnit duration_unit);
 
     /// <summary>
     /// Gets the value associated with the specified metric name.
@@ -144,7 +144,7 @@ namespace Nohros.Metrics
     /// <c>true</c> if a <see cref="Counter"/> associated with the
     /// <paramref name="name"/> exists; otherwise, <c>false</c>.
     /// </returns>
-    bool TryGetTimer(MetricName name, out Timer timer);
+    bool TryGetTimer(MetricName name, out ITimer timer);
 
     /// <param name="name">
     /// The name of the metric to get.

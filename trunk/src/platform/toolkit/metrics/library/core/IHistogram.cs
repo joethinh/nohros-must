@@ -11,17 +11,11 @@ namespace Nohros.Metrics
   ///  http://www.johndcook.com/standard_deviation.html
   /// </para>
   /// </remarks>
-  public interface IHistogram : ISummarizable, ISampling, IMetric
+  public interface IHistogram : IMetric
   {
     /// <summary>
     /// Adds a recorded value.
     /// </summary>
     void Update(long value);
-
-    /// <summary>
-    /// Get the number of values recorded.
-    /// </summary>
-    /// <returns>The number of values recorded.</returns>
-    long Count { get; }
   }
 }
