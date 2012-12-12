@@ -8,7 +8,7 @@ namespace Nohros.Metrics
   {
     [Test]
     public void ShouldCreateEmptyHistogram() {
-      IHistogram histogram = Histograms.Uniform();
+      ISyncHistogram histogram = Histograms.Uniform();
       Assert.That(histogram.Count, Is.EqualTo(0));
       Assert.That(histogram.Max, Is.InRange(0, 0.0001));
       Assert.That(histogram.Min, Is.InRange(0, 0.0001));
@@ -24,7 +24,7 @@ namespace Nohros.Metrics
 
     [Test]
     public void ShouldCreateHistogramWith1000Elements() {
-      IHistogram histogram = Histograms.Uniform();
+      ISyncHistogram histogram = Histograms.Uniform();
 
       for (int i = 1; i <= 1000; i++) {
         histogram.Update(i);
