@@ -8,7 +8,7 @@ namespace Nohros.Metrics
   /// implement only the <see cref="Snapshot"/> property. The default
   /// implementation thows a <see cref="NotImplementedException"/>.
   /// </summary>
-  public abstract class AbstractHistogram : IHistogram
+  public abstract class AbstractHistogram : ISyncHistogram
   {
     readonly double[] variance_;
     long count_;

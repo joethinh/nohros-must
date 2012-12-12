@@ -1,31 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Nohros.Metrics
 {
   /// <summary>
   /// A central registry and factory for metric instances.
   /// </summary>
-  public class MetricsRegistry : AbstractMetricsRegistry, IMetricsRegistry
+  public class SyncMetricsRegistry : AbstractMetricsRegistry, IMetricsRegistry
   {
     readonly Clock clock_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="MetricsRegistry"/> that
+    /// Initializes a new instance of the <see cref="SyncMetricsRegistry"/> that
     /// uses the default clock to mark the passage of time.
     /// </summary>
-    public MetricsRegistry() : this(new UserTimeClock()) {
+    public SyncMetricsRegistry() : this(new UserTimeClock()) {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MetricsRegistry"/> that
+    /// Initializes a new instance of the <see cref="SyncMetricsRegistry"/> that
     /// uses the given clock to mark the passage of time.
     /// </summary>
     /// <param name="clock">
     /// The <see cref="Clock"/> used to mark the passage of time.
     /// </param>
-    public MetricsRegistry(Clock clock) {
+    public SyncMetricsRegistry(Clock clock) {
       clock_ = clock;
     }
     #endregion
@@ -74,9 +73,9 @@ namespace Nohros.Metrics
     /// </example>
     /// </param>
     /// <returns></returns>
-    public IMetered GetMeter(MetricName name, string event_type,
+    public IMeter GetMeter(MetricName name, string event_type,
       TimeUnit rate_unit) {
-      IMetered meter;
+      IMeter meter;
       if (!TryGetMetric(name, out meter)) {
         meter = new Meter(event_type, rate_unit);
         Add(name, meter);
@@ -97,7 +96,7 @@ namespace Nohros.Metrics
     /// <returns>
     /// The timer associated with the key <paramref name="name"/>.
     /// </returns>
-    public Timer GetTimer(MetricName name, TimeUnit duration_unit) {
+    public ITimer GetTimer(MetricName name, TimeUnit duration_unit) {
       Timer timer;
       if (!TryGetMetric(name, out timer)) {
         timer = new Timer(duration_unit, new Meter("calls", TimeUnit.Seconds),
@@ -129,22 +128,6 @@ namespace Nohros.Metrics
     /// <param name="name">
     /// The name of the metric to get.
     /// </param>
-    /// <param name="timer">
-    /// When this method returns, contains the timer associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if a <see cref="Counter"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
-    /// </returns>
-    public bool TryGetTimer(MetricName name, out Timer timer) {
-      return TryGetMetric(name, out timer);
-    }
-
-    /// <param name="name">
-    /// The name of the metric to get.
-    /// </param>
     /// <param name="meter">
     /// When this method returns, contains the meter associated with the
     /// specified metric name, if a metric name is found; otherwise, the
@@ -158,66 +141,20 @@ namespace Nohros.Metrics
       return TryGetMetric(name, out meter);
     }
 
-    public IHistogram GetHistogram(Type klass, string name, bool biased) {
-      return GetHistogram(new MetricName(klass, name), biased);
-    }
-
-    public IHistogram GetHistogram(Type klass, string name, string scope,
-      bool biased) {
-      return GetHistogram(new MetricName(klass, name, scope), biased);
-    }
-
-    public IHistogram GetHistogram(string group, string type, string name,
-      bool biased) {
-      return GetHistogram(new MetricName(group, type, name), biased);
-    }
-
-    public IHistogram GetHistogram(string group, string type, string name,
-      string scope, bool biased) {
-      return GetHistogram(new MetricName(group, type, name, scope), biased);
-    }
-
-    public IMetered GetMeter(Type klass, string name, string event_type,
-      TimeUnit rate_unit) {
-      return GetMeter(new MetricName(klass, name), event_type, rate_unit);
-    }
-
-    public IMetered GetMeter(Type klass, string name, string scope,
-      string event_type,
-      TimeUnit rate_unit) {
-      return GetMeter(new MetricName(klass, name, scope), event_type, rate_unit);
-    }
-
-    public IMetered GetMeter(string group, string type, string name,
-      string event_type,
-      TimeUnit rate_unit) {
-      return GetMeter(new MetricName(group, type, name), event_type, rate_unit);
-    }
-
-    public IMetered GetMeter(string group, string type, string name,
-      string scope, string event_type,
-      TimeUnit rate_unit) {
-      return GetMeter(new MetricName(group, type, name, scope), event_type,
-        rate_unit);
-    }
-
-    public Timer GetTimer(Type klass, string name, TimeUnit duration_unit) {
-      return GetTimer(new MetricName(klass, name), duration_unit);
-    }
-
-    public Timer GetTimer(Type klass, string name, string scope,
-      TimeUnit duration_unit) {
-      return GetTimer(new MetricName(klass, name, scope), duration_unit);
-    }
-
-    public Timer GetTimer(string group, string type, string name,
-      TimeUnit duration_unit) {
-      return GetTimer(new MetricName(group, type, name), duration_unit);
-    }
-
-    public Timer GetTimer(string group, string type, string name, string scope,
-      TimeUnit duration_unit) {
-      return GetTimer(new MetricName(group, type, name, scope), duration_unit);
+    /// <param name="name">
+    /// The name of the metric to get.
+    /// </param>
+    /// <param name="timer">
+    /// When this method returns, contains the timer associated with the
+    /// specified metric name, if a metric name is found; otherwise, the
+    /// <c>null</c>.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if a <see cref="Counter"/> associated with the
+    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
+    /// </returns>
+    public bool TryGetTimer(MetricName name, out ITimer timer) {
+      return TryGetMetric(name, out timer);
     }
 
     public bool TryGetHistogram(Type klass, string name,
@@ -241,22 +178,22 @@ namespace Nohros.Metrics
         out histogram);
     }
 
-    public bool TryGetTimer(Type klass, string name, out Timer timer) {
+    public bool TryGetTimer(Type klass, string name, out ITimer timer) {
       return TryGetTimer(new MetricName(klass, name), out timer);
     }
 
     public bool TryGetTimer(Type klass, string name, string scope,
-      out Timer timer) {
+      out ITimer timer) {
       return TryGetTimer(new MetricName(klass, name, scope), out timer);
     }
 
     public bool TryGetTimer(string group, string type, string name,
-      out Timer timer) {
+      out ITimer timer) {
       return TryGetTimer(new MetricName(group, type, name), out timer);
     }
 
     public bool TryGetTimer(string group, string type, string name, string scope,
-      out Timer timer) {
+      out ITimer timer) {
       return TryGetTimer(new MetricName(group, type, name, scope), out timer);
     }
 

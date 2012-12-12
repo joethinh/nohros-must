@@ -10,7 +10,7 @@ namespace Nohros.Metrics
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="MetricsRegistry"/> class.
+    /// Initializes a new instance of the <see cref="SyncMetricsRegistry"/> class.
     /// </summary>
     protected AbstractMetricsRegistry() {
       metrics_ = new Dictionary<MetricName, IMetric>(kExpectedMetricCount);
@@ -54,25 +54,6 @@ namespace Nohros.Metrics
       if (!TryGetMetric(name, out gauge)) {
         Add(name, gauge);
       }
-    }
-
-    public void AddGauge<T>(Type klass, string name, Gauge<T> metric) {
-      AddGauge(new MetricName(klass, name), metric);
-    }
-
-    public void AddGauge<T>(Type klass, string name, string scope,
-      Gauge<T> metric) {
-      AddGauge(new MetricName(klass, name, scope), metric);
-    }
-
-    public void AddGauge<T>(string group, string type, string name,
-      Gauge<T> metric) {
-      AddGauge(new MetricName(group, type, name), metric);
-    }
-
-    public void AddGauge<T>(string group, string type, string name, string scope,
-      Gauge<T> metric) {
-      AddGauge(new MetricName(group, type, name, scope), metric);
     }
 
     /// <param name="name">
@@ -124,23 +105,6 @@ namespace Nohros.Metrics
     public bool TryGetCounter(string group, string type, string name,
       string scope, out Counter counter) {
       return TryGetCounter(new MetricName(group, type, name, scope), out counter);
-    }
-
-    public Counter GetCounter(Type klass, string name) {
-      return GetCounter(new MetricName(klass, name));
-    }
-
-    public Counter GetCounter(Type klass, string name, string scope) {
-      return GetCounter(new MetricName(klass, name, scope));
-    }
-
-    public Counter GetCounter(string group, string type, string name) {
-      return GetCounter(new MetricName(group, type, name));
-    }
-
-    public Counter GetCounter(string group, string type, string name,
-      string scope) {
-      return GetCounter(new MetricName(group, type, name, scope));
     }
 
     /// <param name="name">

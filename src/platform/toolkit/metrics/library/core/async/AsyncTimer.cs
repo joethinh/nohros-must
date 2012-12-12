@@ -10,6 +10,7 @@ namespace Nohros.Metrics
   public class AsyncTimer : IAsyncTimed
   {
     readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
+    readonly Clock clock_;
     readonly TimeUnit duration_unit_;
     readonly BiasedHistogram histogram_;
     readonly AsyncMeter meter_;
@@ -22,11 +23,17 @@ namespace Nohros.Metrics
     /// The scale unit for this timer's duration metrics.
     /// </param>
     public AsyncTimer(TimeUnit duration_unit, AsyncMeter meter,
-      BiasedHistogram histogram, IExecutor executor) {
+      BiasedHistogram histogram, IExecutor executor)
+      : this(duration_unit, meter, histogram, executor, new UserTimeClock()) {
+    }
+
+    public AsyncTimer(TimeUnit duration_unit, AsyncMeter meter,
+      BiasedHistogram histogram, IExecutor executor, Clock clock) {
       duration_unit_ = duration_unit;
       meter_ = meter;
       histogram_ = histogram;
       async_tasks_mailbox_ = new Mailbox<RunnableDelegate>(Run, executor);
+      clock_ = clock;
     }
     #endregion
 
@@ -111,7 +118,7 @@ namespace Nohros.Metrics
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
       var now = DateTime.Now;
-      long timestamp = Clock.NanoTime;
+      long timestamp = clock_.Tick;
 
       meter_.Report((values, t_context) => {
         var h_values = Report();
@@ -120,6 +127,39 @@ namespace Nohros.Metrics
         Array.Copy(values, 0, final_values, h_values.Length, values.Length);
         callback(final_values, t_context);
       }, context);
+    }
+
+    public T Time<T>(CallableDelegate<T> method) {
+      long start_time = clock_.Tick;
+
+      // The time should be mensured even if a exception is throwed.
+      try {
+        return method();
+      } finally {
+        Update(clock_.Tick - start_time);
+      }
+    }
+
+    public void Time(RunnableDelegate runnable) {
+      long start_time = clock_.Tick;
+
+      // The time should be mensured even if a exception is throwed.
+      try {
+        runnable();
+      } finally {
+        Update(clock_.Tick - start_time);
+      }
+    }
+
+    /// <summary>
+    /// Gets a timing <see cref="TimerContext"/>, which measures an elapsed
+    /// time in nanoseconds.
+    /// </summary>
+    /// <returns>
+    /// A new <see cref="TimerContext"/>.
+    /// </returns>
+    public TimerContext Time() {
+      return new TimerContext(this, clock_);
     }
 
     protected MetricValue[] Report() {
@@ -152,7 +192,7 @@ namespace Nohros.Metrics
     public void Update(long duration) {
       if (duration >= 0) {
         long timestamp = TimeUnitHelper
-          .ToSeconds(Clock.CurrentTimeMilis, TimeUnit.Miliseconds);
+          .ToSeconds(clock_.Time, TimeUnit.Miliseconds);
         async_tasks_mailbox_.Send(
           () => histogram_.Update(duration, timestamp));
         meter_.Mark(duration);
@@ -161,31 +201,6 @@ namespace Nohros.Metrics
 
     double ConvertFromNs(double ns) {
       return ns/TimeUnitHelper.ToNanos(1, duration_unit_);
-    }
-
-    /// <summary>
-    /// Times and records the duration of event.
-    /// </summary>
-    /// <typeparam name="T">The type of the value returned by
-    /// <paramref name="method"/></typeparam>
-    /// <param name="method">
-    /// A method whose duration should be timed.
-    /// </param>
-    /// <returns>
-    /// The value returned by <paramref name="method"/>.
-    /// </returns>
-    /// <exception cref="Exception">
-    /// The exception throwed by <paramref name="method"/>.
-    /// </exception>
-    public T Time<T>(CallableDelegate<T> method) {
-      long start_time = Clock.NanoTime;
-
-      // The time should be mensured even if a exception is throwed.
-      try {
-        return method();
-      } finally {
-        Update(Clock.NanoTime - start_time);
-      }
     }
 
 

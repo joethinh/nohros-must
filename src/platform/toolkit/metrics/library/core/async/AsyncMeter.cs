@@ -16,6 +16,7 @@ namespace Nohros.Metrics
   {
     const long kTickInterval = 5000000000; // 5 seconds in nanoseconds
     readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
+    readonly Clock clock_;
     readonly string event_type_;
     readonly ExponentialWeightedMovingAverage ewma_15_rate_;
     readonly ExponentialWeightedMovingAverage ewma_1_rate_;
@@ -41,11 +42,32 @@ namespace Nohros.Metrics
     /// </code>
     /// </example>
     /// </param>
-    public AsyncMeter(string event_type, TimeUnit rate_unit, IExecutor executor) {
+    public AsyncMeter(string event_type, TimeUnit rate_unit, IExecutor executor)
+      : this(event_type, rate_unit, executor, new UserTimeClock()) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref=" Meter"/> class by using
+    /// the specified meter name, rate unit and clock.
+    /// </summary>
+    /// <param name="rate_unit">
+    /// The rate unit of the new meter.
+    /// </param>
+    /// <param name="event_type">
+    /// The plural name of the event meter is measuring
+    /// <example>
+    /// <code>
+    /// "requests"
+    /// </code>
+    /// </example>
+    /// </param>
+    public AsyncMeter(string event_type, TimeUnit rate_unit, IExecutor executor,
+      Clock clock) {
       count_ = 0;
       rate_unit_ = rate_unit;
       event_type_ = event_type;
-      start_time_ = Clock.NanoTime;
+      clock_ = clock;
+      start_time_ = clock_.Tick;
       last_tick_ = start_time_;
       ewma_1_rate_ = ExponentialWeightedMovingAverages.OneMinute();
       ewma_5_rate_ = ExponentialWeightedMovingAverages.FiveMinute();
@@ -70,7 +92,7 @@ namespace Nohros.Metrics
       // clock tick, because the closure will capture the variable and not the
       // value of it.
       var now = DateTime.Now;
-      long timestamp = Clock.NanoTime;
+      long timestamp = clock_.Tick;
       async_tasks_mailbox_.Send(() => {
         TickIfNecessary(timestamp);
         callback(FifteenMinuteRate, now);
@@ -83,7 +105,7 @@ namespace Nohros.Metrics
       // clock tick, because the closure will capture the variable and not the
       // value of it.
       var now = DateTime.Now;
-      long timestamp = Clock.NanoTime;
+      long timestamp = clock_.Tick;
       async_tasks_mailbox_.Send(() => {
         TickIfNecessary(timestamp);
         callback(FiveMinuteRate, now);
@@ -96,7 +118,7 @@ namespace Nohros.Metrics
       // clock tick and count, because the closure will capture the variable
       // and not the value of it.
       var now = DateTime.Now;
-      long timestamp = Clock.NanoTime;
+      long timestamp = clock_.Tick;
       async_tasks_mailbox_.Send(() => {
         TickIfNecessary(timestamp);
         callback(OneMinuteRate, now);
@@ -109,7 +131,7 @@ namespace Nohros.Metrics
       // clock tick and count, because the closure will capture the variable
       // and not the value of it.
       var now = DateTime.Now;
-      long timestamp = Clock.NanoTime;
+      long timestamp = clock_.Tick;
       async_tasks_mailbox_.Send(() => GetMeanRate(timestamp));
     }
 
@@ -136,7 +158,7 @@ namespace Nohros.Metrics
     /// The number of events.
     /// </param>
     public void Mark(long n) {
-      long timestamp = Clock.NanoTime;
+      long timestamp = clock_.Tick;
       async_tasks_mailbox_.Send(() => {
         TickIfNecessary(timestamp);
         count_ += n;
@@ -148,7 +170,7 @@ namespace Nohros.Metrics
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
       var now = DateTime.Now;
-      long timestamp = Clock.NanoTime;
+      long timestamp = clock_.Tick;
       async_tasks_mailbox_.Send(() => callback(Report(timestamp), context));
     }
 
