@@ -36,7 +36,7 @@ namespace Nohros.Concurrent
   /// </typeparam>
   public class Mailbox<T>
   {
-    const int kDefaultCapacity = 16;
+    const int kDefaultCapacity = 32;
     readonly MailboxReceiveCallback<T> callback_;
     readonly IExecutor executor_;
 

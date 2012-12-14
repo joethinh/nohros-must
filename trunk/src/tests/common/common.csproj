@@ -60,6 +60,7 @@
     <Compile Include="concurrent\AtomicLongTests.cs" />
     <Compile Include="concurrent\AtomicReferenceTests.cs" />
     <Compile Include="concurrent\MailboxTests.cs" />
+    <Compile Include="concurrent\YBlockingQueue.cs" />
     <Compile Include="concurrent\YQueueTests.cs" />
     <Compile Include="configuration\common\provider\ProvidersNodeParserTests.cs" />
     <Compile Include="data\json\collection\JsonCollectionFactoryTest.cs" />
