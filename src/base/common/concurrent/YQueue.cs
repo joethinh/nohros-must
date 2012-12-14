@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Collections.Generic;
-
 using Nohros.Resources;
 
 namespace Nohros.Concurrent
@@ -17,60 +16,71 @@ namespace Nohros.Concurrent
   /// </summary>
   public class YQueue<T>
   {
-    #region Chunk
     class Chunk
     {
-      public T[] values;
-      public volatile int tail_pos, head_pos;
+      public long distance;
+      public volatile int head_pos;
       public volatile Chunk next;
+      public volatile int tail_pos;
+      public T[] values;
 
       #region .ctor
       /// <summary>
       /// Initializes a new instance of the <see cref="Chunk"/> class by using
       /// the specified capacity.
       /// </summary>
-      /// <param name="capacity">The number of elements that the chunk can
-      /// hold.</param>
+      /// <param name="capacity">
+      /// The number of elements that the chunk can hold.
+      /// </param>
       public Chunk(int capacity) {
         values = new T[capacity];
-        head_pos = -1;
+        head_pos = 0;
         tail_pos = 0;
         next = null;
+        distance = 0;
       }
       #endregion
     }
-    #endregion
 
+    const int kDefaultCapacity = 32;
+    volatile Chunk divider_;
     readonly int granularity_;
-    volatile Chunk head_chunk_, tail_chunk_, divider_;
-
-    // People are likely to produce and consume at similar rates. In this
-    // scenario holding onto the most recently freed chunk saves us from
-    // having to instantiate new chunks.
-    volatile Chunk spare_chunk_;
+    volatile Chunk tail_chunk_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="YQueue&lt;T&gt;"/> class
+    /// Initializes a new instance of the <see cref="YQueue{T}"/> class
+    /// that has the default capacity.
+    /// </summary>
+    public YQueue() : this(kDefaultCapacity) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="YQueue{T}"/> class
     /// by using the specified granularity.
     /// </summary>
-    /// <param name="granularity">A number that defines the granularity of the
-    /// queue(how many pushes have to be done till actual memory allocation
-    /// is required).</param>
+    /// <param name="granularity">
+    /// A number that defines the granularity of the queue(how many pushes
+    /// have to be done till actual memory allocation is required).
+    /// </param>
     public YQueue(int granularity) {
       granularity_ = granularity;
-      divider_ = new Chunk(0);
-      divider_.next = tail_chunk_;
-      head_chunk_ = tail_chunk_ = divider_;
-      spare_chunk_ = null;
+      divider_ = new Chunk(granularity);
+
+      // make sure that the divider will not be used to store elements.
+      divider_.tail_pos = granularity - 1;
+      divider_.head_pos = granularity;
+
+      tail_chunk_ = divider_;
     }
     #endregion
 
     /// <summary>
     /// Adds an element to the back end of the queue.
     /// </summary>
-    /// <param name="element">The element to be added to the back end of the
-    /// queue.</param>
+    /// <param name="element">
+    /// The element to be added to the back end of the queue.
+    /// </param>
     public void Enqueue(T element) {
       int tail_pos = tail_chunk_.tail_pos;
 
@@ -88,9 +98,9 @@ namespace Nohros.Concurrent
         return;
       }
 
-      // Create a new chunk if a cached one does not exists yet and links it
+      // Create a new chunk if a cached one does not exists and links it
       // to the current last node.
-      Chunk chunk = spare_chunk_ ?? new Chunk(granularity_);
+      Chunk chunk = new Chunk(granularity_);
       tail_chunk_.next = chunk;
 
       // Reset the chunk and append the specified element to the first slot.
@@ -98,6 +108,11 @@ namespace Nohros.Concurrent
       chunk.head_pos = 0;
       chunk.next = null;
       chunk.values[0] = element;
+      chunk.distance = tail_chunk_.distance + 1;
+
+      // Make sure that the new chunk is fully initialized before it is
+      // assigned to the tail chunk.
+      Thread.MemoryBarrier();
 
       // At this point the newly created chunk(or the last cached chunk) is
       // not yet shared, but still private to the producer; the consumer will
@@ -105,23 +120,6 @@ namespace Nohros.Concurrent
       // it may follow. The line above "commit" the update and publish it
       // atomically to the consumer thread.
       tail_chunk_ = tail_chunk_.next;
-
-      // Performs a lazy cleanup of now-unused nodes. Because we always stop
-      // before |divider_|,this can't conflict with anything the consumer
-      // might be doing later in the list. Each time we read |divider_|, we
-      // see it either before or after any concurrent update by the consumer,
-      // both if which let the producer see the list in a consistent state.
-      while (head_chunk_.head_pos > head_chunk_.tail_pos &&
-        head_chunk_ != divider_) {
-
-        // |head_chunk_| has been more recently used than |spare_chunk_|, so
-        // for cache reasons we'll get rid of the spare and use |head_chunk_|
-        // as the spare.
-        spare_chunk_ = head_chunk_;
-
-        // Advance the head chunk to the next used chunk or divider.
-        head_chunk_ = head_chunk_.next;
-      }
     }
 
     /// <summary>
@@ -185,14 +183,16 @@ namespace Nohros.Concurrent
 
         // We need to compare the current chunk |tail_pos| with the |head_pos|
         // and |granularity|. Since, the |tail_pos| can be modified by the
-        // producer thread we need to cache it's value.
+        // producer thread we need to cache it instantaneous value.
         int tail_pos;
         tail_pos = current_chunk.tail_pos;
-        
+
         if (current_chunk.head_pos > tail_pos) {
-          // we have reached the end of the chunk, go to the next.
           if (tail_pos == granularity_ - 1) {
+            // we have reached the end of the chunk, go to the next chunk and
+            // frees the unused chunk.
             divider_ = current_chunk;
+            //head_chunk_ = head_chunk_.next;
           } else {
             // we already consume all the available itens.
             t = default(T);
@@ -206,12 +206,36 @@ namespace Nohros.Concurrent
           // Here the |head_pos| is less than or equals to |tail_pos|, get
           // the first unconsumed element and increments |head_pos| to publish
           // the queue item removal.
-          t = current_chunk.values[current_chunk.head_pos++];
+          t = current_chunk.values[current_chunk.head_pos];
+
+          // keep the order between assignment and publish operations.
+          Thread.MemoryBarrier();
+
+          current_chunk.head_pos++;
           return true;
         }
       }
       t = default(T);
       return false;
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the <see cref="YQueue{T}"/> is empty.
+    /// </summary>
+    /// <remarks>
+    /// Since this collection is intended to be accessed concurrently by two
+    /// threads in a producer/consumer pattern, it may be the case that another
+    /// thread will modify the collection after <see cref="IsEmpty"/> returns,
+    /// thus invalidatind the result.
+    /// </remarks>
+    public bool IsEmpty {
+      get {
+        Chunk divider = divider_;
+        Chunk tail = tail_chunk_;
+
+        return (divider.next == tail || divider == tail) &&
+          tail.head_pos > tail.tail_pos;
+      }
     }
   }
 }

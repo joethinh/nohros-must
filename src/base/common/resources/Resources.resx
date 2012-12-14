@@ -328,4 +328,10 @@
   <data name="Arg_Type_ShouldBeInterface" xml:space="preserve">
     <value>"{0}" should be an interface.</value>
   </data>
+  <data name="ArgumentOutOfRange_arg_NonMultipleOf" xml:space="preserve">
+    <value>"{0}" should be a multiple of "{1}".</value>
+  </data>
+  <data name="ArgumentOutOfRange_arg_NonNegNum" xml:space="preserve">
+    <value>"{0}" should be a non-negative number.</value>
+  </data>
 </root>

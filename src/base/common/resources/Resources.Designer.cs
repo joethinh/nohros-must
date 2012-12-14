@@ -250,6 +250,24 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; should be a multiple of &quot;{1}&quot;..
+        /// </summary>
+        internal static string ArgumentOutOfRange_arg_NonMultipleOf {
+            get {
+                return ResourceManager.GetString("ArgumentOutOfRange_arg_NonMultipleOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; should be a non-negative number..
+        /// </summary>
+        internal static string ArgumentOutOfRange_arg_NonNegNum {
+            get {
+                return ResourceManager.GetString("ArgumentOutOfRange_arg_NonNegNum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Index was out of range. Must be non-negative and less than the size of the collection.
         ///.
         /// </summary>
