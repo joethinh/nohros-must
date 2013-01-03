@@ -145,6 +145,8 @@ namespace Nohros.Data
         public KeyValuePair<FieldBuilder, PropertyInfo>[] ReferenceFields { get; set; }
       }
 
+      protected delegate void PreCreateTypeEventHandler(TypeBuilder builder);
+
       readonly Type type_t_;
       readonly IDictionary<string, string> value_mapping_;
 
@@ -173,7 +175,7 @@ namespace Nohros.Data
       /// </summary>
       /// <param name="mapping">
       /// An <see cref="KeyValuePair{TKey,TValue}"/> containing the mapping
-      /// between source columns and destination properties
+      /// between source columns and destination properties.
       /// </param>
       /// <remarks>
       /// The <see cref="KeyValuePair{TKey,TValue}.Value"/> is used as the source
@@ -333,8 +335,21 @@ namespace Nohros.Data
         EmitValueProperties(builder, result.OrdinalsField, result.ReaderField,
           result.OrdinalsMapping);
         EmitIgnoreProperties(builder, result.IgnoreMappings);
+
+        OnPreCreateType(builder);
+
         return builder.CreateType();
       }
+
+      void OnPreCreateType(TypeBuilder builder) {
+        Listeners.SafeInvoke(PreCreateType,
+          delegate(PreCreateTypeEventHandler handler) { handler(builder); });
+      }
+
+      /// <summary>
+      /// Raised before the dynamic type is created.
+      /// </summary>
+      protected event PreCreateTypeEventHandler PreCreateType;
 
       /// <summary>
       /// Emit the constuctor code.

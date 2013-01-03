@@ -64,5 +64,14 @@ namespace Nohros.Data
         .Builder()
         .Build(reader);
     }
+
+    public static IChainMapper<T, T1> GetMapper<T, T1>(IDataReader reader,
+      KeyValuePair<string, string>[] mapping_for_t,
+      KeyValuePair<string, string>[] mapping_for_t1) where T1 : IMapper<T1> {
+      DataReaderMapper<T> mapper_for_t = new DataReaderMapper<T>
+        .Builder(mapping_for_t)
+        .Build(reader);
+      return new ChainDataReaderMapper<T, T1>(mapper_for_t);
+    }
   }
 }
