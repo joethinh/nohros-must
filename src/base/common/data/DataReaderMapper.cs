@@ -19,13 +19,27 @@ namespace Nohros.Data
   /// </remarks>
   public abstract partial class DataReaderMapper<T> : IMapper<T>, IDisposable
   {
-    protected readonly IDataReader reader_;
+    protected internal IDataReader reader_;
 
     #region .ctor
+    protected DataReaderMapper() {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataReaderMapper{T}"/>
+    /// using the specified <see cref="IDataReader"/>.
+    /// </summary>
+    /// <param name="reader">
+    /// A <see cref="IDataReader"/> containing the data to be mapped.
+    /// </param>
     protected DataReaderMapper(IDataReader reader) {
       reader_ = reader;
     }
     #endregion
+
+    public void Dispose() {
+      reader_.Dispose();
+    }
 
     public abstract T Map();
 
@@ -38,10 +52,6 @@ namespace Nohros.Data
         yield return Map();
       }
       reader_.Close();
-    }
-
-    public void Dispose() {
-      reader_.Dispose();
     }
   }
 }
