@@ -449,6 +449,15 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} =&gt; The current transaction context is not compatible with this class..
+        /// </summary>
+        internal static string DataProvider_TransactionContextRace {
+            get {
+                return ResourceManager.GetString("DataProvider_TransactionContextRace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Syntax error.
         /// </summary>
         internal static string Format_SyntaxError {
