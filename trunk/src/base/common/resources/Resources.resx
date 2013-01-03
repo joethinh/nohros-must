@@ -334,4 +334,7 @@
   <data name="ArgumentOutOfRange_arg_NonNegNum" xml:space="preserve">
     <value>"{0}" should be a non-negative number.</value>
   </data>
+  <data name="DataProvider_TransactionContextRace" xml:space="preserve">
+    <value>{0} =&gt; The current transaction context is not compatible with this class.</value>
+  </data>
 </root>

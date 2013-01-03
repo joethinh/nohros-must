@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using Nohros.Logging;
 
 namespace Nohros.Data.Providers
 {
@@ -11,6 +12,7 @@ namespace Nohros.Data.Providers
   public class SqlConnectionProvider : IConnectionProvider
   {
     const string kDefaultSchema = "dbo";
+    const string kClassName = "Nohros.Data.Providers.SqlConnectionProvider";
 
     readonly string connection_string_;
     readonly string schema_;
@@ -52,13 +54,50 @@ namespace Nohros.Data.Providers
     }
 
     /// <summary>
+    /// Creates a <see cref="ITransactionContext"/> for the code block that
+    /// follow this method call.
+    /// </summary>
+    public ITransactionContext BeginTransaction() {
+      SqlConnection conn = CreateConnection();
+      return TransactionContexts.Current =
+        new TransactionContext(conn.BeginTransaction());
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITransactionContext"/> for the code block that
+    /// follow this method call.
+    /// </summary>
+    public ITransactionContext BeginTransaction(IsolationLevel isolation_level) {
+      SqlConnection conn = CreateConnection();
+      return TransactionContexts.Current =
+        new TransactionContext(conn.BeginTransaction(isolation_level));
+    }
+
+    /// <summary>
     /// Creates a new instance of the <see cref="SqlConnection"/> class using
     /// the provider connection string.
     /// </summary>
     /// <returns>
     /// A instance of the <see cref="SqlConnection"/> class.
     /// </returns>
+    /// <remarks>
+    /// If a <see cref="ITransactionContext"/> exists this, the connection
+    /// that is associated with it will be returned.
+    /// </remarks>
     public SqlConnection CreateConnection() {
+      ITransactionContext context = TransactionContexts.Current;
+      if (context != null) {
+        try {
+          return
+            (SqlConnection)
+              ((TransactionContext) context).Transaction.Connection;
+        } catch (InvalidCastException) {
+          MustLogger.ForCurrentProcess.Warn(string.Format(
+            Resources.Resources.DataProvider_TransactionContextRace,
+            kClassName));
+          return new SqlConnection(connection_string_);
+        }
+      }
       return new SqlConnection(connection_string_);
     }
   }

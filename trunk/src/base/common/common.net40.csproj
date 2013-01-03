@@ -66,6 +66,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\third_party\sqlite\System.Data.SQLite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -147,15 +148,18 @@
     <Compile Include="configuration\IMustConfiguration.cs" />
     <Compile Include="configuration\AbstractConfigurationBuilder.cs" />
     <Compile Include="configuration\Strings.cs" />
+    <Compile Include="data\ChainDataReaderMapper.cs" />
     <Compile Include="data\CommandBuilder.cs" />
     <Compile Include="CommandLine.cs" />
     <Compile Include="data\DataReaderMapper.cs" />
+    <Compile Include="data\DataReaderMapperBuilder.cs" />
+    <Compile Include="data\IChainMapper.cs" />
     <Compile Include="data\IMapper.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDateTime.cs" />
-    <Compile Include="data\Mapper.cs" />
     <Compile Include="data\Mappers.cs" />
     <Compile Include="data\readers\DataFieldDateTime.cs" />
     <Compile Include="data\readers\DataReaderReader.cs" />
+    <Compile Include="data\Transactions.cs" />
     <Compile Include="exception\ConstraintViolationException.cs" />
     <Compile Include="exception\NetworkException.cs" />
     <Compile Include="exception\NoResultException.cs" />
