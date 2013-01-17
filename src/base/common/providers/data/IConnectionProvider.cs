@@ -18,6 +18,15 @@ namespace Nohros.Data.Providers
     IDbConnection CreateConnection();
 
     /// <summary>
+    /// Creates an instance of the <see cref="ITransactionContext"/> class for
+    /// the current <see cref="IConnectionProvider"/>.
+    /// </summary>
+    /// <returns>
+    /// The newly created <see cref="ITransactionContext"/>.
+    /// </returns>
+    ITransactionContext CreateTransactionContext();
+
+    /// <summary>
     /// Gets an string that represents the database schema related with the
     /// provider.
     /// </summary>
