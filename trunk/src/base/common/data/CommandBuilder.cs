@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using Nohros.Data.Providers;
 
 namespace Nohros.Data
 {
