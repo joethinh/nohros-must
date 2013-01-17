@@ -149,15 +149,29 @@
     <Compile Include="data\ChainDataReaderMapper.cs" />
     <Compile Include="data\CommandBuilder.cs" />
     <Compile Include="CommandLine.cs" />
-    <Compile Include="data\DataReaderMapper.cs" />
-    <Compile Include="data\IMapper.cs" />
+    <Compile Include="data\mappers\BooleanMapType.cs" />
+    <Compile Include="data\mappers\ByteMapType.cs" />
+    <Compile Include="data\mappers\CharMapType.cs" />
+    <Compile Include="data\mappers\IgnoreMapType.cs" />
+    <Compile Include="data\mappers\ConstStringMapType.cs" />
+    <Compile Include="data\mappers\DataReaderMapper.cs" />
+    <Compile Include="data\mappers\DoubleMapType.cs" />
+    <Compile Include="data\mappers\FloatMapType.cs" />
+    <Compile Include="data\mappers\IMapper.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDateTime.cs" />
-    <Compile Include="data\DataReaderMapperBuilder.cs" />
-    <Compile Include="data\Mappers.cs" />
+    <Compile Include="data\mappers\DataReaderMapperBuilder.cs" />
+    <Compile Include="data\mappers\IntMapType.cs" />
+    <Compile Include="data\mappers\ITypeMap.cs" />
+    <Compile Include="data\mappers\LongMapType.cs" />
+    <Compile Include="data\mappers\Mappers.cs" />
+    <Compile Include="data\mappers\ShortMapType.cs" />
+    <Compile Include="data\mappers\StringTypeMap.cs" />
+    <Compile Include="data\mappers\TypeMap.cs" />
+    <Compile Include="data\mappers\TypeMapType.cs" />
     <Compile Include="data\readers\DataFieldDateTime.cs" />
     <Compile Include="data\readers\DataReaderReader.cs" />
-    <Compile Include="data\IChainMapper.cs" />
-    <Compile Include="data\Transactions.cs" />
+    <Compile Include="data\mappers\IChainMapper.cs" />
+    <Compile Include="data\TransactionScopes.cs" />
     <Compile Include="exception\ConstraintViolationException.cs" />
     <Compile Include="exception\NetworkException.cs" />
     <Compile Include="exception\NoResultException.cs" />
@@ -170,6 +184,7 @@
     <Compile Include="logging\ConsoleLogger.cs" />
     <Compile Include="logging\ForwardingLogger.cs" />
     <Compile Include="logging\IForwardingLogger.cs" />
+    <Compile Include="logging\MustLogger.cs" />
     <Compile Include="providers\data\ConnectionProviderLoader.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldBoolean.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDecimal.cs" />
@@ -213,10 +228,15 @@
     <Compile Include="data\json\tokens\JsonToken.cs" />
     <Compile Include="exception\ConfigurationException.cs" />
     <Compile Include="logging\ILoggerFactory.cs" />
+    <Compile Include="providers\data\DependentTransaction.cs" />
     <Compile Include="providers\data\IConnectionProvider.cs" />
+    <Compile Include="providers\data\ImplicitTransaction.cs" />
+    <Compile Include="providers\data\InternalTransaction.cs" />
+    <Compile Include="providers\data\ITransaction.cs" />
     <Compile Include="providers\data\ITransactionContext.cs" />
+    <Compile Include="providers\data\Transaction.cs" />
+    <Compile Include="providers\data\TransactionBehavior.cs" />
     <Compile Include="providers\data\TransactionContext.cs" />
-    <Compile Include="providers\data\TransactionContexts.cs" />
     <Compile Include="RuntimeType.cs" />
     <Compile Include="type\Clocks.cs" />
     <Compile Include="type\collections\AbstractRingQueue.cs" />
@@ -245,7 +265,6 @@
     <Compile Include="data\readers\DataReaders.cs" />
     <Compile Include="exception\ExecutionException.cs" />
     <Compile Include="logging\ChainedLogger.cs" />
-    <Compile Include="logging\MustLogger.cs" />
     <Compile Include="providers\cache\ICacheProviderFactory.cs" />
     <Compile Include="providers\cache\RemovalCause.cs" />
     <Compile Include="configuration\common\provider\ProviderNode.cs" />
@@ -393,7 +412,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
