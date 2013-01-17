@@ -337,4 +337,13 @@
   <data name="DataProvider_TransactionContextRace" xml:space="preserve">
     <value>{0} =&gt; The current transaction context is not compatible with this class.</value>
   </data>
+  <data name="DataProvider_InvalidOperation_TransactionCompleted" xml:space="preserve">
+    <value>This operation is not permitted when the transaction is in completed.</value>
+  </data>
+  <data name="DataProvider_InvalidOperation_NoTransaction" xml:space="preserve">
+    <value>There is no transaction in progress.</value>
+  </data>
+  <data name="InvalidOperation_CalledMoreThanOnce" xml:space="preserve">
+    <value>This method has already been called once.</value>
+  </data>
 </root>

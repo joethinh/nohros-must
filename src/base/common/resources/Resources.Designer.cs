@@ -440,6 +440,24 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is no transaction in progress..
+        /// </summary>
+        internal static string DataProvider_InvalidOperation_NoTransaction {
+            get {
+                return ResourceManager.GetString("DataProvider_InvalidOperation_NoTransaction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This operation is not permitted when the transaction is in completed..
+        /// </summary>
+        internal static string DataProvider_InvalidOperation_TransactionCompleted {
+            get {
+                return ResourceManager.GetString("DataProvider_InvalidOperation_TransactionCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Provider is invalid..
         /// </summary>
         internal static string DataProvider_InvalidProvider {
@@ -472,6 +490,15 @@ namespace Nohros.Resources {
         internal static string InvalidCast_FromTo {
             get {
                 return ResourceManager.GetString("InvalidCast_FromTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This method has already been called once..
+        /// </summary>
+        internal static string InvalidOperation_CalledMoreThanOnce {
+            get {
+                return ResourceManager.GetString("InvalidOperation_CalledMoreThanOnce", resourceCulture);
             }
         }
         
