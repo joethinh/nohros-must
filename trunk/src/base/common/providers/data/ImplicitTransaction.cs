@@ -15,28 +15,35 @@ namespace Nohros.Data.Providers
   /// </remarks>
   public class ImplicitTransaction : ITransaction
   {
-    readonly IConnectionProvider connection_provider_;
-    IDbConnection connection_;
-    TransactionBehavior transaction_behavior_;
+    readonly IDbConnection connection_;
+    readonly TransactionBehavior transaction_behavior_;
 
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="ImplicitTransaction"/>
     /// </summary>
-    /// <param name="connection_provider"></param>
-    public ImplicitTransaction(IConnectionProvider connection_provider)
-      : this(connection_provider, TransactionBehavior.Default) {
+    /// <param name="connection">
+    /// A <see cref="IDbConnection"/> that provide access to the
+    /// underlying data provider.
+    /// </param>
+    public ImplicitTransaction(IDbConnection connection)
+      : this(connection, TransactionBehavior.Default) {
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ImplicitTransaction"/>
     /// </summary>
-    /// <param name="connection_provider"></param>
+    /// <param name="connection">
+    /// A <see cref="IDbConnection"/> that provide access to the
+    /// underlying data provider.
+    /// </param>
     /// <param name="behavior"></param>
-    public ImplicitTransaction(IConnectionProvider connection_provider,
+    public ImplicitTransaction(IDbConnection connection,
       TransactionBehavior behavior) {
-      connection_provider_ = connection_provider;
-      connection_ = null;
+      if (connection == null) {
+        throw new ArgumentNullException("connection");
+      }
+      connection_ = connection;
       transaction_behavior_ = behavior;
     }
     #endregion
@@ -77,16 +84,10 @@ namespace Nohros.Data.Providers
     }
 
     public CommandBuilder GetCommandBuilder() {
-      if (connection_ == null) {
-        connection_ = connection_provider_.CreateConnection();
-      }
       return new CommandBuilder(connection_);
     }
 
     T Execute<T>(IDbCommand cmd, CallableDelegate<T> runnable) {
-      if (connection_ == null) {
-        connection_ = connection_provider_.CreateConnection();
-      }
       if (connection_.State != ConnectionState.Open) {
         connection_.Open();
       }

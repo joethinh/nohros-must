@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using Nohros.Logging;
 
 namespace Nohros.Data.Providers
 {
@@ -37,6 +36,11 @@ namespace Nohros.Data.Providers
       schema_ = schema;
     }
     #endregion
+
+    /// <inheritdoc/>
+    public ITransactionContext CreateTransactionContext() {
+      return new TransactionContext();
+    }
 
     /// <inheritdoc/>
     IDbConnection IConnectionProvider.CreateConnection() {
