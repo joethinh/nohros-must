@@ -78,18 +78,12 @@ namespace Nohros.Data.Json
     }
 
     /// <summary>
-    /// A method that is used to serialize <paramref name="member"/> into a
-    /// key value pair(json member).
+    /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="member"></param>
-    /// <returns>
-    /// A <see cref="KeyValuePair{TKey,TValue}"/> representing the serialized
-    /// member. The key should represent the member name and the value the
-    /// member value.
-    /// </returns>
-    public delegate KeyValuePair<string, string> MemberSerializerDelegate<in T>(
-      T member);
+    /// <param name="obj"></param>
+    /// <param name="builder"></param>
+    public delegate void ForEachDelegate<T>(T obj, JsonStringBuilder builder);
 
     const string kBeginObject = "{";
     const string kEndObject = "}";
@@ -205,18 +199,32 @@ namespace Nohros.Data.Json
     }
 
     /// <summary>
-    /// Write the elements from <see cref="members"/> collection as a JSON
-    /// member.
+    /// Performs the specified action on each element of the
+    /// <see cref="elements"/> collection.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="members"></param>
-    /// <param name="serializer"></param>
-    /// <returns></returns>
-    public JsonStringBuilder WriteMembers<T>(IEnumerable<T> members,
-      MemberSerializerDelegate<T> serializer) {
-      foreach (T member in members) {
-        var m = serializer(member);
-        WriteMember(m.Key, m.Value);
+    /// <param name="elements">
+    /// A collection of elements to perform the <see cref="ForEachDelegate{T}"/>
+    /// action over each element.
+    /// </param>
+    /// <param name="action">
+    /// The <see cref="ForEachDelegate{T}"/> delegate to perform on each
+    /// element of <paramref name="elements"/> collection.
+    /// </param>
+    /// <remarks>
+    /// The <see cref="ForEachDelegate{T}"/> is a delegate to a method that
+    /// performs an action on the object passed to it. The elements of the
+    /// <paramref name="elements"/> are individually passed to the
+    /// <see cref="ForEachDelegate{T}"/> delegate.
+    /// <para>
+    /// This method is a O(n) operation, where n is the number of elements
+    /// of the <paramref name="elements"/> collection.
+    /// </para>
+    /// </remarks>
+    public JsonStringBuilder ForEach<T>(IEnumerable<T> elements,
+      ForEachDelegate<T> action) {
+      foreach (T element in elements) {
+        action(element, this);
       }
       return this;
     }
