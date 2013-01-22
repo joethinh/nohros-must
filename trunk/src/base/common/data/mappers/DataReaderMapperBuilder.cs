@@ -27,14 +27,15 @@ namespace Nohros.Data
       AssemblyBuilder asm_builder = app
         .DefineDynamicAssembly(asm_name, AssemblyBuilderAccess.RunAndSave);
       assembly_ = asm_builder;
+      module_ = asm_builder
+        .DefineDynamicModule(asm_builder.GetName().Name,
+          "nohros.data.dynamic.dll");
 #else
       AssemblyBuilder asm_builder = app
         .DefineDynamicAssembly(asm_name, AssemblyBuilderAccess.Run);
       module_ = asm_builder
-        .DefineDynamicModule(asm_builder.GetName().Name, "nohros.data.dynamic.dll");
-#endif
-      module_ = asm_builder
         .DefineDynamicModule(asm_builder.GetName().Name, false);
+#endif
       data_reader_methods_ = new Dictionary<string, MethodInfo>();
     }
     #endregion
@@ -283,6 +284,9 @@ namespace Nohros.Data
       /// to the property named <paramref source="destination"/>.
       /// </returns>
       public Builder Map(string destination, string source) {
+        if (source == null) {
+          return Map(destination, new IgnoreMapType());
+        }
         return Map(destination, new StringTypeMap(source));
       }
 
@@ -435,7 +439,7 @@ namespace Nohros.Data
       /// to access is performed.
       /// </remarks>
       public Builder Ignore(string destination) {
-        mappings_.Add(destination, null);
+        mappings_.Add(destination, new IgnoreMapType());
         return this;
       }
 
@@ -471,7 +475,7 @@ namespace Nohros.Data
           result.ReferenceMappings);
 
         EmitConstructor(builder, result);
-        EmitMapMethod(builder);
+        EmitMapMethod(builder, result);
         EmitReferenceProperties(builder, result.ReferenceFields);
         EmitValueProperties(builder, result.OrdinalsField, result.ReaderField,
           result.OrdinalsMapping);
@@ -505,7 +509,7 @@ namespace Nohros.Data
 
         // Get the reference mappings and create its corresponding fields
 
-        // Calls the constructor of the base class DataReaderMapper
+        // Calls the constructor of the base class DataReaderMapper_
         ConstructorInfo data_reader_mapper_ctor = typeof (DataReaderMapper<T>)
           .GetConstructor(
             BindingFlags.Public |
@@ -526,18 +530,45 @@ namespace Nohros.Data
             FieldAttributes.Private);
 
         // store the data reader
-        il.Emit(OpCodes.Ldarg_0);
-        il.Emit(OpCodes.Ldarg_1);
-        il.Emit(OpCodes.Stfld, result.ReaderField);
+        il.Emit(OpCodes.Ldarg_0); // load this pointer
+        il.Emit(OpCodes.Ldarg_1); // load local_reader_
+        il.Emit(OpCodes.Stfld, result.ReaderField); // set local_reader_ value
 
-        // get the columns ordinals.
-        result.OrdinalsMapping =
-          EmitOrdinals(il, result.OrdinalsField, result.ValueMappings);
+        // If there is nothing to be mapped, map nothing.
+        if (result.ValueMappings.Length == 0) {
+          // Create an empty array to prevent the NoResultException to be throw
+          // by the Map method.
+          il.Emit(OpCodes.Ldarg_0);
+          il.Emit(OpCodes.Ldc_I4_0);
+          il.Emit(OpCodes.Newarr, typeof (int));
+          il.Emit(OpCodes.Stfld, result.OrdinalsField);
+
+          result.OrdinalsMapping = new KeyValuePair<int, PropertyInfo>[0];
+        } else {
+          // get the columns ordinals, using a try/catch block to prevent a
+          // InvalidOperationException to be throw when no recordset is returned.
+          Label exit_try_label = il.BeginExceptionBlock();
+
+          result.OrdinalsMapping =
+            EmitOrdinals(il, result.OrdinalsField, result.ValueMappings);
+
+          il.Emit(OpCodes.Leave, exit_try_label);
+          il.BeginCatchBlock(typeof (InvalidOperationException));
+
+          // remove the exception from the stack
+          il.Emit(OpCodes.Pop);
+
+          // set [ordinals_] to null
+          il.Emit(OpCodes.Ldarg_0);
+          il.Emit(OpCodes.Ldnull);
+          il.Emit(OpCodes.Stfld, result.OrdinalsField);
+          il.EndExceptionBlock();
+        }
 
         // create the reference objects.
         EmitReferencesInitialization(il, result.ReferenceFields);
 
-        // return from the constructor
+          // return from the constructor
         il.Emit(OpCodes.Ret);
       }
 
@@ -579,13 +610,25 @@ namespace Nohros.Data
         }
       }
 
-      void EmitMapMethod(TypeBuilder type) {
+      void EmitMapMethod(TypeBuilder type, MappingResult result) {
         MethodBuilder builder = type
           .DefineMethod("Map",
             MethodAttributes.Public | MethodAttributes.HideBySig |
               MethodAttributes.Virtual, typeof (T), Type.EmptyTypes);
 
         ILGenerator il = builder.GetILGenerator();
+
+        // throws an NoResultException if ordinals_ is null. A null ordinals_
+        // means that no recordset was returned by the command that creates
+        // the associated data reader.
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Ldfld, result.OrdinalsField);
+
+        Label exit_throw_label = il.DefineLabel();
+        il.Emit(OpCodes.Brtrue, exit_throw_label);
+        il.ThrowException(typeof (NoResultException));
+
+        il.MarkLabel(exit_throw_label);
 
         // load the this pointer into stack and return.
         il.Emit(OpCodes.Ldarg_0);

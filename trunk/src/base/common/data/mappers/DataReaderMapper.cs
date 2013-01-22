@@ -47,7 +47,7 @@ namespace Nohros.Data
       return GetEnumerator();
     }
 
-    public IEnumerator<T> GetEnumerator() {
+    public virtual IEnumerator<T> GetEnumerator() {
       while (reader_.Read()) {
         yield return Map();
       }

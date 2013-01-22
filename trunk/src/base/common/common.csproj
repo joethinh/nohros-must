@@ -152,6 +152,7 @@
     <Compile Include="data\mappers\BooleanMapType.cs" />
     <Compile Include="data\mappers\ByteMapType.cs" />
     <Compile Include="data\mappers\CharMapType.cs" />
+    <Compile Include="data\mappers\NoResultDataReaderMapper.cs" />
     <Compile Include="data\mappers\IgnoreMapType.cs" />
     <Compile Include="data\mappers\ConstStringMapType.cs" />
     <Compile Include="data\mappers\DataReaderMapper.cs" />
@@ -412,7 +413,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

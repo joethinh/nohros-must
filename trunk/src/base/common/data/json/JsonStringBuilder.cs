@@ -77,6 +77,20 @@ namespace Nohros.Data.Json
       Value = 1
     }
 
+    /// <summary>
+    /// A method that is used to serialize <paramref name="member"/> into a
+    /// key value pair(json member).
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="member"></param>
+    /// <returns>
+    /// A <see cref="KeyValuePair{TKey,TValue}"/> representing the serialized
+    /// member. The key should represent the member name and the value the
+    /// member value.
+    /// </returns>
+    public delegate KeyValuePair<string, string> MemberSerializerDelegate<in T>(
+      T member);
+
     const string kBeginObject = "{";
     const string kEndObject = "}";
     const string kBeginArray = "[";
@@ -188,6 +202,23 @@ namespace Nohros.Data.Json
       // points to the first token after the begin array token. This is ok,
       // since the begin array token should not be escaped.
       return WriteEndArray();
+    }
+
+    /// <summary>
+    /// Write the elements from <see cref="members"/> collection as a JSON
+    /// member.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="members"></param>
+    /// <param name="serializer"></param>
+    /// <returns></returns>
+    public JsonStringBuilder WriteMembers<T>(IEnumerable<T> members,
+      MemberSerializerDelegate<T> serializer) {
+      foreach (T member in members) {
+        var m = serializer(member);
+        WriteMember(m.Key, m.Value);
+      }
+      return this;
     }
 
     public JsonStringBuilder WriteTokenArray(IJsonToken[] tokens) {
