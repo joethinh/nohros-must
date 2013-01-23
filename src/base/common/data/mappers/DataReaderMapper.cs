@@ -22,7 +22,7 @@ namespace Nohros.Data
     protected internal IDataReader reader_;
 
     #region .ctor
-    protected DataReaderMapper() {
+    protected internal DataReaderMapper() {
     }
 
     /// <summary>
@@ -52,6 +52,10 @@ namespace Nohros.Data
         yield return Map();
       }
       reader_.Close();
+    }
+
+    internal virtual void Initialize(IDataReader reader) {
+      throw new NotImplementedException();
     }
   }
 }
