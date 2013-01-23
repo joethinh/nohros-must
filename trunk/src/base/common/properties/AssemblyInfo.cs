@@ -22,7 +22,8 @@ using System.Runtime.InteropServices;
            InternalsVisibleTo("Nohros.Net"),
            InternalsVisibleTo("Nohros.Desktop"),
            InternalsVisibleTo("Nohros.Toolkit"),
-           InternalsVisibleTo("Nohros.Metrics")]
+           InternalsVisibleTo("Nohros.Metrics"),
+           InternalsVisibleTo("Nohros.Dynamics")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
