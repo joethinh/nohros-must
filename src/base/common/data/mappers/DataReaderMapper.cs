@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using Nohros.Collections;
 
 namespace Nohros.Data
 {
@@ -17,7 +18,9 @@ namespace Nohros.Data
   /// <see cref="IDataReader"/> is advanced to the next record.
   /// </para>
   /// </remarks>
-  public abstract partial class DataReaderMapper<T> : IMapper<T>, IDisposable
+  public abstract partial class DataReaderMapper<T> : IMapper<T>,
+                                                      IForwardOnlyEnumerable<T>,
+                                                      IDisposable
   {
     protected internal IDataReader reader_;
 
