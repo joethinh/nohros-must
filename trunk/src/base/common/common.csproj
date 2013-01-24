@@ -243,6 +243,7 @@
     <Compile Include="RuntimeType.cs" />
     <Compile Include="type\Clocks.cs" />
     <Compile Include="type\collections\AbstractRingQueue.cs" />
+    <Compile Include="type\collections\IForwardOnlyEnumerable.cs" />
     <Compile Include="type\collections\IRingQueue.cs" />
     <Compile Include="type\collections\RingQueue.cs" />
     <Compile Include="type\collections\Visitor.cs" />

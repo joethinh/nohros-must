@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Reflection.Emit;
+using Nohros.Collections;
 using Nohros.Data;
 using Nohros.Dynamics;
 using PropertyAttributes = System.Reflection.PropertyAttributes;
@@ -340,7 +341,9 @@ namespace Nohros.Data
             TypeAttributes.AutoClass |
             TypeAttributes.AutoLayout,
           typeof (DataReaderMapper<T>),
-          new Type[] {type_t_, typeof (IMapper<T>)});
+          new Type[] {
+            type_t_, typeof (IMapper<T>), typeof (IForwardOnlyEnumerable<T>)
+          });
 
         PropertyInfo[] properties = GetProperties();
 
