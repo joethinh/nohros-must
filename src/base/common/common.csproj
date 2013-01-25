@@ -149,6 +149,8 @@
     <Compile Include="data\ChainDataReaderMapper.cs" />
     <Compile Include="data\CommandBuilder.cs" />
     <Compile Include="CommandLine.cs" />
+    <Compile Include="data\IQuery.cs" />
+    <Compile Include="data\IQueryT.cs" />
     <Compile Include="data\mappers\BooleanMapType.cs" />
     <Compile Include="data\mappers\ByteMapType.cs" />
     <Compile Include="data\mappers\CharMapType.cs" />
