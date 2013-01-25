@@ -256,7 +256,25 @@ namespace Nohros.Data
         return Map(destination, new FloatMapType(value));
       }
 
-      Builder Map(string destination, ITypeMap value) {
+      /// <summary>
+      /// Maps the constant <see cref="value"/> to the interface property
+      /// <paramref source="destination"/>.
+      /// </summary>
+      /// <param name="value">
+      /// The value that should be returned when by the interface property
+      /// <paramref name="destination"/>.
+      /// </param>
+      /// <param name="destination">
+      /// The source of the property that will be mapped to the value
+      /// <paramref name="value"/>.
+      /// </param>
+      /// <returns>
+      /// A <see cref="Builder"/> that builds an object of type
+      /// <typeparamref source="T"/> and mapping the constant value
+      /// <paramref source="value"/> to the property named
+      /// <paramref source="destination"/>.
+      /// </returns>
+      public Builder Map(string destination, ITypeMap value) {
         mappings_[destination] = value;
         return this;
       }
@@ -467,7 +485,9 @@ namespace Nohros.Data
             null, new Type[] {typeof (IDataReader)}, null);
 
         // call the initialize of the nested classes
-        foreach (KeyValuePair<FieldBuilder, PropertyInfo> field in result.ReferenceFields) {
+        foreach (
+          KeyValuePair<FieldBuilder, PropertyInfo> field in
+            result.ReferenceFields) {
           il.Emit(OpCodes.Ldarg_0);
           il.Emit(OpCodes.Ldfld, field.Key);
           il.Emit(OpCodes.Ldarg_1);
