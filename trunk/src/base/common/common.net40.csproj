@@ -152,7 +152,6 @@
     <Compile Include="data\CommandBuilder.cs" />
     <Compile Include="CommandLine.cs" />
     <Compile Include="data\IQuery.cs" />
-    <Compile Include="data\IQueryT.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDateTime.cs" />
     <Compile Include="data\mappers\BooleanMapType.cs" />
     <Compile Include="data\mappers\ByteMapType.cs" />
@@ -243,6 +242,10 @@
     <Compile Include="providers\data\TransactionBehavior.cs" />
     <Compile Include="providers\data\TransactionContext.cs" />
     <Compile Include="RuntimeType.cs" />
+    <Compile Include="type\collections\AbstractRingQueue.cs" />
+    <Compile Include="type\collections\IForwardOnlyEnumerable.cs" />
+    <Compile Include="type\collections\IRingQueue.cs" />
+    <Compile Include="type\collections\RingQueue.cs" />
     <Compile Include="type\collections\Visitor.cs" />
     <Compile Include="type\collections\VisitorDelegate.cs" />
     <Compile Include="type\delegates\CallableDelegate.cs" />
