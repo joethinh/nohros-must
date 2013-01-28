@@ -18,11 +18,14 @@ namespace Nohros.Data
   /// <see cref="IDataReader"/> is advanced to the next record.
   /// </para>
   /// </remarks>
-  public abstract partial class DataReaderMapper<T> : IMapper<T>,
-                                                      IForwardOnlyEnumerable<T>,
-                                                      IDisposable
+  internal abstract partial class DataReaderMapper<T> : IMapper<T>,
+                                                        IForwardOnlyEnumerable
+                                                          <T>,
+                                                        IDisposable
   {
+    protected internal CallableDelegate<T> loader_;
     protected internal IDataReader reader_;
+    internal int[] ordinals_;
 
     #region .ctor
     protected internal DataReaderMapper() {
@@ -37,6 +40,19 @@ namespace Nohros.Data
     /// </param>
     protected DataReaderMapper(IDataReader reader) {
       reader_ = reader;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataReaderMapper{T}"/>
+    /// using the specified <see cref="IDataReader"/> and <typeparamref name="T"/>
+    /// loader.
+    /// </summary>
+    /// <param name="reader">
+    /// A <see cref="IDataReader"/> containing the data to be mapped.
+    /// </param>
+    protected DataReaderMapper(IDataReader reader, CallableDelegate<T> loader) {
+      reader_ = reader;
+      loader_ = loader;
     }
     #endregion
 
@@ -57,7 +73,26 @@ namespace Nohros.Data
       reader_.Close();
     }
 
-    internal virtual void Initialize(IDataReader reader) {
+    internal void Initialize(IDataReader reader) {
+      Initialize(reader, NewT);
+    }
+
+    internal void Initialize(IDataReader reader, CallableDelegate<T> loader) {
+      reader_ = reader;
+      GetOrdinals();
+      if (loader == null) {
+        if (ordinals_ == null) {
+          loader_ = delegate { throw new NoResultException(); };
+        }
+      }
+      loader_ = loader ?? NewT;
+    }
+
+    internal virtual void GetOrdinals() {
+      throw new NotImplementedException();
+    }
+
+    internal virtual T NewT() {
       throw new NotImplementedException();
     }
   }

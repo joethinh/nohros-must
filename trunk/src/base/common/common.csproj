@@ -171,7 +171,6 @@
     <Compile Include="data\mappers\StringTypeMap.cs" />
     <Compile Include="data\mappers\TypeMap.cs" />
     <Compile Include="data\mappers\TypeMapType.cs" />
-    <Compile Include="data\PocoBuilder.cs" />
     <Compile Include="data\readers\DataFieldDateTime.cs" />
     <Compile Include="data\readers\DataReaderReader.cs" />
     <Compile Include="data\mappers\IChainMapper.cs" />
