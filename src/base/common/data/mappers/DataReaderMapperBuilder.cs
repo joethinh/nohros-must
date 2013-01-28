@@ -7,22 +7,29 @@ using Nohros.Collections;
 using Nohros.Data;
 using Nohros.Dynamics;
 using PropertyAttributes = System.Reflection.PropertyAttributes;
+using ValueMap =
+  System.Collections.Generic.KeyValuePair
+    <string, System.Reflection.PropertyInfo>;
+using ConstantMap =
+  System.Collections.Generic.KeyValuePair
+    <Nohros.Data.ITypeMap, System.Reflection.PropertyInfo>;
+using OrdinalMap =
+  System.Collections.Generic.KeyValuePair<int, System.Reflection.PropertyInfo>;
 
 namespace Nohros.Data
 {
-  public abstract partial class DataReaderMapper<T>
+  internal abstract partial class DataReaderMapper<T>
   {
     public class Builder
     {
       class MappingResult
       {
         public FieldBuilder OrdinalsField { get; set; }
-        public KeyValuePair<int, PropertyInfo>[] OrdinalsMapping { get; set; }
-        public FieldBuilder ReaderField { get; set; }
-        public KeyValuePair<string, PropertyInfo>[] ValueMappings { get; set; }
-        public PropertyInfo[] ReferenceMappings { get; set; }
-        public KeyValuePair<ITypeMap, PropertyInfo>[] ConstantMappings { get; set; }
-        public KeyValuePair<FieldBuilder, PropertyInfo>[] ReferenceFields { get; set; }
+        public OrdinalMap[] OrdinalsMapping { get; set; }
+        public FieldInfo ReaderField { get; set; }
+        public ValueMap[] ValueMappings { get; set; }
+        public ConstantMap[] ConstantMappings { get; set; }
+        public FieldInfo LoaderField { get; set; }
       }
 
       protected delegate void PreCreateTypeEventHandler(TypeBuilder builder);
@@ -38,10 +45,8 @@ namespace Nohros.Data
       }
 
       Builder(Type type_t) {
-        if (type_t.IsInterface == false) {
-          throw new InvalidOperationException(
-            string.Format(Resources.Resources.Arg_Type_ShouldBeInterface,
-              type_t.Name));
+        if (type_t == null) {
+          throw new ArgumentNullException("type_t");
         }
         mappings_ = new Dictionary<string, ITypeMap>(
           StringComparer.OrdinalIgnoreCase);
@@ -289,10 +294,26 @@ namespace Nohros.Data
       /// <see cref="DataReaderMapper{T}"/> class.
       /// </returns>
       public DataReaderMapper<T> Build(IDataReader reader) {
+        if (reader == null) {
+          throw new ArgumentNullException("reader");
+        }
+        return Build(reader, null);
+      }
+
+      /// <summary>
+      /// Builds a dynamic <see cref="DataReaderMapper{T}"/> for the type
+      /// <typeparamref source="T"/>.
+      /// </summary>
+      /// <returns>
+      /// An object that implements the <see cref="IMapper{T}"/> and the
+      /// <typeparamref source="T"/> interface and derives from the
+      /// <see cref="DataReaderMapper{T}"/> class.
+      /// </returns>
+      public DataReaderMapper<T> Build(IDataReader reader,
+        CallableDelegate<T> loader) {
         DataReaderMapper<T> mapper =
           (DataReaderMapper<T>) Activator.CreateInstance(GetDynamicType());
-        mapper.reader_ = reader;
-        mapper.Initialize(reader);
+        mapper.Initialize(reader, loader);
         return mapper;
       }
 
@@ -360,7 +381,7 @@ namespace Nohros.Data
             TypeAttributes.AutoLayout,
           typeof (DataReaderMapper<T>),
           new Type[] {
-            type_t_, typeof (IMapper<T>), typeof (IForwardOnlyEnumerable<T>)
+            typeof (IMapper<T>), typeof (IForwardOnlyEnumerable<T>)
           });
 
         PropertyInfo[] properties = GetProperties();
@@ -370,17 +391,10 @@ namespace Nohros.Data
         // Get the mappings for the properties that return value types.
         GetMappings(properties, result);
 
-        // Get the mappings for the properties that return value types.
-        result.ReferenceFields = EmitReferenceFields(builder,
-          result.ReferenceMappings);
-
         EmitConstructor(builder, result);
-        EmitInitialize(builder, result);
+        EmitGetOrdinals(builder, result);
+        EmitNewT(builder, result);
         EmitMapMethod(builder, result);
-        EmitReferenceProperties(builder, result.ReferenceFields);
-        EmitValueProperties(builder, result.OrdinalsField, result.ReaderField,
-          result.OrdinalsMapping);
-        EmitConstantProperties(builder, result.ConstantMappings);
 
         OnPreCreateType(builder);
 
@@ -408,7 +422,7 @@ namespace Nohros.Data
             MethodAttributes.RTSpecialName,
             CallingConventions.Standard, Type.EmptyTypes);
 
-        // Calls the constructor of the base class DataReaderMapper_
+        // Calls the constructor of the base class DataReaderMapper
         ConstructorInfo data_reader_mapper_ctor = typeof (DataReaderMapper<T>)
           .GetConstructor(
             BindingFlags.Public |
@@ -417,36 +431,59 @@ namespace Nohros.Data
             null, Type.EmptyTypes, null);
         ILGenerator il = constructor.GetILGenerator();
         il.Emit(OpCodes.Ldarg_0); // load "this" pointer
-        il.Emit(OpCodes.Call, data_reader_mapper_ctor); // call data reader ctor
+        il.Emit(OpCodes.Call, data_reader_mapper_ctor); // call default ctor
 
         // Create the array that will store the column ordinals.
         result.OrdinalsField = type
           .DefineField("ordinals_", typeof (int[]), FieldAttributes.Private);
 
-        result.ReaderField = type
-          .DefineField("local_reader_", typeof (IDataReader),
-            FieldAttributes.Private);
+        result.ReaderField = typeof (DataReaderMapper<T>)
+          .GetField("reader_", BindingFlags.Public |
+            BindingFlags.NonPublic |
+            BindingFlags.Instance);
 
-        // create the reference objects.
-        EmitReferencesInitialization(il, result.ReferenceFields);
+        result.LoaderField = typeof (DataReaderMapper<T>)
+          .GetField("loader_", BindingFlags.Public |
+            BindingFlags.NonPublic |
+            BindingFlags.Instance);
 
         // return from the constructor
         il.Emit(OpCodes.Ret);
       }
 
-      void EmitInitialize(TypeBuilder type, MappingResult result) {
+      void EmitNewT(TypeBuilder type, MappingResult result) {
         MethodBuilder builder = type
-          .DefineMethod("Initialize",
+          .DefineMethod("NewT",
             MethodAttributes.Assembly | MethodAttributes.HideBySig |
-              MethodAttributes.Virtual, typeof (void),
-            new Type[] {typeof (IDataReader)});
+              MethodAttributes.Virtual, type_t_, Type.EmptyTypes);
 
         ILGenerator il = builder.GetILGenerator();
 
-        // Set the value of local_reader_ to the specied reader_
-        il.Emit(OpCodes.Ldarg_0);
-        il.Emit(OpCodes.Ldarg_1);
-        il.Emit(OpCodes.Stfld, result.ReaderField);
+        // Calls the default constructor of the type T
+        ConstructorInfo t_constructor = type_t_
+          .GetConstructor(
+            BindingFlags.Public |
+              BindingFlags.NonPublic | BindingFlags.Instance,
+            null, Type.EmptyTypes, null);
+
+        if (t_constructor == null) {
+          throw new MissingMethodException(type_t_.Name, "ctor()");
+        }
+
+        LocalBuilder local_t = il.DeclareLocal(type_t_);
+        il.Emit(OpCodes.Newobj, t_constructor);
+        il.Emit(OpCodes.Stloc_0, local_t);
+        il.Emit(OpCodes.Ldloc_0);
+        il.Emit(OpCodes.Ret);
+      }
+
+      void EmitGetOrdinals(TypeBuilder type, MappingResult result) {
+        MethodBuilder builder = type
+          .DefineMethod("GetOrdinals",
+            MethodAttributes.Assembly | MethodAttributes.HideBySig |
+              MethodAttributes.Virtual, typeof (void), Type.EmptyTypes);
+
+        ILGenerator il = builder.GetILGenerator();
 
         // If there is nothing to be mapped, map nothing.
         if (result.ValueMappings.Length == 0) {
@@ -461,7 +498,7 @@ namespace Nohros.Data
         } else {
           // get the columns ordinals, using a try/catch block to prevent a
           // InvalidOperationException to be throw when no recordset is returned.
-          Label exit_try_label = il.BeginExceptionBlock();
+          il.BeginExceptionBlock();
 
           result.OrdinalsMapping = EmitOrdinals(il, result);
 
@@ -484,52 +521,7 @@ namespace Nohros.Data
               BindingFlags.Instance,
             null, new Type[] {typeof (IDataReader)}, null);
 
-        // call the initialize of the nested classes
-        foreach (
-          KeyValuePair<FieldBuilder, PropertyInfo> field in
-            result.ReferenceFields) {
-          il.Emit(OpCodes.Ldarg_0);
-          il.Emit(OpCodes.Ldfld, field.Key);
-          il.Emit(OpCodes.Ldarg_1);
-          il.Emit(OpCodes.Callvirt, method_info);
-        }
-
         il.Emit(OpCodes.Ret);
-      }
-
-      /// <summary>
-      /// Emit the code that initialize the references mappings.
-      /// </summary>
-      /// <param name="il">
-      /// The <see cref="ILGenerator"/> for the constructor method.
-      /// </param>
-      /// <param name="reference_fields">
-      /// An array containing a map between a reference properties and its
-      /// associated private field.
-      /// </param>
-      void EmitReferencesInitialization(ILGenerator il,
-        KeyValuePair<FieldBuilder, PropertyInfo>[] reference_fields) {
-        for (int i = 0, j = reference_fields.Length; i < j; i++) {
-          FieldBuilder field = reference_fields[i].Key;
-          PropertyInfo property = reference_fields[i].Value;
-
-          // Create the reference type.
-          Type generic_type_builder = typeof (DataReaderMapper<>.Builder);
-          Type type_builder = generic_type_builder.MakeGenericType(new Type[] {
-            property.PropertyType
-          });
-          object type_instance = Activator.CreateInstance(type_builder);
-          Type reference_type = (Type) type_builder
-            .InvokeMember("GetDynamicType", BindingFlags.InvokeMethod |
-              BindingFlags.NonPublic | BindingFlags.Instance, null,
-              type_instance, new object[0]);
-          ConstructorInfo reference_type_ctor =
-            reference_type.GetConstructor(Type.EmptyTypes);
-
-          il.Emit(OpCodes.Ldarg_0); // load "this" pointer
-          il.Emit(OpCodes.Newobj, reference_type_ctor); // new ref_type()
-          il.Emit(OpCodes.Stfld, field); // store new type
-        }
       }
 
       void EmitMapMethod(TypeBuilder type, MappingResult result) {
@@ -540,137 +532,64 @@ namespace Nohros.Data
 
         ILGenerator il = builder.GetILGenerator();
 
-        // throws an NoResultException if ordinals_ is null. A null ordinals_
-        // means that no recordset was returned by the command that creates
-        // the associated data reader.
+        // Create a new instance of the T using the associated class loader and
+        // stores in a local variable.
+        il.DeclareLocal(type_t_);
+        MethodInfo callable = typeof (CallableDelegate<T>).GetMethod("Invoke");
         il.Emit(OpCodes.Ldarg_0);
-        il.Emit(OpCodes.Ldfld, result.OrdinalsField);
+        il.Emit(OpCodes.Ldfld, result.LoaderField);
+        il.Emit(OpCodes.Callvirt, callable);
+        il.Emit(OpCodes.Stloc_0);
 
-        Label exit_throw_label = il.DefineLabel();
-        il.Emit(OpCodes.Brtrue, exit_throw_label);
-        il.ThrowException(typeof (NoResultException));
-
-        il.MarkLabel(exit_throw_label);
-
-        // load the this pointer into stack and return.
-        il.Emit(OpCodes.Ldarg_0);
-        il.Emit(OpCodes.Ret);
-      }
-
-      KeyValuePair<FieldBuilder, PropertyInfo>[] EmitReferenceFields(
-        TypeBuilder type, PropertyInfo[] reference_mappings) {
-        int pos = 0;
-        List<KeyValuePair<FieldBuilder, PropertyInfo>> forwarding_properties =
-          new List<KeyValuePair<FieldBuilder, PropertyInfo>>(
-            reference_mappings.Length);
-        for (int i = 0, j = reference_mappings.Length; i < j; i++) {
-          PropertyInfo property = reference_mappings[i];
-          FieldBuilder field = type
-            .DefineField(GetMemberName(property.Name), property.PropertyType,
-              FieldAttributes.Private);
-          forwarding_properties.Add(
-            new KeyValuePair<FieldBuilder, PropertyInfo>(field, property));
-        }
-        return forwarding_properties.ToArray();
-      }
-
-      void EmitReferenceProperties(TypeBuilder type,
-        KeyValuePair<FieldBuilder, PropertyInfo>[] reference_fields) {
-        for (int i = 0, j = reference_fields.Length; i < j; i++) {
-          FieldBuilder field = reference_fields[i].Key;
-          PropertyInfo property = reference_fields[i].Value;
-          PropertyBuilder builder = type
-            .DefineProperty(property.Name, PropertyAttributes.HasDefault,
-              property.PropertyType, null);
-
-          MethodBuilder get_method = type.DefineMethod("get_" + property.Name,
-            MethodAttributes.Public |
-              MethodAttributes.SpecialName |
-              MethodAttributes.HideBySig |
-              MethodAttributes.Virtual |
-              MethodAttributes.Final |
-              MethodAttributes.NewSlot,
-            property.PropertyType, Type.EmptyTypes);
-
-          ILGenerator il = get_method.GetILGenerator();
-          il.Emit(OpCodes.Ldarg_0);
-          il.Emit(OpCodes.Ldfld, field);
-          il.Emit(OpCodes.Ret);
-
-          builder.SetGetMethod(get_method);
-        }
-      }
-
-      void EmitValueProperties(TypeBuilder type, FieldBuilder ordinals,
-        FieldBuilder reader, KeyValuePair<int, PropertyInfo>[] fields) {
+        // Set the value of the properties of the newly created T object.
+        OrdinalMap[] fields = result.OrdinalsMapping;
         for (int i = 0, j = fields.Length; i < j; i++) {
           int ordinal = fields[i].Key;
           PropertyInfo property = fields[i].Value;
-          PropertyBuilder builder = type
-            .DefineProperty(property.Name, PropertyAttributes.HasDefault,
-              property.PropertyType, null);
-
-          MethodBuilder get_method = type.DefineMethod("get_" + property.Name,
-            MethodAttributes.Public |
-              MethodAttributes.SpecialName |
-              MethodAttributes.HideBySig |
-              MethodAttributes.Virtual |
-              MethodAttributes.Final |
-              MethodAttributes.NewSlot,
-            property.PropertyType, Type.EmptyTypes);
 
           MethodInfo get_x_method =
             Dynamics_.GetDataReaderMethod(
               Dynamics_.GetDataReaderMethodName(property.PropertyType));
 
-          ILGenerator il = get_method.GetILGenerator();
-          il.Emit(OpCodes.Ldarg_0);
-          il.Emit(OpCodes.Ldfld, reader);
-          il.Emit(OpCodes.Ldarg_0);
-          il.Emit(OpCodes.Ldfld, ordinals);
-          il.Emit(OpCodes.Ldc_I4, ordinal);
-          il.Emit(OpCodes.Ldelem_I4);
-          il.Emit(OpCodes.Callvirt, get_x_method);
-          il.Emit(OpCodes.Ret);
-
-          builder.SetGetMethod(get_method);
-        }
-      }
-
-      void EmitConstantProperties(TypeBuilder type,
-        IEnumerable<KeyValuePair<ITypeMap, PropertyInfo>> constant_fields) {
-        ConstructorInfo not_implemented_exception_ctor =
-          typeof (NotImplementedException)
-            .GetConstructor(BindingFlags.Instance | BindingFlags.Public,
-              null, Type.EmptyTypes, null);
-        foreach (KeyValuePair<ITypeMap, PropertyInfo> pair in constant_fields) {
-          ITypeMap map = pair.Key;
-          PropertyInfo property = pair.Value;
-
-          PropertyBuilder builder = type
-            .DefineProperty(property.Name, PropertyAttributes.HasDefault,
-              property.PropertyType, null);
-
-          MethodBuilder get_method = type.DefineMethod("get_" + property.Name,
-            MethodAttributes.Public |
-              MethodAttributes.SpecialName |
-              MethodAttributes.HideBySig |
-              MethodAttributes.Virtual |
-              MethodAttributes.Final |
-              MethodAttributes.NewSlot,
-            property.PropertyType, Type.EmptyTypes);
-
-          ILGenerator il = get_method.GetILGenerator();
-          if (map.MapType == TypeMapType.Ignore) {
-            il.Emit(OpCodes.Newobj, not_implemented_exception_ctor);
-            il.Emit(OpCodes.Throw);
-          } else {
-            EmitLoad(il, map);
+          // Get the set method of the current property. If the property does
+          // not have a set method ignores it.
+          MethodInfo set_x_property = property.GetSetMethod(true);
+          if (set_x_property == null) {
+            continue;
           }
 
-          il.Emit(OpCodes.Ret);
-          builder.SetGetMethod(get_method);
+          il.Emit(OpCodes.Ldloc_0);
+          il.Emit(OpCodes.Ldarg_0);
+          il.Emit(OpCodes.Ldfld, result.ReaderField);
+          il.Emit(OpCodes.Ldarg_0);
+          il.Emit(OpCodes.Ldfld, result.OrdinalsField);
+          il.Emit(GetLoadOpCode(ordinal), ordinal);
+          il.Emit(OpCodes.Ldelem_I4);
+          il.Emit(OpCodes.Callvirt, get_x_method);
+          il.Emit(OpCodes.Callvirt, set_x_property);
         }
+
+        ConstantMap[] constant_maps = result.ConstantMappings;
+        for (int i = 0, j = constant_maps.Length; i < j; i++) {
+          ITypeMap map = constant_maps[i].Key;
+          PropertyInfo property = constant_maps[i].Value;
+          if (map.MapType != TypeMapType.Ignore) {
+            // Get the set method of the current property. If the property does
+            // not have a set method ignores it.
+            MethodInfo set_x_property = property.GetSetMethod(true);
+            if (set_x_property == null) {
+              continue;
+            }
+
+            il.Emit(OpCodes.Ldloc_0);
+            EmitLoad(il, map);
+            il.Emit(OpCodes.Callvirt, set_x_property);
+          }
+        }
+
+        // load the local T and return.
+        il.Emit(OpCodes.Ldloc_0);
+        il.Emit(OpCodes.Ret);
       }
 
       void EmitLoad(ILGenerator il, ITypeMap map) {
@@ -711,6 +630,40 @@ namespace Nohros.Data
             il.Emit(OpCodes.Ldstr, (string) map.Value);
             break;
         }
+      }
+
+      OpCode GetLoadOpCode(int value) {
+        if (value < 8 && value > -1) {
+          switch (value) {
+            case 0:
+              return OpCodes.Ldc_I4_0;
+
+            case 1:
+              return OpCodes.Ldc_I4_1;
+
+            case 2:
+              return OpCodes.Ldc_I4_2;
+
+            case 3:
+              return OpCodes.Ldc_I4_3;
+
+            case 4:
+              return OpCodes.Ldc_I4_4;
+
+            case 5:
+              return OpCodes.Ldc_I4_5;
+
+            case 6:
+              return OpCodes.Ldc_I4_6;
+
+            case 7:
+              return OpCodes.Ldc_I4_7;
+
+            case 8:
+              return OpCodes.Ldc_I4_8;
+          }
+        }
+        return OpCodes.Ldc_I4;
       }
 
       void EmitLoadInt(ILGenerator il, int value) {
@@ -789,7 +742,7 @@ namespace Nohros.Data
         if (type.IsValueType || type.Name == "String") {
           return false;
         }
-        return type.IsInterface;
+        return true;
       }
 
       PropertyInfo[] GetProperties() {
@@ -818,12 +771,10 @@ namespace Nohros.Data
       }
 
       void GetMappings(PropertyInfo[] properties, MappingResult result) {
-        List<KeyValuePair<string, PropertyInfo>> value_mappings =
-          new List<KeyValuePair<string, PropertyInfo>>(properties.Length);
-        List<PropertyInfo> reference_mappings =
-          new List<PropertyInfo>(properties.Length);
-        List<KeyValuePair<ITypeMap, PropertyInfo>> const_mappings =
-          new List<KeyValuePair<ITypeMap, PropertyInfo>>(properties.Length);
+        List<ValueMap> value_mappings =
+          new List<ValueMap>(properties.Length);
+        List<ConstantMap> const_mappings =
+          new List<ConstantMap>(properties.Length);
         for (int i = 0, j = properties.Length; i < j; i++) {
           PropertyInfo property = properties[i];
           ITypeMap mapping;
@@ -833,25 +784,16 @@ namespace Nohros.Data
             mapping = new StringTypeMap(property.Name);
           }
 
-          if (mapping.MapType == TypeMapType.Ignore) {
+          if (mapping.MapType == TypeMapType.Ignore || IsReferenceType(property)) {
             mapping = new IgnoreMapType(GetDefaultValue(property.PropertyType));
-            const_mappings
-              .Add(new KeyValuePair<ITypeMap, PropertyInfo>(mapping, property));
-          } else if (IsReferenceType(property)) {
-            reference_mappings.Add(property);
+            const_mappings.Add(new ConstantMap(mapping, property));
+          } else if (mapping.MapType == TypeMapType.String) {
+            value_mappings.Add(new ValueMap((string) mapping.Value, property));
           } else {
-            if (mapping.MapType == TypeMapType.String) {
-              value_mappings.Add(
-                new KeyValuePair<string, PropertyInfo>((string) mapping.Value,
-                  property));
-            } else {
-              const_mappings
-                .Add(new KeyValuePair<ITypeMap, PropertyInfo>(mapping, property));
-            }
+            const_mappings.Add(new ConstantMap(mapping, property));
           }
         }
         result.ValueMappings = value_mappings.ToArray();
-        result.ReferenceMappings = reference_mappings.ToArray();
         result.ConstantMappings = const_mappings.ToArray();
       }
 

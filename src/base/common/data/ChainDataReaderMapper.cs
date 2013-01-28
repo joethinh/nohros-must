@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Nohros.Data
 {
-  public class ChainDataReaderMapper<T, T1> : DataReaderMapper<T>,
+  internal class ChainDataReaderMapper<T, T1> : DataReaderMapper<T>,
                                               IChainMapper<T, T1>
     where T1 : IMapper<T1>
   {
