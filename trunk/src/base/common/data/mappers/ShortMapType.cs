@@ -4,7 +4,7 @@ namespace Nohros.Data
 {
   /// <summary>
   /// Maps a class property to constant <see cref="short"/>.
-  /// </summary>s
+  /// </summary>
   public class ShortMapType : TypeMap
   {
     #region .ctor
