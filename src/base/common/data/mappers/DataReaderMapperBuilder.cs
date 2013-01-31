@@ -563,7 +563,7 @@ namespace Nohros.Data
           il.Emit(OpCodes.Ldfld, result.ReaderField);
           il.Emit(OpCodes.Ldarg_0);
           il.Emit(OpCodes.Ldfld, result.OrdinalsField);
-          il.Emit(GetLoadOpCode(ordinal), ordinal);
+          EmitLoad(il, ordinal);
           il.Emit(OpCodes.Ldelem_I4);
           il.Emit(OpCodes.Callvirt, get_x_method);
           il.Emit(OpCodes.Callvirt, set_x_property);
@@ -632,38 +632,50 @@ namespace Nohros.Data
         }
       }
 
-      OpCode GetLoadOpCode(int value) {
-        if (value < 8 && value > -1) {
+      void EmitLoad(ILGenerator il, int value) {
+        if (value > -1 && value < 9) {
           switch (value) {
             case 0:
-              return OpCodes.Ldc_I4_0;
+              il.Emit(OpCodes.Ldc_I4_0);
+              break;
 
             case 1:
-              return OpCodes.Ldc_I4_1;
+              il.Emit(OpCodes.Ldc_I4_1);
+              break;
 
             case 2:
-              return OpCodes.Ldc_I4_2;
+              il.Emit(OpCodes.Ldc_I4_2);
+              break;
 
             case 3:
-              return OpCodes.Ldc_I4_3;
+              il.Emit(OpCodes.Ldc_I4_3);
+              break;
 
             case 4:
-              return OpCodes.Ldc_I4_4;
+              il.Emit(OpCodes.Ldc_I4_4);
+              break;
 
             case 5:
-              return OpCodes.Ldc_I4_5;
+              il.Emit(OpCodes.Ldc_I4_5);
+              break;
 
             case 6:
-              return OpCodes.Ldc_I4_6;
+              il.Emit(OpCodes.Ldc_I4_6);
+              break;
 
             case 7:
-              return OpCodes.Ldc_I4_7;
+              il.Emit(OpCodes.Ldc_I4_7);
+              break;
 
             case 8:
-              return OpCodes.Ldc_I4_8;
+              il.Emit(OpCodes.Ldc_I4_8);
+              break;
           }
+        } else if (value > -128 && value < 128) {
+          il.Emit(OpCodes.Ldc_I4_S, value);
+        } else {
+          il.Emit(OpCodes.Ldc_I4, value);
         }
-        return OpCodes.Ldc_I4;
       }
 
       void EmitLoadInt(ILGenerator il, int value) {
