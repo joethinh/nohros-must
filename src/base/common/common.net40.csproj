@@ -159,9 +159,11 @@
     <Compile Include="data\mappers\ConstStringMapType.cs" />
     <Compile Include="data\mappers\DataReaderMapper.cs" />
     <Compile Include="data\mappers\DataReaderMapperBuilder.cs" />
+    <Compile Include="data\mappers\DateTimeMapType.cs" />
     <Compile Include="data\mappers\DoubleMapType.cs" />
     <Compile Include="data\mappers\Dynamics.cs" />
     <Compile Include="data\mappers\FloatMapType.cs" />
+    <Compile Include="data\mappers\GuidMapType.cs" />
     <Compile Include="data\mappers\IChainMapper.cs" />
     <Compile Include="data\mappers\IgnoreMapType.cs" />
     <Compile Include="data\mappers\IMapper.cs" />
@@ -416,7 +418,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

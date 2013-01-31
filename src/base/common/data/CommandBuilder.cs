@@ -131,6 +131,36 @@ namespace Nohros.Data
       return AddParameter(name, value, out parameter);
     }
 
+    public CommandBuilder AddParameter(string name, int value)
+    {
+      IDbDataParameter parameter;
+      return AddParameter(name, value, DbType.Int32, out parameter);
+    }
+
+    public CommandBuilder AddParameter(string name, string value)
+    {
+      IDbDataParameter parameter;
+      return AddParameter(name, value, DbType.String, out parameter);
+    }
+
+    public CommandBuilder AddParameter(string name, long value)
+    {
+      IDbDataParameter parameter;
+      return AddParameter(name, value, DbType.Int64, out parameter);
+    }
+
+    public CommandBuilder AddParameter(string name, Guid value)
+    {
+      IDbDataParameter parameter;
+      return AddParameter(name, value, DbType.Guid, out parameter);
+    }
+
+    public CommandBuilder AddParameter(string name, DateTime value)
+    {
+      IDbDataParameter parameter;
+      return AddParameter(name, value, DbType.DateTime, out parameter);
+    }
+
     /// <summary>
     /// Creates an <see cref="IDbDataParameter"/> object and add it to the
     /// collection of parameters of the <see cref="IDbCommand"/> that will
@@ -248,6 +278,40 @@ namespace Nohros.Data
     public CommandBuilder AddParameter(string name, object value,
       out IDbDataParameter parameter) {
       parameter = CreateParameterWithValue(name, value);
+      return this;
+    }
+
+    public CommandBuilder AddParameter(string name, int value,
+      out IDbDataParameter parameter) {
+      parameter = CreateParameter(name, value, DbType.Int32);
+      return this;
+    }
+
+    public CommandBuilder AddParameter(string name, string value,
+      out IDbDataParameter parameter)
+    {
+      parameter = CreateParameter(name, value, DbType.String);
+      return this;
+    }
+
+    public CommandBuilder AddParameter(string name, long value,
+      out IDbDataParameter parameter)
+    {
+      parameter = CreateParameter(name, value, DbType.Int64);
+      return this;
+    }
+
+    public CommandBuilder AddParameter(string name, Guid value,
+      out IDbDataParameter parameter)
+    {
+      parameter = CreateParameter(name, value, DbType.Guid);
+      return this;
+    }
+
+    public CommandBuilder AddParameter(string name, DateTime value,
+      out IDbDataParameter parameter)
+    {
+      parameter = CreateParameter(name, value, DbType.DateTime);
       return this;
     }
 
