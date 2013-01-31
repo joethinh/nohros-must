@@ -72,11 +72,81 @@ namespace Nohros.Common
       Assert.That(mapper, Is.AssignableTo<NestedMapperTest>());
     }
 
+    public interface ICrmEvent
+    {
+      /// <summary>
+      /// Retorna um numero que identifica o acionamento de forma unica em
+      /// um servidor.
+      /// </summary>
+      /// <remarks>
+      /// Este valor esta, geralmente, associado ao ID do registro que contem
+      /// os dados do acinamento.
+      /// </remarks>
+      int ID { get; }
+
+      /// <summary>
+      /// Retorna um numero que identifica o tipo de acionamento realizado.
+      /// </summary>
+      int TypeID { get; }
+
+      /// <summary>
+      /// Retorna o codigo do agente que realizou o acionamento.
+      /// </summary>
+      int AgentID { get; }
+
+      /// <summary>
+      /// Retorna um numero que identifica o contato acionado de forma unica em
+      /// um servidor.
+      /// </summary>
+      int ContactID { get; }
+
+      /// <summary>
+      /// Retorna a data em que o acionamento foi realizado.
+      /// </summary>
+      DateTime Date { get; }
+
+      Guid ServerID { get; set; }
+    }
+
+    public class CrmEvent : ICrmEvent
+    {
+      /// <inheritdoc/>
+      public int ID { get; set; }
+
+      /// <inheritdoc/>
+      public int TypeID { get; set; }
+
+      /// <inheritdoc/>
+      public int AgentID { get; set; }
+
+      /// <inheritdoc/>
+      public int ContactID { get; set; }
+
+      /// <inheritdoc/>
+      public DateTime Date { get; set; }
+
+      /// <inheritdoc/>
+      public Guid ServerID { get; set; }
+    }
+
     [Test]
     public void GetDynamicType() {
-      var builder = new DataReaderMapper<NestedMapperTest>.Builder()
+      /*var builder = new DataReaderMapper<NestedMapperTest>.Builder()
         .Map("usuario_nome", "name");
       Type type = builder.GetDynamicType();
+      Dynamics_.AssemblyBuilder.Save("test.dll");*/
+      var reader = Mock.Create<IDataReader>();
+      Mappers.GetMapper<CrmEvent>(reader,
+        () => new[] {
+          new KeyValuePair<string, string>("id", "cod_hist_cli"),
+          new KeyValuePair<string, string>("typeid","cod_ocor"),
+          new KeyValuePair<string, string>("agentid","usuario_cad"),
+          new KeyValuePair<string, string>("contactid","cod_dev"),
+          new KeyValuePair<string, string>("date", "data_cad"),
+          new KeyValuePair<string, string>("serverid", null)
+        },()=>new CrmEvent {
+          ServerID = Guid.NewGuid()
+        });
       Dynamics_.AssemblyBuilder.Save("test.dll");
     }
 
