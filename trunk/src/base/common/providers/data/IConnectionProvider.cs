@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 
 namespace Nohros.Data.Providers
@@ -16,15 +15,6 @@ namespace Nohros.Data.Providers
     /// An instance of the <see cref="IDbConnection"/> object.
     /// </returns>
     IDbConnection CreateConnection();
-
-    /// <summary>
-    /// Creates an instance of the <see cref="ITransactionContext"/> class for
-    /// the current <see cref="IConnectionProvider"/>.
-    /// </summary>
-    /// <returns>
-    /// The newly created <see cref="ITransactionContext"/>.
-    /// </returns>
-    ITransactionContext CreateTransactionContext();
 
     /// <summary>
     /// Gets an string that represents the database schema related with the

@@ -129,8 +129,8 @@ namespace Nohros
         if (num2 != -1)
           assembly_name = assembly_name.Substring(0, num2);
 
-        if (!assembly_name.EndsWith(".dll"))
-          assembly_name = assembly_name + ".dll";
+        //if (!assembly_name.EndsWith(".dll"))
+          //assembly_name = assembly_name + ".dll";
 
         string assembly_path =
           Path.Combine(runtime_type.Location, assembly_name);
