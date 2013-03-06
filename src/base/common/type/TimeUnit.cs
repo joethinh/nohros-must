@@ -116,17 +116,16 @@ namespace Nohros
     /// </summary>
     /// <returns></returns>
     public static long ToUnixTime(TimeSpan duration) {
-      return (long)(duration.Ticks * 0.0001);
+      return (long) (duration.Ticks*0.0001);
     }
 
     /// <summary>
     /// Converts the specified datetime to the unix time unit.
     /// </summary>
     /// <returns></returns>
-    public static long ToUnixTime(DateTime duration)
-    {
+    public static long ToUnixTime(DateTime duration) {
       DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, duration.Kind);
-      return (long)(duration.Subtract(epoch).TotalMilliseconds);
+      return (long) (duration.Subtract(epoch).TotalMilliseconds);
     }
 
     /// <summary>
@@ -137,25 +136,25 @@ namespace Nohros
     public static long ToMillis(long duration, TimeUnit unit) {
       switch (unit) {
         case TimeUnit.Nanoseconds:
-          return x(duration, C2/C0, MAX/(C2/C0));
+          return duration/(C2/C0);
 
         case TimeUnit.Microseconds:
-          return x(duration, C2/C1, MAX/(C2/C1));
+          return duration/(C2/C1);
 
         case TimeUnit.Miliseconds:
           return duration;
 
         case TimeUnit.Seconds:
-          return duration/(C3/C2);
+          return x(duration, C3/C2, MAX/(C3/C2));
 
         case TimeUnit.Minutes:
-          return duration/(C4/C2);
+          return x(duration, C4/C2, MAX/(C4/C2));
 
         case TimeUnit.Hours:
-          return duration/(C5/C2);
+          return x(duration, C5/C2, MAX/(C5/C2));
 
         case TimeUnit.Days:
-          return duration/(C6/C2);
+          return x(duration, (C6/C2), MAX/(C6/C2));
       }
       throw new ArgumentOutOfRangeException("unit");
     }
@@ -168,25 +167,25 @@ namespace Nohros
     public static long ToSeconds(long duration, TimeUnit unit) {
       switch (unit) {
         case TimeUnit.Nanoseconds:
-          return x(duration, C3/C0, MAX/(C3/C0));
+          return duration/(C3/C0);
 
         case TimeUnit.Microseconds:
-          return x(duration, C3/C1, MAX/(C3/C1));
+          return duration/(C3/C1);
 
         case TimeUnit.Miliseconds:
-          return x(duration, C3/C2, MAX/(C3/C2));
+          return duration/(C3/C2);
 
         case TimeUnit.Seconds:
           return duration;
 
         case TimeUnit.Minutes:
-          return duration/(C4/C3);
+          return x(duration, C4/C3, MAX/(C4/C3));
 
         case TimeUnit.Hours:
-          return duration/(C5/C3);
+          return x(duration, C5/C3, MAX/(C5/C3));
 
         case TimeUnit.Days:
-          return duration/(C6/C3);
+          return x(duration, C6/C3, MAX/(C6/C3));
       }
       throw new ArgumentOutOfRangeException("unit");
     }
