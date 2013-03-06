@@ -308,9 +308,20 @@ namespace Nohros.Metrics
       return registry_.TryGetMetric(name, out metric);
     }
 
+    /// <summary>
+    /// Gets or set the singleton metrics object.
+    /// </summary>
+    /// <remarks>
+    /// The default value of <see cref="Registry"/> is
+    /// <see cref="SyncMetricsRegistry"/>.
+    /// </remarks>
     public static IMetricsRegistry Registry {
       get { return registry_; }
-      set { registry_ = value; }
+      set {
+        if (registry_ == null) {
+          throw new ArgumentNullException("value");
+        }
+      }
     }
   }
 }

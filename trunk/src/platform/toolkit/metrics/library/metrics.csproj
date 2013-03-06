@@ -70,6 +70,9 @@
     <Compile Include="core\UniformHistogram.cs" />
     <Compile Include="MetricAddedEventHandler.cs" />
     <Compile Include="Metrics.cs" />
+    <Compile Include="reporting\AbstractPollingReporter.cs" />
+    <Compile Include="reporting\ConsoleReporter.cs" />
+    <Compile Include="reporting\IMetricsReporter.cs" />
     <Compile Include="stats\ExponentialWeightedMovingAverage.cs" />
     <Compile Include="stats\ExponentialWeightedMovingAverages.cs" />
     <Compile Include="core\Gauge.cs" />
@@ -111,6 +114,7 @@
       <Name>common %28%28base%29\common%29</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
