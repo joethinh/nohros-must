@@ -6,7 +6,7 @@ namespace Nohros.Metrics
   /// <summary>
   /// A central registry for metric instances.
   /// </summary>
-  public interface IMetricsRegistry
+  public interface IMetricsRegistry : IMetric
   {
     /// <summary>
     /// Gets the counter that is associated with the specified
@@ -160,7 +160,6 @@ namespace Nohros.Metrics
     /// </returns>
     bool TryGetMetric<T>(MetricName name, out T metric) where T : class, IMetric;
 
-
     /// <param name="name">
     /// The name of the metric to get.
     /// </param>
@@ -191,6 +190,11 @@ namespace Nohros.Metrics
     void Add(MetricName name, IMetric metric);
 
     /// <summary>
+    /// Raised when a new metric is added to the registry.
+    /// </summary>
+    event MetricAddedEventHandler MetricAdded;
+
+    /// <summary>
     /// Gets or sets an metric with the specified name.
     /// </summary>
     /// <param name="name">
@@ -206,10 +210,5 @@ namespace Nohros.Metrics
     /// <param name="name"> is not found.</param>
     /// </exception>
     IMetric this[MetricName name] { get; set; }
-
-    /// <summary>
-    /// Raised when a new metric is added to the registry.
-    /// </summary>
-    event MetricAddedEventHandler MetricAdded;
   }
 }
