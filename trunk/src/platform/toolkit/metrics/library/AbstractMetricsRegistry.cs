@@ -56,9 +56,13 @@ namespace Nohros.Metrics
       }
     }
 
-    public void Report<T>(MetricReportCallback<T> callback, T context) {
+    public void Report<T>(MetricsReportCallback<T> callback, T context) {
       foreach (KeyValuePair<MetricName, IMetric> metric in metrics_) {
-        metric.Value.Report(callback, context);
+        var name = metric.Key;
+        metric.Value.Report((metrics, ctx) => {
+          var pair = new KeyValuePair<MetricName, MetricValue[]>(name, metrics);
+          callback(pair, ctx);
+        }, context);
       }
     }
 

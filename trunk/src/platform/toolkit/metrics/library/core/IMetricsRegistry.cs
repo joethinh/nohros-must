@@ -6,7 +6,7 @@ namespace Nohros.Metrics
   /// <summary>
   /// A central registry for metric instances.
   /// </summary>
-  public interface IMetricsRegistry : IMetric
+  public interface IMetricsRegistry
   {
     /// <summary>
     /// Gets the counter that is associated with the specified
@@ -20,6 +20,20 @@ namespace Nohros.Metrics
     /// <paramref name="name"/>.
     /// </returns>
     Counter GetCounter(MetricName name);
+
+    /// <summary>
+    /// Gets the the collection of values associated with all the registered
+    /// metrics.
+    /// </summary>
+    /// <param name="callback">
+    /// A <see cref="MetricsReportCallback{T}"/> that is called to
+    /// report the metric's value.
+    /// </param>
+    /// <param name="context">
+    /// A user-defined object that qualifies or contains information about the
+    /// reporting operation.
+    /// </param>
+    void Report<T>(MetricsReportCallback<T> callback, T context);
 
     /// <summary>
     /// Gets the counter that is associated with the specified

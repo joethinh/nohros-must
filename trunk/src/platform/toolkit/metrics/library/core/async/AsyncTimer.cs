@@ -195,7 +195,7 @@ namespace Nohros.Metrics
           .ToSeconds(clock_.Time, TimeUnit.Miliseconds);
         async_tasks_mailbox_.Send(
           () => histogram_.Update(duration, timestamp));
-        meter_.Mark(duration);
+        meter_.Mark();
       }
     }
 
