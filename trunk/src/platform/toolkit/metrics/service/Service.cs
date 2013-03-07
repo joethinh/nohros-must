@@ -49,7 +49,7 @@ namespace Nohros.Metrics
         logger_.Error(
           string.Format(S.Log_MethodThrowsException, kClassName,
             "Store"), e);
-        service_host_
+        service_host_.Send(service_host_.FormatErrorMessage());
           .SendError(request.Id, (int) StatusCode.kBadRequest, request.Sender, e);
       }
     }
