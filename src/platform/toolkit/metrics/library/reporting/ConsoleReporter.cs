@@ -17,9 +17,11 @@ namespace Nohros.Metrics.Reporting
       var registry = MetricsRegsitry;
       var now = DateTime.UtcNow;
       registry.Report((metrics, timestamp) => {
-        foreach (MetricValue metric in metrics) {
-          Console.Write(timestamp.ToString("0") + "-");
-          Console.WriteLine(metric.Name + ":" + metric.Value.ToString());
+        MetricName name = metrics.Key;
+        foreach (MetricValue metric in metrics.Value) {
+          Console.Write(timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ") + ":"
+            + name + ".");
+          Console.WriteLine(metric.Name + "=" + metric.Value.ToString());
         }
       }, now);
     }
