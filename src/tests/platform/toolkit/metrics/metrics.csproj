@@ -40,8 +40,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AsyncTimerTests.cs" />
     <Compile Include="CallableGaugeTests.cs" />
-    <Compile Include="ClockTests.cs" />
     <Compile Include="CounterTest.cs" />
     <Compile Include="HistogramTests.cs" />
     <Compile Include="MeterTests.cs" />
@@ -64,7 +64,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\platform\toolkit\metrics\library\metrics.csproj">
       <Project>{EE140ABF-C917-44D7-B89F-D6946332F507}</Project>
-      <Name>metrics %28%28plataform%29\%28toolkit%29\%28metrics%29\metrics%29</Name>
+      <Name>metrics %28%28metrics%29\metrics%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

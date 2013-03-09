@@ -59,6 +59,7 @@
     <Compile Include="MetricsLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceReporter.cs" />
+	<Compile Include="..\protos\metrics\parsers\csharp\Metrics.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\library\metrics.csproj">
