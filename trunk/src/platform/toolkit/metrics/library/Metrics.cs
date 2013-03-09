@@ -13,7 +13,7 @@ namespace Nohros.Metrics
   /// </remarks>
   public class AppMetrics
   {
-    static IMetricsRegistry registry_;
+    static readonly IMetricsRegistry registry_;
 
     #region .ctor
     static AppMetrics() {
