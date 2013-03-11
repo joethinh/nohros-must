@@ -4,7 +4,7 @@ using System.Data;
 namespace Nohros.Data
 {
   internal class ChainDataReaderMapper<T, T1> : DataReaderMapper<T>,
-                                              IChainMapper<T, T1>
+                                                IChainMapper<T, T1>
     where T1 : IMapper<T1>
   {
     readonly DataReaderMapper<T> mapper_;
@@ -43,6 +43,11 @@ namespace Nohros.Data
       }
       t = default(T1);
       return false;
+    }
+
+    /// <inheritdoc/>
+    protected internal override T MapInternal() {
+      return mapper_.MapInternal();
     }
   }
 }

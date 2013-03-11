@@ -22,6 +22,10 @@ namespace Nohros.Data
       throw new NoResultException();
     }
 
+    protected internal override T MapInternal() {
+      throw new NoResultException();
+    }
+
     public static NoResultDataReaderMapper<T> Default {
       get { return no_result_data_reader_mapper_; }
     }

@@ -23,12 +23,14 @@ namespace Nohros.Data
                                                           <T>,
                                                         IDisposable
   {
+    bool has_rows_;
     protected internal CallableDelegate<T> loader_;
-    protected internal IDataReader reader_;
     internal int[] ordinals_;
+    protected internal IDataReader reader_;
 
     #region .ctor
     protected internal DataReaderMapper() {
+      has_rows_ = false;
     }
 
     /// <summary>
@@ -40,6 +42,7 @@ namespace Nohros.Data
     /// </param>
     protected DataReaderMapper(IDataReader reader) {
       reader_ = reader;
+      has_rows_ = false;
     }
 
     /// <summary>
@@ -53,6 +56,7 @@ namespace Nohros.Data
     protected DataReaderMapper(IDataReader reader, CallableDelegate<T> loader) {
       reader_ = reader;
       loader_ = loader;
+      has_rows_ = false;
     }
     #endregion
 
@@ -60,18 +64,35 @@ namespace Nohros.Data
       reader_.Dispose();
     }
 
-    public abstract T Map();
+    public virtual T Map() {
+      T t;
+      if (!Map(out t)) {
+        throw new NoResultException();
+      }
+      return t;
+    }
 
     IEnumerator IEnumerable.GetEnumerator() {
       return GetEnumerator();
     }
 
     public virtual IEnumerator<T> GetEnumerator() {
-      while (reader_.Read()) {
-        yield return Map();
+      T t;
+      while (Map(out t)) {
+        yield return t;
       }
-      reader_.Close();
     }
+
+    public bool Map(out T t) {
+      if (reader_.Read()) {
+        t = MapInternal();
+        return true;
+      }
+      t = default(T);
+      return false;
+    }
+
+    protected internal abstract T MapInternal();
 
     internal void Initialize(IDataReader reader) {
       Initialize(reader, NewT);
