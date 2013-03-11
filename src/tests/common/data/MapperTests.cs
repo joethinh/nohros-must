@@ -185,7 +185,6 @@ namespace Nohros.Common
           var mapper = new DataReaderMapper<MapMapperTest>.Builder()
             .Map("name", "usuario_nome")
             .Build(reader);
-          reader.Read();
           Assert.That(mapper.Map().Name, Is.EqualTo("nohros"));
         }
       }
@@ -207,7 +206,6 @@ namespace Nohros.Common
               new KeyValuePair<string, string>("name", "usuario_nome")
             })
             .Build(reader);
-          reader.Read();
           Assert.That(mapper.Map().Name, Is.EqualTo("nohros"));
         }
       }

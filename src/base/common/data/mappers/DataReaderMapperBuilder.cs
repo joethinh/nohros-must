@@ -526,7 +526,7 @@ namespace Nohros.Data
 
       void EmitMapMethod(TypeBuilder type, MappingResult result) {
         MethodBuilder builder = type
-          .DefineMethod("Map",
+          .DefineMethod("MapInternal",
             MethodAttributes.Public | MethodAttributes.HideBySig |
               MethodAttributes.Virtual, typeof (T), Type.EmptyTypes);
 
