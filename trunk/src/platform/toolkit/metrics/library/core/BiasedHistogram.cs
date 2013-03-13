@@ -25,7 +25,7 @@ namespace Nohros.Metrics
     /// <inheritdoc/>
     public override void Update(long value) {
       long timestamp = TimeUnitHelper
-        .ToSeconds(Clock.CurrentTimeMilis, TimeUnit.Miliseconds);
+        .ToSeconds(Clock.CurrentTimeMilis, TimeUnit.Milliseconds);
       Update(value, timestamp);
     }
 

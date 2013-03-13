@@ -59,6 +59,6 @@ namespace Nohros.Metrics
     /// <summary>
     /// Gets the number of events which have been marked.
     /// </summary>
-    double Count { get; }
+    long Count { get; }
   }
 }
