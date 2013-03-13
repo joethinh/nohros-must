@@ -45,6 +45,33 @@ namespace Nohros.Common
       public string Name { get; set; }
     }
 
+    public class PostPoco
+    {
+      public int Id { get; set; }
+      public string Text { get; set; }
+      public DateTime CreationDate { get; set; }
+      public int Counter1 { get; set; }
+      public int Counter2 { get; set; }
+    }
+
+    [Test]
+    public void ShouldMapInternalClass() {
+      var builder = new SqlConnectionStringBuilder();
+      builder.DataSource = ".\\SQLEX";
+      builder.UserID = "nohros";
+      builder.Password = "Noors03";
+
+      using (var conn = new SqlConnection(builder.ToString()))
+      using (var cmd = new SqlCommand("select 15 as Id, 'post' as text, Getdate() as CreationDate, 9 as Counter1, 10 as Counter2", conn)) {
+        conn.Open();
+        using (var reader = cmd.ExecuteReader()) {
+          var mapper = new DataReaderMapper<PostPoco>.Builder()
+            .Build(reader);
+          reader.Read();
+        }
+      }
+    }
+
     [Test]
     public void ShouldBuildDynamicType() {
       var reader = Mock.Create<IDataReader>();
@@ -142,10 +169,7 @@ namespace Nohros.Common
           new KeyValuePair<string, string>("typeid","cod_ocor"),
           new KeyValuePair<string, string>("agentid","usuario_cad"),
           new KeyValuePair<string, string>("contactid","cod_dev"),
-          new KeyValuePair<string, string>("date", "data_cad"),
-          new KeyValuePair<string, string>("serverid", null)
-        },()=>new CrmEvent {
-          ServerID = Guid.NewGuid()
+          new KeyValuePair<string, string>("date", "data_cad")
         });
       Dynamics_.AssemblyBuilder.Save("test.dll");
     }
@@ -174,7 +198,7 @@ namespace Nohros.Common
     [Test]
     public void ShouldMapCustomColumnToProperty() {
       var builder = new SqlConnectionStringBuilder();
-      builder.DataSource = "192.168.203.186";
+      builder.DataSource = ".";
       builder.UserID = "nohros";
       builder.Password = "Noors03";
 
@@ -193,7 +217,7 @@ namespace Nohros.Common
     [Test]
     public void ShouldMapArrayOfKeyValuePairs() {
       var builder = new SqlConnectionStringBuilder();
-      builder.DataSource = "192.168.203.186";
+      builder.DataSource = ".";
       builder.UserID = "nohros";
       builder.Password = "Noors03";
 
@@ -214,7 +238,7 @@ namespace Nohros.Common
     [Test]
     public void ShouldMapNestedInterface() {
       var builder = new SqlConnectionStringBuilder();
-      builder.DataSource = "192.168.203.186";
+      builder.DataSource = ".";
       builder.UserID = "nohros";
       builder.Password = "Noors03";
 

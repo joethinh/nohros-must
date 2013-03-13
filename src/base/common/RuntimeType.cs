@@ -129,11 +129,17 @@ namespace Nohros
         if (num2 != -1)
           assembly_name = assembly_name.Substring(0, num2);
 
-        //if (!assembly_name.EndsWith(".dll"))
-          //assembly_name = assembly_name + ".dll";
-
         string assembly_path =
           Path.Combine(runtime_type.Location, assembly_name);
+
+        // If the file does not exists append one of the know extensions
+        // to it and try again.
+        if (!File.Exists(assembly_path)) {
+          assembly_path = Path.Combine(runtime_type.Location, assembly_name) + ".dll";
+          if (!File.Exists(assembly_path)) {
+            assembly_path = Path.Combine(runtime_type.Location, assembly_name) + ".exe";
+          }
+        }
 
         Assembly assembly = Assembly.LoadFrom(assembly_path);
         type = assembly.GetType(runtime_type.Type.Substring(0, num));

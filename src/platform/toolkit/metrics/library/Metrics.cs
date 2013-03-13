@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Nohros.Metrics.Reporting;
 
 namespace Nohros.Metrics
 {
@@ -14,12 +16,47 @@ namespace Nohros.Metrics
   public class AppMetrics
   {
     static readonly IMetricsRegistry registry_;
+    static readonly IDictionary<string, IMetricsReporter> reporters_;
 
     #region .ctor
     static AppMetrics() {
       registry_ = new SyncMetricsRegistry();
+      reporters_ = new Dictionary<string, IMetricsReporter>();
     }
     #endregion
+
+    /// <summary>
+    /// Stops all the registered reporters and deallocates any associated
+    /// resources.
+    /// </summary>
+    public static void Shutdown() {
+      foreach (IMetricsReporter reporter in reporters_.Values) {
+        reporter.Shutdown();
+      }
+    }
+
+    /// <summary>
+    /// Register a <see cref="IMetricsReporter"/> under the given reporter
+    /// name.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the reporter.
+    /// </param>
+    /// <param name="reporter">
+    /// The reporter to be registerd.
+    /// </param>
+    /// <remarks>
+    /// This method allows a <see cref="IMetricsReporter"/> object to have the
+    /// same lifecycle of the <see cref="AppMetrics"/> class without needing
+    /// to be referenced by other classes.
+    /// <para>
+    /// All registered <see cref="IMetricsReporter"/> are shutedown when the
+    /// <see cref="Shutdown"/> method is called.
+    /// </para>
+    /// </remarks>
+    public static void RegisterReporter(string name, IMetricsReporter reporter) {
+      reporters_[name] = reporter;
+    }
 
     /// <summary>
     /// Gets the counter that is associated with the specified
