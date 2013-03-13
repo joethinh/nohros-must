@@ -15,5 +15,11 @@ namespace Nohros.Common
       epoch = TimeUnitHelper.ToUnixTime(date);
       Assert.AreEqual(23*60*60*1000, epoch);
     }
+
+    [Test]
+    public void ShouldConvertToMilliseconds() {
+      var millis = TimeUnitHelper.ToMillis(10, TimeUnit.Seconds);
+      Assert.That(millis, Is.EqualTo(10 * 1000));
+    }
   }
 }

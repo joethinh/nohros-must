@@ -91,5 +91,48 @@ namespace Nohros.Metrics
       Assert.That(metric_name_4_.GetHashCode(),
         Is.EqualTo(metric_name_4_.GetHashCode()));
     }
+
+    [Test]
+    public void ShouldCreateMetricFromString() {
+      MetricName name = "name";
+      Assert.That(name.ToString(), Is.EqualTo("name"));
+      Assert.That(name.Group, Is.EqualTo(string.Empty));
+      Assert.That(name.Type, Is.EqualTo(string.Empty));
+      Assert.That(name.Name, Is.EqualTo("name"));
+      Assert.That(name.Scope, Is.EqualTo(string.Empty));
+      Assert.That(name.HasScope, Is.EqualTo(false));
+
+      name = "type.name";
+      Assert.That(name.ToString(), Is.EqualTo("type.name"));
+      Assert.That(name.Group, Is.EqualTo(string.Empty));
+      Assert.That(name.Type, Is.EqualTo("type"));
+      Assert.That(name.Name, Is.EqualTo("name"));
+      Assert.That(name.Scope, Is.EqualTo(string.Empty));
+      Assert.That(name.HasScope, Is.EqualTo(false));
+
+      name = "group.type.name";
+      Assert.That(name.ToString(), Is.EqualTo("group.type.name"));
+      Assert.That(name.Group, Is.EqualTo("group"));
+      Assert.That(name.Type, Is.EqualTo("type"));
+      Assert.That(name.Name, Is.EqualTo("name"));
+      Assert.That(name.Scope, Is.EqualTo(string.Empty));
+      Assert.That(name.HasScope, Is.EqualTo(false));
+
+      name = "group.type.name.scope";
+      Assert.That(name.ToString(), Is.EqualTo("group.type.name.scope"));
+      Assert.That(name.Group, Is.EqualTo("group"));
+      Assert.That(name.Type, Is.EqualTo("type"));
+      Assert.That(name.Name, Is.EqualTo("name"));
+      Assert.That(name.Scope, Is.EqualTo("scope"));
+      Assert.That(name.HasScope, Is.EqualTo(true));
+
+      name = "dotted.group.type.name.scope";
+      Assert.That(name.ToString(), Is.EqualTo("dotted.group.type.name.scope"));
+      Assert.That(name.Group, Is.EqualTo("dotted.group"));
+      Assert.That(name.Type, Is.EqualTo("type"));
+      Assert.That(name.Name, Is.EqualTo("name"));
+      Assert.That(name.Scope, Is.EqualTo("scope"));
+      Assert.That(name.HasScope, Is.EqualTo(true));
+    }
   }
 }
