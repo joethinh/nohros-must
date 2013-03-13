@@ -36,6 +36,25 @@ namespace Nohros.Metrics
     void Report<T>(MetricsReportCallback<T> callback, T context);
 
     /// <summary>
+    /// Gets the the collection of values associated with the metrics that
+    /// matches the criteria defined by the <paramref name="predicate"/>.
+    /// </summary>
+    /// <param name="callback">
+    /// A <see cref="MetricsReportCallback{T}"/> that is called to
+    /// report the metric's value.
+    /// </param>
+    /// <param name="context">
+    /// A user-defined object that qualifies or contains information about the
+    /// reporting operation.
+    /// </param>
+    /// <param name="predicate">
+    /// A <see cref="MetricPredicate"/> delegate that defines the conditions
+    /// of the metrics to report.
+    /// </param>
+    void Report<T>(MetricsReportCallback<T> callback, T context,
+      MetricPredicate predicate);
+
+    /// <summary>
     /// Gets the counter that is associated with the specified
     /// <see cref="MetricName"/> or create a new one if no association exists.
     /// </summary>

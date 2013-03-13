@@ -1,4 +1,5 @@
 ﻿using System;
+using Nohros.Resources;
 
 namespace Nohros.Metrics
 {
@@ -125,10 +126,10 @@ namespace Nohros.Metrics
               ? "type"
               : scope == null ? "scope" : "name");
       }
-      group_ = group;
-      type_ = type;
-      name_ = name;
-      scope_ = scope;
+      group_ = group.Trim();
+      type_ = type.Trim();
+      name_ = name.Trim();
+      scope_ = scope.Trim();
       metric_name_as_string_ = MetricNameAsString(group, type, name, scope);
     }
     #endregion
@@ -150,11 +151,39 @@ namespace Nohros.Metrics
     /// <returns></returns>
     static string MetricNameAsString(string group, string type,
       string name, string scope) {
-      string metricname_as_string = string.Concat(group, ".", type, ".", name);
-      if (scope.Length > 0) {
-        metricname_as_string += "." + scope;
-      }
+      string metricname_as_string = string.Concat(group,
+        (group.Length == 0) ? string.Empty : ".",
+        type,
+        (type.Length == 0) ? string.Empty : ".",
+        name,
+        (scope.Length == 0) ? string.Empty : ".", scope);
       return metricname_as_string;
+    }
+
+    public static implicit operator MetricName(string metric_name) {
+      string[] names = metric_name.Trim().Split('.');
+      switch (names.Length) {
+        case 0:
+          throw new ArgumentException(
+            StringResources.Argument_EmptyStringOrSpaceSequence);
+
+        case 1:
+          return new MetricName(string.Empty, string.Empty, names[0]);
+
+        case 2:
+          return new MetricName(string.Empty, names[0], names[1]);
+
+        case 3:
+          return new MetricName(names[0], names[1], names[2]);
+
+        case 4:
+          return new MetricName(names[0], names[1], names[2], names[3]);
+
+        default:
+          int pos = names.Length - 1;
+          return new MetricName(string.Join(".", names, 0, pos - 2),
+            names[pos - 2], names[pos - 1], names[pos]);
+      }
     }
 
     /// <summary>
