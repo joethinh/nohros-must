@@ -51,6 +51,27 @@ namespace Nohros.Metrics
     }
     #endregion
 
+    /// <summary>
+    /// Mark the occurrence of an event.
+    /// </summary>
+    public void Mark() {
+      Mark(1);
+    }
+
+    /// <summary>
+    /// Mark the occurrence of a given number of events.
+    /// </summary>
+    /// <param name="n">
+    /// The number of events.
+    /// </param>
+    public virtual void Mark(long n) {
+      TickIfNecessary(Clock.NanoTime);
+      count_ += n;
+      ewma_1_rate_.Update(n);
+      ewma_5_rate_.Update(n);
+      ewma_15_rate_.Update(n);
+    }
+
     /// <inheritdoc/>
     public TimeUnit RateUnit {
       get { return rate_unit_; }
@@ -87,25 +108,26 @@ namespace Nohros.Metrics
 
     /// <inheritdoc/>
     public double MeanRate {
-      get {
-        long timestamp = Clock.NanoTime;
-        if (count_ == 0) {
-          return 0.0;
-        }
-
-        long elapsed = timestamp - start_time_;
-        double rate = count_/(double) elapsed;
-        return ConvertNsRate(rate);
-      }
+      get { return GetMeanRate(Clock.NanoTime); }
     }
 
     /// <inheritdoc/>
-    public double Count {
+    public long Count {
       get { return count_; }
     }
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
       callback(Report(), context);
+    }
+
+    internal double GetMeanRate(long timestamp) {
+      if (count_ == 0) {
+        return 0.0;
+      }
+
+      long elapsed = timestamp - start_time_;
+      double rate = count_/(double) elapsed;
+      return ConvertNsRate(rate);
     }
 
     /// <summary>
@@ -115,27 +137,6 @@ namespace Nohros.Metrics
       ewma_1_rate_.Tick();
       ewma_5_rate_.Tick();
       ewma_15_rate_.Tick();
-    }
-
-    /// <summary>
-    /// Mark the occurrence of an event.
-    /// </summary>
-    public void Mark() {
-      Mark(1);
-    }
-
-    /// <summary>
-    /// Mark the occurrence of a given number of events.
-    /// </summary>
-    /// <param name="n">
-    /// The number of events.
-    /// </param>
-    public virtual void Mark(long n) {
-      TickIfNecessary(Clock.NanoTime);
-      count_ += n;
-      ewma_1_rate_.Update(n);
-      ewma_5_rate_.Update(n);
-      ewma_15_rate_.Update(n);
     }
 
     void TickIfNecessary(long now) {
@@ -150,12 +151,13 @@ namespace Nohros.Metrics
     }
 
     public MetricValue[] Report() {
+      string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
       return new[] {
-        new MetricValue("Count", Count),
-        new MetricValue("MeanRate", MeanRate),
-        new MetricValue("OneMinuteRate", OneMinuteRate),
-        new MetricValue("FiveMinuteRate", FiveMinuteRate),
-        new MetricValue("FifteenMinuteRate", FifteenMinuteRate)
+        new MetricValue("Count", Count, EventType),
+        new MetricValue("MeanRate", MeanRate, rate_unit),
+        new MetricValue("OneMinuteRate", OneMinuteRate, rate_unit),
+        new MetricValue("FiveMinuteRate", FiveMinuteRate, rate_unit),
+        new MetricValue("FifteenMinuteRate", FifteenMinuteRate, rate_unit)
       };
     }
 

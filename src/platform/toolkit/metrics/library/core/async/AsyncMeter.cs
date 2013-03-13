@@ -169,7 +169,6 @@ namespace Nohros.Metrics
     }
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
-      var now = DateTime.Now;
       long timestamp = clock_.Tick;
       async_tasks_mailbox_.Send(() => callback(Report(timestamp), context));
     }
@@ -213,12 +212,13 @@ namespace Nohros.Metrics
     }
 
     MetricValue[] Report(long timestamp) {
+      string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
       return new[] {
-        new MetricValue("Count", count_),
-        new MetricValue("MeanRate", GetMeanRate(timestamp)),
-        new MetricValue("OneMinuteRate", OneMinuteRate),
-        new MetricValue("FiveMinuteRate", FiveMinuteRate),
-        new MetricValue("FifteenMinuteRate", FifteenMinuteRate)
+        new MetricValue("Count", count_, EventType),
+        new MetricValue("MeanRate", GetMeanRate(timestamp), rate_unit),
+        new MetricValue("OneMinuteRate", OneMinuteRate, rate_unit),
+        new MetricValue("FiveMinuteRate", FiveMinuteRate, rate_unit),
+        new MetricValue("FifteenMinuteRate", FifteenMinuteRate, rate_unit)
       };
     }
 

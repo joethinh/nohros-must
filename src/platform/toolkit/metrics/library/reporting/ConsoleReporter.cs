@@ -34,7 +34,8 @@ namespace Nohros.Metrics.Reporting
       foreach (MetricValue metric in metrics.Value) {
         Console.Write(timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ") + ":"
           + name + ".");
-        Console.WriteLine(metric.Name + "=" + metric.Value.ToString());
+        Console.Write(metric.Name + "=" + metric.Value.ToString());
+        Console.WriteLine(metric.Unit);
       }
     }
   }

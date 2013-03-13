@@ -69,6 +69,7 @@
     <Compile Include="core\MetricReportCallback.cs" />
     <Compile Include="core\MetricValue.cs" />
     <Compile Include="core\UniformHistogram.cs" />
+    <Compile Include="core\Unit.cs" />
     <Compile Include="MetricAddedEventHandler.cs" />
     <Compile Include="Metrics.cs" />
     <Compile Include="reporting\AbstractPollingReporter.cs" />

@@ -41,7 +41,7 @@ namespace Nohros.Metrics
     #endregion
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
-      callback(new[] { new MetricValue("Count", Count) }, context);
+      callback(new[] { new MetricValue("count", Count) }, context);
     }
 
     /// <summary>

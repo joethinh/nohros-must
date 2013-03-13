@@ -99,16 +99,16 @@ namespace Nohros.Metrics
     protected MetricValue[] Report() {
       Snapshot snapshot = Snapshot;
       return new[] {
-        new MetricValue("Min", Min),
-        new MetricValue("Max", Max),
-        new MetricValue("Mean", Mean),
-        new MetricValue("StandardDeviation", StandardDeviation),
-        new MetricValue("Median", snapshot.Median),
-        new MetricValue("Percentile75", snapshot.Percentile75),
-        new MetricValue("Percentile95", snapshot.Percentile95),
-        new MetricValue("Percentile98", snapshot.Percentile98),
-        new MetricValue("Percentile99", snapshot.Percentile99),
-        new MetricValue("Percentile999", snapshot.Percentile999)
+        new MetricValue("min", Min),
+        new MetricValue("max", Max),
+        new MetricValue("mean", Mean),
+        new MetricValue("stddev", StandardDeviation),
+        new MetricValue("median", snapshot.Median),
+        new MetricValue("percentile75", snapshot.Percentile75),
+        new MetricValue("percentile95", snapshot.Percentile95),
+        new MetricValue("percentile98", snapshot.Percentile98),
+        new MetricValue("percentile99", snapshot.Percentile99),
+        new MetricValue("percentile999", snapshot.Percentile999)
       };
     }
 

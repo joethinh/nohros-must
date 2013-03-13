@@ -195,7 +195,7 @@ namespace Nohros.Metrics
     }
 
     public long CurrentTimeInSeconds {
-      get { return TimeUnitHelper.ToSeconds(clock_.Time, TimeUnit.Miliseconds); }
+      get { return TimeUnitHelper.ToSeconds(clock_.Time, TimeUnit.Milliseconds); }
     }
   }
 }

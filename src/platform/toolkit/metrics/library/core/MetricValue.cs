@@ -8,12 +8,41 @@ namespace Nohros.Metrics
   public struct MetricValue
   {
     readonly string name_;
+    readonly string unit_;
     readonly double value_;
 
     #region .ctor
-    public MetricValue(string name, double value) {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MetricName"/> class using
+    /// the specified metric name, value and unit type.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the metric.
+    /// </param>
+    /// <param name="value">
+    /// The metric's value
+    /// </param>
+    public MetricValue(string name, double value)
+      : this(name, value, string.Empty) {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MetricName"/> class using
+    /// the specified metric name, value and unit type.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the metric.
+    /// </param>
+    /// <param name="value">
+    /// The metric's value
+    /// </param>
+    /// <param name="unit">
+    /// The type of unit of the <paramref name="value"/>.
+    /// </param>
+    public MetricValue(string name, double value, string unit) {
       name_ = name;
       value_ = value;
+      unit_ = unit;
     }
     #endregion
 
@@ -33,6 +62,10 @@ namespace Nohros.Metrics
     /// </remarks>
     public string Name {
       get { return name_; }
+    }
+
+    public string Unit {
+      get { return unit_; }
     }
   }
 }

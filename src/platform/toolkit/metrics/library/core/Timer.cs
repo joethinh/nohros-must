@@ -9,7 +9,7 @@ namespace Nohros.Metrics
   public class Timer : ITimed, ITimer
   {
     readonly Clock clock_;
-    readonly TimeUnit duration_unit_;
+    internal readonly TimeUnit duration_unit_;
     readonly BiasedHistogram histogram_;
     readonly Meter meter_;
 
@@ -43,7 +43,7 @@ namespace Nohros.Metrics
       get { return meter_.EventType; }
     }
 
-    public double Count {
+    public long Count {
       get { return meter_.Count; }
     }
 
@@ -124,42 +124,6 @@ namespace Nohros.Metrics
       callback(Report(), context);
     }
 
-    protected MetricValue[] Report() {
-      Snapshot snapshot = Snapshot;
-      return new[] {
-        new MetricValue("Min", Min),
-        new MetricValue("Max", Max),
-        new MetricValue("Mean", Mean),
-        new MetricValue("StandardDeviation", StandardDeviation),
-        new MetricValue("Median", snapshot.Median),
-        new MetricValue("Percentile75", snapshot.Percentile75),
-        new MetricValue("Percentile95", snapshot.Percentile95),
-        new MetricValue("Percentile98", snapshot.Percentile98),
-        new MetricValue("Percentile99", snapshot.Percentile99),
-        new MetricValue("Percentile999", snapshot.Percentile999),
-        new MetricValue("Count", Count),
-        new MetricValue("MeanRate", MeanRate),
-        new MetricValue("OneMinuteRate", OneMinuteRate),
-        new MetricValue("FiveMinuteRate", FiveMinuteRate),
-        new MetricValue("FifteenMinuteRate", FifteenMinuteRate)
-      };
-    }
-
-    /// <summary>
-    /// Adds a recorded duration.
-    /// </summary>
-    /// <param name="duration">The length of the duration.</param>
-    void Update(long duration) {
-      if (duration >= 0) {
-        histogram_.Update(duration);
-        meter_.Mark();
-      }
-    }
-
-    double ConvertFromNs(double ns) {
-      return ns/TimeUnitHelper.ToNanos(1, duration_unit_);
-    }
-
     public T Time<T>(CallableDelegate<T> method) {
       long start_time = clock_.Tick;
 
@@ -191,6 +155,44 @@ namespace Nohros.Metrics
     /// </returns>
     public TimerContext Time() {
       return new TimerContext(this, clock_);
+    }
+
+    protected MetricValue[] Report() {
+      Snapshot snapshot = Snapshot;
+      string duration_unit = UnitHelper.FromTimeUnit(duration_unit_);
+      string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
+      return new[] {
+        new MetricValue("min", Min, duration_unit),
+        new MetricValue("max", Max, duration_unit),
+        new MetricValue("mean", Mean, duration_unit),
+        new MetricValue("stddev", StandardDeviation, duration_unit),
+        new MetricValue("median", snapshot.Median, duration_unit),
+        new MetricValue("percentile75", snapshot.Percentile75, duration_unit),
+        new MetricValue("percentile95", snapshot.Percentile95, duration_unit),
+        new MetricValue("percentile98", snapshot.Percentile98, duration_unit),
+        new MetricValue("percentile99", snapshot.Percentile99, duration_unit),
+        new MetricValue("percentile999", snapshot.Percentile999, duration_unit),
+        new MetricValue("count", Count, EventType),
+        new MetricValue("meanRate", MeanRate, rate_unit),
+        new MetricValue("oneMinuteRate", OneMinuteRate, rate_unit),
+        new MetricValue("fiveMinuteRate", FiveMinuteRate, rate_unit),
+        new MetricValue("fifteenMinuteRate", FifteenMinuteRate, rate_unit)
+      };
+    }
+
+    /// <summary>
+    /// Adds a recorded duration.
+    /// </summary>
+    /// <param name="duration">The length of the duration.</param>
+    void Update(long duration) {
+      if (duration >= 0) {
+        histogram_.Update(duration);
+        meter_.Mark();
+      }
+    }
+
+    double ConvertFromNs(double ns) {
+      return ns/TimeUnitHelper.ToNanos(1, duration_unit_);
     }
 
     /// <summary>

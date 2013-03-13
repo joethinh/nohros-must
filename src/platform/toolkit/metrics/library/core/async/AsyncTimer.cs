@@ -13,7 +13,7 @@ namespace Nohros.Metrics
     readonly Clock clock_;
     readonly TimeUnit duration_unit_;
     readonly BiasedHistogram histogram_;
-    readonly AsyncMeter meter_;
+    readonly Meter meter_;
 
     #region .ctor
     /// <summary>
@@ -22,12 +22,12 @@ namespace Nohros.Metrics
     /// <param name="duration_unit">
     /// The scale unit for this timer's duration metrics.
     /// </param>
-    public AsyncTimer(TimeUnit duration_unit, AsyncMeter meter,
+    public AsyncTimer(TimeUnit duration_unit, Meter meter,
       BiasedHistogram histogram, IExecutor executor)
       : this(duration_unit, meter, histogram, executor, new UserTimeClock()) {
     }
 
-    public AsyncTimer(TimeUnit duration_unit, AsyncMeter meter,
+    public AsyncTimer(TimeUnit duration_unit, Meter meter,
       BiasedHistogram histogram, IExecutor executor, Clock clock) {
       duration_unit_ = duration_unit;
       meter_ = meter;
@@ -38,19 +38,23 @@ namespace Nohros.Metrics
     #endregion
 
     public void GetFifteenMinuteRate(DoubleMetricCallback callback) {
-      meter_.GetFifteenMinuteRate(callback);
+      var now = DateTime.Now;
+      async_tasks_mailbox_.Send(() => callback(meter_.FifteenMinuteRate, now));
     }
 
     public void GetFiveMinuteRate(DoubleMetricCallback callback) {
-      meter_.GetFiveMinuteRate(callback);
+      var now = DateTime.Now;
+      async_tasks_mailbox_.Send(() => callback(meter_.FiveMinuteRate, now));
     }
 
     public void GetMeanRate(DoubleMetricCallback callback) {
-      meter_.GetMeanRate(callback);
+      var now = DateTime.Now;
+      async_tasks_mailbox_.Send(() => callback(meter_.MeanRate, now));
     }
 
     public void GetOneMinuteRate(DoubleMetricCallback callback) {
-      meter_.GetOneMinuteRate(callback);
+      var now = DateTime.Now;
+      async_tasks_mailbox_.Send(() => callback(meter_.OneMinuteRate, now));
     }
 
     public TimeUnit RateUnit {
@@ -63,7 +67,8 @@ namespace Nohros.Metrics
     }
 
     public void GetCount(LongMetricCallback callback) {
-      meter_.GetCount(callback);
+      var now = DateTime.Now;
+      async_tasks_mailbox_.Send(() => callback(meter_.Count, now));
     }
 
     /// <inheritdoc/>
@@ -117,16 +122,8 @@ namespace Nohros.Metrics
     }
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
-      var now = DateTime.Now;
       long timestamp = clock_.Tick;
-
-      meter_.Report((values, t_context) => {
-        var h_values = Report();
-        var final_values = new MetricValue[values.Length + h_values.Length];
-        Array.Copy(h_values, final_values, h_values.Length);
-        Array.Copy(values, 0, final_values, h_values.Length, values.Length);
-        callback(final_values, t_context);
-      }, context);
+      async_tasks_mailbox_.Send(() => callback(Report(timestamp), context));
     }
 
     public T Time<T>(CallableDelegate<T> method) {
@@ -162,20 +159,33 @@ namespace Nohros.Metrics
       return new TimerContext(this, clock_);
     }
 
-    protected MetricValue[] Report() {
+    protected MetricValue[] Report(long timestamp) {
       Snapshot snapshot = histogram_.Snapshot;
+      string duration_unit = UnitHelper.FromTimeUnit(duration_unit_);
+      string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
       return new[] {
-        new MetricValue("Min", ConvertFromNs(histogram_.Min)),
-        new MetricValue("Max", ConvertFromNs(histogram_.Max)),
-        new MetricValue("Mean", ConvertFromNs(histogram_.Mean)),
-        new MetricValue("StandardDeviation",
-          ConvertFromNs(histogram_.StandardDeviation)),
-        new MetricValue("Median", ConvertFromNs(snapshot.Median)),
-        new MetricValue("Percentile75", ConvertFromNs(snapshot.Percentile75)),
-        new MetricValue("Percentile95", ConvertFromNs(snapshot.Percentile95)),
-        new MetricValue("Percentile98", ConvertFromNs(snapshot.Percentile98)),
-        new MetricValue("Percentile99", ConvertFromNs(snapshot.Percentile99)),
-        new MetricValue("Percentile999", ConvertFromNs(snapshot.Percentile999))
+        new MetricValue("min", ConvertFromNs(histogram_.Min), duration_unit),
+        new MetricValue("max", ConvertFromNs(histogram_.Max), duration_unit),
+        new MetricValue("mean", ConvertFromNs(histogram_.Mean), duration_unit),
+        new MetricValue("stddev", ConvertFromNs(histogram_.StandardDeviation),
+          duration_unit),
+        new MetricValue("median", ConvertFromNs(snapshot.Median), duration_unit)
+        ,
+        new MetricValue("percentile75", ConvertFromNs(snapshot.Percentile75),
+          duration_unit),
+        new MetricValue("percentile95", ConvertFromNs(snapshot.Percentile95),
+          duration_unit),
+        new MetricValue("percentile98", ConvertFromNs(snapshot.Percentile98),
+          duration_unit),
+        new MetricValue("percentile99", ConvertFromNs(snapshot.Percentile99),
+          duration_unit),
+        new MetricValue("percentile999", ConvertFromNs(snapshot.Percentile999),
+          duration_unit),
+        new MetricValue("count", meter_.Count, EventType),
+        new MetricValue("meanRate", meter_.GetMeanRate(timestamp), rate_unit),
+        new MetricValue("oneMinuteRate", meter_.OneMinuteRate, rate_unit),
+        new MetricValue("fiveMinuteRate", meter_.FiveMinuteRate, rate_unit),
+        new MetricValue("fifteenMinuteRate", meter_.FifteenMinuteRate, rate_unit)
       };
     }
 
@@ -192,7 +202,7 @@ namespace Nohros.Metrics
     public void Update(long duration) {
       if (duration >= 0) {
         long timestamp = TimeUnitHelper
-          .ToSeconds(clock_.Time, TimeUnit.Miliseconds);
+          .ToSeconds(clock_.Time, TimeUnit.Milliseconds);
         async_tasks_mailbox_.Send(
           () => histogram_.Update(duration, timestamp));
         meter_.Mark();

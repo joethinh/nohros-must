@@ -39,7 +39,7 @@ namespace Nohros.Metrics
       AsyncTimer timer;
       if (!TryGetMetric(name, out timer)) {
         timer = new AsyncTimer(duration_unit,
-          new AsyncMeter("calls", TimeUnit.Seconds, executor_),
+          new Meter("calls", TimeUnit.Seconds),
           Histograms.Biased(), executor_);
         Add(name, timer);
       }
