@@ -65,6 +65,7 @@
     <Compile Include="core\ISyncHistogram.cs" />
     <Compile Include="core\ITimed.cs" />
     <Compile Include="core\ITimer.cs" />
+    <Compile Include="core\MetricPredicate.cs" />
     <Compile Include="core\MetricReportCallback.cs" />
     <Compile Include="core\MetricValue.cs" />
     <Compile Include="core\UniformHistogram.cs" />

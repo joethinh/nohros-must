@@ -56,9 +56,33 @@ namespace Nohros.Metrics.Reporting
     }
 
     /// <summary>
+    /// Starts the reporter polling at the given period.
+    /// </summary>
+    /// <param name="period">
+    /// The amount of time between polls.
+    /// </param>
+    /// <param name="unit">
+    /// The unit for <paramref name="period"/>
+    /// </param>
+    /// <param name="predicate">
+    /// A <see cref="MetricPredicate"/> delegate that defines the conditions of
+    /// the metrics to report.
+    /// </param>
+    public virtual void Start(long period, TimeUnit unit,
+      MetricPredicate predicate) {
+      timer_ = new System.Threading.Timer(obj => Run((MetricPredicate) obj),
+        predicate, 0, TimeUnitHelper.ToMillis(period, unit));
+    }
+
+    /// <summary>
     /// The method that is called when a poll is scheduled to occur.
     /// </summary>
     public abstract void Run();
+
+    /// <summary>
+    /// The method that is called when a poll is scheduled to occur.
+    /// </summary>
+    public abstract void Run(MetricPredicate predicate);
 
     /// <summary>
     /// Gets the associated metrics registry.

@@ -56,13 +56,31 @@ namespace Nohros.Metrics
       }
     }
 
+    /// <inheritdoc/>
     public void Report<T>(MetricsReportCallback<T> callback, T context) {
+      // The code above is the same as the Report method that accepts a
+      // predicate, and it is duplicated to avoid overhead of calling the
+      // predicate method when there is no need.
       foreach (KeyValuePair<MetricName, IMetric> metric in metrics_) {
         var name = metric.Key;
         metric.Value.Report((metrics, ctx) => {
           var pair = new KeyValuePair<MetricName, MetricValue[]>(name, metrics);
           callback(pair, ctx);
         }, context);
+      }
+    }
+
+    /// <inheritdoc/>
+    public void Report<T>(MetricsReportCallback<T> callback, T context,
+      MetricPredicate predicate) {
+      foreach (KeyValuePair<MetricName, IMetric> metric in metrics_) {
+        var name = metric.Key;
+        if (predicate(name, metric.Value)) {
+          metric.Value.Report((metrics, ctx) => {
+            var pair = new KeyValuePair<MetricName, MetricValue[]>(name, metrics);
+            callback(pair, ctx);
+          }, context);
+        }
       }
     }
 
