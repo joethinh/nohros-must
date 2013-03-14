@@ -49,7 +49,8 @@ namespace Nohros.Metrics
 
     public void GetMeanRate(DoubleMetricCallback callback) {
       var now = DateTime.Now;
-      async_tasks_mailbox_.Send(() => callback(meter_.MeanRate, now));
+      var timestamp = clock_.Tick;
+      async_tasks_mailbox_.Send(() => callback(meter_.GetMeanRate(timestamp), now));
     }
 
     public void GetOneMinuteRate(DoubleMetricCallback callback) {

@@ -20,6 +20,9 @@ namespace Nohros.Common
     public void ShouldConvertToMilliseconds() {
       var millis = TimeUnitHelper.ToMillis(10, TimeUnit.Seconds);
       Assert.That(millis, Is.EqualTo(10 * 1000));
+
+      var minutes = TimeUnitHelper.ToMillis(10, TimeUnit.Minutes);
+      Assert.That(minutes, Is.EqualTo(10 * 60 * 1000));
     }
   }
 }

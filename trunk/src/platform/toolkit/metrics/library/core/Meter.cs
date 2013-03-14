@@ -14,6 +14,7 @@ namespace Nohros.Metrics
   public class Meter : IMetered, IMeter
   {
     const long kTickInterval = 5000000000; // 5 seconds in nanoseconds
+    readonly Clock clock_;
     readonly string event_type_;
     readonly ExponentialWeightedMovingAverage ewma_15_rate_;
     readonly ExponentialWeightedMovingAverage ewma_1_rate_;
@@ -39,11 +40,16 @@ namespace Nohros.Metrics
     /// </code>
     /// </example>
     /// </param>
-    public Meter(string event_type, TimeUnit rate_unit) {
+    public Meter(string event_type, TimeUnit rate_unit)
+      : this(event_type, rate_unit, new UserTimeClock()) {
+    }
+
+    public Meter(string event_type, TimeUnit rate_unit, Clock clock) {
       count_ = 0;
+      clock_ = clock;
       rate_unit_ = rate_unit;
       event_type_ = event_type;
-      start_time_ = Clock.NanoTime;
+      start_time_ = clock_.Tick;
       last_tick_ = start_time_;
       ewma_1_rate_ = ExponentialWeightedMovingAverages.OneMinute();
       ewma_5_rate_ = ExponentialWeightedMovingAverages.FiveMinute();
@@ -65,7 +71,7 @@ namespace Nohros.Metrics
     /// The number of events.
     /// </param>
     public virtual void Mark(long n) {
-      TickIfNecessary(Clock.NanoTime);
+      TickIfNecessary(clock_.Tick);
       count_ += n;
       ewma_1_rate_.Update(n);
       ewma_5_rate_.Update(n);
@@ -85,7 +91,7 @@ namespace Nohros.Metrics
     /// <inheritdoc/>
     public double FifteenMinuteRate {
       get {
-        TickIfNecessary(Clock.NanoTime);
+        TickIfNecessary(clock_.Tick);
         return ewma_15_rate_.Rate(rate_unit_);
       }
     }
@@ -93,7 +99,7 @@ namespace Nohros.Metrics
     /// <inheritdoc/>
     public double FiveMinuteRate {
       get {
-        TickIfNecessary(Clock.NanoTime);
+        TickIfNecessary(clock_.Tick);
         return ewma_5_rate_.Rate(rate_unit_);
       }
     }
@@ -101,14 +107,14 @@ namespace Nohros.Metrics
     /// <inheritdoc/>
     public double OneMinuteRate {
       get {
-        TickIfNecessary(Clock.NanoTime);
+        TickIfNecessary(clock_.Tick);
         return ewma_1_rate_.Rate(rate_unit_);
       }
     }
 
     /// <inheritdoc/>
     public double MeanRate {
-      get { return GetMeanRate(Clock.NanoTime); }
+      get { return GetMeanRate(clock_.Tick); }
     }
 
     /// <inheritdoc/>
