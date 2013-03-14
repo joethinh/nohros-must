@@ -17,7 +17,7 @@ namespace Nohros.Metrics
     [Test]
     public void ShouldHasDurationUnit() {
       var timer = Timer;
-      Assert.That(timer.DurationUnit, Is.EqualTo(TimeUnit.Miliseconds));
+      Assert.That(timer.DurationUnit, Is.EqualTo(TimeUnit.Milliseconds));
     }
 
     [Test]
@@ -38,15 +38,15 @@ namespace Nohros.Metrics
 
     [Test]
     public void ShouldTimeSeriesOfEvents() {
-      var timer = new Timer(TimeUnit.Miliseconds,
+      var timer = new Timer(TimeUnit.Milliseconds,
         new Meter("calls", TimeUnit.Seconds), Histograms.Biased(),
         new ClockMock());
 
-      timer.Update(10, TimeUnit.Miliseconds);
-      timer.Update(20, TimeUnit.Miliseconds);
-      timer.Update(20, TimeUnit.Miliseconds);
-      timer.Update(30, TimeUnit.Miliseconds);
-      timer.Update(40, TimeUnit.Miliseconds);
+      timer.Update(10, TimeUnit.Milliseconds);
+      timer.Update(20, TimeUnit.Milliseconds);
+      timer.Update(20, TimeUnit.Milliseconds);
+      timer.Update(30, TimeUnit.Milliseconds);
+      timer.Update(40, TimeUnit.Milliseconds);
 
       Assert.That(timer.Count, Is.EqualTo(5));
       Assert.That(timer.Max, Is.InRange(40.0, 40.0001));
@@ -93,7 +93,7 @@ namespace Nohros.Metrics
 
     public Timer Timer {
       get {
-        return new Timer(TimeUnit.Miliseconds,
+        return new Timer(TimeUnit.Milliseconds,
           new Meter("calls", TimeUnit.Seconds), Histograms.Biased(),
           new ClockMock());
       }

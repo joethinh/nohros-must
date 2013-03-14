@@ -22,7 +22,7 @@ namespace Nohros
     /// <summary>
     /// A millisecond is defined as thousandth of a second.
     /// </summary>
-    Miliseconds = 2,
+    Milliseconds = 2,
 
     /// <summary>
     /// The base unit of mensure.
@@ -84,7 +84,7 @@ namespace Nohros
         case TimeUnit.Microseconds:
           return x(duration, C1/C0, MAX/(C1/C0));
 
-        case TimeUnit.Miliseconds:
+        case TimeUnit.Milliseconds:
           return x(duration, C2/C0, MAX/(C2/C0));
 
         case TimeUnit.Seconds:
@@ -141,7 +141,7 @@ namespace Nohros
         case TimeUnit.Microseconds:
           return duration/(C2/C1);
 
-        case TimeUnit.Miliseconds:
+        case TimeUnit.Milliseconds:
           return duration;
 
         case TimeUnit.Seconds:
@@ -172,7 +172,7 @@ namespace Nohros
         case TimeUnit.Microseconds:
           return duration/(C3/C1);
 
-        case TimeUnit.Miliseconds:
+        case TimeUnit.Milliseconds:
           return duration/(C3/C2);
 
         case TimeUnit.Seconds:

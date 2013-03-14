@@ -19,7 +19,7 @@ namespace Nohros.Metrics
     [Test]
     public void ShouldHasDurationUnit() {
       var timer = AsyncTimer;
-      Assert.That(timer.DurationUnit, Is.EqualTo(TimeUnit.Miliseconds));
+      Assert.That(timer.DurationUnit, Is.EqualTo(TimeUnit.Milliseconds));
     }
 
     [Test]
@@ -51,11 +51,11 @@ namespace Nohros.Metrics
     public void ShouldTimeSeriesOfEvents() {
       var signaler = new ManualResetEvent(false);
       var timer = AsyncTimer;
-      timer.Update(10, TimeUnit.Miliseconds);
-      timer.Update(20, TimeUnit.Miliseconds);
-      timer.Update(20, TimeUnit.Miliseconds);
-      timer.Update(30, TimeUnit.Miliseconds);
-      timer.Update(40, TimeUnit.Miliseconds);
+      timer.Update(10, TimeUnit.Milliseconds);
+      timer.Update(20, TimeUnit.Milliseconds);
+      timer.Update(20, TimeUnit.Milliseconds);
+      timer.Update(30, TimeUnit.Milliseconds);
+      timer.Update(40, TimeUnit.Milliseconds);
 
       timer.GetCount((metric, context) => Assert.That(metric, Is.EqualTo(5)));
       timer.GetMax((metric, context) =>
@@ -135,8 +135,8 @@ namespace Nohros.Metrics
     public AsyncTimer AsyncTimer {
       get {
         var executor = Executors.SameThreadExecutor();
-        return new AsyncTimer(TimeUnit.Miliseconds,
-          new AsyncMeter("calls", TimeUnit.Seconds, executor),
+        return new AsyncTimer(TimeUnit.Milliseconds,
+          new Meter("calls", TimeUnit.Seconds),
           Histograms.Biased(),
           executor, new ClockMock());
       }
