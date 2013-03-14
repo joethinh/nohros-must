@@ -181,12 +181,11 @@ namespace Nohros.Metrics
       start_time_ = CurrentTimeInSeconds;
 
       KeyValuePair<double, int>[] priorities = priorities_.ToArray();
-      for (int i = 0, j = priorities.Length; i < j; i++) {
-        KeyValuePair<double, int> priority = priorities[i];
+      foreach (KeyValuePair<double, int> priority in priorities) {
         priorities_.Remove(priority.Key);
         double new_priority = priority.Key*
           Math.Exp(-alpha_*(start_time_ - old_start_time));
-        priorities_.Add(new_priority, priority.Value);
+        priorities_[new_priority] = priority.Value;
       }
     }
 

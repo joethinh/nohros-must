@@ -15,7 +15,7 @@ namespace Nohros.Metrics
   /// </remarks>
   public class AppMetrics
   {
-    static readonly IMetricsRegistry registry_;
+    static IMetricsRegistry registry_;
     static readonly IDictionary<string, IMetricsReporter> reporters_;
 
     #region .ctor
@@ -358,6 +358,7 @@ namespace Nohros.Metrics
         if (registry_ == null) {
           throw new ArgumentNullException("value");
         }
+        registry_ = value;
       }
     }
   }
