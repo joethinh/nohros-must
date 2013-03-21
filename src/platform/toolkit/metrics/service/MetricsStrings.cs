@@ -10,6 +10,6 @@ namespace Nohros.Metrics
     public const string kDefaultConfigFileName = "metrics.config";
     public const string kDefaultConfigRootNode = "metrics";
 
-    public const string kMetricsDataProviderName = "MetricsDataProvider";
+    public const string kMetricsDataProviderName = "MetricsRepository";
   }
 }

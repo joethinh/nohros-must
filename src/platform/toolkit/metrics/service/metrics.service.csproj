@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(SolutionDir)bin\debug\</OutputPath>
+    <OutputPath>$(SolutionDir)bin\debug\metrics\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>$(SolutionDir)bin\release\</OutputPath>
+    <OutputPath>$(SolutionDir)bin\release\metrics\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -70,10 +70,12 @@
     <Compile Include="configuration\Settings.cs" />
     <Compile Include="configuration\SettingsBuilder.cs" />
     <Compile Include="configuration\SettingsLoader.cs" />
-    <Compile Include="data\IMetricsDataProvider.cs" />
-    <Compile Include="data\IMetricsDataProviderFactory.cs" />
-    <Compile Include="data\SqlMetricsDataProvider.cs" />
-    <Compile Include="data\SqlMetricsDataProviderFactory.cs" />
+    <Compile Include="data\commands\StoreMetricCommand.cs" />
+    <Compile Include="data\mssql\commands\StoreMetricCommand.cs" />
+    <Compile Include="data\IMetricsRepository.cs" />
+    <Compile Include="data\IMetricsRepositoryFactory.cs" />
+    <Compile Include="data\mssql\SqlMetricsDataProvider.cs" />
+    <Compile Include="data\mssql\SqlMetricsDataProviderFactory.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="MetricsLogger.cs" />
     <Compile Include="MetricsStrings.cs" />
@@ -83,6 +85,9 @@
     <Compile Include="protos\metrics\parsers\csharp\Metrics.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="metrics.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -91,7 +96,9 @@
       <Name>metrics %28%28metrics%29\metrics%29</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="data\queries\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

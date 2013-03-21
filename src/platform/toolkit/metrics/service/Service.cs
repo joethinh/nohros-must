@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Nohros.Metrics.Data;
 using Nohros.Ruby;
 using Nohros.Ruby.Protocol;
 using S = Nohros.Resources.StringResources;
@@ -12,18 +13,20 @@ namespace Nohros.Metrics
     const string kClassName = "Nohros.Metrics.Service";
 
     readonly MetricsLogger logger_;
-    readonly IMetricsDataProvider metrics_data_provider_;
+    readonly IMetricsRepository metrics_data_provider_;
     readonly ISettings settings_;
     readonly ManualResetEvent start_stop_event_;
+    readonly StoreMetricCommand store_metric_;
     IRubyServiceHost service_host_;
 
     #region .ctor
-    public Service(ISettings settings,
-      IMetricsDataProvider metrics_data_provider) {
+    public Service(ISettings settings, IMetricsRepository metrics_data_provider) {
       settings_ = settings;
       metrics_data_provider_ = metrics_data_provider;
       logger_ = MetricsLogger.ForCurrentProcess;
       start_stop_event_ = new ManualResetEvent(false);
+
+      metrics_data_provider_.Query(out store_metric_);
     }
     #endregion
 
@@ -46,16 +49,17 @@ namespace Nohros.Metrics
             break;
         }
       } catch (Exception e) {
-        logger_.Error(
-          string.Format(S.Log_MethodThrowsException, kClassName,
-            "Store"), e);
+        logger_.Error(string.Format(S.Log_MethodThrowsException, kClassName,
+          "Store"), e);
       }
     }
 
     void StoreMetrics(StoreMetricsMessage request) {
       foreach (MetricProto proto in request.MetricsList) {
-        var name = proto.Name.ToMetricName().ToString();
-        metrics_data_provider_.Store(name, proto.Value, proto.Timestamp);
+        store_metric_.Name = proto.Name;
+        store_metric_.Timestamp = proto.Timestamp;
+        store_metric_.Value = proto.Value;
+        store_metric_.Execute();
       }
     }
   }
