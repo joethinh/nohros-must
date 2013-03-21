@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using Nohros.Data.Providers;
 
-namespace Nohros.Metrics
+namespace Nohros.Metrics.Data.Sql
 {
-  public class SqlMetricsDataProviderFactory : IMetricsDataProviderFactory
+  public class SqlMetricsDataProviderFactory : IMetricsRepositoryFactory
   {
-    public IMetricsDataProvider CreateMetricsDataProvider(
+    public IMetricsRepository CreateMetricsDataProvider(
       IDictionary<string, string> options) {
       var factory = new SqlConnectionProviderFactory();
       var sql_connection_provider = factory
