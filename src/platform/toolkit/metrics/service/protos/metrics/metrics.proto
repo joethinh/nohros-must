@@ -13,34 +13,19 @@ enum MessageType {
   kStoreMetricsMessage = 100;
 }
 
-// Defines a unique name for a metric. It is composed by four parts,
-// group, type, name and scope. Two metrics that have the same value
-// for the fours parts should be considered the same.
-message MetricNameProto {
-  // The top level grouping of the metric.
-  required string group = 1;
-  
-  // The second level grouping of the metric.
-  required string type = 2;
-  
-  // A short name describing the metric's purpose(ex. session-count)
-  required string name = 3;
-  
-  // An optional name describing the metric's scope. Useful
-  // when you have multiple instances of a metric.
-  optional string scope = 4;
-}
-
 // The defintion of a metric.
 message MetricProto {
   // The name of the metric to store
-  required MetricNameProto name = 1;
+  required string name = 1;
   
   // The value to store for the metric.
   required  double value = 2;
   
   // The timestamp that identify when the metric was collected.
   required  sint64 timestamp = 3;
+  
+  // The unit used to measure the metric.
+  optional string unit = 4;
 }
 
 // A mesage that is sent to persist the metrics.
