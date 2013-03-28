@@ -51,7 +51,16 @@ namespace Nohros.Dynamics
     /// <param name="type"></param>
     /// <returns></returns>
     public static bool DynamicTypeExists(Type type) {
-      return module_.GetType(GetDynamicTypeName(type)) != null;
+      return DynamicTypeExists(type.Namespace, type);
+    }
+
+    /// <summary>
+    /// Checks if a dynamic type exists for the type <paramref name="type"/>
+    /// and prefix <paramref name="prefix"/>.
+    /// </summary>
+    /// <returns></returns>
+    public static bool DynamicTypeExists(string prefix, Type type) {
+      return module_.GetType(GetDynamicTypeName(prefix, type)) != null;
     }
 
     /// <summary>
@@ -62,7 +71,21 @@ namespace Nohros.Dynamics
     /// </param>
     /// <returns></returns>
     public static string GetDynamicTypeName(Type type) {
-      return type.Name + "_";
+      return GetDynamicTypeName(type.Namespace, type);
+    }
+
+    /// <summary>
+    /// Gets the name of the dynamic type for the <typeparamref name="type"/>.
+    /// </summary>
+    /// <param name="prefix">
+    /// The preffix to be prepended on the type name.
+    /// </param>
+    /// <param name="type">
+    /// The type which dynamic type name should be retrieved.
+    /// </param>
+    /// <returns></returns>
+    public static string GetDynamicTypeName(string prefix, Type type) {
+      return prefix + "." + type.Name + "_";
     }
 
     public static string GetDataReaderMethodName(Type type) {
