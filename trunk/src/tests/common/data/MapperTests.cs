@@ -77,10 +77,8 @@ namespace Nohros.Common
       var reader = Mock.Create<IDataReader>();
       var mapper = new DataReaderMapper<MapperTest>.Builder()
         .Map("usuario_nome", "name")
-        .Build(reader);
-      Dynamics_.AssemblyBuilder.Save("test.dll");
+        .Build(reader, "MyNamespace");
       Assert.That(mapper, Is.AssignableTo<DataReaderMapper<MapperTest>>());
-      Assert.That(mapper, Is.AssignableTo<MapperTest>());
     }
 
     [Test]
@@ -217,12 +215,12 @@ namespace Nohros.Common
     [Test]
     public void ShouldMapArrayOfKeyValuePairs() {
       var builder = new SqlConnectionStringBuilder();
-      builder.DataSource = ".";
+      builder.DataSource = "itaucaj";
       builder.UserID = "nohros";
       builder.Password = "Noors03";
 
       using (var conn = new SqlConnection(builder.ToString()))
-      using (var cmd = new SqlCommand("select 'nohros' as usuario_nome", conn)) {
+      using (var cmd = new SqlCommand("exec fila_get_by_id @fila_id = 1", conn)) {
         conn.Open();
         using (var reader = cmd.ExecuteReader()) {
           var mapper = new DataReaderMapper<KeyedMapperTest>.Builder(

@@ -89,6 +89,12 @@ namespace Nohros.Dynamics
     }
 
     public static string GetDataReaderMethodName(Type type) {
+      // If the type is a enumeration we need to get the method that is
+      // associated with the enumeration underlying type.
+      if (type.IsEnum) {
+        type = Enum.GetUnderlyingType(type);
+      }
+
       if (type == typeof (int)) {
         return "GetInt32";
       }
@@ -127,7 +133,7 @@ namespace Nohros.Dynamics
       }
       throw new ArgumentException(
         string
-          .Format(Resources.Resources.Arg_WrongType, "type", "ValueType"));
+          .Format(Resources.Resources.Arg_WrongType, type.Name, "ValueType"));
     }
 
     public static MethodInfo GetDataReaderMethod(string method) {
