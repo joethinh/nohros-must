@@ -16,14 +16,14 @@ namespace Nohros.Metrics.Reporting
 
     /// <inheritdoc/>
     public override void Run(MetricPredicate predicate) {
-      var registry = MetricsRegsitry;
+      var registry = MetricsRegistry;
       var now = DateTime.UtcNow;
       registry.Report(Report, now, predicate);
     }
 
     /// <inheritdoc/>
     public override void Run() {
-      var registry = MetricsRegsitry;
+      var registry = MetricsRegistry;
       var now = DateTime.UtcNow;
       registry.Report(Report, now);
     }

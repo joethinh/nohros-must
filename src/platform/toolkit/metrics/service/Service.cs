@@ -36,7 +36,7 @@ namespace Nohros.Metrics
       start_stop_event_.WaitOne();
     }
 
-    public override void Stop(IRubyMessage message) {
+    public override void Shutdown() {
       start_stop_event_.Set();
     }
 

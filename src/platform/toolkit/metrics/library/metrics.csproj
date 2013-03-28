@@ -74,7 +74,12 @@
     <Compile Include="Metrics.cs" />
     <Compile Include="reporting\AbstractPollingReporter.cs" />
     <Compile Include="reporting\ConsoleReporter.cs" />
+    <Compile Include="reporting\ForwarderReporter.cs" />
     <Compile Include="reporting\IMetricsReporter.cs" />
+    <Compile Include="reporting\IMetricsReporterFactory.cs" />
+    <Compile Include="reporting\IPollingMetricsReporter.cs" />
+    <Compile Include="reporting\IPollingMetricsReporterFactory.cs" />
+    <Compile Include="reporting\NOPMetricsReporter.cs" />
     <Compile Include="stats\ExponentialWeightedMovingAverage.cs" />
     <Compile Include="stats\ExponentialWeightedMovingAverages.cs" />
     <Compile Include="core\Gauge.cs" />
