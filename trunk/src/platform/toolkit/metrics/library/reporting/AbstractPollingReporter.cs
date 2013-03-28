@@ -9,7 +9,7 @@ namespace Nohros.Metrics.Reporting
   /// implementations which periodically poll registered metrics (e.g., to
   /// send data to another service).
   /// </summary>
-  public abstract class AbstractPollingReporter : IMetricsReporter
+  public abstract class AbstractPollingReporter : IPollingMetricsReporter
   {
     readonly IMetricsRegistry registry_;
     System.Threading.Timer timer_;
@@ -87,7 +87,7 @@ namespace Nohros.Metrics.Reporting
     /// <summary>
     /// Gets the associated metrics registry.
     /// </summary>
-    protected IMetricsRegistry MetricsRegsitry {
+    protected internal IMetricsRegistry MetricsRegistry {
       get { return registry_; }
     }
   }

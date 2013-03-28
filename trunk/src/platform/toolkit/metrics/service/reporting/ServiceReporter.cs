@@ -13,32 +13,33 @@ namespace Nohros.Metrics.Reporting
   /// </summary>
   public class ServiceReporter : AbstractPollingReporter
   {
-    readonly string server_;
     readonly ZmqContext context_;
+    readonly string endpoint_;
     readonly ZmqSocket socket_;
 
     #region .ctor
-    public ServiceReporter(IMetricsRegistry registry, string server)
+    public ServiceReporter(IMetricsRegistry registry, ZmqContext context,
+      string endpoint)
       : base(registry) {
-      context_ = new Context();
+      context_ = context;
       socket_ = context_.Socket(SocketType.DEALER);
-      server_ = server;
+      endpoint_ = "tcp://" + endpoint;
     }
     #endregion
 
     public override void Start(long period, TimeUnit unit) {
-      socket_.Connect(server_);
+      socket_.Connect(endpoint_);
       base.Start(period, unit);
     }
 
     public override void Run() {
-      var registry = MetricsRegsitry;
+      var registry = MetricsRegistry;
       var now = DateTime.UtcNow;
       registry.Report(Report, now);
     }
 
     public override void Run(MetricPredicate predicate) {
-      var registry = MetricsRegsitry;
+      var registry = MetricsRegistry;
       var now = DateTime.UtcNow;
       registry.Report(Report, now, predicate);
     }

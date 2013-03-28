@@ -286,6 +286,7 @@
     <Compile Include="type\ParameterizedStringPartLiteral.cs" />
     <Compile Include="type\ParameterizedStringPartParameter.cs" />
     <Compile Include="type\suppliers\ExpiringMemoizingSupplier.cs" />
+    <Compile Include="type\suppliers\IRestrictedSupplier.cs" />
     <Compile Include="type\suppliers\ISupplier.cs" />
     <Compile Include="type\suppliers\MemoizingSupplier.cs" />
     <Compile Include="type\ParameterizedStringPart.cs" />
@@ -416,7 +417,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
