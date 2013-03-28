@@ -294,10 +294,23 @@ namespace Nohros.Data
       /// <see cref="DataReaderMapper{T}"/> class.
       /// </returns>
       public DataReaderMapper<T> Build(IDataReader reader) {
+        return Build(reader, type_t_.Namespace);
+      }
+
+      /// <summary>
+      /// Builds a dynamic <see cref="DataReaderMapper{T}"/> for the type
+      /// <typeparamref source="T"/>.
+      /// </summary>
+      /// <returns>
+      /// An object that implements the <see cref="IMapper{T}"/> and the
+      /// <typeparamref source="T"/> interface and derives from the
+      /// <see cref="DataReaderMapper{T}"/> class.
+      /// </returns>
+      public DataReaderMapper<T> Build(IDataReader reader, string prefix) {
         if (reader == null) {
           throw new ArgumentNullException("reader");
         }
-        return Build(reader, null);
+        return Build(reader, null, prefix);
       }
 
       /// <summary>
@@ -311,8 +324,22 @@ namespace Nohros.Data
       /// </returns>
       public DataReaderMapper<T> Build(IDataReader reader,
         CallableDelegate<T> loader) {
+        return Build(reader, loader, type_t_.Namespace);
+      }
+
+      /// <summary>
+      /// Builds a dynamic <see cref="DataReaderMapper{T}"/> for the type
+      /// <typeparamref source="T"/>.
+      /// </summary>
+      /// <returns>
+      /// An object that implements the <see cref="IMapper{T}"/> and the
+      /// <typeparamref source="T"/> interface and derives from the
+      /// <see cref="DataReaderMapper{T}"/> class.
+      /// </returns>
+      public DataReaderMapper<T> Build(IDataReader reader,
+        CallableDelegate<T> loader, string prefix) {
         DataReaderMapper<T> mapper =
-          (DataReaderMapper<T>) Activator.CreateInstance(GetDynamicType());
+          (DataReaderMapper<T>) Activator.CreateInstance(GetDynamicType(prefix));
         mapper.Initialize(reader, loader);
         return mapper;
       }
@@ -327,7 +354,22 @@ namespace Nohros.Data
       /// </param>
       /// <returns></returns>
       public static bool TryGetDynamicType(out Type type) {
-        string dynamic_type_name = Dynamics_.GetDynamicTypeName(typeof (T));
+        var t = typeof (T);
+        return TryGetDynamicType(t.Namespace, out type);
+      }
+
+      /// <summary>
+      /// Gets the dynamic type for <typeparamref name="T"/>.
+      /// </summary>
+      /// <param name="type">
+      /// When this method returns contains the type that was dynamically
+      /// created for the type <typeparamref name="T"/>, or <c>null</c> is
+      /// a dynamic type for <typeparamref name="T"/> does not exists.
+      /// </param>
+      /// <returns></returns>
+      public static bool TryGetDynamicType(string prefix, out Type type) {
+        string dynamic_type_name = Dynamics_.GetDynamicTypeName(prefix,
+          typeof (T));
         type = Dynamics_.ModuleBuilder.GetType(dynamic_type_name);
         return type != null;
       }
@@ -342,7 +384,21 @@ namespace Nohros.Data
       /// If the dynamic type does not already exists, it will be created.
       /// </remarks>
       internal Type GetDynamicType() {
-        string dynamic_type_name = Dynamics_.GetDynamicTypeName(type_t_);
+        return GetDynamicType(type_t_.Namespace);
+      }
+
+      /// <summary>
+      /// Gets the dynamic type for <typeparamref source="T"/>.
+      /// </summary>
+      /// <returns>
+      /// The dynamic type for <typeparamref source="T"/>.
+      /// </returns>
+      /// <remarks>
+      /// If the dynamic type does not already exists, it will be created.
+      /// </remarks>
+      internal Type GetDynamicType(string prefix) {
+        string dynamic_type_name =
+          Dynamics_.GetDynamicTypeName(prefix, type_t_);
         return Dynamics_.ModuleBuilder
           .GetType(dynamic_type_name) ?? MakeDynamicType(dynamic_type_name);
       }
