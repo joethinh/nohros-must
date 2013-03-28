@@ -74,7 +74,6 @@
     <Compile Include="concurrent\MailboxTests.cs" />
     <Compile Include="concurrent\YQueueTests.cs" />
     <Compile Include="configuration\common\provider\ProvidersNodeParserTests.cs" />
-    <Compile Include="data\DataReaderMapperTests.cs" />
     <Compile Include="data\json\collection\JsonCollectionFactoryTest.cs" />
     <Compile Include="data\json\collection\JsonObjectTest.cs" />
     <Compile Include="data\json\collection\JsonTableTest.cs" />
@@ -114,7 +113,6 @@
     <Content Include="config-tests.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="JustMock.Readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
