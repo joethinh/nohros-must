@@ -38,11 +38,6 @@ namespace Nohros.Data.Providers
     #endregion
 
     /// <inheritdoc/>
-    public ITransactionContext CreateTransactionContext() {
-      return new TransactionContext();
-    }
-
-    /// <inheritdoc/>
     IDbConnection IConnectionProvider.CreateConnection() {
       return CreateConnection();
     }

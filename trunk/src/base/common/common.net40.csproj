@@ -190,6 +190,7 @@
     <Compile Include="logging\ConsoleLogger.cs" />
     <Compile Include="logging\ForwardingLogger.cs" />
     <Compile Include="logging\IForwardingLogger.cs" />
+    <Compile Include="providers\data\AbstractTransactionContext.cs" />
     <Compile Include="providers\data\ConnectionProviderLoader.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldBoolean.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDecimal.cs" />
@@ -233,15 +234,9 @@
     <Compile Include="data\json\tokens\JsonToken.cs" />
     <Compile Include="exception\ConfigurationException.cs" />
     <Compile Include="logging\ILoggerFactory.cs" />
-    <Compile Include="providers\data\DependentTransaction.cs" />
     <Compile Include="providers\data\IConnectionProvider.cs" />
-    <Compile Include="providers\data\ImplicitTransaction.cs" />
-    <Compile Include="providers\data\InternalTransaction.cs" />
-    <Compile Include="providers\data\ITransaction.cs" />
     <Compile Include="providers\data\ITransactionContext.cs" />
-    <Compile Include="providers\data\Transaction.cs" />
-    <Compile Include="providers\data\TransactionBehavior.cs" />
-    <Compile Include="providers\data\TransactionContext.cs" />
+    <Compile Include="providers\data\ITransactionContextFactory.cs" />
     <Compile Include="RuntimeType.cs" />
     <Compile Include="type\collections\AbstractRingQueue.cs" />
     <Compile Include="type\collections\IForwardOnlyEnumerable.cs" />
@@ -417,7 +412,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
