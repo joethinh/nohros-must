@@ -5,53 +5,32 @@ namespace Nohros.Data.Providers
   /// <summary>
   /// Makes a code block transactional.
   /// </summary>
-  /// <remarks>
-  /// <see cref="ITransactionContext"/> manages the ambient transaction. The
-  /// ambient transaction is the transaction your code executes in.
-  /// <para>
-  /// If no execption occurs within the transaction context(that is, between
-  /// the initialization of the <see cref="ITransactionContext"/> object and
-  /// the calling of its <see cref="ITransactionContext.Dispose"/> method),
-  /// then the transaction in which the scope participates is allowed to
-  /// proceed. If an exception does occur within the transaction context, the
-  /// transaction in which it participates will be rolled back.
-  /// </para>
-  /// <para>
-  /// When your application completes all work it wants to perform in a
-  /// transaction, you should call the <see cref="Complete"/> method only once
-  /// to inform that it is acceptable to commit the transaction. Failing to
-  /// call this method aborts the transaction.
-  /// </para>
-  /// <para>
-  /// A call to the <see cref="ITransactionContext.Dispose"/> method marks the
-  /// end of the transaction context. Exceptions that occur after calling this
-  /// method may not affect the transaction.
-  /// </para>
-  /// </remarks>
-  public interface ITransactionContext : IDisposable
+  public interface ITransactionContext
   {
     /// <summary>
-    /// Indicates that all operations within a context are completed
-    /// successfully.
+    /// Atomically commits all the related operations against the associated
+    /// data provider.
     /// </summary>
     /// <remarks>
     /// When you are satisfied that all operations within the context are
-    /// competed successfully, you should call this methos only once to inform
-    /// that the state accross all resources is consistent, and the transaction
-    /// can be commited. It is very good practive to put the call as the last
-    /// statement in the using block.
+    /// ready to be persisted against the associated data provider, you should
+    /// call this method to inform that the state across all resources is
+    /// consistent, and the operations can be persisted.
     /// <para>
-    /// Falling to call this methos aborts the transaction because the
-    /// <see cref="ITransactionContext"/> interprets this as a system failure,
-    /// or exception thrown whithin the context of a transaction. However, you
-    /// shold also note that calling this methos does not guarantee a commit of
-    /// the transaction. It is merely a way of informing the
-    /// <see cref="ITransactionContext"/> of your status.
+    /// Failing to call this method aborts the transaction, preventing the
+    /// associated operations to be executed.
+    /// </para>
+    /// <para>
+    /// Calling this method does not guarantee a commit of the operations. It
+    /// is merely a way to inform the context about your status.
+    /// </para>
+    /// <para>
+    /// If one of the operations fails to be executed the operations that was
+    /// already executed should be rolled back.
     /// </para>
     /// </remarks>
-    /// <exception cref="InvalidOperationException">
-    /// There is no transaction in progress or this method has laready called
-    /// once.
+    /// <exception cref="ProviderException">
+    /// A operation fail to be persisted against the associated data provider.
     /// </exception>
     void Complete();
   }
