@@ -42,6 +42,6 @@ namespace Nohros.Concurrent
     /// <returns>
     /// The newly created <see cref="Thread"/> object.
     /// </returns>
-    //Thread CreateThread(ParameterizedThreadStart runnable);
+    Thread CreateThread(ParameterizedThreadStart runnable);
   }
 }
