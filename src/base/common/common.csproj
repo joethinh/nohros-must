@@ -189,7 +189,7 @@
     <Compile Include="logging\ForwardingLogger.cs" />
     <Compile Include="logging\IForwardingLogger.cs" />
     <Compile Include="logging\MustLogger.cs" />
-    <Compile Include="providers\data\AbstractTransactionContext.cs" />
+    <Compile Include="providers\data\TransactionContext.cs" />
     <Compile Include="providers\data\ConnectionProviderLoader.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldBoolean.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDecimal.cs" />
@@ -413,7 +413,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
