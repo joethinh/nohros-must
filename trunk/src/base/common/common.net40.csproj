@@ -190,7 +190,6 @@
     <Compile Include="logging\ConsoleLogger.cs" />
     <Compile Include="logging\ForwardingLogger.cs" />
     <Compile Include="logging\IForwardingLogger.cs" />
-    <Compile Include="providers\data\AbstractTransactionContext.cs" />
     <Compile Include="providers\data\ConnectionProviderLoader.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldBoolean.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDecimal.cs" />
@@ -237,6 +236,7 @@
     <Compile Include="providers\data\IConnectionProvider.cs" />
     <Compile Include="providers\data\ITransactionContext.cs" />
     <Compile Include="providers\data\ITransactionContextFactory.cs" />
+    <Compile Include="providers\data\TransactionContext.cs" />
     <Compile Include="RuntimeType.cs" />
     <Compile Include="type\collections\AbstractRingQueue.cs" />
     <Compile Include="type\collections\IForwardOnlyEnumerable.cs" />
@@ -412,7 +412,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

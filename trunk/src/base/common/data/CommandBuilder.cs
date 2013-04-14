@@ -36,6 +36,15 @@ namespace Nohros.Data
     public CommandBuilder(IDbConnection connection) {
       command_ = connection.CreateCommand();
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommandBuilder"/> class
+    /// by using the specified <see cref="IDbCommand"/>.
+    /// </summary>
+    /// <param name="command"></param>
+    public CommandBuilder(IDbCommand command) {
+      command_ = command;
+    }
     #endregion
 
     /// <summary>
