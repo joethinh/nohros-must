@@ -58,5 +58,41 @@ namespace Nohros.Configuration
     /// </para>
     /// </remarks>
     IProviderOptions Options { get; }
+
+    /// <summary>
+    /// Gets a collection of strings that can be used to identify the provider.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="Aliases"/> provides a way to identify the same provider by
+    /// more than one name. This property is useful when you need to
+    /// implement distinct provider behavior within a single class and do not
+    /// want to couple the distinct behaviors within a single definition.
+    /// <example>
+    /// <code>
+    /// public interface ISomeRepository {
+    ///   string SomeProperty { get; }
+    /// }
+    /// <para>
+    /// <code>
+    /// public interface ISomeOtherRepository {
+    ///   string SomeOtherProperty { get; }
+    /// }
+    /// </code>
+    /// </para>
+    /// <para>
+    /// <code>
+    /// public SqlDataProvider : ISomeRepository, ISomeOtherRepository {
+    /// }
+    /// </code>
+    /// </para>
+    /// </code>
+    /// </example>
+    /// The SqlDataProvider could be referenced in the configuration file
+    /// using a single provider node and two alias.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// An attempt to set the value of the property to null was performed.
+    /// </exception>
+    ICollection<string> Aliases { get; }
   }
 }

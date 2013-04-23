@@ -26,7 +26,8 @@ namespace Nohros.Configuration
     /// A attribute named <paramref name="name"/> is not found within
     /// <paramref name="node"/>.
     /// </exception>
-    protected static string GetAttributeValue(XmlElement node, string name) {
+    protected internal static string GetAttributeValue(XmlElement node,
+      string name) {
       XmlAttribute xml_attribute = node.Attributes[name];
       if (xml_attribute == null) {
         throw new ConfigurationException(
@@ -52,7 +53,8 @@ namespace Nohros.Configuration
     /// A string representing the absolute path of the value that was set in
     /// the "location" attribute of the <paramref name="element"/>.
     /// </returns>
-    protected static string GetLocation(XmlElement element, string base_directory) {
+    protected static string GetLocation(XmlElement element,
+      string base_directory) {
       string location;
       if (GetAttributeValue(element, Strings.kLocationAttribute, out location)) {
         if (!Path.IsPathRooted(location))
@@ -68,8 +70,9 @@ namespace Nohros.Configuration
     /// <paramref name="base_directory"/> are both not <c>null</c> and
     /// <paramref name="base_directory"/> is an absolute path(rooted).
     /// </summary>
-    protected static void CheckPreconditions(XmlElement element, string base_directory) {
-      if(element == null || base_directory == null) {
+    protected static void CheckPreconditions(XmlElement element,
+      string base_directory) {
+      if (element == null || base_directory == null) {
         throw new ArgumentNullException(element == null
           ? "element"
           : "base_directory");

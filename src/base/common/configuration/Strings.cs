@@ -37,6 +37,9 @@ namespace Nohros
     public const string kLoginModuleNodeName = "module";
     public const string kXmlElementsNodeName = "xml-elements";
 
+    public const string kAliasesNodeName = "aliases";
+    public const string kAliasNodeName = "alias";
+
     /// <summary>
     /// The key that will be used to store the Xml element that was used to
     /// configure a <see cref="Nohros.Configuration.IConfiguration"/> object.

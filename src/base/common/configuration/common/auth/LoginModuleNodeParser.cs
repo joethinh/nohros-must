@@ -37,7 +37,7 @@ namespace Nohros.Configuration
       LoginModuleNode login_module = new LoginModuleNode(name, type,
         control_flag, location);
       IList<string> options_references;
-      login_module.options = GetOptions(name, element, out options_references);
+      login_module.Options = GetOptions(name, element, out options_references);
       return login_module;
     }
 

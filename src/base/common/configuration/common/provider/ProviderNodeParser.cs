@@ -37,7 +37,8 @@ namespace Nohros.Configuration
       ProviderNode provider = new ProviderNode(name, type);
       provider.location_ = location;
       provider.group_ = group;
-      provider.options = GetOptions(name, element, out options_refs);
+      provider.options_ = GetOptions(name, element, out options_refs);
+      provider.aliases_ = GetAliases(element);
       return provider;
     }
 
@@ -53,6 +54,16 @@ namespace Nohros.Configuration
       }
       options_references = new List<string>();
       return new ProviderOptionsNode(name);
+    }
+
+    protected static ICollection<string> GetAliases(XmlElement element) {
+      foreach (XmlNode node in element.ChildNodes) {
+        if (node.NodeType == XmlNodeType.Element &&
+          Strings.AreEquals(node.Name, Strings.kAliasesNodeName)) {
+          return ProviderAliasesNode.Parse((XmlElement) node);
+        }
+      }
+      return new string[0];
     }
   }
 }

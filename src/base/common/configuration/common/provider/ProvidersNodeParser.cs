@@ -62,6 +62,11 @@ namespace Nohros.Configuration
             }
             providers_node_group.Add(provider);
 
+            // Associate each alias with the provider object.
+            foreach (string alias in provider.Aliases) {
+              providers_node_group.Add(alias, provider);
+            }
+
             // Add the provider to the unresolved providers list if it has
             // references to be resolved.
             if (references.Count > 0) {
