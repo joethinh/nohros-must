@@ -235,9 +235,14 @@
     <Compile Include="exception\ConfigurationException.cs" />
     <Compile Include="logging\ILoggerFactory.cs" />
     <Compile Include="providers\data\IConnectionProvider.cs" />
-    <Compile Include="providers\data\ITransactionContext.cs" />
-    <Compile Include="providers\data\ITransactionContextFactory.cs" />
-    <Compile Include="providers\data\TransactionContext.cs" />
+    <Compile Include="providers\data\transaction\EnlistCommandDelegate.cs" />
+    <Compile Include="providers\data\transaction\EnlistedCommand.cs" />
+    <Compile Include="providers\data\transaction\ExecuteCommandCallback.cs" />
+    <Compile Include="providers\data\transaction\IEnlistedCommand.cs" />
+    <Compile Include="providers\data\transaction\ImmediateTransactionContext.cs" />
+    <Compile Include="providers\data\transaction\ITransactionContext.cs" />
+    <Compile Include="providers\data\transaction\ITransactionContextFactory.cs" />
+    <Compile Include="providers\data\transaction\TransactionContext.cs" />
     <Compile Include="RuntimeType.cs" />
     <Compile Include="type\collections\AbstractRingQueue.cs" />
     <Compile Include="type\collections\IForwardOnlyEnumerable.cs" />

@@ -346,4 +346,7 @@
   <data name="InvalidOperation_CalledMoreThanOnce" xml:space="preserve">
     <value>This method has already been called once.</value>
   </data>
+  <data name="Arg_TransactionContext_Command_Connection" xml:space="preserve">
+    <value>The connection that is associated with the specified command should be the same as the specified in the context constructor.</value>
+  </data>
 </root>
