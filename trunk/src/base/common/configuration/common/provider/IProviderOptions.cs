@@ -17,6 +17,9 @@ namespace Nohros.Configuration
     /// </param>
     void Add(string key, string value);
 
+    /// <summary>
+    /// Gets the number of options in the collection.
+    /// </summary>
     int Count { get; }
 
     /// <summary>

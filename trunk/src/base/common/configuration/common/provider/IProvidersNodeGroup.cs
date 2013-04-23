@@ -76,6 +76,23 @@ namespace Nohros.Configuration
     void Add(IProviderNode node);
 
     /// <summary>
+    /// Adds an <see cref="IProviderNode"/> to the
+    /// <see cref="IProvidersNodeGroup"/> collection using the given provider
+    /// name.
+    /// </summary>
+    /// <param name="name">
+    /// The name to use to identify the provider node.
+    /// </param>
+    /// <param name="node">
+    /// The <see cref="IProviderNode"/> to add.
+    /// </param>
+    /// <remarks>
+    /// The name of the node will be used as a node key and it should be
+    /// the node's uniquely identifier.
+    /// </remarks>
+    void Add(string name, IProviderNode node);
+
+    /// <summary>
     /// Gets a <see cref="IProviderNode"/> node whose name is
     /// <paramref name="name"/> and is associated with the
     /// default group.

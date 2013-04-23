@@ -127,6 +127,7 @@
     <Compile Include="configuration\common\provider\IProviderOptions.cs" />
     <Compile Include="configuration\common\provider\IProvidersNode.cs" />
     <Compile Include="configuration\common\provider\IProvidersNodeGroup.cs" />
+    <Compile Include="configuration\common\provider\ProviderAliasesNodeParser.cs" />
     <Compile Include="configuration\common\provider\ProviderNodeBuilder.cs" />
     <Compile Include="configuration\common\provider\ProviderNodeParser.cs" />
     <Compile Include="configuration\common\provider\ProviderOptionsNode.cs" />
@@ -412,7 +413,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

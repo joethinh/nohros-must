@@ -37,6 +37,11 @@ namespace Nohros.Configuration
     }
 
     /// <inheritdoc/>
+    public void Add(string name, IProviderNode node) {
+      AddChildNode(name, node);
+    }
+
+    /// <inheritdoc/>
     public IProviderNode GetProviderNode(string name) {
       return GetChildNode<IProviderNode>(name);
     }

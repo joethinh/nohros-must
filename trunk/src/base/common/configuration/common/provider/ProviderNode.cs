@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Nohros.Configuration
 {
@@ -9,6 +10,7 @@ namespace Nohros.Configuration
   public partial class ProviderNode : AbstractConfigurationNode, IProviderNode
   {
     readonly string type_;
+    ICollection<string> aliases_;
 
     string group_;
     string location_;
@@ -20,7 +22,7 @@ namespace Nohros.Configuration
     /// This should never be a <c>null</c> reference. If a provider does
     /// not have any configured options_ this dictionary should be empty.
     /// </remarks>
-    protected IProviderOptions options;
+    IProviderOptions options_;
 
     #region .ctor
     /// <summary>
@@ -60,7 +62,8 @@ namespace Nohros.Configuration
       type_ = type;
       location_ = location;
       group_ = string.Empty;
-      options = new ProviderOptionsNode(name);
+      options_ = new ProviderOptionsNode(name);
+      aliases_ = new string[0];
     }
     #endregion
 
@@ -76,7 +79,13 @@ namespace Nohros.Configuration
 
     /// <inheritdoc/>
     public IProviderOptions Options {
-      get { return options; }
+      get { return options_; }
+      protected set {
+        if (options_ == null) {
+          throw new ArgumentNullException("value");
+        }
+        options_ = value;
+      }
     }
 
     /// <summary>
@@ -84,6 +93,17 @@ namespace Nohros.Configuration
     /// </summary>
     public string Group {
       get { return group_; }
+    }
+
+    /// <inheritdoc/>
+    public ICollection<string> Aliases {
+      get { return aliases_; }
+      protected set {
+        if (aliases_ == null) {
+          throw new ArgumentNullException("value");
+        }
+        aliases_ = value;
+      }
     }
   }
 }
