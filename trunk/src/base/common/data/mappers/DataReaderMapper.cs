@@ -23,14 +23,14 @@ namespace Nohros.Data
                                                           <T>,
                                                         IDisposable
   {
-    bool has_rows_;
+    bool defer_;
     protected internal CallableDelegate<T> loader_;
     internal int[] ordinals_;
     protected internal IDataReader reader_;
 
     #region .ctor
     protected internal DataReaderMapper() {
-      has_rows_ = false;
+      defer_ = false;
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ namespace Nohros.Data
     /// </param>
     protected DataReaderMapper(IDataReader reader) {
       reader_ = reader;
-      has_rows_ = false;
+      defer_ = false;
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ namespace Nohros.Data
     protected DataReaderMapper(IDataReader reader, CallableDelegate<T> loader) {
       reader_ = reader;
       loader_ = loader;
-      has_rows_ = false;
+      defer_ = false;
     }
     #endregion
 
@@ -77,6 +77,19 @@ namespace Nohros.Data
     }
 
     public virtual IEnumerator<T> GetEnumerator() {
+      IEnumerator<T> enumerator = GetDeferredEnumerator();
+      if (defer_) {
+        return enumerator;
+      }
+
+      List<T> list = new List<T>();
+      while (enumerator.MoveNext()) {
+        list.Add(enumerator.Current);
+      }
+      return list.GetEnumerator();
+    }
+
+    IEnumerator<T> GetDeferredEnumerator() {
       T t;
       while (Map(out t)) {
         yield return t;
@@ -99,6 +112,11 @@ namespace Nohros.Data
     }
 
     internal void Initialize(IDataReader reader, CallableDelegate<T> loader) {
+      Initialize(reader, loader, false);
+    }
+
+    internal void Initialize(IDataReader reader, CallableDelegate<T> loader,
+      bool defer) {
       reader_ = reader;
       GetOrdinals();
       if (loader == null) {
@@ -107,6 +125,7 @@ namespace Nohros.Data
         }
       }
       loader_ = loader ?? NewT;
+      defer_ = defer;
     }
 
     internal virtual void GetOrdinals() {

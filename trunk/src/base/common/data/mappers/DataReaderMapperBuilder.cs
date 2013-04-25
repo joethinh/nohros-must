@@ -36,6 +36,7 @@ namespace Nohros.Data
 
       readonly IDictionary<string, ITypeMap> mappings_;
       readonly Type type_t_;
+      readonly string type_t_type_name_;
 
       #region .ctor
       /// <summary>
@@ -51,6 +52,18 @@ namespace Nohros.Data
         mappings_ = new Dictionary<string, ITypeMap>(
           StringComparer.OrdinalIgnoreCase);
         type_t_ = type_t;
+        type_t_type_name_ = GetClassName(type_t_);
+      }
+
+      string GetClassName(Type t) {
+        string type_name = t.Namespace;
+        Type obj = typeof (object);
+        Type nested = t.BaseType;
+        while (nested != obj) {
+          type_name += "." + nested.Name;
+          nested = nested.BaseType;
+        }
+        return type_name;
       }
 
       /// <summary>
@@ -294,7 +307,20 @@ namespace Nohros.Data
       /// <see cref="DataReaderMapper{T}"/> class.
       /// </returns>
       public DataReaderMapper<T> Build(IDataReader reader) {
-        return Build(reader, type_t_.Namespace);
+        return Build(reader, false);
+      }
+
+      /// <summary>
+      /// Builds a dynamic <see cref="DataReaderMapper{T}"/> for the type
+      /// <typeparamref source="T"/>.
+      /// </summary>
+      /// <returns>
+      /// An object that implements the <see cref="IMapper{T}"/> and the
+      /// <typeparamref source="T"/> interface and derives from the
+      /// <see cref="DataReaderMapper{T}"/> class.
+      /// </returns>
+      public DataReaderMapper<T> Build(IDataReader reader, bool defer) {
+        return Build(reader, type_t_type_name_, defer);
       }
 
       /// <summary>
@@ -310,7 +336,23 @@ namespace Nohros.Data
         if (reader == null) {
           throw new ArgumentNullException("reader");
         }
-        return Build(reader, null, prefix);
+        return Build(reader, prefix, false);
+      }
+
+      /// <summary>
+      /// Builds a dynamic <see cref="DataReaderMapper{T}"/> for the type
+      /// <typeparamref source="T"/>.
+      /// </summary>
+      /// <returns>
+      /// An object that implements the <see cref="IMapper{T}"/> and the
+      /// <typeparamref source="T"/> interface and derives from the
+      /// <see cref="DataReaderMapper{T}"/> class.
+      /// </returns>
+      public DataReaderMapper<T> Build(IDataReader reader, string prefix, bool defer) {
+        if (reader == null) {
+          throw new ArgumentNullException("reader");
+        }
+        return Build(reader, null, prefix, defer);
       }
 
       /// <summary>
@@ -324,7 +366,21 @@ namespace Nohros.Data
       /// </returns>
       public DataReaderMapper<T> Build(IDataReader reader,
         CallableDelegate<T> loader) {
-        return Build(reader, loader, type_t_.Namespace);
+        return Build(reader, loader, false);
+      }
+
+      /// <summary>
+      /// Builds a dynamic <see cref="DataReaderMapper{T}"/> for the type
+      /// <typeparamref source="T"/>.
+      /// </summary>
+      /// <returns>
+      /// An object that implements the <see cref="IMapper{T}"/> and the
+      /// <typeparamref source="T"/> interface and derives from the
+      /// <see cref="DataReaderMapper{T}"/> class.
+      /// </returns>
+      public DataReaderMapper<T> Build(IDataReader reader,
+        CallableDelegate<T> loader, bool defer) {
+        return Build(reader, loader, type_t_type_name_, defer);
       }
 
       /// <summary>
@@ -338,9 +394,23 @@ namespace Nohros.Data
       /// </returns>
       public DataReaderMapper<T> Build(IDataReader reader,
         CallableDelegate<T> loader, string prefix) {
+        return Build(reader, loader, prefix, false);
+      }
+
+      /// <summary>
+      /// Builds a dynamic <see cref="DataReaderMapper{T}"/> for the type
+      /// <typeparamref source="T"/>.
+      /// </summary>
+      /// <returns>
+      /// An object that implements the <see cref="IMapper{T}"/> and the
+      /// <typeparamref source="T"/> interface and derives from the
+      /// <see cref="DataReaderMapper{T}"/> class.
+      /// </returns>
+      public DataReaderMapper<T> Build(IDataReader reader,
+        CallableDelegate<T> loader, string prefix, bool defer) {
         DataReaderMapper<T> mapper =
           (DataReaderMapper<T>) Activator.CreateInstance(GetDynamicType(prefix));
-        mapper.Initialize(reader, loader);
+        mapper.Initialize(reader, loader, defer);
         return mapper;
       }
 
