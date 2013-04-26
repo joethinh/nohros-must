@@ -20,65 +20,42 @@ namespace Nohros.Data
   /// </para>
   /// </remarks>
 #if DEBUG
-  public abstract partial class DataReaderMapper<T> : IMapper<T>,
-                                                        IForwardOnlyEnumerable
-                                                          <T>,
-                                                        IDisposable
+  public abstract partial class DataReaderMapper<T> : IDataReaderMapper<T>
 #else
-  internal abstract partial class DataReaderMapper<T> : IMapper<T>,
-                                                        IForwardOnlyEnumerable
-                                                          <T>,
-                                                        IDisposable
+  internal abstract class DataReaderMapper<T> : IDataReaderMapper<T>
 #endif
   {
-    bool defer_;
-    protected internal CallableDelegate<T> loader_;
-    internal int[] ordinals_;
-    protected internal IDataReader reader_;
+    class Enumerator : IEnumerable<T>
+    {
+      readonly DataReaderMapper<T> mapper_;
+      readonly IDataReader reader_;
+
+      #region .ctor
+      public Enumerator(IDataReader reader, DataReaderMapper<T> mapper) {
+        mapper_ = mapper;
+        reader_ = reader;
+      }
+      #endregion
+
+      IEnumerator IEnumerable.GetEnumerator() {
+        return GetEnumerator();
+      }
+
+      public IEnumerator<T> GetEnumerator() {
+        T t;
+        while (mapper_.Map(reader_, out t)) {
+          yield return t;
+        }
+      }
+    }
+
+    internal CallableDelegate<T> loader_;
 
     #region .ctor
-    protected internal DataReaderMapper() {
-      defer_ = false;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DataReaderMapper{T}"/>
-    /// using the specified <see cref="IDataReader"/>.
-    /// </summary>
-    /// <param name="reader">
-    /// A <see cref="IDataReader"/> containing the data to be mapped.
-    /// </param>
-    protected DataReaderMapper(IDataReader reader) {
-      reader_ = reader;
-      defer_ = false;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DataReaderMapper{T}"/>
-    /// using the specified <see cref="IDataReader"/> and <typeparamref name="T"/>
-    /// loader.
-    /// </summary>
-    /// <param name="reader">
-    /// A <see cref="IDataReader"/> containing the data to be mapped.
-    /// </param>
-    protected DataReaderMapper(IDataReader reader, CallableDelegate<T> loader) {
-      reader_ = reader;
-      loader_ = loader;
-      defer_ = false;
+    internal DataReaderMapper() {
+      loader_ = NewT;
     }
     #endregion
-
-    public void Dispose() {
-      reader_.Dispose();
-    }
-
-    public virtual T Map() {
-      T t;
-      if (!Map(out t)) {
-        throw new NoResultException();
-      }
-      return t;
-    }
 
 #if DEBUG
     public void Save(string assembly_file_name) {
@@ -86,63 +63,41 @@ namespace Nohros.Data
     }
 #endif
 
-    IEnumerator IEnumerable.GetEnumerator() {
-      return GetEnumerator();
-    }
-
-    public virtual IEnumerator<T> GetEnumerator() {
-      IEnumerator<T> enumerator = GetDeferredEnumerator();
-      if (defer_) {
-        return enumerator;
-      }
-
-      List<T> list = new List<T>();
-      while (enumerator.MoveNext()) {
-        list.Add(enumerator.Current);
-      }
-      return list.GetEnumerator();
-    }
-
-    IEnumerator<T> GetDeferredEnumerator() {
-      T t;
-      while (Map(out t)) {
-        yield return t;
-      }
-    }
-
-    public bool Map(out T t) {
-      if (reader_.Read()) {
-        t = MapInternal();
+    bool Map(IDataReader reader, out T t) {
+      if (reader.Read()) {
+        t = MapInternal(reader);
         return true;
       }
       t = default(T);
       return false;
     }
 
-    protected internal abstract T MapInternal();
+    internal abstract T MapInternal(IDataReader reader);
 
-    internal void Initialize(IDataReader reader) {
-      Initialize(reader, NewT);
+    protected CallableDelegate<T> Loader {
+      get { return loader_; }
+      set { loader_ = value; }
     }
 
-    internal void Initialize(IDataReader reader, CallableDelegate<T> loader) {
-      Initialize(reader, loader, false);
-    }
-
-    internal void Initialize(IDataReader reader, CallableDelegate<T> loader,
-      bool defer) {
-      reader_ = reader;
-      GetOrdinals();
-      if (loader == null) {
-        if (ordinals_ == null) {
-          loader_ = delegate { throw new NoResultException(); };
-        }
+    public T Map(IDataReader reader) {
+      T t;
+      GetOrdinals(reader);
+      if (!Map(reader, out t)) {
+        throw new NoResultException();
       }
-      loader_ = loader ?? NewT;
-      defer_ = defer;
+      return t;
     }
 
-    internal virtual void GetOrdinals() {
+    public IEnumerable<T> Map(IDataReader reader, bool defer) {
+      GetOrdinals(reader);
+      var enumerable = new Enumerator(reader, this);
+      if (defer) {
+        return enumerable;
+      }
+      return new List<T>(enumerable);
+    }
+
+    internal virtual void GetOrdinals(IDataReader reader) {
       throw new NotImplementedException();
     }
 
