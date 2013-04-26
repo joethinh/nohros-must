@@ -11,90 +11,25 @@ namespace Nohros.Common
 {
   public class MapperTests
   {
-    public class KeyedMapperTest
+    public class CrmEvent : ICrmEvent
     {
-      public string Name { get; set; }
-    }
+      /// <inheritdoc/>
+      public int ID { get; set; }
 
-    public class MapperDerivedTest : MapperTest
-    {
-    }
+      /// <inheritdoc/>
+      public int TypeID { get; set; }
 
-    public class MapperTest
-    {
-      public string Name { get; set; }
-    }
+      /// <inheritdoc/>
+      public int AgentID { get; set; }
 
-    public class IgnoreMapperTest
-    {
-      public string Name { get; set; }
-    }
+      /// <inheritdoc/>
+      public int ContactID { get; set; }
 
-    public class NestedMapperTest
-    {
-      public MapperTest Nested { get; set; }
-    }
+      /// <inheritdoc/>
+      public DateTime Date { get; set; }
 
-    public class MapNestedMapperTest
-    {
-      public MapperTest Nested { get; set; }
-    }
-
-    public class MapMapperTest
-    {
-      public string Name { get; set; }
-    }
-
-    public class PostPoco
-    {
-      public int Id { get; set; }
-      public string Text { get; set; }
-      public DateTime CreationDate { get; set; }
-      public int Counter1 { get; set; }
-      public int Counter2 { get; set; }
-    }
-
-    [Test]
-    public void ShouldMapInternalClass() {
-      var builder = new SqlConnectionStringBuilder();
-      builder.DataSource = ".\\SQLEX";
-      builder.UserID = "nohros";
-      builder.Password = "Noors03";
-
-      using (var conn = new SqlConnection(builder.ToString()))
-      using (var cmd = new SqlCommand("select 15 as Id, 'post' as text, Getdate() as CreationDate, 9 as Counter1, 10 as Counter2", conn)) {
-        conn.Open();
-        using (var reader = cmd.ExecuteReader()) {
-          var mapper = new DataReaderMapper<PostPoco>.Builder()
-            .Build(reader);
-          reader.Read();
-        }
-      }
-    }
-
-    [Test]
-    public void ShouldBuildDynamicType() {
-      var reader = Mock.Create<IDataReader>();
-      var mapper = new DataReaderMapper<MapperTest>.Builder()
-        .Map("usuario_nome", "name")
-        .Build(reader, "MyNamespace");
-      Assert.That(mapper, Is.AssignableTo<DataReaderMapper<MapperTest>>());
-    }
-
-    [Test]
-    public void ShouldBuildNestedDynamicType() {
-      var reader = Mock.Create<IDataReader>();
-      Mock
-        .Arrange(() => reader.GetOrdinal(Arg.AnyString))
-        .Returns(0);
-      var mapper = new DataReaderMapper<NestedMapperTest>.Builder()
-        .Map("usuario_nome", "name")
-        .Build(reader);
-      var inner = mapper.Map().Nested;
-      Assert.That(inner, Is.AssignableTo<DataReaderMapper<MapperTest>>());
-      Assert.That(inner, Is.AssignableTo<MapperTest>());
-      Assert.That(mapper, Is.AssignableTo<DataReaderMapper<NestedMapperTest>>());
-      Assert.That(mapper, Is.AssignableTo<NestedMapperTest>());
+      /// <inheritdoc/>
+      public Guid ServerID { get; set; }
     }
 
     public interface ICrmEvent
@@ -133,52 +68,103 @@ namespace Nohros.Common
       Guid ServerID { get; set; }
     }
 
-    public class CrmEvent : ICrmEvent
+    public class IgnoreMapperTest
     {
-      /// <inheritdoc/>
-      public int ID { get; set; }
+      public string Name { get; set; }
+      public string Location { get; set; }
+    }
 
-      /// <inheritdoc/>
-      public int TypeID { get; set; }
+    public class KeyedMapperTest
+    {
+      public string Name { get; set; }
+    }
 
-      /// <inheritdoc/>
-      public int AgentID { get; set; }
+    public class MapMapperTest
+    {
+      public string Name { get; set; }
+    }
 
-      /// <inheritdoc/>
-      public int ContactID { get; set; }
+    public class MapNestedMapperTest
+    {
+      public MapperTest Nested { get; set; }
+    }
 
-      /// <inheritdoc/>
-      public DateTime Date { get; set; }
+    public class MapperDerivedTest : MapperTest
+    {
+    }
 
-      /// <inheritdoc/>
-      public Guid ServerID { get; set; }
+    public class MapperTest
+    {
+      public string Name { get; set; }
+    }
+
+    public class NestedMapperTest
+    {
+      public MapperTest Nested { get; set; }
+    }
+
+    public class PostPoco
+    {
+      public int Id { get; set; }
+      public string Text { get; set; }
+      public DateTime CreationDate { get; set; }
+      public int Counter1 { get; set; }
+      public int Counter2 { get; set; }
     }
 
     [Test]
-    public void GetDynamicType() {
-      /*var builder = new DataReaderMapper<NestedMapperTest>.Builder()
-        .Map("usuario_nome", "name");
-      Type type = builder.GetDynamicType();
-      Dynamics_.AssemblyBuilder.Save("test.dll");*/
+    public void ShouldMapInternalClass() {
+      var builder = new SqlConnectionStringBuilder();
+      builder.DataSource = ".\\SQLEX";
+      builder.UserID = "nohros";
+      builder.Password = "Noors03";
+
+      using (var conn = new SqlConnection(builder.ToString()))
+      using (
+        var cmd =
+          new SqlCommand(
+            "select 15 as Id, 'post' as text, Getdate() as CreationDate, 9 as Counter1, 10 as Counter2",
+            conn)) {
+        conn.Open();
+        using (var reader = cmd.ExecuteReader()) {
+          var mapper = new DataReaderMapperBuilder<PostPoco>()
+            .Build();
+          reader.Read();
+        }
+      }
+    }
+
+    [Test]
+    public void ShouldBuildDynamicType() {
       var reader = Mock.Create<IDataReader>();
-      Mappers.GetMapper<CrmEvent>(reader,
-        () => new[] {
-          new KeyValuePair<string, string>("id", "cod_hist_cli"),
-          new KeyValuePair<string, string>("typeid","cod_ocor"),
-          new KeyValuePair<string, string>("agentid","usuario_cad"),
-          new KeyValuePair<string, string>("contactid","cod_dev"),
-          new KeyValuePair<string, string>("date", "data_cad")
-        });
-      Dynamics_.AssemblyBuilder.Save("test.dll");
+      var mapper = new DataReaderMapperBuilder<MapperTest>("MyNamespace")
+        .Map("usuario_nome", "name")
+        .Build()
+        .Map(reader);
+      Assert.That(mapper, Is.AssignableTo<DataReaderMapper<MapperTest>>());
+    }
+
+    [Test]
+    public void ShouldBuildNestedDynamicType() {
+      var reader = Mock.Create<IDataReader>();
+      Mock
+        .Arrange(() => reader.GetOrdinal(Arg.AnyString))
+        .Returns(0);
+      var mapper = new DataReaderMapperBuilder<NestedMapperTest>()
+        .Map("usuario_nome", "name")
+        .Build();
+      var inner = mapper.Map(reader).Nested;
+      Assert.That(inner, Is.AssignableTo<DataReaderMapper<MapperTest>>());
+      Assert.That(inner, Is.AssignableTo<MapperTest>());
+      Assert.That(mapper, Is.AssignableTo<DataReaderMapper<NestedMapperTest>>());
+      Assert.That(mapper, Is.AssignableTo<NestedMapperTest>());
     }
 
     [Test]
     public void ShouldBuildDerivedInterface() {
-      var reader = Mock.Create<IDataReader>();
-      var mapper = new DataReaderMapper<MapperDerivedTest>.Builder()
-        .Build(reader);
-      Assert.That(mapper,
-        Is.AssignableTo<DataReaderMapper<MapperDerivedTest>>());
+      var mapper = new DataReaderMapperBuilder<MapperDerivedTest>()
+        .Build();
+      Assert.That(mapper, Is.AssignableTo<DataReaderMapper<MapperDerivedTest>>());
       Assert.That(mapper, Is.AssignableTo<MapperDerivedTest>());
       Assert.That(mapper, Is.AssignableTo<MapperTest>());
     }
@@ -186,11 +172,18 @@ namespace Nohros.Common
     [Test]
     public void ShouldIgnoreProperty() {
       var reader = Mock.Create<IDataReader>();
-      var mapper = new DataReaderMapper<IgnoreMapperTest>.Builder()
+      Mock
+        .Arrange(() => reader.Read())
+        .Returns(true);
+      Mock
+        .Arrange(() => reader.GetString(0))
+        .Returns("name-value");
+
+      var mapper = new DataReaderMapperBuilder<IgnoreMapperTest>("ShouldIgnoreProperty")
+        .AutoMap()
         .Ignore("name")
-        .Build(reader);
-      Assert.That(() => mapper.Map().Name,
-        Throws.TypeOf<NotImplementedException>());
+        .Build();
+      Assert.That(() => mapper.Map(reader).Name, Is.Null);
     }
 
     [Test]
@@ -204,10 +197,10 @@ namespace Nohros.Common
       using (var cmd = new SqlCommand("select 'nohros' as usuario_nome", conn)) {
         conn.Open();
         using (var reader = cmd.ExecuteReader()) {
-          var mapper = new DataReaderMapper<MapMapperTest>.Builder()
+          var mapper = new DataReaderMapperBuilder<MapMapperTest>()
             .Map("name", "usuario_nome")
-            .Build(reader);
-          Assert.That(mapper.Map().Name, Is.EqualTo("nohros"));
+            .Build();
+          Assert.That(mapper.Map(reader).Name, Is.EqualTo("nohros"));
         }
       }
     }
@@ -223,38 +216,13 @@ namespace Nohros.Common
       using (var cmd = new SqlCommand("exec fila_get_by_id @fila_id = 1", conn)) {
         conn.Open();
         using (var reader = cmd.ExecuteReader()) {
-          var mapper = new DataReaderMapper<KeyedMapperTest>.Builder(
-            new KeyValuePair<string, string>[] {
-              new KeyValuePair<string, string>("name", "usuario_nome")
-            })
-            .Build(reader);
-          Assert.That(mapper.Map().Name, Is.EqualTo("nohros"));
-        }
-      }
-    }
-
-    [Test]
-    public void ShouldMapNestedInterface() {
-      var builder = new SqlConnectionStringBuilder();
-      builder.DataSource = ".";
-      builder.UserID = "nohros";
-      builder.Password = "Noors03";
-
-      using (var conn = new SqlConnection(builder.ToString()))
-      using (var cmd = new SqlCommand("select 'nohros' as usuario_nome", conn)) {
-        conn.Open();
-        using (var reader = cmd.ExecuteReader()) {
-          var derived = new DataReaderMapper<MapNestedMapperTest>.Builder()
-            .Build(reader, ()=> {
-              return new MapNestedMapperTest {
-                Nested = new DataReaderMapper<MapperTest>.Builder()
-                  .Map("name", "usuario_nome")
-                  .Build(reader)
-                  .Map()
-              };
-            });
-          reader.Read();
-          Assert.That(derived.Map().Nested.Name, Is.EqualTo("nohros"));
+          var mapper = new DataReaderMapperBuilder<KeyedMapperTest>()
+            .Map(
+              new KeyValuePair<string, string>[] {
+                new KeyValuePair<string, string>("name", "usuario_nome")
+              })
+            .Build();
+          Assert.That(mapper.Map(reader).Name, Is.EqualTo("nohros"));
         }
       }
     }
@@ -262,11 +230,10 @@ namespace Nohros.Common
     [Test]
     public void ShoudMapToConstValues() {
       var reader = Mock.Create<IDataReader>();
-      var mapper = new DataReaderMapper<IgnoreMapperTest>.Builder()
+      var mapper = new DataReaderMapperBuilder<IgnoreMapperTest>()
         .Map("name", new ConstStringMapType("myname"))
-        .Build(reader);
-      Dynamics_.AssemblyBuilder.Save("test.dll");
-      Assert.That(mapper.Map().Name, Is.EqualTo("myname"));
+        .Build();
+      Assert.That(mapper.Map(reader).Name, Is.EqualTo("myname"));
     }
   }
 }
