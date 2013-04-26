@@ -148,7 +148,6 @@
     <Compile Include="configuration\IMustConfiguration.cs" />
     <Compile Include="configuration\AbstractConfigurationBuilder.cs" />
     <Compile Include="configuration\Strings.cs" />
-    <Compile Include="data\ChainDataReaderMapper.cs" />
     <Compile Include="data\CommandBuilder.cs" />
     <Compile Include="CommandLine.cs" />
     <Compile Include="data\ICommand.cs" />
@@ -157,7 +156,7 @@
     <Compile Include="data\mappers\ByteMapType.cs" />
     <Compile Include="data\mappers\CharMapType.cs" />
     <Compile Include="data\mappers\Dynamics.cs" />
-    <Compile Include="data\mappers\NoResultDataReaderMapper.cs" />
+    <Compile Include="data\mappers\IDataReaderMapper.cs" />
     <Compile Include="data\mappers\IgnoreMapType.cs" />
     <Compile Include="data\mappers\ConstStringMapType.cs" />
     <Compile Include="data\mappers\DataReaderMapper.cs" />
@@ -169,14 +168,15 @@
     <Compile Include="data\mappers\IntMapType.cs" />
     <Compile Include="data\mappers\ITypeMap.cs" />
     <Compile Include="data\mappers\LongMapType.cs" />
-    <Compile Include="data\mappers\Mappers.cs" />
+    <Compile Include="data\mappers\Mappers.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="data\mappers\ShortMapType.cs" />
     <Compile Include="data\mappers\StringTypeMap.cs" />
     <Compile Include="data\mappers\TypeMap.cs" />
     <Compile Include="data\mappers\TypeMapType.cs" />
     <Compile Include="data\readers\DataFieldDateTime.cs" />
     <Compile Include="data\readers\DataReaderReader.cs" />
-    <Compile Include="data\mappers\IChainMapper.cs" />
     <Compile Include="data\TransactionScopes.cs" />
     <Compile Include="exception\ConstraintViolationException.cs" />
     <Compile Include="exception\NetworkException.cs" />
