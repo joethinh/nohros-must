@@ -18,7 +18,11 @@ using OrdinalMap =
 
 namespace Nohros.Data
 {
+#if DEBUG
+  public abstract partial class DataReaderMapper<T>
+#else
   internal abstract partial class DataReaderMapper<T>
+#endif
   {
     public class Builder
     {
@@ -52,18 +56,7 @@ namespace Nohros.Data
         mappings_ = new Dictionary<string, ITypeMap>(
           StringComparer.OrdinalIgnoreCase);
         type_t_ = type_t;
-        type_t_type_name_ = GetClassName(type_t_);
-      }
-
-      string GetClassName(Type t) {
-        string type_name = t.Namespace;
-        Type obj = typeof (object);
-        Type nested = t.BaseType;
-        while (nested != obj) {
-          type_name += "." + nested.Name;
-          nested = nested.BaseType;
-        }
-        return type_name;
+        type_t_type_name_ = type_t_.Namespace;
       }
 
       /// <summary>
@@ -83,7 +76,7 @@ namespace Nohros.Data
       public Builder(IEnumerable<KeyValuePair<string, string>> mapping)
         : this(typeof (T)) {
         // Perform the mapping only if the dynamic type does not already exists
-        if (!Dynamics_.DynamicTypeExists(type_t_)) {
+        if (!Dynamics_.DynamicTypeExists(type_t_type_name_, type_t_)) {
           foreach (KeyValuePair<string, string> map in mapping) {
             Map(map.Key, map.Value);
           }
@@ -107,7 +100,7 @@ namespace Nohros.Data
       public Builder(IEnumerable<KeyValuePair<string, ITypeMap>> mapping)
         : this(typeof (T)) {
         // Perform the mapping only if the dynamic type does not already exists
-        if (!Dynamics_.DynamicTypeExists(type_t_)) {
+        if (!Dynamics_.DynamicTypeExists(type_t_type_name_, type_t_)) {
           foreach (KeyValuePair<string, ITypeMap> map in mapping) {
             Map(map.Key, map.Value);
           }
@@ -131,7 +124,7 @@ namespace Nohros.Data
       public Builder(CallableDelegate<KeyValuePair<string, string>[]> mapping)
         : this(typeof (T)) {
         // Perform the mapping only if the dynamic type does not already exists
-        if (!Dynamics_.DynamicTypeExists(type_t_)) {
+        if (!Dynamics_.DynamicTypeExists(type_t_type_name_, type_t_)) {
           foreach (KeyValuePair<string, string> map in mapping()) {
             Map(map.Key, map.Value);
           }
@@ -155,13 +148,24 @@ namespace Nohros.Data
       public Builder(CallableDelegate<KeyValuePair<string, ITypeMap>[]> mapping)
         : this(typeof (T)) {
         // Perform the mapping only if the dynamic type does not already exists
-        if (!Dynamics_.DynamicTypeExists(type_t_)) {
+        if (!Dynamics_.DynamicTypeExists(type_t_type_name_, type_t_)) {
           foreach (KeyValuePair<string, ITypeMap> map in mapping()) {
             Map(map.Key, map.Value);
           }
         }
       }
       #endregion
+
+      string GetClassName(Type t) {
+        string type_name = t.Namespace;
+        Type obj = typeof (object);
+        Type nested = t.BaseType;
+        while (nested != obj) {
+          type_name += "." + nested.Name;
+          nested = nested.BaseType;
+        }
+        return type_name;
+      }
 
       /// <summary>
       /// Maps the source column <paramref source="source"/> to the interface
@@ -348,7 +352,8 @@ namespace Nohros.Data
       /// <typeparamref source="T"/> interface and derives from the
       /// <see cref="DataReaderMapper{T}"/> class.
       /// </returns>
-      public DataReaderMapper<T> Build(IDataReader reader, string prefix, bool defer) {
+      public DataReaderMapper<T> Build(IDataReader reader, string prefix,
+        bool defer) {
         if (reader == null) {
           throw new ArgumentNullException("reader");
         }

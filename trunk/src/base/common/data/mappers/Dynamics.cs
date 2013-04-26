@@ -46,15 +46,6 @@ namespace Nohros.Dynamics
 #endif
 
     /// <summary>
-    /// Checks if a dynamic type exists for the type <paramref name="type"/>.
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    public static bool DynamicTypeExists(Type type) {
-      return DynamicTypeExists(type.Namespace, type);
-    }
-
-    /// <summary>
     /// Checks if a dynamic type exists for the type <paramref name="type"/>
     /// and prefix <paramref name="prefix"/>.
     /// </summary>
