@@ -19,10 +19,17 @@ namespace Nohros.Data
   /// <see cref="IDataReader"/> is advanced to the next record.
   /// </para>
   /// </remarks>
+#if DEBUG
+  public abstract partial class DataReaderMapper<T> : IMapper<T>,
+                                                        IForwardOnlyEnumerable
+                                                          <T>,
+                                                        IDisposable
+#else
   internal abstract partial class DataReaderMapper<T> : IMapper<T>,
                                                         IForwardOnlyEnumerable
                                                           <T>,
                                                         IDisposable
+#endif
   {
     bool defer_;
     protected internal CallableDelegate<T> loader_;
