@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using Nohros.Collections;
+using Nohros.Dynamics;
 
 namespace Nohros.Data
 {
@@ -71,6 +72,12 @@ namespace Nohros.Data
       }
       return t;
     }
+
+#if DEBUG
+    public void Save(string assembly_file_name) {
+      Dynamics_.AssemblyBuilder.Save(assembly_file_name);
+    }
+#endif
 
     IEnumerator IEnumerable.GetEnumerator() {
       return GetEnumerator();
