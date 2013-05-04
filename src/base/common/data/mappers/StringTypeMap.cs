@@ -20,5 +20,19 @@ namespace Nohros.Data
     public StringTypeMap(string value) : base(value, TypeMapType.String) {
     }
     #endregion
+
+    /// <summary>
+    /// Implicit converts a string to a <see cref="StringTypeMap"/>.
+    /// </summary>
+    /// <param name="str">
+    /// The string to be converted.
+    /// </param>
+    /// <returns>
+    /// A <see cref="StringTypeMap"/> object representing the string
+    /// <paramref name="str"/>.
+    /// </returns>
+    public static implicit operator StringTypeMap(string str) {
+      return new StringTypeMap(str);
+    }
   }
 }
