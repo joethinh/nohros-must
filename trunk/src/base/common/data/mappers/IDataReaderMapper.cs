@@ -24,6 +24,16 @@ namespace Nohros.Data
     T Map(IDataReader reader);
 
     /// <summary>
+    /// maps a element of a query result to a object of type
+    /// <typeparamref name="T"/>.
+    /// </summary>
+    /// <returns>
+    /// A object of type <typeparamref name="T"/> containing the data readed
+    /// from the current row of the given <paramref name="reader"/>.
+    /// </returns>
+    T Map(IDataReader reader, Action<T> post_map);
+
+    /// <summary>
     /// Maps a element of a query result to a collection of object of type
     /// <typeparamref name="T"/>.
     /// </summary>
@@ -32,5 +42,15 @@ namespace Nohros.Data
     /// the data readed from the given <paramref name="reader"/>.
     /// </returns>
     IEnumerable<T> Map(IDataReader reader, bool defer);
+
+    /// <summary>
+    /// Maps a element of a query result to a collection of object of type
+    /// <typeparamref name="T"/>.
+    /// </summary>
+    /// <returns>
+    /// A collection of objects of type <typeparamref name="T"/> containing
+    /// the data readed from the given <paramref name="reader"/>.
+    /// </returns>
+    IEnumerable<T> Map(IDataReader reader, bool defer, Action<T> post_map);
   }
 }

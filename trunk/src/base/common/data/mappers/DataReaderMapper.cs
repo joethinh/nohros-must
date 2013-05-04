@@ -28,12 +28,15 @@ namespace Nohros.Data
     class Enumerator : IEnumerable<T>
     {
       readonly DataReaderMapper<T> mapper_;
+      readonly Action<T> post_map_;
       readonly IDataReader reader_;
 
       #region .ctor
-      public Enumerator(IDataReader reader, DataReaderMapper<T> mapper) {
+      public Enumerator(IDataReader reader, DataReaderMapper<T> mapper,
+        Action<T> post_map) {
         mapper_ = mapper;
         reader_ = reader;
+        post_map_ = post_map;
       }
       #endregion
 
@@ -44,6 +47,7 @@ namespace Nohros.Data
       public IEnumerator<T> GetEnumerator() {
         T t;
         while (mapper_.Map(reader_, out t)) {
+          post_map_(t);
           yield return t;
         }
       }
@@ -62,6 +66,12 @@ namespace Nohros.Data
       Dynamics_.AssemblyBuilder.Save(assembly_file_name);
     }
 #endif
+    internal abstract T MapInternal(IDataReader reader);
+
+    protected CallableDelegate<T> Loader {
+      get { return loader_; }
+      set { loader_ = value; }
+    }
 
     bool Map(IDataReader reader, out T t) {
       if (reader.Read()) {
@@ -70,13 +80,6 @@ namespace Nohros.Data
       }
       t = default(T);
       return false;
-    }
-
-    internal abstract T MapInternal(IDataReader reader);
-
-    protected CallableDelegate<T> Loader {
-      get { return loader_; }
-      set { loader_ = value; }
     }
 
     public T Map(IDataReader reader) {
@@ -88,9 +91,19 @@ namespace Nohros.Data
       return t;
     }
 
+    public T Map(IDataReader reader, Action<T> post_map) {
+      T t = Map(reader);
+      post_map(t);
+      return t;
+    }
+
     public IEnumerable<T> Map(IDataReader reader, bool defer) {
+      return Map(reader, defer, delegate { });
+    }
+
+    public IEnumerable<T> Map(IDataReader reader, bool defer, Action<T> post_map) {
       GetOrdinals(reader);
-      var enumerable = new Enumerator(reader, this);
+      var enumerable = new Enumerator(reader, this, post_map);
       if (defer) {
         return enumerable;
       }
