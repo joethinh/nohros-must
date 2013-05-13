@@ -53,8 +53,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>$(SolutionDir)bin\release\net40</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>NET40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>$(SolutionDir)..\docs\nohros.xml</DocumentationFile>
@@ -161,6 +160,7 @@
     <Compile Include="data\mappers\ConstStringMapType.cs" />
     <Compile Include="data\mappers\DataReaderMapper.cs" />
     <Compile Include="data\mappers\DataReaderMapperBuilder.cs" />
+    <Compile Include="data\mappers\DecimalMapType.cs" />
     <Compile Include="data\mappers\DoubleMapType.cs" />
     <Compile Include="data\mappers\Dynamics.cs" />
     <Compile Include="data\mappers\FloatMapType.cs" />
@@ -417,7 +417,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

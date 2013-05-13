@@ -60,6 +60,11 @@ namespace Nohros.Data
     /// <summary>
     /// Maps to the default value of a type.
     /// </summary>
-    Ignore = 10
+    Ignore = 10,
+
+    /// <summary>
+    /// Maps to A CONSTANT <see cref="decimal"/>.
+    /// </summary>
+    Decimal = 11
   }
 }

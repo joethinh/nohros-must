@@ -145,6 +145,16 @@ namespace Nohros.Common
     }
 
     [Test]
+    public void ShouldMapMemberExpression() {
+      var reader = Mock.Create<IDataReader>();
+      var mapper = new DataReaderMapperBuilder<MapperTest>("MyNamespace")
+        .Map(x => x.ToString(), "")
+        .Build()
+        .Map(reader);
+      Assert.That(mapper, Is.AssignableTo<DataReaderMapper<MapperTest>>());
+    }
+
+    [Test]
     public void ShouldBuildNestedDynamicType() {
       var reader = Mock.Create<IDataReader>();
       Mock

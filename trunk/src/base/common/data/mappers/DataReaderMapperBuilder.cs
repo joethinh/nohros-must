@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Reflection.Emit;
-using Nohros.Collections;
-using Nohros.Configuration;
-using Nohros.Data;
 using Nohros.Dynamics;
 using PropertyAttributes = System.Reflection.PropertyAttributes;
 using ValueMap =
@@ -16,6 +13,10 @@ using ConstantMap =
     <Nohros.Data.ITypeMap, System.Reflection.PropertyInfo>;
 using OrdinalMap =
   System.Collections.Generic.KeyValuePair<int, System.Reflection.PropertyInfo>;
+#if NET40
+using System.Linq.Expressions;
+
+#endif
 
 namespace Nohros.Data
 {
@@ -110,50 +111,6 @@ namespace Nohros.Data
     public DataReaderMapperBuilder<T> Map(
       IEnumerable<KeyValuePair<string, ITypeMap>> mapping) {
       foreach (KeyValuePair<string, ITypeMap> map in mapping) {
-        Map(map.Key, map.Value);
-      }
-      return this;
-    }
-
-    /// <summary>
-    /// Builds a dynamic <see cref="DataReaderMapper{T}"/> for the type
-    /// <typeparamref source="T"/> using the specified
-    /// properties.
-    /// </summary>
-    /// <param name="mapping">
-    /// An <see cref="KeyValuePair{TKey,TValue}"/> containing the mapping
-    /// between source columns and destination properties
-    /// </param>
-    /// <remarks>
-    /// The <see cref="KeyValuePair{TKey,TValue}.Value"/> is used as the source
-    /// column name and the <see cref="KeyValuePair{TKey,TValue}.Key"/> is
-    /// used as the destination property name.
-    /// </remarks>
-    public DataReaderMapperBuilder<T> Map(
-      CallableDelegate<KeyValuePair<string, string>[]> mapping) {
-      foreach (KeyValuePair<string, string> map in mapping()) {
-        Map(map.Key, map.Value);
-      }
-      return this;
-    }
-
-    /// <summary>
-    /// Builds a dynamic <see cref="DataReaderMapper{T}"/> for the type
-    /// <typeparamref source="T"/> using the specified
-    /// properties.
-    /// </summary>
-    /// <param name="mapping">
-    /// An <see cref="KeyValuePair{TKey,TValue}"/> containing the mapping
-    /// between source columns and destination properties
-    /// </param>
-    /// <remarks>
-    /// The <see cref="KeyValuePair{TKey,TValue}.Value"/> is used as the source
-    /// column name and the <see cref="KeyValuePair{TKey,TValue}.Key"/> is
-    /// used as the destination property name.
-    /// </remarks>
-    public DataReaderMapperBuilder<T> Map(
-      CallableDelegate<KeyValuePair<string, ITypeMap>[]> mapping) {
-      foreach (KeyValuePair<string, ITypeMap> map in mapping()) {
         Map(map.Key, map.Value);
       }
       return this;
@@ -271,6 +228,28 @@ namespace Nohros.Data
     }
 
     /// <summary>
+    /// Maps the constant value <see cref="value"/> to the interface
+    /// property <paramref source="destination"/>.
+    /// </summary>
+    /// <param name="value">
+    /// The value that should be returned when by the interface property
+    /// <paramref name="destination"/>.
+    /// </param>
+    /// <param name="destination">
+    /// The source of the property that will be mapped to the value
+    /// <paramref name="value"/>.
+    /// </param>
+    /// <returns>
+    /// A <see cref="DataReaderMapperBuilder{T}"/> that builds an object of type
+    /// <typeparamref source="T"/> and mapping the constant value
+    /// <paramref source="value"/> to the property named
+    /// <paramref source="destination"/>.
+    /// </returns>
+    public DataReaderMapperBuilder<T> Map(string destination, decimal value) {
+      return Map(destination, new DecimalMapType(value));
+    }
+
+    /// <summary>
     /// Maps the constant <see cref="value"/> to the interface property
     /// <paramref source="destination"/>.
     /// </summary>
@@ -305,6 +284,23 @@ namespace Nohros.Data
       auto_map_ = true;
       return this;
     }
+
+#if NET40
+    public DataReaderMapperBuilder<T> Map<TProperty>(
+      Expression<Func<T, TProperty>> expression, string source) {
+      MemberExpression member;
+      if (expression.Body is UnaryExpression) {
+        member = ((UnaryExpression) expression.Body).Operand as MemberExpression;
+      } else {
+        member = expression.Body as MemberExpression;
+      }
+
+      if (member == null) {
+        throw new ArgumentException("[member] should be a class property");
+      }
+      return Map(member.Member.Name, source);
+    }
+#endif
 
     /// <summary>
     /// Defines the factory that shoud be used to create an instance of the
@@ -659,6 +655,7 @@ namespace Nohros.Data
       il.Emit(OpCodes.Ret);
     }
 
+    // TODO: // optmize the load operation for small types.
     void EmitLoad(ILGenerator il, ITypeMap map) {
       switch (map.MapType) {
         case TypeMapType.Int:
@@ -696,6 +693,10 @@ namespace Nohros.Data
         case TypeMapType.ConstString:
           il.Emit(OpCodes.Ldstr, (string) map.Value);
           break;
+
+          // TODO: Find out the IL operation to use to load decimals
+        case TypeMapType.Decimal:
+          throw new NotImplementedException();
       }
     }
 
