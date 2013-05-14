@@ -30,7 +30,13 @@ namespace Nohros.Data.Providers
     /// The key that should be associated with the option that contains
     /// the login to be used to connect to the Sql Server.
     /// </summary>
-    public const string kLoginOption = "login";
+    const string kLoginOption = "login";
+
+    /// <summary>
+    /// The key that should be associated with the option that contains
+    /// the login to be used to connect to the Sql Server.
+    /// </summary>
+    public const string kUserNameOption = "username";
 
     /// <summary>
     /// The key that should be associated with the option that contains
@@ -63,7 +69,14 @@ namespace Nohros.Data.Providers
 
       SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
       builder.DataSource = options[kServerOption];
-      builder.UserID = options[kLoginOption];
+
+      // We try to get the user name information using the "login" key for
+      // backward compatibility.
+      string user_id;
+      if (!options.TryGetValue(kLoginOption, out user_id)) {
+        user_id = options[kUserNameOption];
+      }
+      builder.UserID = user_id;
       builder.Password = options[kPasswordOption];
       builder.InitialCatalog = options[kInitialCatalogOption];
       return new SqlConnectionProvider(builder.ConnectionString);
