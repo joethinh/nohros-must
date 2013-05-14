@@ -6,20 +6,121 @@ namespace Nohros.Extensions
 {
   public static class StringExtensions
   {
+    /// <summary>
+    /// Compares two string objects by evaluating the numeric values of the
+    /// corresponding <see cref="Char"/> objects in each string.
+    /// </summary>
+    /// <param name="str">
+    /// The first string.
+    /// </param>
+    /// <param name="comparand">
+    /// The string to compare with the first.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="str"/> is equals to
+    /// <paramref name="comparand"/>; otherwise, <c>false</c>.
+    /// </returns>
     public static bool CompareOrdinal(this string str, string comparand) {
       return string.Compare(str, comparand, StringComparison.Ordinal) == 0;
     }
 
+    /// <summary>
+    /// Compares two string objects by evaluating the numeric values of the
+    /// corresponding <see cref="Char"/> objects in each string ignoring
+    /// their case.
+    /// </summary>
+    /// <param name="str">
+    /// The first string.
+    /// </param>
+    /// <param name="comparand">
+    /// The string to compare with the first.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="str"/> is equals to
+    /// <paramref name="comparand"/>; otherwise, <c>false</c>.
+    /// </returns>
     public static bool CompareOrdinalIgnoreCase(this String str,
       string comparand) {
       return
         string.Compare(str, comparand, StringComparison.OrdinalIgnoreCase) == 0;
     }
 
+    /// <summary>
+    /// Compares two string objects by evaluating the numeric values of the
+    /// corresponding <see cref="Char"/> objects in each string ignoring
+    /// their case and using the current culture.
+    /// </summary>
+    /// <param name="str">
+    /// The first string.
+    /// </param>
+    /// <param name="comparand">
+    /// The string to compare with the first.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="str"/> is equals to
+    /// <paramref name="comparand"/>; otherwise, <c>false</c>.
+    /// </returns>
     public static bool CompareCurrentCultureIgnoreCase(this string str,
       string comparand) {
       return string.
         Compare(str, comparand, StringComparison.CurrentCultureIgnoreCase) == 0;
+    }
+
+    /// <summary>
+    /// Compare two strings, ignoring or honoring their case.
+    /// </summary>
+    /// <param name="str">
+    /// The first string.
+    /// </param>
+    /// <param name="comparand">
+    /// The string to compare with the first.
+    /// </param>
+    /// <param name="ignore_case">
+    /// A boolean value indicating a case-sensitive or insensitive comparison(
+    /// <c>true</c> indicates a case-insensitive comparison.)
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="str"/> is equals to
+    /// <paramref name="comparand"/>; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool Compare(this string str, string comparand,
+      bool ignore_case) {
+      return string.Compare(str, comparand, ignore_case) == 0;
+    }
+
+    /// <summary>
+    /// Compares two strings using a parameter that specifies whether the
+    /// comparison uses the current or invariant culture, honors or ignores
+    /// case, and uses word or ordina sort rules.
+    /// </summary>
+    /// <param name="str">
+    /// The first string.
+    /// </param>
+    /// <param name="comparand">
+    /// The string to compare with the first.
+    /// </param>
+    /// <param name="comparison">
+    /// One of the <see cref="StringComparison"/> values that indicates the
+    /// type of comparison to perform.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="str"/> is equals to
+    /// <paramref name="comparand"/>; otherwise, <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    /// The <paramref name="comparison"/> parameter indicates whether the
+    /// comparison should use the current or invariant culture, honor or
+    /// ignore the case of the comparands, or use work(culture-sensitive) or
+    /// ordinal (culture-insensitive) sort rules.
+    /// <para>
+    /// This method performs the same operation as the
+    /// <see cref="string.Compare(string,string)"/>.
+    /// </para>
+    /// </remarks>
+    /// <seealso cref="string.Compare(string,string)"/>
+    public static bool Compare(this string str, string comparand,
+      StringComparison comparison) {
+      return string.Compare(str, comparand, comparison) == 0;
     }
 
     public static string Fmt(this string str, object arg0) {
