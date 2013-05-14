@@ -89,6 +89,31 @@ namespace Nohros.Extensions
     }
 
     /// <summary>
+    /// Compares two string objects by evaluating the numeric values of the
+    /// corresponding <see cref="Char"/> objects in each string, ignoring or
+    /// honoring their case.
+    /// </summary>
+    /// <param name="str">
+    /// The first string.
+    /// </param>
+    /// <param name="comparand">
+    /// The string to compare with the first.
+    /// </param>
+    /// <param name="ignore_case">
+    /// A boolean value indicating a case-sensitive or insensitive comparison(
+    /// <c>true</c> indicates a case-insensitive comparison.)
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="str"/> is equals to
+    /// <paramref name="comparand"/>; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool CompareOrdinal(this string str, string comparand,
+      bool ignore_case)
+    {
+      return string.Compare(str, comparand, ignore_case) == 0;
+    }
+
+    /// <summary>
     /// Compares two strings using a parameter that specifies whether the
     /// comparison uses the current or invariant culture, honors or ignores
     /// case, and uses word or ordina sort rules.
