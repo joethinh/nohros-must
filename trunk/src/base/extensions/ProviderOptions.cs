@@ -200,5 +200,28 @@ namespace Nohros.Extensions
       }
       return default_value;
     }
+
+    /// <summary>
+    /// Gets the string value associated with the key <paramref name="key"/>
+    /// from the <paramref name="options"/>.
+    /// </summary>
+    /// <param name="options">
+    /// The <see cref="IDictionary{TKey,TValue}"/> to search for the key
+    /// <paramref name="key"/>.
+    /// </param>
+    /// <param name="key">
+    /// The key to search for.
+    /// </param>
+    /// <returns></returns>
+    public static string GetString(this IDictionary<string, string> options,
+      string key) {
+      string option;
+      if (!options.TryGetValue(key, out option)) {
+        throw
+          new KeyNotFoundException("There is no value associated with the key \""
+            + key + "\"");
+      }
+      return option;
+    }
   }
 }
