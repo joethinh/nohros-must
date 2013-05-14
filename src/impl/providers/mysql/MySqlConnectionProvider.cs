@@ -60,11 +60,6 @@ namespace Nohros.Data.Providers.MySql
       get { return schema_; }
     }
 
-    /// <inheritdoc/>
-    public ITransactionContext CreateTransactionContext() {
-      return new TransactionContext();
-    }
-
     /// <summary>
     /// Creates a new instance of the <see cref="MySqlConnection"/> class using
     /// the provider connection string.
