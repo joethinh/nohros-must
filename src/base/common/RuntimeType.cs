@@ -112,7 +112,7 @@ namespace Nohros
       Type type = System.Type.GetType(runtime_type.Type);
 
       // attempt to load .NET type of the provider. If the location of the
-      // assemlby is specified we need to load the assembly and try to get the
+      // assembly is specified we need to load the assembly and try to get the
       // type from the loaded assembly. The name of the assembly will be
       // extracted from the provider type.
       if (type == null) {
@@ -120,7 +120,7 @@ namespace Nohros
         int num = assembly_name.IndexOf(',');
         if (num == -1) {
           // try to load the type from the calling assembly if a explicit
-          // asembly was not specified.
+          // assembly was not specified.
           return Assembly.GetCallingAssembly().GetType(runtime_type.Type);
         }
 
