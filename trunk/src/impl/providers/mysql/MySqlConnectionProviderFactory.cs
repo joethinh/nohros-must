@@ -26,7 +26,7 @@ namespace Nohros.Data.Providers.MySql
     /// The key that should be associated with the option that contains
     /// the login to be used to connect to the Sql Server.
     /// </summary>
-    public const string kLoginOption = "userid";
+    public const string kLoginOption = "username";
 
     /// <summary>
     /// The key that should be associated with the option that contains
