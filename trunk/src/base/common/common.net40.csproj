@@ -281,8 +281,6 @@
     <Compile Include="configuration\common\auth\LoginModuleNode.cs" />
     <Compile Include="providers\cache\ICacheProvider.cs" />
     <Compile Include="providers\data\IConnectionProviderFactory.cs" />
-    <Compile Include="providers\data\SqlConnectionProvider.cs" />
-    <Compile Include="providers\data\SqlConnectionProviderFactory.cs" />
     <Compile Include="type\Clock.cs" />
     <Compile Include="type\delegates\Listeners.cs" />
     <Compile Include="type\ParameterizedStringPartLiteral.cs" />
@@ -417,7 +415,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

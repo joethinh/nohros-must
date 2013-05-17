@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("nohros.data.mysql")]
-[assembly: AssemblyDescription("nohros.data.mysql")]
+[assembly: AssemblyTitle("nohros.data.sqlserver")]
+[assembly: AssemblyDescription("nohros.data.sqlserver")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Nohors Inc")]
+[assembly: AssemblyCompany("Nohros Inc")]
 [assembly: AssemblyProduct("Nohros Must")]
-[assembly: AssemblyCopyright("Copyright ©  2013 by Nohros")]
+[assembly: AssemblyCopyright("Copyright © Nohros Inc 2013 by Nohros Inc")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5af5bf44-6e5a-4817-aed4-921cd4100b20")]
+[assembly: Guid("59c44ce8-329d-4e77-93c6-4a6d90faf6af")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.0.10.0")]
-[assembly: AssemblyFileVersion("0.0.10.0")]
+[assembly: AssemblyVersion("0.0.1.0")]
+[assembly: AssemblyFileVersion("0.0.1.0")]

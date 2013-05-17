@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using Nohros.Data.Providers;
 
-namespace Nohros.Data.Providers
+namespace Nohros.Data.SqlServer
 {
   /// <summary>
   /// A implementation of the <see cref="IConnectionProvider"/> that
