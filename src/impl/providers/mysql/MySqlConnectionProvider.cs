@@ -3,7 +3,7 @@ using System.Data;
 using MySql.Data.MySqlClient;
 using Nohros.Data.Providers;
 
-namespace Nohros.Data.Providers.MySql
+namespace Nohros.Data.MySql
 {
   /// <summary>
   /// A implementation of the <see cref="IConnectionProvider"/> that provides

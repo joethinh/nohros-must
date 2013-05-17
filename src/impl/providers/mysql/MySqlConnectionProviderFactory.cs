@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
+using Nohros.Data.Providers;
 
-namespace Nohros.Data.Providers.MySql
+namespace Nohros.Data.MySql
 {
   public class MySqlConnectionProviderFactory : IConnectionProviderFactory
   {

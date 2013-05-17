@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>must.data.mongodb</id>
+        <version>0.0.1</version>
+        <title>Must Data for MongoDB</title>
+        <authors>Nohros Inc</authors>
+        <owners>Nohros Inc</owners>
+        <projectUrl>http://code.google.com/p/nohros-must</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>This project contains the MongoDB implementation of the nohros data API.</description>
+        <summary>The MongoDB implementation of the nohros data API.</summary>
+        <copyright>Nohros Inc</copyright>
+        <language>en-US</language>
+        <tags>csharp framework nohros log4net logging</tags>
+        <dependencies>
+            <dependency id="mongocsharpdriver" version="1.8" />
+            <dependency id="must.common" version="1.6" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="..\bin\release\mongodb\nohros.data.mongodb.dll" target="lib\net20\nohros.data.mongodb.dll" />
+        <file src="..\bin\release\mongodb\nohros.data.mongodb.dll" target="lib\net40\nohros.data.mongodb.dll" />
+    </files>
+</package>

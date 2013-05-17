@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Data.SQLite;
+using Nohros.Data.Providers;
 
-namespace Nohros.Data.Providers.SQLite
+namespace Nohros.Data.SQLite
 {
   /// <summary>
   /// A implementation of the <see cref="IConnectionProvider"/> that provides

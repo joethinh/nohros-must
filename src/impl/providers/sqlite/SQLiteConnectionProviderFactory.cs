@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using Nohros.Data.Providers;
 
-namespace Nohros.Data.Providers.SQLite
+namespace Nohros.Data.SQLite
 {
   public class SQLiteConnectionProviderFactory : IConnectionProviderFactory
   {
