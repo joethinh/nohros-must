@@ -51,7 +51,7 @@ namespace Nohros.Data.SQLite
       IDictionary<string, string> options) {
       string connection_string;
       if (options.TryGetValue(kConnectionStringOption, out connection_string)) {
-        return new SqlConnectionProvider(connection_string);
+        return new SQLiteConnectionProvider(connection_string);
       }
 
       SQLiteConnectionStringBuilder builder =
