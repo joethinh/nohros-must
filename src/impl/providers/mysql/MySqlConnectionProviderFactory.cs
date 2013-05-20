@@ -51,7 +51,7 @@ namespace Nohros.Data.MySql
       IDictionary<string, string> options) {
       string connection_string;
       if (options.TryGetValue(kConnectionStringOption, out connection_string)) {
-        return new SqlConnectionProvider(connection_string);
+        return new MySqlConnectionProvider(connection_string);
       }
 
       MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder();
