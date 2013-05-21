@@ -169,15 +169,6 @@ namespace Nohros.Extensions
       return string.IsNullOrEmpty(str);
     }
 
-    /// <summary>
-    /// Escapes a minimal set of characters (\n,\\,\r,\t,",\f,\b) by replacing
-    /// them with their escapes codes.
-    /// </summary>
-    /// <returns>The escaped version of <see cref="str"/></returns>
-    public static string JsonEncode(this string str) {
-      return JsonStringBuilder.Escape(str);
-    }
-
     public static string RemoveDiacritics(this string str) {
       string normalized_string = str.Normalize(NormalizationForm.FormD);
       var builder = new StringBuilder(str.Length);
