@@ -7,13 +7,13 @@ namespace Nohros.Common
   {
     [Test]
     public void ShouldConvertToUnixEpoch() {
-      var date = new DateTime(1970, 1, 1);
+      var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
       var epoch = TimeUnitHelper.ToUnixTime(date);
       Assert.AreEqual(0, epoch);
 
-      date = new DateTime(1970, 1, 1, 23, 0, 0);
+      date = new DateTime(1970, 1, 1, 23, 0, 0, 0, DateTimeKind.Utc);
       epoch = TimeUnitHelper.ToUnixTime(date);
-      Assert.AreEqual(23*60*60*1000, epoch);
+      Assert.AreEqual(23*60*60, epoch);
     }
 
     [Test]

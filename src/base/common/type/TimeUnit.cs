@@ -112,20 +112,12 @@ namespace Nohros
     }
 
     /// <summary>
-    /// Converts the specified timestamp to the unix time unit.
-    /// </summary>
-    /// <returns></returns>
-    public static long ToUnixTime(TimeSpan duration) {
-      return (long) (duration.Ticks*0.0001);
-    }
-
-    /// <summary>
     /// Converts the specified datetime to the unix time unit.
     /// </summary>
     /// <returns></returns>
     public static long ToUnixTime(DateTime duration) {
-      DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, duration.Kind);
-      return (long) (duration.Subtract(epoch).TotalMilliseconds);
+      DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+      return (long) duration.ToUniversalTime().Subtract(epoch).TotalSeconds;
     }
 
     /// <summary>
