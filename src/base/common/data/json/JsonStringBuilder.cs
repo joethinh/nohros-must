@@ -631,7 +631,7 @@ namespace Nohros.Data.Json
         char c = token[m];
 
         // don't escape standard text/numbers except '\' and the text delimiter
-        if (c >= ' ' && c < 128 && c != '\\') {
+        if (c >= ' ' && c < 128 && c != '\\' && c != '"') {
           continue;
         }
 
@@ -694,7 +694,7 @@ namespace Nohros.Data.Json
         last_replace_position += (m - last_replace_position + 1);
       }
 
-      if (last_replace_position != 0 && last_replace_position < token.Length) {
+      if (last_replace_position < token.Length) {
         escaped.Append(token.Substring(last_replace_position));
       }
       return escaped.ToString();
