@@ -49,6 +49,12 @@
     <Reference Include="Microsoft.Practices.Unity.Configuration">
       <HintPath>..\..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
     </Reference>
+    <Reference Include="nohros, Version=1.6.24.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\must.common.1.6.24.0\lib\net40\nohros.dll</HintPath>
+    </Reference>
+    <Reference Include="nohros.data.sqlserver, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\must.data.sqlserver.0.0.1\lib\net20\nohros.data.sqlserver.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.6.1.12217, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -95,12 +101,6 @@
     <Compile Include="type\suppliers\MemoizingSupplierTests.cs" />
     <Compile Include="type\suppliers\Mocks.cs" />
     <Compile Include="type\TimeUnitHelperTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\base\common\common.net40.csproj">
-      <Project>{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}</Project>
-      <Name>common.net40</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

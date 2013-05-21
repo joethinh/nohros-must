@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using NUnit.Framework;
 using Nohros.Data.Providers;
+using Nohros.Data.SqlServer;
 
 namespace Nohros.Common.Providers
 {
@@ -18,7 +19,7 @@ namespace Nohros.Common.Providers
       Assert.That(provider, Is.TypeOf(typeof (SqlConnectionProvider)));
 
       options.Clear();
-      options[SqlConnectionProviderFactory.kLoginOption] = "login";
+      options[SqlConnectionProviderFactory.kUserNameOption] = "login";
       options[SqlConnectionProviderFactory.kPasswordOption] = "password";
       options[SqlConnectionProviderFactory.kServerOption] = "server";
       options[SqlConnectionProviderFactory.kInitialCatalogOption] = "database";
@@ -35,7 +36,7 @@ namespace Nohros.Common.Providers
       var factory = new SqlConnectionProviderFactory();
       options.Clear();
 
-      options[SqlConnectionProviderFactory.kLoginOption] = "login";
+      options[SqlConnectionProviderFactory.kUserNameOption] = "login";
       Assert.Throws<KeyNotFoundException>(() => factory.CreateProvider(options));
       options.Clear();
 

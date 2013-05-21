@@ -17,5 +17,11 @@ namespace Nohros.Extensions
       Assert.That("first".CompareOrdinal("firsT"), Is.False);
       Assert.That("first".CompareOrdinal("fIrSt"), Is.False);
     }
+
+    [Test]
+    public void ShouldReturnFalseWhenStringIsNullOrEmpty() {
+      Assert.That(string.Empty.IsNullOrEmpty(), Is.False);
+      Assert.That(((string) null).IsNullOrEmpty(), Is.True);
+    }
   }
 }

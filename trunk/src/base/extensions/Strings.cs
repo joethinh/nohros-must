@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
+using Nohros.Data.Json;
 
 namespace Nohros.Extensions
 {
@@ -108,8 +109,7 @@ namespace Nohros.Extensions
     /// <paramref name="comparand"/>; otherwise, <c>false</c>.
     /// </returns>
     public static bool CompareOrdinal(this string str, string comparand,
-      bool ignore_case)
-    {
+      bool ignore_case) {
       return string.Compare(str, comparand, ignore_case) == 0;
     }
 
@@ -163,6 +163,19 @@ namespace Nohros.Extensions
 
     public static string Fmt(this string str, params object[] args) {
       return string.Format(str, args);
+    }
+
+    public static bool IsNullOrEmpty(this string str) {
+      return string.IsNullOrEmpty(str);
+    }
+
+    /// <summary>
+    /// Escapes a minimal set of characters (\n,\\,\r,\t,",\f,\b) by replacing
+    /// them with their escapes codes.
+    /// </summary>
+    /// <returns>The escaped version of <see cref="str"/></returns>
+    public static string JsonEncode(this string str) {
+      return JsonStringBuilder.Escape(str);
     }
 
     public static string RemoveDiacritics(this string str) {

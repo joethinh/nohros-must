@@ -20,6 +20,5 @@
     </metadata>
     <files>
         <file src="..\bin\release\mongodb\nohros.data.mongodb.dll" target="lib\net20\nohros.data.mongodb.dll" />
-        <file src="..\bin\release\mongodb\nohros.data.mongodb.dll" target="lib\net40\nohros.data.mongodb.dll" />
     </files>
 </package>

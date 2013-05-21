@@ -685,14 +685,17 @@ namespace Nohros.Data.Json
             continue;
         }
 
-        // If we are here, we found some character that needs to be escaped.
+        // If we are here, we found some character that needs to be escaped set
+        // the last replace pointer to the location where the replacement was
+        // performed plus the size of the escaped character.
         escaped.Append(string.Concat(
           token.Substring(last_replace_position,
             m - last_replace_position), escape_string));
-
-        // set the last replace pointer to the location where the
-        // replacement was performed plus the size of the escaped character.
         last_replace_position += (m - last_replace_position + 1);
+      }
+
+      if (last_replace_position != 0 && last_replace_position < token.Length) {
+        escaped.Append(token.Substring(last_replace_position));
       }
       return escaped.ToString();
     }
@@ -786,6 +789,9 @@ namespace Nohros.Data.Json
         // Replace the old token with the new token if the old one was
         // modified.
         if (last_replace_position != 0) {
+          if (last_replace_position < token.Value.Length) {
+            new_token += token.Value.Substring(last_replace_position);
+          }
           tokens_[i] = new Token(new_token, token.Type);
         }
       }
