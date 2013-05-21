@@ -92,7 +92,7 @@ namespace Nohros.Common.data.json
     [Test]
     public void ShouldEscapeunicodeCharacters() {
       string json = JsonStringBuilder.Escape("C:\\p");
-      Assert.AreEqual("c:\\p", json);
+      Assert.AreEqual("C:\\\\p", json);
     }
   }
 }
