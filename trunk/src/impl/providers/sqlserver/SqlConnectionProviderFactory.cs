@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using Nohros.Data.Providers;
+using Nohros.Resources;
 
 namespace Nohros.Data.SqlServer
 {
@@ -69,18 +70,27 @@ namespace Nohros.Data.SqlServer
       }
 
       SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-      builder.DataSource = options[kServerOption];
+      builder.DataSource = GetOption(kServerOption, options);
 
       // We try to get the user name information using the "login" key for
       // backward compatibility.
       string user_id;
       if (!options.TryGetValue(kLoginOption, out user_id)) {
-        user_id = options[kUserNameOption];
+        user_id = GetOption(kUserNameOption, options);
       }
       builder.UserID = user_id;
-      builder.Password = options[kPasswordOption];
-      builder.InitialCatalog = options[kInitialCatalogOption];
+      builder.Password = GetOption(kPasswordOption, options);
+      builder.InitialCatalog = GetOption(kInitialCatalogOption, options);
       return new SqlConnectionProvider(builder.ConnectionString);
+    }
+
+    string GetOption(string name, IDictionary<string,string> options) {
+      string option;
+      if(!options.TryGetValue(name, out option)) {
+        throw new KeyNotFoundException(
+          string.Format(StringResources.Arg_KeyNotFound, name));
+      }
+      return option;
     }
   }
 }
