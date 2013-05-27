@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>must.common</id>
-        <version>1.6.26.0</version>
+        <version>1.7.0.0</version>
         <title>Must Framework - Common</title>
         <authors>Nohros Inc</authors>
         <owners>Nohros Inc</owners>
@@ -19,6 +19,5 @@
     <files>
         <file src="..\bin\release\nohros.dll" target="lib\net20\nohros.dll" />
         <file src="..\bin\release\net40\nohros.dll" target="lib\net40\nohros.dll" />
-        <file src="..\base\common\CHANGES.txt" target="CHANGES.txt" />
     </files>
 </package>
