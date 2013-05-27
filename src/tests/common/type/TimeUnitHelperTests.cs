@@ -19,10 +19,25 @@ namespace Nohros.Common
     [Test]
     public void ShouldConvertToMilliseconds() {
       var millis = TimeUnitHelper.ToMillis(10, TimeUnit.Seconds);
-      Assert.That(millis, Is.EqualTo(10 * 1000));
+      Assert.That(millis, Is.EqualTo(10*1000));
 
       var minutes = TimeUnitHelper.ToMillis(10, TimeUnit.Minutes);
-      Assert.That(minutes, Is.EqualTo(10 * 60 * 1000));
+      Assert.That(minutes, Is.EqualTo(10*60*1000));
+    }
+
+    [Test]
+    public void ShouldConvertFromUnixEpochToLocal() {
+      Assert.That(TimeUnitHelper.FromUnixEpoch(1369686995),
+        Is.EqualTo(new DateTime(2013, 5, 27, 17, 36, 35, DateTimeKind.Local)));
+      Assert.That(TimeUnitHelper.FromUnixEpoch(1369686995, DateTimeKind.Local),
+        Is.EqualTo(new DateTime(2013, 5, 27, 17, 36, 35, DateTimeKind.Local)));
+    }
+
+    [Test]
+    public void ShouldConvertFromUnixEpochToUTC() {
+      var date_time = TimeUnitHelper.FromUnixEpoch(1369686995, DateTimeKind.Utc);
+      Assert.That(date_time,
+        Is.EqualTo(new DateTime(2013, 5, 27, 20, 36, 35, DateTimeKind.Utc)));
     }
   }
 }

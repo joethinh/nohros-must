@@ -121,6 +121,48 @@ namespace Nohros
     }
 
     /// <summary>
+    /// Converts the specified epoch time to its corresponding date and time.
+    /// </summary>
+    /// <param name="timestamp">
+    /// A Unix epoch time.
+    /// </param>
+    /// <returns>
+    /// The <see cref="DateTime"/> representation of the specified unix epoch
+    /// time.
+    /// </returns>
+    /// <remarks>
+    /// The returned date time represents a local time. To convert to a
+    /// Coordinated Universal Time (UTC) use the
+    /// <see cref="FromUnixEpoch(long, DateTimeKind)"/> overload
+    /// </remarks>
+    public static DateTime FromUnixEpoch(long timestamp) {
+      return FromUnixEpoch(timestamp, DateTimeKind.Local);
+    }
+
+    /// <summary>
+    /// Converts the specified epoch time to its corresponding date and time
+    /// using the given date time kind.
+    /// </summary>
+    /// <param name="timestamp">
+    /// A Unix epoch time.
+    /// </param>
+    /// <returns>
+    /// The <see cref="DateTime"/> representation of the specified unix epoch
+    /// time.
+    /// </returns>
+    /// <remarks>
+    /// If <paramref name="kind"/> is set to
+    /// <see cref="DateTimeKind.Unspecified"/> the
+    /// <see cref="DateTimeKind.Local"/> will be used.
+    /// </remarks>
+    public static DateTime FromUnixEpoch(long timestamp, DateTimeKind kind) {
+      var date =
+        new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+          .AddSeconds(timestamp);
+      return kind == DateTimeKind.Utc ? date : date.ToLocalTime();
+    }
+
+    /// <summary>
     /// Convert the specified time duration in the given unit to the
     /// seconds units.
     /// </summary>
