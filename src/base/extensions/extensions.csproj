@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="DataParameters.cs" />
     <Compile Include="DataReaders.cs" />
-    <Compile Include="Json.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderOptions.cs" />
     <Compile Include="Providers.cs" />
