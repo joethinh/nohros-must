@@ -44,17 +44,6 @@ namespace Nohros.Configuration
     IConfigurationBuilder<T> SetProviders(ProvidersNode providers);
 
     /// <summary>
-    /// Sets the <see cref="LoginModulesNode"/> object for
-    /// the <see cref="AbstractConfigurationBuilder{T}"/>
-    /// </summary>
-    /// <param name="login_modules">The <see cref="LoginModulesNode"/>
-    /// to set.</param>
-    /// <returns>A <see cref="AbstractConfigurationBuilder{T}"/> object that
-    /// associates <paramref name="login_modules"/> with the builded
-    /// <see cref="Nohros.Configuration.IConfiguration"/>.</returns>
-    IConfigurationBuilder<T> SetLoginModules(LoginModulesNode login_modules);
-
-    /// <summary>
     /// Sets the <see cref="XmlElementsNode"/> object for
     /// the <see cref="AbstractConfigurationBuilder{T}"/>
     /// </summary>
@@ -86,14 +75,6 @@ namespace Nohros.Configuration
     /// associates <paramref name="properties"/> with the builded
     /// <see cref="Nohros.Configuration.IConfiguration"/>.</returns>
     IConfigurationBuilder<T> SetProperties(DictionaryValue properties);
-
-
-    /// <summary>
-    /// Gets the configured login modules.
-    /// </summary>
-    /// <value>The configured login modules or <c>null</c> if no
-    /// login modules are configured.</value>
-    LoginModulesNode LoginModules { get; }
 
     /// <summary>
     /// Gets the configured properties.

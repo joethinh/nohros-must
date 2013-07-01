@@ -15,10 +15,9 @@ namespace Nohros.Configuration
   /// The nohros shcema is defined by the
   /// http://nohros.com/schemas/nohros/nohros.xsd file.
   /// </remarks>
-  public partial class Configuration : IConfiguration, ILoginConfiguration
+  public partial class Configuration : IConfiguration
   {
     LogLevel log_level_;
-    ILoginModulesNode login_modules_;
     DictionaryValue properties_;
     ProvidersNode providers_;
     RepositoriesNode repositories_;
@@ -33,7 +32,6 @@ namespace Nohros.Configuration
       properties_ = new DictionaryValue();
       repositories_ = new RepositoriesNode();
       providers_ = new ProvidersNode();
-      login_modules_ = new LoginModulesNode();
       xml_elements_ = new XmlElementsNode();
     }
 
@@ -44,22 +42,10 @@ namespace Nohros.Configuration
       properties_ = builder.Properties;
       repositories_ = builder.Repositories;
       providers_ = builder.Providers;
-      login_modules_ = builder.LoginModules;
       xml_elements_ = builder.XmlElements;
     }
     #endregion
 
-    /// <summary>
-    /// Gets the login modules that was configured for this application.
-    /// </summary>
-    /// <remarks>
-    /// If this application has no login modules configured, this property will
-    /// returns a empty <see cref="LoginModulesNode"/>, that is a
-    /// <see cref="LoginModulesNode"/> object that contains no login modules.
-    /// </remarks>
-    public ILoginModulesNode LoginModules {
-      get { return login_modules_; }
-    }
 
     /// <summary>
     /// Gets the repositories that was configured for this application.
@@ -130,7 +116,6 @@ namespace Nohros.Configuration
       repositories_ = configuration.repositories_;
       xml_elements_ = configuration.xml_elements_;
       log_level_ = configuration.log_level_;
-      login_modules_ = configuration.login_modules_;
       properties_ = configuration.properties_;
     }
 

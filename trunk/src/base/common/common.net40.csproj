@@ -118,12 +118,8 @@
     <Compile Include="configuration\AbstractConfigurationNode.cs" />
     <Compile Include="configuration\builders\CallableConfigurationBuilder.cs" />
     <Compile Include="configuration\builders\ThrowableConfigurationBuilder.cs" />
-    <Compile Include="configuration\common\auth\ILoginModulesNode.cs" />
-    <Compile Include="configuration\common\auth\LoginModulesNode.cs" />
-    <Compile Include="configuration\common\auth\LoginModulesNodeParser.cs" />
     <Compile Include="configuration\common\IRepositoriesNode.cs" />
     <Compile Include="configuration\common\IRepositoryNode.cs" />
-    <Compile Include="configuration\common\auth\LoginModuleNodeParser.cs" />
     <Compile Include="configuration\common\provider\IProviderOptions.cs" />
     <Compile Include="configuration\common\provider\IProvidersNode.cs" />
     <Compile Include="configuration\common\provider\IProvidersNodeGroup.cs" />
@@ -257,10 +253,6 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="resources\StringResources.cs" />
-    <Compile Include="security\auth\AbstractLoginModule.cs" />
-    <Compile Include="security\auth\ILoginModuleFactory.cs" />
-    <Compile Include="security\auth\ILoginModuleNodePair.cs" />
-    <Compile Include="security\auth\LoginModuleNodePair.cs" />
     <Compile Include="type\delegates\RunnableDelegate.cs" />
     <Compile Include="concurrent\SerialExecutorState.cs" />
     <Compile Include="concurrent\Uninterruptibles.cs" />
@@ -278,7 +270,6 @@
     <Compile Include="configuration\common\RepositoryNode.cs" />
     <Compile Include="configuration\AbstractHierarchicalConfigurationNode.cs" />
     <Compile Include="configuration\common\provider\IProviderNode.cs" />
-    <Compile Include="configuration\common\auth\LoginModuleNode.cs" />
     <Compile Include="providers\cache\ICacheProvider.cs" />
     <Compile Include="providers\data\IConnectionProviderFactory.cs" />
     <Compile Include="type\Clock.cs" />
@@ -338,30 +329,6 @@
     <Compile Include="mq\IMessageMiddleware.cs" />
     <Compile Include="exception\ProviderException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="security\auth\BasicPermission.cs" />
-    <Compile Include="security\auth\FieldCallback.cs" />
-    <Compile Include="security\auth\callback\IAuthCallback.cs" />
-    <Compile Include="security\auth\callback\IAuthCallbackHandler.cs" />
-    <Compile Include="configuration\common\auth\ILoginConfiguration.cs" />
-    <Compile Include="security\auth\IPermission.cs" />
-    <Compile Include="security\auth\IPrincipal.cs" />
-    <Compile Include="security\auth\LoginException.cs" />
-    <Compile Include="security\auth\LoginFactory.cs" />
-    <Compile Include="configuration\common\auth\LoginModuleControlFlag.cs" />
-    <Compile Include="configuration\common\auth\ILoginModuleNode.cs" />
-    <Compile Include="security\auth\PermissionBase.cs" />
-    <Compile Include="security\auth\NasUser.cs" />
-    <Compile Include="security\auth\Principal.cs" />
-    <Compile Include="security\auth\sets\ISecureSet.cs" />
-    <Compile Include="security\auth\sets\PermissionSet.cs" />
-    <Compile Include="security\auth\SecurityContextBase.cs" />
-    <Compile Include="security\auth\LoginContext.cs" />
-    <Compile Include="security\auth\ILoginModule.cs" />
-    <Compile Include="security\auth\ModuleActivator.cs" />
-    <Compile Include="security\auth\sets\PrincipalSet.cs" />
-    <Compile Include="security\auth\sets\SecureSet.cs" />
-    <Compile Include="security\auth\SQLite.cs" />
-    <Compile Include="security\auth\Subject.cs" />
     <Compile Include="NSecurity.cs" />
     <Compile Include="exception\Thrower.cs" />
     <Compile Include="type\ValueTypes.cs" />
@@ -415,7 +382,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
