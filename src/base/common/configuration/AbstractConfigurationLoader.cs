@@ -827,9 +827,6 @@ namespace Nohros.Configuration
           } else if (Strings.AreEquals(name, Strings.kProvidersNodeName)) {
             builder.SetProviders(ProvidersNode.Parse((XmlElement) node,
               location_));
-          } else if (Strings.AreEquals(name, Strings.kLoginModulesNodeName)) {
-            builder.SetLoginModules(LoginModulesNode.Parse((XmlElement) node,
-              location_));
           } else if (Strings.AreEquals(name, Strings.kXmlElementsNodeName)) {
             XmlElementsNode xml_elements =
               XmlElementsNode.Parse((XmlElement) node);

@@ -12,7 +12,6 @@ namespace Nohros.Configuration.Builders
     IConfigurationBuilder<T> where T : IConfiguration
   {
     LogLevel log_level_;
-    LoginModulesNode login_modules_;
     DictionaryValue properties_;
     ProvidersNode providers_;
     RepositoriesNode repositories_;
@@ -27,7 +26,6 @@ namespace Nohros.Configuration.Builders
       properties_ = new DictionaryValue();
       repositories_ = new RepositoriesNode();
       providers_ = new ProvidersNode();
-      login_modules_ = new LoginModulesNode();
       xml_elements_ = new XmlElementsNode();
     }
     #endregion
@@ -69,21 +67,6 @@ namespace Nohros.Configuration.Builders
     /// </returns>
     public IConfigurationBuilder<T> SetProviders(ProvidersNode providers) {
       providers_ = providers;
-      return this;
-    }
-
-    /// <summary>
-    /// Sets the <see cref="LoginModulesNode"/> object for
-    /// the <see cref="AbstractConfigurationBuilder{T}"/>
-    /// </summary>
-    /// <param name="login_modules">The <see cref="LoginModulesNode"/>
-    /// to set.</param>
-    /// <returns>A <see cref="AbstractConfigurationBuilder{T}"/> object that
-    /// associates <paramref name="login_modules"/> with the builded
-    /// <see cref="Nohros.Configuration.IConfiguration"/>.</returns>
-    public IConfigurationBuilder<T> SetLoginModules(
-      LoginModulesNode login_modules) {
-      login_modules_ = login_modules;
       return this;
     }
 
@@ -148,20 +131,9 @@ namespace Nohros.Configuration.Builders
       properties_ = builder.properties_;
       providers_ = builder.providers_;
       log_level_ = builder.log_level_;
-      login_modules_ = builder.login_modules_;
       repositories_ = builder.repositories_;
       xml_elements_ = builder.xml_elements_;
       return this;
-    }
-
-
-    /// <summary>
-    /// Gets the configured login modules.
-    /// </summary>
-    /// <value>The configured login modules or <c>null</c> if no
-    /// login modules are configured.</value>
-    public LoginModulesNode LoginModules {
-      get { return login_modules_; }
     }
 
     /// <summary>
