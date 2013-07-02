@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Nohros.Security.Auth
 {
@@ -32,20 +30,22 @@ namespace Nohros.Security.Auth
   public interface IAuthCallbackHandler
   {
     /// <summary>
-    /// Retrieve or display information requested in the
-    /// provided <see cref="ICallback"/>
+    /// Retrieve or display information requested in the provided callbacks.
     /// </summary>
     /// <remarks>
     /// The handle method implementation checks the instance(s) of the
     /// <see cref="IAuthCallback"/> objects(s) passed in to retrieve or
     /// display the requested information.
     /// </remarks>
-    /// <param name="callback">An array of <see cref="IAuthCallback"/> objects
-    /// provided underlying security service which contains the information
-    /// requested to be retrieved or displayed.</param>
-    /// <exception cref="NotSupportedException">If the implementation of this
-    /// method does not support one or more of the
-    /// <see cref="ICallback"/>s specified.</exception>
+    /// <param name="callback">
+    /// An array of <see cref="IAuthCallback"/> objects provided underlying
+    /// security service which contains the information requested to be
+    /// retrieved or displayed.
+    /// </param>
+    /// <exception cref="NotSupportedException">
+    /// The implementation of this method does not support one or more of
+    /// the <see cref="IAuthCallback"/>s specified.
+    /// </exception>.
     void Handle(IAuthCallback[] callback);
   }
 }

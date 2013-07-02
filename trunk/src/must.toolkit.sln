@@ -41,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "(auth)", "(auth)", "{55CDAA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "auth", "platform\toolkit\auth\auth.csproj", "{9913BB99-D7DE-4F9B-9DB2-42F039209C27}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "auth", "tests\auth\auth.csproj", "{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +203,16 @@ Global
 		{9913BB99-D7DE-4F9B-9DB2-42F039209C27}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9913BB99-D7DE-4F9B-9DB2-42F039209C27}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{9913BB99-D7DE-4F9B-9DB2-42F039209C27}.Release|x86.ActiveCfg = Release|Any CPU
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -220,6 +232,7 @@ Global
 		{876848CE-99F0-4AA1-8468-365204B77123} = {761E2349-D417-4DB1-89B3-59C9F8631355}
 		{D0528AEC-8CDD-47FF-AD6C-694121F07C8B} = {761E2349-D417-4DB1-89B3-59C9F8631355}
 		{9CEC7355-3D4B-470A-AFDD-FD59FB7C5A7C} = {761E2349-D417-4DB1-89B3-59C9F8631355}
+		{373E3C84-5A5F-407C-891A-7F34DE8BA4D8} = {761E2349-D417-4DB1-89B3-59C9F8631355}
 		{9913BB99-D7DE-4F9B-9DB2-42F039209C27} = {55CDAAFE-2018-420E-B0D8-71103CF7E617}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
