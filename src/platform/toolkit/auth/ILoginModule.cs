@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 
 using Nohros.Configuration;
 
@@ -18,10 +18,6 @@ namespace Nohros.Security.Auth
   /// requiring any modifications to the application itself.
   /// </para>
   /// <para>
-  /// The <see cref="ILoginConfiguration"/> is responsible for reading
-  /// the appropriate <see cref="ILoginModule"/> configuration data.
-  /// </para>
-  /// <para>
   /// The calling application sees the authentication process as a single
   /// operation. However, the authentication process whitin the login module
   /// proceeds in two distinct phases. In the first phase, the login module's
@@ -29,8 +25,8 @@ namespace Nohros.Security.Auth
   /// LoginContext's <see cref="LoginContext.Login()"/> method. The login
   /// method for the login module's then performs the actual authentication
   /// and saves its authentication status as private state information. Once
-  /// finished, the login module's either returns true(if it succeeded) or
-  /// false(if it failed). In the failure case, the login module's must not
+  /// finished, the login module's either returns true (if it succeeded) or
+  /// false (if it failed). In the failure case, the login module's must not
   /// retry the authentication or introduce delays. The responsability of such
   /// tasks belongs to the application. If the application attempts to retry
   /// the authentication, the login module's login method will be called
@@ -57,38 +53,91 @@ namespace Nohros.Security.Auth
   /// </para>
   /// <para>
   /// Log out involves only one phase. The <see cref="LoginContext"/> invokes
-  /// the <see cref="ILoginModule.Logout()"/> method. The logout method for the
-  /// login module then performs the logout procedures, such as logging session
-  /// information.
+  /// the <see cref="ILoginModule.Logout(Subject)"/> method. The logout method
+  /// for the login module then performs the logout procedures, such as logging
+  /// session information.
   /// </para>
   /// </summary>
   public interface ILoginModule
   {
     /// <summary>
-    /// Method to abort the authentication process - phase 2.
+    /// Method to abort the authentication process (phase 2.)
     /// </summary>
-    /// <returns></returns>
+    /// <remarks>
+    /// This method is called if the <see cref="LoginContext"/> overall
+    /// authentication failed.
+    /// <para>
+    /// If this <see cref="ILoginModule"/> own authentication attempt
+    /// succeeded (checked by retrieving the private state saved by the
+    /// <see cref="Login"/> method), then this method cleans up any state that
+    /// was originally saved.
+    /// </para>
+    /// </remarks>
+    /// <returns>
+    /// <c>true</c> if this method succeeded, or <c>false</c> if this
+    /// <see cref="ILoginModule"/> should be ignored.
+    /// </returns>
+    /// <exception cref="LoginException">
+    /// The <see cref="Login"/> operation fails.
+    /// </exception>
     bool Abort();
 
     /// <summary>
-    /// Method to commit the authentication process - phase 2.
+    /// Method to commit the authentication process (phase 2).
+    /// <para>
+    /// This method is called by the <see cref="LoginContext"/> if overall
+    /// authentication succeeded.
+    /// </para>
+    /// <para>
+    /// If this <see cref="ILoginModule"/> own authentication attempt succeeded
+    /// (checked by retrieving the private state saved by the
+    /// <see cref="Login"/> method), ths this method cleans up any saved state
+    /// that was originally saved.
+    /// </para>
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// <c>true</c> if this method succeeded, or <c>false</c> if this
+    /// <see cref="ILoginModule"/> should be ignored.
+    /// </returns>
+    /// <exception cref="LoginException">
+    /// The <see cref="Commit"/> operation fails.
+    /// </exception>
     bool Commit();
 
     /// <summary>
     /// Method to authenticate a subject.
     /// </summary>
     /// <remarks>
-    /// The implementation of this method authenticates
+    /// The implementation of this method authenticates a <see cref="Subject"/>.
+    /// For exemple, it may prompt for <see cref="Subject"/> information
+    /// such as username and password adn then attempt to verify the password.
+    /// This method saves the result of authentication attempt as private
+    /// state within <see cref="ILoginModule"/>.
     /// </remarks>
-    /// <returns></returns>
+    /// <returns>
+    /// <c>true</c> if the authentication succeeded, or <c>false</c> if this
+    /// <see cref="ILoginModule"/> should be ignored.
+    /// </returns>
+    /// <exception cref="LoginException">
+    /// The <see cref="Login"/> operation fails.
+    /// </exception>
     bool Login();
 
     /// <summary>
-    /// Method which logs out a user.
+    /// Method which logs out a <see cref="Subject"/>.
     /// </summary>
-    /// <returns></returns>
-    bool Logout();
+    /// <exception cref="LoginException">
+    /// The <see cref="Logout"/> operation fails.
+    /// </exception>
+    bool Logout(Subject subject);
+   
+    /// <summary>
+    /// Gets the login's module control flag.
+    /// </summary>
+    /// <value>
+    /// A <see cref="LoginModuleControlFlag"/> specifying whether this login
+    /// module is Required, Requisite, Sufficient or Optional.
+    /// </value>
+    LoginModuleControlFlag ControlFlag { get; }
   }
 }
