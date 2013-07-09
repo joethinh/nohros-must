@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="repositories\SetStateCommand.cs" />
     <Compile Include="repositories\SqlStateRepository.cs" />
     <Compile Include="repositories\SqlStateRepositoryFactory.cs" />
     <Compile Include="repositories\StateByNameQuery.cs" />
