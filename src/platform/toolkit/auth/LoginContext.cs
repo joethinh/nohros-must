@@ -67,13 +67,13 @@ namespace Nohros.Security.Auth
   /// <see cref="Logout"/> method. As with the <see cref="Login"/> method, this
   /// logout method invokes the <see cref="ILoginModule.Logout"/> method for
   /// each login module configured for this login context. Each login module's
-  /// logout method cleans up state and removes/destroys permissions from the
-  /// subject as appropriate.
+  /// logout method cleans up subject's state and removes/destroys their
+  /// permissions as appropriate.
   /// </para>
   /// <para>
   /// Each of the configured login module invoked by the login context is
   /// initialized with a <see cref="Subject"/> object to be authenticated, a
-  /// <see cref="ICallbackHandler"/> object used to communicate with users,
+  /// <see cref="IAuthCallbackHandler"/> object used to communicate with users,
   /// shared login module state, and login module specific options.
   /// </para>
   /// <para>
