@@ -148,6 +148,7 @@
     <Compile Include="CommandLine.cs" />
     <Compile Include="data\ICommand.cs" />
     <Compile Include="data\IQuery.cs" />
+    <Compile Include="data\repositories\AbstractStateByNameQuery.cs" />
     <Compile Include="data\repositories\IStateByNameQuery.cs" />
     <Compile Include="data\repositories\IStateRepository.cs" />
     <Compile Include="data\mappers\BooleanMapType.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="data\mappers\TypeMapType.cs" />
     <Compile Include="data\readers\DataFieldDateTime.cs" />
     <Compile Include="data\readers\DataReaderReader.cs" />
+    <Compile Include="data\repositories\IStateRepositoryFactory.cs" />
     <Compile Include="data\TransactionScopes.cs" />
     <Compile Include="exception\ConstraintViolationException.cs" />
     <Compile Include="exception\NetworkException.cs" />
