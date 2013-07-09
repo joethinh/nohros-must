@@ -173,6 +173,7 @@
     <Compile Include="data\mappers\TypeMapType.cs" />
     <Compile Include="data\readers\DataFieldDateTime.cs" />
     <Compile Include="data\readers\DataReaderReader.cs" />
+    <Compile Include="data\repositories\AbstractStateByNameQuery.cs" />
     <Compile Include="data\repositories\IStateByNameQuery.cs" />
     <Compile Include="data\repositories\IStateRepository.cs" />
     <Compile Include="data\TransactionScopes.cs" />
