@@ -149,6 +149,7 @@
     <Compile Include="data\ICommand.cs" />
     <Compile Include="data\IQuery.cs" />
     <Compile Include="data\repositories\AbstractStateByNameQuery.cs" />
+    <Compile Include="data\repositories\ISetStateCommand.cs" />
     <Compile Include="data\repositories\IStateByNameQuery.cs" />
     <Compile Include="data\repositories\IStateRepository.cs" />
     <Compile Include="data\mappers\BooleanMapType.cs" />
