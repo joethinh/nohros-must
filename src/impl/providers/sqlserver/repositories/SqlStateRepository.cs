@@ -29,5 +29,10 @@ namespace Nohros.Data.SqlServer
     public IStateByNameQuery Query(out IStateByNameQuery query) {
       return query = new StateByNameQuery(sql_connection_provider_);
     }
+
+    /// <inheritdoc/>
+    public ISetStateCommand Query(out ISetStateCommand query) {
+      return query = new SetStateCommand(sql_connection_provider_);
+    }
   }
 }
