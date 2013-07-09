@@ -19,5 +19,17 @@ namespace Nohros.Data
     /// The newly create <see cref="IStateByNameQuery"/> query.
     /// </returns>
     IStateByNameQuery Query(out IStateByNameQuery query);
+
+    /// <summary>
+    /// Creates a query that associates a string representing a state with a
+    /// given name.
+    /// </summary>
+    /// <param name="query">
+    /// The newly create <see cref="ISetStateCommand"/> query.
+    /// </param>
+    /// <returns>
+    /// The newly create <see cref="ISetStateCommand"/> query.
+    /// </returns>
+    ISetStateCommand Query(out ISetStateCommand query);
   }
 }
