@@ -195,7 +195,7 @@ namespace Nohros
     static int GetArgumentOfType(object[] args, Type type) {
       for (int i = 0, j = args.Length; i < j; i++) {
         object arg = args[i];
-        if (arg != null && arg.GetType() == type) {
+        if (type.IsInstanceOfType(arg)) {
           return i;
         }
       }
