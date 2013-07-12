@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LoginContextFactory.cs" />
     <Compile Include="LoginModuleControlFlag.cs" />
     <Compile Include="BasicPermission.cs" />
     <Compile Include="callback\IAuthCallback.cs" />
