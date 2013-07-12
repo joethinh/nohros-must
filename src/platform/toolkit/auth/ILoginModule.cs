@@ -53,7 +53,7 @@ namespace Nohros.Security.Auth
   /// </para>
   /// <para>
   /// Log out involves only one phase. The <see cref="LoginContext"/> invokes
-  /// the <see cref="ILoginModule.Logout(Subject)"/> method. The logout method
+  /// the <see cref="ILoginModule.Logout()"/> method. The logout method
   /// for the login module then performs the logout procedures, such as logging
   /// session information.
   /// </para>
@@ -129,7 +129,7 @@ namespace Nohros.Security.Auth
     /// <exception cref="LoginException">
     /// The <see cref="Logout"/> operation fails.
     /// </exception>
-    bool Logout(Subject subject);
+    bool Logout();
    
     /// <summary>
     /// Gets the login's module control flag.

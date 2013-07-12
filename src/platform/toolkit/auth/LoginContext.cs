@@ -17,7 +17,7 @@ namespace Nohros.Security.Auth
   /// application without requiring any modifications to the application
   /// itself.
   /// <para>
-  /// In adition to supporting pluggable authentication, this class also
+  /// In addition to supporting pluggable authentication, this class also
   /// support the notion of stacked authentication. In other words, an
   /// application may be configured to use more than one
   /// <see cref="ILoginModule"/>. For example, one could configure both
@@ -99,10 +99,9 @@ namespace Nohros.Security.Auth
   /// <seealso cref="ILoginModule"/>
   public sealed class LoginContext
   {
-    readonly IAuthCallbackHandler callback_;
     readonly ILoginModule[] login_modules_;
-    readonly Dictionary<string, object> state_;
-    readonly Subject subject_;
+    readonly bool subject_was_suplied_;
+    Subject subject_;
 
     #region .ctor
     /// <summary>
@@ -121,8 +120,8 @@ namespace Nohros.Security.Auth
       if (login_modules == null) {
         throw new ArgumentNullException("login_modules");
       }
-      state_ = new Dictionary<string, object>();
       login_modules_ = login_modules;
+      subject_was_suplied_ = false;
     }
 
     /// <summary>
@@ -143,64 +142,13 @@ namespace Nohros.Security.Auth
     /// </exception>
     public LoginContext(Subject subject, ILoginModule[] login_modules)
       : this(login_modules) {
-      if (subject == null) {
-        throw new ArgumentNullException("subject");
-      }
-      subject_ = subject;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LoginContext"/> class by
-    /// using the specified <see cref="IAuthCallbackHandler"/> object.
-    /// </summary>
-    /// <param name="login_modules">
-    /// A array containing all the configuration data and its associated
-    /// login modules that should be used to authenticate a subject using this
-    /// context.
-    /// </param>
-    /// <param name="callback">The <see cref="IAuthCallbackHandler"/> object
-    /// used by the login modules to communicate with the user.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="callback"/> or <paramref name="login_modules"/>
-    /// are <c>null</c>.
-    /// </exception>
-    public LoginContext(ILoginModule[] login_modules,
-      IAuthCallbackHandler callback)
-      : this(login_modules, new Subject(), callback) {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LoginContext"/> class by
-    /// using the specified <see cref="Subject"/> object and
-    /// <see cref="IAuthCallbackHandler"/> delegate.
-    /// </summary>
-    /// <param name="login_modules">
-    /// A array containing all the configuration data and its associated
-    /// login modules that should be used to authenticate a subject using this
-    /// context.
-    /// </param>
-    /// <param name="subject">
-    /// The subject to authenticate.
-    /// </param>
-    /// <param name="callback">
-    /// The <see cref="IAuthCallbackHandler"/> object used by login modules to
-    /// communicate with the user.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="subject"/> or <paramref name="callback"/> are
-    /// <c>null</c> references.
-    /// </exception>
-    public LoginContext(ILoginModule[] login_modules,
-      Subject subject, IAuthCallbackHandler callback)
-      : this(login_modules) {
-      if (subject == null || callback == null) {
+      if (subject == null || login_modules == null) {
         throw new ArgumentNullException(subject == null
           ? "subject"
-          : "callback");
+          : "login_modules");
       }
-      callback_ = callback;
       subject_ = subject;
+      subject_was_suplied_ = true;
     }
     #endregion
 
@@ -335,6 +283,9 @@ namespace Nohros.Security.Auth
             StringResources.Log_MethodThrowsException, "commit"), exception);
         }
       }
+      if (!subject_was_suplied_) {
+        subject_ = null;
+      }
     }
 
     /// <summary>
@@ -356,11 +307,11 @@ namespace Nohros.Security.Auth
     /// restoration can take place.
     /// </para>
     /// </remarks>
-    public void Logout(Subject subject) {
+    public void Logout() {
       for (int i = 0, j = login_modules_.Length; i < j; i++) {
         ILoginModule login_module = login_modules_[i];
         try {
-          login_module.Logout(subject);
+          login_module.Logout();
         } catch (Exception ex) {
           // Don't punish the other login modules if we're given a bad one.
           MustLogger.ForCurrentProcess.Error(string.Format(
