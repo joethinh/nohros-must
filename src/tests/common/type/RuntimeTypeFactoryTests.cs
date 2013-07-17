@@ -6,11 +6,11 @@ namespace Nohros
 {
   public class RuntimeTypeFactoryTests
   {
-    public interface IBaseType
+    public class BaseType : IBaseType
     {
     }
 
-    public class BaseType : IBaseType
+    public interface IBaseType
     {
     }
 
@@ -41,10 +41,10 @@ namespace Nohros
         Arg3 = arg3;
         StringArg = arg2;
       }
-      #endregion
 
       public TestFactory(IBaseType type) {
       }
+      #endregion
 
       public int Arg { get; set; }
       public int Arg3 { get; set; }
@@ -138,7 +138,7 @@ namespace Nohros
       object obj = RuntimeTypeFactory<ITestFactory>.CreateInstance(node_, "a1",
         0, 2);
       Assert.That(obj, Is.AssignableTo<TestFactory>());
-      test = (TestFactory)obj;
+      test = (TestFactory) obj;
       Assert.That(test.Arg, Is.EqualTo(0));
       Assert.That(test.StringArg, Is.EqualTo("a1"));
       Assert.That(test.Arg3, Is.EqualTo(2));
@@ -146,7 +146,7 @@ namespace Nohros
       obj = RuntimeTypeFactory<ITestFactory>.CreateInstanceFallback(node_, "a2",
         10, 3);
       Assert.That(obj, Is.AssignableTo<TestFactory>());
-      test = (TestFactory)obj;
+      test = (TestFactory) obj;
       Assert.That(test.Arg, Is.EqualTo(10));
       Assert.That(test.StringArg, Is.EqualTo("a2"));
       Assert.That(test.Arg3, Is.EqualTo(3));
@@ -154,7 +154,7 @@ namespace Nohros
       obj = RuntimeTypeFactory<ITestFactory>.CreateInstanceNoException(node_,
         "a3", 20, 4);
       Assert.That(obj, Is.AssignableTo<TestFactory>());
-      test = (TestFactory)obj;
+      test = (TestFactory) obj;
       Assert.That(test.Arg, Is.EqualTo(20));
       Assert.That(test.StringArg, Is.EqualTo("a3"));
       Assert.That(test.Arg3, Is.EqualTo(4));
@@ -169,6 +169,17 @@ namespace Nohros
       } catch {
         Assert.Fail(
           "Derived type should be accepted as argument for base type parameter");
+      }
+    }
+
+    [Test]
+    public void ShouldDiscardNonDeclaredParameters() {
+      var base_type = new BaseType();
+      try {
+        object obj = RuntimeTypeFactory<ITestFactory>
+          .CreateInstance(node_, base_type, string.Empty);
+      } catch {
+        Assert.Fail("Non declared parameters should be discarded");
       }
     }
   }
