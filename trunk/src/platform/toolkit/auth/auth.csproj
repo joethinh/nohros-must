@@ -42,22 +42,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LoginContextFactory.cs" />
+    <Compile Include="callback\AuthCallbackHandlers.cs" />
+    <Compile Include="callback\ActionableAuthCallbackHandler.cs" />
+    <Compile Include="callback\ThrowableAuthCallbackHandler.cs" />
     <Compile Include="LoginModuleControlFlag.cs" />
-    <Compile Include="BasicPermission.cs" />
+    <Compile Include="permissions\BasicPermission.cs" />
     <Compile Include="callback\IAuthCallback.cs" />
     <Compile Include="callback\IAuthCallbackHandler.cs" />
-    <Compile Include="FieldCallback.cs" />
+    <Compile Include="callback\FieldCallback.cs" />
     <Compile Include="ILoginModule.cs" />
     <Compile Include="ILoginModuleFactory.cs" />
-    <Compile Include="IPermission.cs" />
+    <Compile Include="sets\IPermission.cs" />
     <Compile Include="IPrincipal.cs" />
     <Compile Include="LoginContext.cs" />
     <Compile Include="LoginException.cs" />
-    <Compile Include="LoginFactory.cs" />
     <Compile Include="AbstractLoginModuleFactory.cs" />
-    <Compile Include="ModuleActivator.cs" />
-    <Compile Include="PermissionBase.cs" />
+    <Compile Include="callback\NopAuthCallbackHandler.cs" />
+    <Compile Include="permissions\PermissionBase.cs" />
     <Compile Include="Principal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -65,7 +66,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SecurityContextBase.cs" />
     <Compile Include="sets\ISecureSet.cs" />
     <Compile Include="sets\PermissionSet.cs" />
     <Compile Include="sets\PrincipalSet.cs" />

@@ -18,7 +18,14 @@ namespace Nohros.Security.Auth
   {
     public const string kControlFlagOption = "controlFlag";
 
-    public LoginModuleControlFlag GetControlFlag(
+    /// <inheritdoc/>
+    public abstract ILoginModule CreateLoginModule(
+      Subject subject,
+      IAuthCallbackHandler callback,
+      IDictionary<string, string> shared,
+      IDictionary<string, string> options);
+
+    protected LoginModuleControlFlag GetControlFlag(
       IDictionary<string, string> options) {
       string option = options.GetString(kControlFlagOption);
       switch (option.ToLower()) {
@@ -38,9 +45,5 @@ namespace Nohros.Security.Auth
           return LoginModuleControlFlag.Required;
       }
     }
-
-    /// <inheritdoc/>
-    public abstract ILoginModule CreateLoginModule(
-      IDictionary<string, string> options);
   }
 }
