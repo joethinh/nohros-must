@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Nohros framework")]
-[assembly: AssemblyDescription("nohros")]
+[assembly: AssemblyTitle("must.common")]
+[assembly: AssemblyDescription("must.common")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nohros Systems Inc")]
-[assembly: AssemblyProduct("Nohros framework")]
+[assembly: AssemblyProduct("Nohros Must framework")]
 [assembly: AssemblyCopyright("Copyright © Nohros Systems Inc 2008")]
 [assembly: AssemblyTrademark("Copyright © Nohros Systems Inc 2008")]
 [assembly: AssemblyCulture("")]
@@ -42,6 +42,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.7.7.0")]
-[assembly: AssemblyFileVersion("1.7.7.0")]
+[assembly: AssemblyVersion("1.7.8.0")]
+[assembly: AssemblyFileVersion("1.7.8.0")]
 

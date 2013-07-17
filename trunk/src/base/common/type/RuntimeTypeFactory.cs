@@ -135,7 +135,7 @@ namespace Nohros
               Activator.CreateInstance(type, kFlags, null, args, null) as T;
           } else {
             KeyValuePair<ConstructorInfo, ParameterInfo[]>[] list =
-              GetPossibleMatchingConstructors(type, kFlags, args.Length);
+              GetOrderedConstructors(type, kFlags, args.Length);
             if (list.Length > 0) {
               KeyValuePair<ConstructorInfo, object[]> ctor;
               if (TryGetMatchingConstructor(list, args, out ctor)) {
@@ -172,10 +172,16 @@ namespace Nohros
       List<object> ordered_args = new List<object>(args.Length);
       for (int i = 0, j = ctors.Length; i < j; i++) {
         ParameterInfo[] parms = ctors[i].Value;
+        if (parms.Length > args.Length) {
+          continue;
+        }
         for (int k = 0, m = parms.Length; k < m; k++) {
           int pos = GetArgumentOfType(mutable_args, parms[k].ParameterType);
           if (pos == -1) {
+            // The current constructor does not match, reinitialize the
+            // auxiliar arrays and restart the matching process.
             ordered_args.Clear();
+            Array.Copy(args, mutable_args, args.Length);
             break;
           }
           ordered_args.Add(mutable_args[pos]);
@@ -203,17 +209,36 @@ namespace Nohros
     }
 
     static KeyValuePair<ConstructorInfo, ParameterInfo[]>[]
-      GetPossibleMatchingConstructors(Type type, BindingFlags flags, int count) {
+      GetOrderedConstructors(Type type, BindingFlags flags, int count) {
       List<KeyValuePair<ConstructorInfo, ParameterInfo[]>> list =
         new List<KeyValuePair<ConstructorInfo, ParameterInfo[]>>();
       ConstructorInfo[] ctors = type.GetConstructors(flags);
       foreach (ConstructorInfo ctor in ctors) {
         ParameterInfo[] parms = ctor.GetParameters();
-        if (parms.Length == count) {
-          list.Add(new KeyValuePair<ConstructorInfo, ParameterInfo[]>(ctor,
-            parms));
-        }
+        list.Add(new KeyValuePair<ConstructorInfo, ParameterInfo[]>(ctor,
+          parms));
       }
+
+      // Sort the constructors using the following rule ordering:
+      //   . constructors with the same number of parameters of the
+      //     specified arguments.
+      list.Sort(
+        delegate(KeyValuePair<ConstructorInfo, ParameterInfo[]> x,
+          KeyValuePair<ConstructorInfo, ParameterInfo[]> y) {
+          if (x.Value.Length == y.Value.Length) {
+            return 0;
+          }
+
+          if (x.Value.Length == count) {
+            return -1;
+          }
+
+          if (y.Value.Length == count) {
+            return 1;
+          }
+
+          return (x.Value.Length > y.Value.Length) ? -1 : 1;
+        });
       return list.ToArray();
     }
   }
