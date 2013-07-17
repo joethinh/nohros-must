@@ -122,9 +122,11 @@ namespace Nohros.Security.Auth
     /// Determines whether the access request indicated by the specified
     /// permission should be granted or denied for the underlying subject.
     /// </summary>
-    /// <param name="permission">The requested permission.</param>
-    /// <returns>true if the access request is permitted; otherwise
-    /// <c>false</c>.
+    /// <param name="permission">
+    /// The requested permission.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the access request is permitted; otherwise <c>false</c>.
     /// </returns>
     public bool CheckPermission(IPermission permission) {
       return (permissions_.Implies(permission));
@@ -162,10 +164,13 @@ namespace Nohros.Security.Auth
     /// <summary>
     /// Compares the specified object with this subject for for equality.
     /// </summary>
-    /// <param name="obj">The object to be compared for equality with this
-    /// subject.</param>
-    /// <returns><c>true</c> if the given object is also a
-    /// <see cref="Subject"/> and two instances are equivalent.</returns>
+    /// <param name="obj">
+    /// The object to be compared for equality with this subject.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the given object is also a <see cref="Subject"/> and
+    /// two instances are equivalent.
+    /// </returns>
     /// <remarks>
     /// The hash code of a subject is compute by using your principals. So if
     /// two subject objects has the same collection of principals them
@@ -179,10 +184,13 @@ namespace Nohros.Security.Auth
     /// <summary>
     /// Compares the specified subject with this subject for for equality.
     /// </summary>
-    /// <param name="subject">The subject to be compared for equality with
-    /// this instance.</param>
-    /// <returns>true if the given object is also a <see cref="Subject"/> and
-    /// two instances are equivalent.</returns>
+    /// <param name="subject">
+    /// The subject to be compared for equality with this instance.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the given object is also a <see cref="Subject"/> and
+    /// two instances are equivalent.
+    /// </returns>
     /// <remarks>
     /// The hash code of a subject is compute by using your principals. So if
     /// two subject objects has the same collection of principals them they are

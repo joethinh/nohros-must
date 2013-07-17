@@ -1,8 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nohros.Configuration;
 using Nohros.Logging;
 using Nohros.Resources;
+using LoginModuleFactoryTuple =
+  System.Collections.Generic.KeyValuePair
+    <Nohros.Security.Auth.ILoginModuleFactory,
+      System.Collections.Generic.IDictionary<string, string>>;
 
 namespace Nohros.Security.Auth
 {
@@ -97,58 +102,30 @@ namespace Nohros.Security.Auth
   /// <seealso cref="Subject"/>
   /// <seealso cref="IAuthCallbackHandler"/>
   /// <seealso cref="ILoginModule"/>
+  /// <seealso cref="ILoginModuleFactory"/>
   public sealed class LoginContext
   {
-    readonly ILoginModule[] login_modules_;
-    readonly bool subject_was_suplied_;
-    Subject subject_;
+    readonly
+      IEnumerable<LoginModuleFactoryTuple> login_module_factories_;
 
     #region .ctor
     /// <summary>
     /// Initialize a new instance of the <see cref="LoginContext"/> class by
     /// using the specified login modules.
     /// </summary>
-    /// <param name="login_modules">
-    /// A array containing all the configuration data and its associated
-    /// login modules that should be used to authenticate a subject using this
-    /// context.
+    /// <param name="login_module_factories">
+    /// A array containing the factories that can be used to create an instance
+    /// of all the configured <see cref="ILoginModule"/>s.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// <paramref name="login_modules"/> is <c>null</c>.
+    /// <paramref name="login_module_factories"/> is <c>null</c>.
     /// </exception>
-    public LoginContext(ILoginModule[] login_modules) {
-      if (login_modules == null) {
-        throw new ArgumentNullException("login_modules");
+    public LoginContext(
+      IEnumerable<LoginModuleFactoryTuple> login_module_factories) {
+      if (login_module_factories == null) {
+        throw new ArgumentNullException("login_module_factories");
       }
-      login_modules_ = login_modules;
-      subject_was_suplied_ = false;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LoginContext"/> class by
-    /// using the specified subject and login modules.
-    /// </summary>
-    /// <param name="subject">
-    /// The <see cref="Subject"/> to authenticate.
-    /// </param>
-    /// <param name="login_modules">
-    /// A array containing all the configuration data and its associated
-    /// login modules that should be used to authenticate a subject using this
-    /// context.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="subject"/> or <paramref name="login_modules"/>
-    /// are <c>null</c>.
-    /// </exception>
-    public LoginContext(Subject subject, ILoginModule[] login_modules)
-      : this(login_modules) {
-      if (subject == null || login_modules == null) {
-        throw new ArgumentNullException(subject == null
-          ? "subject"
-          : "login_modules");
-      }
-      subject_ = subject;
-      subject_was_suplied_ = true;
+      login_module_factories_ = login_module_factories;
     }
     #endregion
 
@@ -190,14 +167,18 @@ namespace Nohros.Security.Auth
     /// guarantees that proper cleanup and state restoration can take place.
     /// </para>
     /// </remarks>
-    public bool Login() {
+    public bool Login(Subject subject,
+      IAuthCallbackHandler auth_callback_handler) {
       int i, j;
       bool overall_login_succeeds = true;
-      IList<ILoginModule> succeeded_login_modules =
-        new List<ILoginModule>(login_modules_.Length);
 
-      for (i = 0, j = login_modules_.Length; i < j; i++) {
-        ILoginModule login_module = login_modules_[i];
+      ILoginModule[] login_modules = CreateLoginModules(subject,
+        auth_callback_handler);
+      IList<ILoginModule> succeeded_login_modules =
+        new List<ILoginModule>(login_modules.Length);
+
+      for (i = 0, j = login_modules.Length; i < j; i++) {
+        ILoginModule login_module = login_modules[i];
 
         // A try/catch block is used here to ensure that the login method will
         // be called for each configured module (respecting the control flag
@@ -238,10 +219,21 @@ namespace Nohros.Security.Auth
       }
 
       if (!overall_login_succeeds) {
-        Abort();
+        Abort(login_modules);
         return false;
       }
-      return Commit(succeeded_login_modules);
+
+      try {
+        if (!Commit(succeeded_login_modules)) {
+          Abort(login_modules);
+          return false;
+        }
+      } catch (Exception e) {
+        MustLogger.ForCurrentProcess.Debug(string.Format(
+          StringResources.Log_ThrowsException, "commit"), e);
+      }
+
+      return true;
     }
 
     /// <summary>
@@ -250,17 +242,11 @@ namespace Nohros.Security.Auth
     /// <param name="succeeded_login_modules"></param>
     /// <returns></returns>
     bool Commit(IList<ILoginModule> succeeded_login_modules) {
-      try {
-        for (int i = 0, j = succeeded_login_modules.Count; i < j; i++) {
-          ILoginModule login_module = succeeded_login_modules[i];
-          login_module.Commit();
+      for (int i = 0, j = succeeded_login_modules.Count; i < j; i++) {
+        ILoginModule login_module = succeeded_login_modules[i];
+        if (!login_module.Commit()) {
+          return false;
         }
-      } catch (Exception exception) {
-        MustLogger.ForCurrentProcess.Debug(string.Format(
-          StringResources.Log_ThrowsException, "commit"), exception);
-
-        Abort();
-        return false;
       }
       return true;
     }
@@ -273,18 +259,15 @@ namespace Nohros.Security.Auth
     /// If a <see cref="ILoginModule"/> throws an exception, it will be logged
     /// and we proceed down the list of login modules.
     /// </remarks>
-    void Abort() {
-      for (int i = 0, j = login_modules_.Length; i < j; i++) {
-        ILoginModule login_module = login_modules_[i];
+    void Abort(ILoginModule[] login_modules) {
+      for (int i = 0, j = login_modules.Length; i < j; i++) {
+        ILoginModule login_module = login_modules[i];
         try {
           login_module.Abort();
         } catch (Exception exception) {
           MustLogger.ForCurrentProcess.Error(string.Format(
             StringResources.Log_MethodThrowsException, "commit"), exception);
         }
-      }
-      if (!subject_was_suplied_) {
-        subject_ = null;
       }
     }
 
@@ -307,11 +290,13 @@ namespace Nohros.Security.Auth
     /// restoration can take place.
     /// </para>
     /// </remarks>
-    public void Logout() {
-      for (int i = 0, j = login_modules_.Length; i < j; i++) {
-        ILoginModule login_module = login_modules_[i];
+    public void Logout(Subject subject) {
+      ILoginModule[] login_modules = CreateLoginModules(subject,
+        new NopAuthCallbackHandler());
+      for (int i = 0, j = login_modules.Length; i < j; i++) {
+        ILoginModule login_module = login_modules[i];
         try {
-          login_module.Logout();
+          login_module.Logout(subject);
         } catch (Exception ex) {
           // Don't punish the other login modules if we're given a bad one.
           MustLogger.ForCurrentProcess.Error(string.Format(
@@ -320,20 +305,15 @@ namespace Nohros.Security.Auth
       }
     }
 
-    /// <summary>
-    /// Gets the authenticated <see cref="Subject"/>.
-    /// </summary>
-    /// <remarks>
-    /// If the caller was specified a <see cref="Subject"/>, this method
-    /// returns the caller-specified <see cref="Subject"/>. If a
-    /// <see cref="Subject"/> was not specified and authentication succeeds,
-    /// this method returns the <see cref="Subject"/> instantiated and used for
-    /// authentication by this <see cref="LoginContext"/>. If a
-    /// <see cref="Subject"/> was not specified, and authentication fails or
-    /// has been attempted, this method returns null.
-    /// </remarks>
-    public Subject Subject {
-      get { return subject_; }
+    ILoginModule[] CreateLoginModules(Subject subject,
+      IAuthCallbackHandler auth_callback_handler) {
+      var shared_state = new Dictionary<string, string>();
+      return login_module_factories_
+        .Select(
+          tuple =>
+            tuple.Key.CreateLoginModule(subject, auth_callback_handler,
+              shared_state, tuple.Value))
+        .ToArray();
     }
   }
 }

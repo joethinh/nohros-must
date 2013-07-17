@@ -1,5 +1,4 @@
 using System;
-
 using Nohros.Configuration;
 
 namespace Nohros.Security.Auth
@@ -129,8 +128,8 @@ namespace Nohros.Security.Auth
     /// <exception cref="LoginException">
     /// The <see cref="Logout"/> operation fails.
     /// </exception>
-    bool Logout();
-   
+    bool Logout(Subject subject);
+
     /// <summary>
     /// Gets the login's module control flag.
     /// </summary>
