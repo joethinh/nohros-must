@@ -41,7 +41,18 @@ namespace Nohros.Data
     /// Initializes a new instance of the <see cref="CommandBuilder"/> class
     /// by using the specified <see cref="IDbCommand"/>.
     /// </summary>
-    /// <param name="command"></param>
+    /// <param name="command">
+    /// A <see cref="IDbCommand"/> object that will be used to persist the
+    /// operations performed by the builder.
+    /// </param>
+    /// <remarks>
+    /// The <paramref name="command"/> object will be modified only in response
+    /// to a the execution of a method of the <see cref="CommandBuilder"/>.
+    /// For exemple, if the <see cref="IDbCommand.CommandText"/> property of
+    /// the <paramref name="command"/> is already set and the
+    /// <see cref="SetText"/> method is not executed, the
+    /// <see cref="IDbCommand.CommandText"/> will be not modified.
+    /// </remarks>
     public CommandBuilder(IDbCommand command) {
       command_ = command;
     }

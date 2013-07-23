@@ -149,6 +149,7 @@
     <Compile Include="data\ICommand.cs" />
     <Compile Include="data\IQuery.cs" />
     <Compile Include="data\repositories\AbstractStateByNameQuery.cs" />
+    <Compile Include="data\repositories\ICriteria.cs" />
     <Compile Include="data\repositories\ISetStateCommand.cs" />
     <Compile Include="data\repositories\IStateByNameQuery.cs" />
     <Compile Include="data\repositories\IStateRepository.cs" />
@@ -391,7 +392,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

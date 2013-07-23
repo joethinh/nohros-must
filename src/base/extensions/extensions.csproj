@@ -46,6 +46,7 @@
     <Compile Include="ProviderOptions.cs" />
     <Compile Include="Providers.cs" />
     <Compile Include="Configurations.cs" />
+    <Compile Include="StringHashSet.cs" />
     <Compile Include="Strings.cs" />
   </ItemGroup>
   <ItemGroup>
