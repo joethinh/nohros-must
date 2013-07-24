@@ -10,9 +10,12 @@ namespace Nohros.Data
   /// </summary>
   public abstract class AbstractCriteria : ICriteria
   {
+    const string kFilterMapPrefix = "FL";
+    const string kFieldMapPrefix = "FD";
+
     readonly HashSet<string> fields_;
     readonly Dictionary<string, object> filters_;
-    internal readonly Dictionary<string, string> maps_;
+    readonly Dictionary<string, string> maps_;
 
     #region .ctor
     protected AbstractCriteria() {
@@ -34,8 +37,21 @@ namespace Nohros.Data
     }
 
     /// <inheritdoc/>
-    public IDictionary<string, string> Map {
-      get { return maps_; }
+    public string GetFieldMap(string key) {
+      string map;
+      if (TryGetMap(kFieldMapPrefix + key, out map)) {
+        return map;
+      }
+      return key;
+    }
+
+    /// <inheritdoc/>
+    public string GetFilterMap(string key) {
+      string map;
+      if (TryGetMap(kFilterMapPrefix + key, out map)) {
+        return map;
+      }
+      return key;
     }
 
     /// <summary>
@@ -50,12 +66,32 @@ namespace Nohros.Data
       get { return filters_; }
     }
 
-    internal void BaseWhere(string name, object value) {
-      string field;
-      if (!maps_.TryGetValue(name, out field)) {
-        field = name;
-      }
-      filters_.Add(field, value);
+    /// <inheritdoc/>
+    bool TryGetMap(string key, out string map) {
+      return maps_.TryGetValue(key, out map);
+    }
+
+    /// <summary>
+    /// Maps a property to a field.
+    /// </summary>
+    public void MapField(string key, string map) {
+      Map(kFieldMapPrefix + key, map);
+    }
+
+    /// <summary>
+    /// Maps a property to a filter field.
+    /// </summary>
+    public void MapFilter(string key, string map) {
+      Map(kFilterMapPrefix + key, map);
+    }
+
+    void Map(string key, string map) {
+      maps_[key] = map;
+    }
+
+    internal void Where(string name, object value) {
+      string key = GetFilterMap(name);
+      filters_.Add(key, name);
     }
 
     internal string GetMemberName<TProperty, T>(

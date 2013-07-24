@@ -42,10 +42,7 @@ namespace Nohros.Data
     protected virtual void BaseSelect<TProperty>(
       Expression<Func<TField, TProperty>> expression) {
       string name = GetMemberName(expression);
-      string field;
-      if (!maps_.TryGetValue(name, out field)) {
-        field = name;
-      }
+      string field = GetFieldMap(name);
       Fields.Add(field);
     }
 
@@ -61,7 +58,7 @@ namespace Nohros.Data
     protected virtual void BaseWhere<TProperty>(
       Expression<Func<TField, TProperty>> expression, object value) {
       string name = GetMemberName(expression);
-      BaseWhere(name, value);
+      Where(name, value);
     }
 
     /// <summary>
@@ -76,7 +73,7 @@ namespace Nohros.Data
     protected virtual void BaseWhere<TProperty>(
       Expression<Func<TFilter, TProperty>> expression, object value) {
       string name = GetMemberName(expression);
-      BaseWhere(name, value);
+      Where(name, value);
     }
 
     /// <summary>
@@ -95,7 +92,7 @@ namespace Nohros.Data
     protected void Map<TProperty>(
       Expression<Func<TField, TProperty>> expression, string destination) {
       string name = GetMemberName(expression);
-      maps_.Add(name, destination);
+      MapField(name, destination);
     }
   }
 }
