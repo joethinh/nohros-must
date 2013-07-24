@@ -8,8 +8,7 @@ namespace Nohros.Data
   /// Provides a base implementation of the <see cref="ICriteria{TField,TFilter}"/>
   /// class.
   /// </summary>
-  public abstract class AbstractCriteria<TField, TFilter> :
-    ICriteria<TField, TFilter>
+  public abstract class AbstractCriteria<TField> : ICriteria<TField>
   {
     readonly HashSet<string> fields_;
     readonly Dictionary<string, object> filters_;
@@ -24,21 +23,14 @@ namespace Nohros.Data
     #endregion
 
     /// <inheritdoc/>
-    public virtual ICriteria<TField, TFilter> Where<TProperty>(
-      Expression<Func<TFilter, TProperty>> expression, object value) {
-      BaseWhere(expression, value);
-      return this;
-    }
-
-    /// <inheritdoc/>
-    public virtual ICriteria<TField, TFilter> Select<TProperty>(
+    public virtual ICriteria<TField> Select<TProperty>(
       Expression<Func<TField, TProperty>> expression) {
       BaseSelect(expression);
       return this;
     }
 
     /// <inheritdoc/>
-    public virtual ICriteria<TField, TFilter> Where<TProperty>(
+    public virtual ICriteria<TField> Where<TProperty>(
       Expression<Func<TField, TProperty>> expression, object value) {
       BaseWhere(expression, value);
       return this;
@@ -73,21 +65,6 @@ namespace Nohros.Data
     /// </remarks>
     protected virtual void BaseWhere<TProperty>(
       Expression<Func<TField, TProperty>> expression, object value) {
-      string name = GetMemberName(expression);
-      BaseWhere(name, value);
-    }
-
-    /// <summary>
-    /// Add the given property/value as a filter.
-    /// </summary>
-    /// <param name="expression"></param>
-    /// <param name="value"></param>
-    /// <remarks>
-    /// For SQL-92 compatible repositories, this represents the clause of the
-    /// <c>WHERE</c> clause.
-    /// </remarks>
-    protected virtual void BaseWhere<TProperty>(
-      Expression<Func<TFilter, TProperty>> expression, object value) {
       string name = GetMemberName(expression);
       BaseWhere(name, value);
     }
