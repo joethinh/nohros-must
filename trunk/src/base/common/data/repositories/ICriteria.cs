@@ -18,6 +18,13 @@ namespace Nohros.Data
     ICollection<string> Fields { get; }
 
     /// <summary>
+    /// Gets a <see cref="IDictionary{TKey,TValue}"/> class containing the
+    /// custom maps between a object properties and a the returned fields
+    /// set.
+    /// </summary>
+    IDictionary<string, string> Map { get; }
+
+    /// <summary>
     /// Get a <see cref="IDictionary{TKey,TValue}"/> containing the defined
     /// filtering.
     /// </summary>

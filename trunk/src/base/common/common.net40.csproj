@@ -173,15 +173,17 @@
     <Compile Include="data\mappers\TypeMapType.cs" />
     <Compile Include="data\readers\DataFieldDateTime.cs" />
     <Compile Include="data\readers\DataReaderReader.cs" />
-    <Compile Include="data\repositories\AbstractCriteriaT.cs" />
-    <Compile Include="data\repositories\ICriteria.cs" />
     <Compile Include="data\repositories\AbstractCriteria.cs" />
+    <Compile Include="data\repositories\AbstractCriteriaT2.cs" />
+    <Compile Include="data\repositories\ICriteria.cs" />
+    <Compile Include="data\repositories\AbstractCriteriaT1.cs" />
     <Compile Include="data\repositories\AbstractStateByNameQuery.cs" />
     <Compile Include="data\repositories\ICriteriaT.cs" />
     <Compile Include="data\repositories\ISetStateCommand.cs" />
     <Compile Include="data\repositories\IStateByNameQuery.cs" />
     <Compile Include="data\repositories\IStateRepository.cs" />
     <Compile Include="data\repositories\IStateRepositoryFactory.cs" />
+    <Compile Include="data\repositories\CriteriaResolver.cs" />
     <Compile Include="data\TransactionScopes.cs" />
     <Compile Include="exception\ConstraintViolationException.cs" />
     <Compile Include="exception\NetworkException.cs" />
@@ -190,6 +192,7 @@
     <Compile Include="exception\NoUniqueResultException.cs" />
     <Compile Include="exception\ReferentialIntegrityException.cs" />
     <Compile Include="exception\RepositoryException.cs" />
+    <Compile Include="extensions\StringSet.cs" />
     <Compile Include="io\Path.cs" />
     <Compile Include="IRuntimeType.cs" />
     <Compile Include="logging\ConsoleLogger.cs" />
@@ -391,7 +394,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
