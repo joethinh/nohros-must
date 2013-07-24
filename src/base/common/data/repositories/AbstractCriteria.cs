@@ -8,12 +8,11 @@ namespace Nohros.Data
   /// Provides a base implementation of the <see cref="ICriteria{TField,TFilter}"/>
   /// class.
   /// </summary>
-  public abstract class AbstractCriteria<TField, TFilter> :
-    ICriteria<TField, TFilter>
+  public abstract class AbstractCriteria : ICriteria
   {
     readonly HashSet<string> fields_;
     readonly Dictionary<string, object> filters_;
-    readonly Dictionary<string, string> maps_;
+    internal readonly Dictionary<string, string> maps_;
 
     #region .ctor
     protected AbstractCriteria() {
@@ -23,76 +22,35 @@ namespace Nohros.Data
     }
     #endregion
 
-    /// <inheritdoc/>
-    public virtual ICriteria<TField, TFilter> Where<TProperty>(
-      Expression<Func<TFilter, TProperty>> expression, object value) {
-      BaseWhere(expression, value);
-      return this;
-    }
-
-    /// <inheritdoc/>
-    public virtual ICriteria<TField, TFilter> Select<TProperty>(
-      Expression<Func<TField, TProperty>> expression) {
-      BaseSelect(expression);
-      return this;
-    }
-
-    /// <inheritdoc/>
-    public virtual ICriteria<TField, TFilter> Where<TProperty>(
-      Expression<Func<TField, TProperty>> expression, object value) {
-      BaseWhere(expression, value);
-      return this;
-    }
-
     /// <summary>
-    /// Add the given property to the list of properties to be returned from
-    /// the database.
+    /// Gets the list of fields that should be selected from the database.
     /// </summary>
     /// <remarks>
     /// For SQL-92 compatible repositories, this represents the list of columns
     /// of the <c>SELECT</c> clause.
     /// </remarks>
-    protected virtual void BaseSelect<TProperty>(
-      Expression<Func<TField, TProperty>> expression) {
-      string name = GetMemberName(expression);
-      string field;
-      if (!maps_.TryGetValue(name, out field)) {
-        field = name;
-      }
-      fields_.Add(field);
+    public ICollection<string> Fields {
+      get { return fields_; }
+    }
+
+    /// <inheritdoc/>
+    public IDictionary<string, string> Map {
+      get { return maps_; }
     }
 
     /// <summary>
-    /// Add the given property/value as a filter.
+    /// Get a <see cref="IDictionary{TKey,TValue}"/> containing the defined
+    /// filtering.
     /// </summary>
-    /// <param name="expression"></param>
-    /// <param name="value"></param>
     /// <remarks>
     /// For SQL-92 compatible repositories, this represents the clause of the
     /// <c>WHERE</c> clause.
     /// </remarks>
-    protected virtual void BaseWhere<TProperty>(
-      Expression<Func<TField, TProperty>> expression, object value) {
-      string name = GetMemberName(expression);
-      BaseWhere(name, value);
+    public IDictionary<string, object> Filters {
+      get { return filters_; }
     }
 
-    /// <summary>
-    /// Add the given property/value as a filter.
-    /// </summary>
-    /// <param name="expression"></param>
-    /// <param name="value"></param>
-    /// <remarks>
-    /// For SQL-92 compatible repositories, this represents the clause of the
-    /// <c>WHERE</c> clause.
-    /// </remarks>
-    protected virtual void BaseWhere<TProperty>(
-      Expression<Func<TFilter, TProperty>> expression, object value) {
-      string name = GetMemberName(expression);
-      BaseWhere(name, value);
-    }
-
-    void BaseWhere(string name, object value) {
+    internal void BaseWhere(string name, object value) {
       string field;
       if (!maps_.TryGetValue(name, out field)) {
         field = name;
@@ -100,7 +58,7 @@ namespace Nohros.Data
       filters_.Add(field, value);
     }
 
-    string GetMemberName<TProperty, T>(
+    internal string GetMemberName<TProperty, T>(
       Expression<Func<T, TProperty>> expression) {
       MemberExpression member;
       if (expression.Body is UnaryExpression) {
@@ -114,48 +72,6 @@ namespace Nohros.Data
       }
 
       return member.Member.Name;
-    }
-
-    /// <summary>
-    /// Maps a property to a database field.
-    /// </summary>
-    /// <typeparam name="TProperty">
-    /// The type of property to be mapped
-    /// </typeparam>
-    /// <param name="expression">
-    /// The property to be mapped
-    /// </param>
-    /// <param name="destination">
-    /// The name of the database field that should be mapped to the propertyd
-    /// defined by <paramref name="expression"/>.
-    /// </param>
-    protected void Map<TProperty>(
-      Expression<Func<TField, TProperty>> expression, string destination) {
-      string name = GetMemberName(expression);
-      maps_.Add(name, destination);
-    }
-
-    /// <summary>
-    /// Gets the list of fields that should be selected from the database.
-    /// </summary>
-    /// <remarks>
-    /// For SQL-92 compatible repositories, this represents the list of columns
-    /// of the <c>SELECT</c> clause.
-    /// </remarks>
-    public ICollection<string> Fields {
-      get { return fields_; }
-    }
-
-    /// <summary>
-    /// Get a <see cref="IDictionary{TKey,TValue}"/> containing the defined
-    /// filtering.
-    /// </summary>
-    /// <remarks>
-    /// For SQL-92 compatible repositories, this represents the clause of the
-    /// <c>WHERE</c> clause.
-    /// </remarks>
-    public IDictionary<string, object> Filters {
-      get { return filters_; }
     }
   }
 }
