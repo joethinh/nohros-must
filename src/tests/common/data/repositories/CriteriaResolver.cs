@@ -11,8 +11,8 @@ namespace Nohros.Data
     {
       #region .ctor
       public TestCriteria() {
-        Map(x => x.Name, "t.name_on_database");
-        Map(x => x.ID, "t.id_on_database");
+        MapField(x => x.Name, "t.name_on_database");
+        MapField(x => x.ID, "t.id_on_database");
       }
       #endregion
     }

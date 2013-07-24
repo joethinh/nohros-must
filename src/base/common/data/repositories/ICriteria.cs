@@ -22,7 +22,13 @@ namespace Nohros.Data
     /// custom maps between a object properties and a the returned fields
     /// set.
     /// </summary>
-    IDictionary<string, string> Map { get; }
+    string GetFieldMap(string key);
+
+    /// <summary>
+    /// Gets a <see cref="IDictionary{TKey,TValue}"/> class containing the
+    /// custom maps between a object properties and the filter set.
+    /// </summary>
+    string GetFilterMap(string key);
 
     /// <summary>
     /// Get a <see cref="IDictionary{TKey,TValue}"/> containing the defined

@@ -94,17 +94,14 @@ namespace Nohros.Data
     public static IDataReaderMapper<T> Resolve<T>(this ICriteria criteria,
       string prefix) {
       object obj;
-      string hash = criteria.Fields.Join(":");
+      string hash = prefix + ":" + criteria.Fields.Join(":");
       if (mappers_.TryGetValue(hash, out obj)) {
         return (IDataReaderMapper<T>) obj;
       }
 
       var builder = new DataReaderMapperBuilder<T>();
       foreach (var field in criteria.Fields) {
-        string map;
-        if (!criteria.Map.TryGetValue(field, out map)) {
-          map = field;
-        }
+        string map = criteria.GetFieldMap(field);
         builder.Map(field, map);
       }
       IDataReaderMapper<T> mapper = builder.Build();
