@@ -18,18 +18,6 @@ namespace sqlserver
         Map(x => x.ID, "t.id_on_database");
       }
       #endregion
-
-      public TestCriteria Select<TProperty>(
-        Expression<Func<TestPoco, TProperty>> expression) {
-        BaseSelect(expression);
-        return this;
-      }
-
-      public TestCriteria Where<TProperty>(
-        Expression<Func<TestPoco, TProperty>> expression, object value) {
-        BaseWhere(expression, value);
-        return this;
-      }
     }
 
     public class TestPoco
