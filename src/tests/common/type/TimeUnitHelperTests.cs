@@ -31,6 +31,11 @@ namespace Nohros.Common
         Is.EqualTo(new DateTime(2013, 5, 27, 17, 36, 35, DateTimeKind.Local)));
       Assert.That(TimeUnitHelper.FromUnixEpoch(1369686995, DateTimeKind.Local),
         Is.EqualTo(new DateTime(2013, 5, 27, 17, 36, 35, DateTimeKind.Local)));
+
+      Assert.That(TimeUnitHelper.FromUnixEpoch(1369686995),
+        Is.EqualTo(new DateTime(2013, 5, 27, 17, 36, 35)));
+      Assert.That(TimeUnitHelper.FromUnixEpoch(1369686995),
+        Is.EqualTo(new DateTime(2013, 5, 27, 17, 36, 35)));
     }
 
     [Test]

@@ -74,14 +74,14 @@ namespace Nohros.Data
     /// <summary>
     /// Maps a property to a field.
     /// </summary>
-    public void MapField(string key, string map) {
+    protected void MapField(string key, string map) {
       Map(kFieldMapPrefix + key, map);
     }
 
     /// <summary>
     /// Maps a property to a filter field.
     /// </summary>
-    public void MapFilter(string key, string map) {
+    protected void MapFilter(string key, string map) {
       Map(kFilterMapPrefix + key, map);
     }
 
