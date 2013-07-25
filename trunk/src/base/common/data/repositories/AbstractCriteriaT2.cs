@@ -7,7 +7,8 @@ namespace Nohros.Data
   /// Provides a base implementation of the <see cref="ICriteria{TField,TFilter}"/>
   /// class.
   /// </summary>
-  public abstract class AbstractCriteria<TField> : AbstractCriteria, ICriteria<TField>
+  public abstract class AbstractCriteria<TField> : AbstractCriteria,
+                                                   ICriteria<TField>
   {
     /// <inheritdoc/>
     public virtual ICriteria<TField> Select<TProperty>(
@@ -51,6 +52,15 @@ namespace Nohros.Data
       Expression<Func<TField, TProperty>> expression, object value) {
       string name = GetMemberName(expression);
       Where(name, value);
+    }
+
+    /// <summary>
+    /// Maps a property to query field.
+    /// </summary>
+    public void Map<TProperty>(
+      Expression<Func<TField, TProperty>> expression, string map) {
+      string name = GetMemberName(expression);
+      MapField(name, map);
     }
   }
 }
