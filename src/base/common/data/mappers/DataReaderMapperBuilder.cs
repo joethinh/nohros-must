@@ -559,6 +559,17 @@ namespace Nohros.Data
 
         result.OrdinalsMapping = new KeyValuePair<int, PropertyInfo>[0];
       } else {
+        // check if the ordinals is not already got.
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Ldfld, result.OrdinalsField);
+        il.Emit(OpCodes.Ldnull);
+        il.Emit(OpCodes.Ceq);
+
+        Label label = il.DefineLabel();
+        il.Emit(OpCodes.Brtrue_S, label);
+        il.Emit(OpCodes.Ret);
+        il.MarkLabel(label);
+
         // get the columns ordinals, using a try/catch block to prevent a
         // InvalidOperationException to be throw when no recordset is returned.
         il.BeginExceptionBlock();
