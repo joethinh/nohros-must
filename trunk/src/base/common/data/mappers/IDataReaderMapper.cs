@@ -27,6 +27,26 @@ namespace Nohros.Data
     /// maps a element of a query result to a object of type
     /// <typeparamref name="T"/>.
     /// </summary>
+    /// <param name="t">
+    /// When this method returns contains a object of type
+    /// <typeparamref name="T"/> associated the data readed from the current
+    /// row of the given <paramref name="reader"/>.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> when the map operation the data returned from the database
+    /// was successfully mapped to a object of type <typeparamref name="T"/>;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    /// When <paramref name="reader"/> does not contain any data, <c>false</c>
+    /// will be returned to indicate that the expected result does not exists.
+    /// </remarks>
+    bool Map(IDataReader reader, out T t);
+
+    /// <summary>
+    /// maps a element of a query result to a object of type
+    /// <typeparamref name="T"/>.
+    /// </summary>
     /// <returns>
     /// A object of type <typeparamref name="T"/> containing the data readed
     /// from the current row of the given <paramref name="reader"/>.

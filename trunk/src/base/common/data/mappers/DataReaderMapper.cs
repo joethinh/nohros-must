@@ -46,7 +46,7 @@ namespace Nohros.Data
 
       public IEnumerator<T> GetEnumerator() {
         T t;
-        while (mapper_.Map(reader_, out t)) {
+        while (mapper_.Map(reader_, true, out t)) {
           post_map_(t);
           yield return t;
         }
@@ -73,19 +73,36 @@ namespace Nohros.Data
       set { loader_ = value; }
     }
 
-    bool Map(IDataReader reader, out T t) {
-      if (reader.Read()) {
-        t = MapInternal(reader);
-        return true;
+    public bool Map(IDataReader reader, out T t) {
+      return Map(reader, true, out t);
+    }
+
+    bool Map(IDataReader reader, bool read, out T t) {
+      if (read) {
+        if (reader.Read()) {
+          t = MapInternal(reader);
+          return true;
+        }
+        t = default(T);
+        return false;
       }
-      t = default(T);
+      t = MapInternal(reader);
       return false;
     }
 
     public T Map(IDataReader reader) {
       T t;
       GetOrdinals(reader);
-      if (!Map(reader, out t)) {
+      if (!Map(reader, true, out t)) {
+        throw new NoResultException();
+      }
+      return t;
+    }
+
+    public T MapCurrent(IDataReader reader) {
+      T t;
+      GetOrdinals(reader);
+      if (!Map(reader, false, out t)) {
         throw new NoResultException();
       }
       return t;
@@ -98,7 +115,7 @@ namespace Nohros.Data
     }
 
     public IEnumerable<T> Map(IDataReader reader, bool defer) {
-      return Map(reader, defer, delegate { });
+      return Map(reader, defer, (Action<T>) delegate { });
     }
 
     public IEnumerable<T> Map(IDataReader reader, bool defer, Action<T> post_map) {
