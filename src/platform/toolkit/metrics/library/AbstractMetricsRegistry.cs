@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Nohros.Metrics
 {
-  public class AbstractMetricsRegistry
+  public class AbstractMetricsRegistry : IMetricsRegistry
   {
     const int kExpectedMetricCount = 1024;
     readonly Dictionary<MetricName, IMetric> metrics_;

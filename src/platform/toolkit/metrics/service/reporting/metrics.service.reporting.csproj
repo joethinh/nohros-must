@@ -46,6 +46,9 @@
     <Reference Include="Google.ProtocolBuffers.Serialization, Version=2.4.1.473, Culture=neutral, PublicKeyToken=55f7125234beb589, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net20\Google.ProtocolBuffers.Serialization.dll</HintPath>
     </Reference>
+    <Reference Include="nohros">
+      <HintPath>..\..\..\..\..\packages\must.common.1.7.7.0\lib\net20\nohros.dll</HintPath>
+    </Reference>
     <Reference Include="nohros.ruby.net, Version=0.5.7.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\packages\nohros.ruby.net.0.5.7.2\lib\net20\nohros.ruby.net.dll</HintPath>
@@ -66,10 +69,6 @@
     <Compile Include="ServiceReporterFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\base\common\common.csproj">
-      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
-      <Name>common %28%28base%29\common%29</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\library\metrics.csproj">
       <Project>{EE140ABF-C917-44D7-B89F-D6946332F507}</Project>
       <Name>metrics %28%28metrics%29\metrics%29</Name>

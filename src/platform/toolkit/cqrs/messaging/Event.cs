@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.CRQS.Messaging
+namespace Nohros.CQRS.Messaging
 {
   public class Event : Message
   {

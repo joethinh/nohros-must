@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Nohros.CRQS.Messaging;
+using Nohros.CQRS.Messaging;
 
 namespace Nohros.CQRS.Domain
 {

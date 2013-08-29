@@ -1,5 +1,5 @@
 ﻿using System;
-using Nohros.CRQS.Messaging;
+using Nohros.CQRS.Messaging;
 
 namespace Nohros.CQRS.EventSourcing
 {

@@ -8,8 +8,8 @@
     <ProjectGuid>{5D2EA0E5-414D-4AD8-AC9B-FCA35B07F4AD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nohros.CRQS.Messaging</RootNamespace>
-    <AssemblyName>nohros.crqs.messaging</AssemblyName>
+    <RootNamespace>Nohros.CQRS.Messaging</RootNamespace>
+    <AssemblyName>nohros.cqrs.messaging</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
