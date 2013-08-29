@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>must.cqrs.eventsourcing</id>
+        <version>0.0.1.0</version>
+        <title>Must Framework - CRQS EventSourcing</title>
+        <authors>Nohros Inc</authors>
+        <owners>Nohros Inc</owners>
+        <projectUrl>http://code.google.com/p/nohros-must</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>CRQS EventSourcing</description>
+        <summary>The common package of the nohros must framework.</summary>
+        <copyright>Nohros Inc</copyright>
+        <language>en-US</language>
+        <tags>csharp framework nohros security</tags>
+    </metadata>
+    <files>
+        <file src="..\bin\release\cqrs\nohros.cqrs.eventsourcing.dll" target="lib\nohros.cqrs.eventsourcing.dll" />
+    </files>
+</package>
