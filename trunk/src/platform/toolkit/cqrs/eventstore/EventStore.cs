@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using EventStore.ClientAPI;
 using Nohros.CQRS.EventSourcing;
-using Nohros.CRQS.Messaging;
+using Nohros.CQRS.Messaging;
 using System.Linq;
 
 namespace Nohros.CQRS.EventStore
@@ -21,7 +21,7 @@ namespace Nohros.CQRS.EventStore
     }
     #endregion
 
-    public IList<Event> GetEventsForAggregate(Guid aggregate_id,
+    public ICollection<Event> GetEventsForAggregate(Guid aggregate_id,
       IEventSerializer serializer) {
       return GetEventsForAggregate(aggregate_id, serializer, int.MaxValue);
     }
@@ -53,7 +53,7 @@ namespace Nohros.CQRS.EventStore
       }
     }
 
-    public IList<Event> GetEventsForAggregate(Guid aggregate_id,
+    public ICollection<Event> GetEventsForAggregate(Guid aggregate_id,
       IEventSerializer serializer, int version) {
       var events = new List<Event>();
       var stream_name = aggregate_id.ToString("G");

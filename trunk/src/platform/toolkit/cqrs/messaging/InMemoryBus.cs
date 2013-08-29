@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Nohros.Concurrent;
 
-namespace Nohros.CRQS.Messaging
+namespace Nohros.CQRS.Messaging
 {
   public class InMemoryBus : IBus
   {

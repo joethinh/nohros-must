@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.CRQS.Messaging
+namespace Nohros.CQRS.Messaging
 {
   public interface IHandle<T> where T : IMessage
   {
