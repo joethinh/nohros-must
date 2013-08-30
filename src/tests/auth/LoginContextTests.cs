@@ -10,7 +10,7 @@ namespace Nohros.Security
   public class LoginContextTests
   {
     [Test]
-    public void ShouldReturnTrueWhenUserIsValid() {
+    public void should_authenticate_a_valid_user() {
       var login_module_factory = Mock.Create<ILoginModuleFactory>();
       var subject = new Subject();
       var callback = new NopAuthCallbackHandler();
@@ -40,7 +40,7 @@ namespace Nohros.Security
     }
 
     [Test]
-    public void ShouldAbortWhenLoginFails() {
+    public void should_abort_when_authentication_fail() {
       var login_module_factory = Mock.Create<ILoginModuleFactory>();
       var subject = new Subject();
       var callback = new NopAuthCallbackHandler();
