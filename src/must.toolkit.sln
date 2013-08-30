@@ -51,7 +51,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "messaging", "platform\toolk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eventstore", "platform\toolkit\cqrs\eventstore\eventstore.csproj", "{ADB9EF6A-EBC9-45A9-A645-279F2C80C41F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eventsourcing", "platform\toolkit\cqrs\eventsourcing\eventsourcing.csproj", "{C7E6D676-D9AE-4627-9C46-D8813501AE44}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eventstore.protobuf", "platform\toolkit\cqrs\eventsourcing\eventstore.protobuf.csproj", "{C7E6D676-D9AE-4627-9C46-D8813501AE44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

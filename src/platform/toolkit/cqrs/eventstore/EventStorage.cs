@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using EventStore.ClientAPI;
-using Nohros.CQRS.EventSourcing;
 using Nohros.CQRS.Messaging;
 using System.Linq;
 
 namespace Nohros.CQRS.EventStore
 {
-  public class EventStore : IEventStore
+  public class EventStorage
   {
     const int kWritePageSize = 500;
     const int kReadPageSize = 500;
@@ -15,7 +14,7 @@ namespace Nohros.CQRS.EventStore
     readonly IPublisher publisher_;
 
     #region .ctor
-    public EventStore(IEventStoreConnection connection, IPublisher publisher) {
+    public EventStorage(IEventStoreConnection connection, IPublisher publisher) {
       connection_ = connection;
       publisher_ = publisher;
     }
@@ -70,8 +69,10 @@ namespace Nohros.CQRS.EventStore
           slice.Events.Select(
             @event =>
               serializer.Deserialize(
-                new SerializedEvent(@event.OriginalEvent.Metadata,
-                  @event.OriginalEvent.Data)));
+                new EventData(
+                  @event.OriginalEvent.EventId, @event.OriginalEvent.EventType,
+                  false, @event.OriginalEvent.Data,
+                  @event.OriginalEvent.Metadata)));
         events.AddRange(serialized_events);
       } while (version > slice.NextEventNumber && !slice.IsEndOfStream);
       return events;
