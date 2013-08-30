@@ -2,7 +2,7 @@
 
 namespace Nohros.CQRS.Messaging
 {
-  public interface IBus : IPublisher
+  public interface IBus : IPublisher, ISubscriber
   {
     /// <summary>
     /// Sends a message to a registered handler.
