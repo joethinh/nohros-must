@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>must.cqrs.eventstore</id>
-        <version>0.0.1.0</version>
+        <version>0.0.3.0</version>
         <title>Must Framework - CRQS Domain</title>
         <authors>Nohros Inc</authors>
         <owners>Nohros Inc</owners>
@@ -13,6 +13,12 @@
         <copyright>Nohros Inc</copyright>
         <language>en-US</language>
         <tags>csharp framework nohros security</tags>
+        <dependencies>
+          <dependency id="must.cqrs.domain" version="0.0.2.0" />
+          <dependency id="must.cqrs.messaging" version="0.0.2.0" />
+          <dependency id="eventstore.client" version="2.0.2.0" />
+          <dependency id="must.common" version="1.8.7.0" />
+        </dependencies>
     </metadata>
     <files>
         <file src="..\bin\release\cqrs\nohros.cqrs.eventstore.dll" target="lib\nohros.cqrs.eventstore.dll" />
