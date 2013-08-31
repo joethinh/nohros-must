@@ -51,8 +51,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "messaging", "platform\toolk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eventstore", "platform\toolkit\cqrs\eventstore\eventstore.csproj", "{ADB9EF6A-EBC9-45A9-A645-279F2C80C41F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eventstore.protobuf", "platform\toolkit\cqrs\eventsourcing\eventstore.protobuf.csproj", "{C7E6D676-D9AE-4627-9C46-D8813501AE44}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -253,16 +251,6 @@ Global
 		{ADB9EF6A-EBC9-45A9-A645-279F2C80C41F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{ADB9EF6A-EBC9-45A9-A645-279F2C80C41F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{ADB9EF6A-EBC9-45A9-A645-279F2C80C41F}.Release|x86.ActiveCfg = Release|Any CPU
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -287,7 +275,6 @@ Global
 		{8A8C316D-1CF2-4D63-978B-3C87CF11E7A3} = {7C227EFF-5201-411D-BBDD-4BD0C64F6520}
 		{5D2EA0E5-414D-4AD8-AC9B-FCA35B07F4AD} = {7C227EFF-5201-411D-BBDD-4BD0C64F6520}
 		{ADB9EF6A-EBC9-45A9-A645-279F2C80C41F} = {7C227EFF-5201-411D-BBDD-4BD0C64F6520}
-		{C7E6D676-D9AE-4627-9C46-D8813501AE44} = {7C227EFF-5201-411D-BBDD-4BD0C64F6520}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35
