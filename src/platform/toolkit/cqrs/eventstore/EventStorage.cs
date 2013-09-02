@@ -56,7 +56,7 @@ namespace Nohros.CQRS.EventStore
       IEventSerializer serializer, int version) {
       var events = new List<Event>();
       var stream_name = aggregate_id.ToString("N");
-      int position = 1;
+      int position = 0;
       StreamEventsSlice slice;
       do {
         var count = position + kReadPageSize <= version
