@@ -20,7 +20,7 @@ namespace Nohros.CQRS.Messaging
 
     public void Publish<T>(T @event, IExecutor executor) where T : IMessage {
       List<Action<IMessage>> handlers;
-      if (routes_.TryGetValue(@event.GetType(), out handlers)) {
+      if (!routes_.TryGetValue(@event.GetType(), out handlers)) {
         return;
       }
 
