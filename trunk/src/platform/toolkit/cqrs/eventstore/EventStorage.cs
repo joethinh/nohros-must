@@ -27,7 +27,7 @@ namespace Nohros.CQRS.EventStore
 
     public void SaveEvents(Guid aggregate_id, ICollection<Event> events,
       int expected_version, IEventSerializer serializer) {
-      string stream_name = aggregate_id.ToString("G");
+      string stream_name = aggregate_id.ToString("N");
       if (events.Count < kWritePageSize) {
         connection_.AppendToStream(stream_name, expected_version,
           Serialize(events, serializer));
@@ -55,7 +55,7 @@ namespace Nohros.CQRS.EventStore
     public ICollection<Event> GetEventsForAggregate(Guid aggregate_id,
       IEventSerializer serializer, int version) {
       var events = new List<Event>();
-      var stream_name = aggregate_id.ToString("G");
+      var stream_name = aggregate_id.ToString("N");
       int position = 1;
       StreamEventsSlice slice;
       do {
