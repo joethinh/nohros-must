@@ -37,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Event.cs" />
-    <Compile Include="FuncHandler.cs" />
+    <Compile Include="RunnableHandler.cs" />
     <Compile Include="Handlers.cs" />
     <Compile Include="IBus.cs" />
     <Compile Include="IHandle.cs" />
