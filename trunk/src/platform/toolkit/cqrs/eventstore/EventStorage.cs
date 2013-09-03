@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Nohros.CQRS.EventStore
 {
-  public class EventStorage
+  public class EventStorage : IEventStorage
   {
     const int kWritePageSize = 500;
     const int kReadPageSize = 500;
@@ -20,31 +20,13 @@ namespace Nohros.CQRS.EventStore
     }
     #endregion
 
-    public ICollection<Event> GetEventsForAggregate(Guid aggregate_id,
-      IEventSerializer serializer) {
-      return GetEventsForAggregate(aggregate_id, serializer, int.MaxValue);
-    }
-
     public void SaveEvents(Guid aggregate_id, ICollection<Event> events,
       int expected_version, IEventSerializer serializer) {
       string stream_name = aggregate_id.ToString("N");
       if (events.Count < kWritePageSize) {
-        connection_.AppendToStream(stream_name, expected_version,
-          Serialize(events, serializer));
+        SaveEventsAtOnce(stream_name, expected_version, events, serializer);
       } else {
-        EventStoreTransaction trasaction = connection_
-          .StartTransaction(stream_name, expected_version);
-        EventData[] serialized_events = Serialize(events, serializer).ToArray();
-
-        int position = 0;
-        while (position < serialized_events.Length) {
-          var page_events = serialized_events
-            .Skip(position)
-            .Take(kWritePageSize);
-          trasaction.Write(page_events);
-          position += kWritePageSize;
-        }
-        trasaction.Commit();
+        SaveEventsInBatch(stream_name, expected_version, events, serializer);
       }
 
       foreach (Event @event in events) {
@@ -52,7 +34,7 @@ namespace Nohros.CQRS.EventStore
       }
     }
 
-    public ICollection<Event> GetEventsForAggregate(Guid aggregate_id,
+    public IList<Event> GetEventsForAggregate(Guid aggregate_id,
       IEventSerializer serializer, int version) {
       var events = new List<Event>();
       var stream_name = aggregate_id.ToString("N");
@@ -66,16 +48,48 @@ namespace Nohros.CQRS.EventStore
           count, false);
         position = slice.NextEventNumber;
         var serialized_events =
-          slice.Events.Select(
-            @event =>
-              serializer.Deserialize(
-                new EventData(
-                  @event.OriginalEvent.EventId, @event.OriginalEvent.EventType,
-                  false, @event.OriginalEvent.Data,
-                  @event.OriginalEvent.Metadata)));
+          slice.Events.Select(@event => Deserialize(@event, serializer));
         events.AddRange(serialized_events);
       } while (version > slice.NextEventNumber && !slice.IsEndOfStream);
       return events;
+    }
+
+    public IList<Event> GetEventsForAggregate(Guid aggregate_id,
+      IEventSerializer serializer) {
+      return GetEventsForAggregate(aggregate_id, serializer, int.MaxValue);
+    }
+
+    void SaveEventsAtOnce(string stream_name, int expected_version,
+      IEnumerable<Event> events, IEventSerializer serializer) {
+      connection_.AppendToStream(stream_name, expected_version,
+        Serialize(events, serializer));
+    }
+
+    void SaveEventsInBatch(string stream_name, int expected_version,
+      IEnumerable<Event> events, IEventSerializer serializer) {
+      EventStoreTransaction trasaction = connection_
+        .StartTransaction(stream_name, expected_version);
+      EventData[] serialized_events = Serialize(events, serializer).ToArray();
+
+      int position = 0;
+      while (position < serialized_events.Length) {
+        var page_events = serialized_events
+          .Skip(position)
+          .Take(kWritePageSize);
+        trasaction.Write(page_events);
+        position += kWritePageSize;
+      }
+      trasaction.Commit();
+    }
+
+    Event Deserialize(ResolvedEvent @event, IEventSerializer serializer) {
+      var e = serializer.Deserialize(
+        new EventData(
+          @event.OriginalEvent.EventId, @event.OriginalEvent.EventType,
+          false, @event.OriginalEvent.Data,
+          @event.OriginalEvent.Metadata));
+      e.Version = @event.Event.EventNumber;
+      return e;
     }
 
     IEnumerable<EventData> Serialize(IEnumerable<Event> events,
