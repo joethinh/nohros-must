@@ -33,7 +33,12 @@ namespace Nohros.CQRS.EventStore
         try {
           Save(aggregate.ID, events, current_expected_version);
           break;
-        } catch (WrongExpectedVersionException e) {
+        } catch (AggregateException e) {
+          if (e.InnerException == null ||
+            !(e.InnerException is WrongExpectedVersionException)) {
+            throw;
+          }
+
           IList<Event> events_since =
             storage_.GetEventsForAggregate(aggregate.ID, serialzer_,
               expected_version);
