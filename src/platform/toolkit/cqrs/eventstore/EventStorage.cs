@@ -22,7 +22,7 @@ namespace Nohros.CQRS.EventStore
 
     public void SaveEvents(Guid aggregate_id, ICollection<Event> events,
       int expected_version, IEventSerializer serializer) {
-      string stream_name = aggregate_id.ToString("N");
+      string stream_name = StreamNameForID(aggregate_id);
       if (events.Count < kWritePageSize) {
         SaveEventsAtOnce(stream_name, expected_version, events, serializer);
       } else {
@@ -37,7 +37,7 @@ namespace Nohros.CQRS.EventStore
     public IList<Event> GetEventsForAggregate(Guid aggregate_id,
       IEventSerializer serializer, int version) {
       var events = new List<Event>();
-      var stream_name = aggregate_id.ToString("N");
+      var stream_name = StreamNameForID(aggregate_id);
       int position = 0;
       StreamEventsSlice slice;
       do {
@@ -54,9 +54,30 @@ namespace Nohros.CQRS.EventStore
       return events;
     }
 
+    public IList<Event> GetEventsForAggregateSince(Guid aggregate_id,
+      IEventSerializer serializer, int version) {
+      var events = new List<Event>();
+      var stream_name = StreamNameForID(aggregate_id);
+      int position = version;
+      StreamEventsSlice slice;
+      do {
+        slice = connection_.ReadStreamEventsForward(stream_name, position,
+          kReadPageSize, false);
+        position = slice.NextEventNumber;
+        var serialized_events =
+          slice.Events.Select(@event => Deserialize(@event, serializer));
+        events.AddRange(serialized_events);
+      } while (!slice.IsEndOfStream);
+      return events;
+    }
+
     public IList<Event> GetEventsForAggregate(Guid aggregate_id,
       IEventSerializer serializer) {
       return GetEventsForAggregate(aggregate_id, serializer, int.MaxValue);
+    }
+
+    string StreamNameForID(Guid id) {
+      return id.ToString("N");
     }
 
     void SaveEventsAtOnce(string stream_name, int expected_version,

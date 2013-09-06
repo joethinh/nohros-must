@@ -40,6 +40,7 @@
     <Compile Include="AggregateFactories.cs" />
     <Compile Include="AggregateNotFoundException.cs" />
     <Compile Include="AggregateRoot.cs" />
+    <Compile Include="Entity.cs" />
     <Compile Include="FuncAggregateFactory.cs" />
     <Compile Include="IAggregateFactory.cs" />
     <Compile Include="IRepository.cs" />

@@ -43,6 +43,7 @@
     <Compile Include="IConflictEvaluator.cs" />
     <Compile Include="IMessageHandler.cs" />
     <Compile Include="MessageHandler.cs" />
+    <Compile Include="NoConflictEvaluator.cs" />
     <Compile Include="RunnableHandler.cs" />
     <Compile Include="Handlers.cs" />
     <Compile Include="IBus.cs" />

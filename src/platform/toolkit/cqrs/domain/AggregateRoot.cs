@@ -1,51 +1,37 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Nohros.CQRS.Messaging;
 
 namespace Nohros.CQRS.Domain
 {
-  public abstract class AggregateRoot
+  public abstract class AggregateRoot : Entity
   {
     readonly List<Event> changes_;
-    readonly IDictionary<Type, Action<Event>> handlers_;
+    readonly List<Entity> entities_;
 
     #region .ctor
     protected AggregateRoot() {
       changes_ = new List<Event>();
-      handlers_ = new Dictionary<Type, Action<Event>>();
+      entities_ = new List<Entity>();
     }
     #endregion
 
-    public IEnumerable<Event> GetUncommittedChanges() {
-      return changes_;
+    protected void AddEntity(Entity entity) {
+      entities_.Add(entity);
     }
 
-    public void MarkChangesAsCommited() {
+    public override IEnumerable<Event> GetUncommittedChanges() {
+      return changes_.Concat(GetEntityUncommittedChanges());
+    }
+
+    IEnumerable<Event> GetEntityUncommittedChanges() {
+      return entities_.SelectMany(entity => entity.GetUncommittedChanges());
+    }
+
+    public override void MarkChangesAsCommited() {
+      entities_.ForEach(entity => entity.MarkChangesAsCommited());
       changes_.Clear();
-    }
-
-    public void LoadFromHistory(IEnumerable<Event> events) {
-      foreach (Event @event in events) {
-        ApplyChange(@event, false);
-      }
-    }
-
-    protected void Subscribe<T>(Action<T> handler) where T : Event {
-      handlers_.Add(typeof (T), @event => handler(@event as T));
-    }
-
-    protected void ApplyChange(Event @event) {
-      ApplyChange(@event, true);
-    }
-
-    void ApplyChange(Event @event, bool is_new) {
-      Action<Event> action;
-      if (handlers_.TryGetValue(@event.GetType(), out action)) {
-        action(@event);
-      }
-      if (is_new) {
-        changes_.Add(@event);
-      }
     }
 
     public abstract Guid ID { get; }
