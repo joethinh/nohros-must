@@ -9,10 +9,13 @@ namespace Nohros.CQRS.EventStore
     IList<Event> GetEventsForAggregate(Guid aggregate_id,
       IEventSerializer serializer);
 
-    void SaveEvents(Guid aggregate_id, ICollection<Event> events,
-      int expected_version, IEventSerializer serializer);
-
     IList<Event> GetEventsForAggregate(Guid aggregate_id,
       IEventSerializer serializer, int version);
+
+    IList<Event> GetEventsForAggregateSince(Guid aggregate_id,
+      IEventSerializer serializer, int version);
+
+    void SaveEvents(Guid aggregate_id, ICollection<Event> events,
+      int expected_version, IEventSerializer serializer);
   }
 }

@@ -34,5 +34,19 @@ namespace Nohros.CQRS.EventStore
     public static IConflictEvaluator FromFunc(Func<Event, Event, bool> func) {
       return new FuncConflictEvaluator(func);
     }
+
+    /// <summary>
+    /// Creates a <see cref="IConflictEvaluator"/> that always evaluate a
+    /// conflict as "no conflicting".
+    /// </summary>
+    /// <returns>
+    /// Creates a <see cref="IConflictEvaluator"/> that always evaluate a
+    /// conflict as "no conflicting", which means that the
+    /// <see cref="IConflictEvaluator.ConflictWith"/> method alwyas returns
+    /// <c>false</c>.
+    /// </returns>
+    public static IConflictEvaluator NoConflict() {
+      return new NoConflictEvaluator();
+    }
   }
 }

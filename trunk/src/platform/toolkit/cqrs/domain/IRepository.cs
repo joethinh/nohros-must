@@ -14,7 +14,7 @@ namespace Nohros.CQRS.Domain
     /// The version that is expected for the <paramref name="aggregate"/>.
     /// </param>
     /// <exception cref=""></exception>
-    void Save(AggregateRoot aggregate, int expected_version);
+    void Save(T aggregate, int expected_version);
 
     /// <summary>
     /// Gets the aggregate that is associated with the given ID.
