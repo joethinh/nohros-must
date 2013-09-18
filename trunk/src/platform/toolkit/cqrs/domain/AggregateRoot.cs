@@ -7,12 +7,10 @@ namespace Nohros.CQRS.Domain
 {
   public abstract class AggregateRoot : Entity
   {
-    readonly List<Event> changes_;
     readonly List<Entity> entities_;
 
     #region .ctor
     protected AggregateRoot() {
-      changes_ = new List<Event>();
       entities_ = new List<Entity>();
     }
     #endregion
@@ -22,7 +20,8 @@ namespace Nohros.CQRS.Domain
     }
 
     public override IEnumerable<Event> GetUncommittedChanges() {
-      return changes_.Concat(GetEntityUncommittedChanges());
+      return base.GetUncommittedChanges()
+                 .Concat(GetEntityUncommittedChanges());
     }
 
     IEnumerable<Event> GetEntityUncommittedChanges() {
@@ -31,7 +30,7 @@ namespace Nohros.CQRS.Domain
 
     public override void MarkChangesAsCommited() {
       entities_.ForEach(entity => entity.MarkChangesAsCommited());
-      changes_.Clear();
+      base.MarkChangesAsCommited();
     }
 
     public abstract Guid ID { get; }
