@@ -78,9 +78,24 @@ namespace Nohros.Data.Json
     }
 
     /// <summary>
-    /// 
+    /// Defines a method that executes an operation using a
+    /// <see cref="JsonStringBuilder"/> object that returns that object after
+    /// the operation is completed.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <returns>
+    /// A <see cref="JsonStringBuilder"/> object.
+    /// </returns>
+    public delegate void BuilderDelegate(JsonStringBuilder builder);
+
+    /// <summary>
+    /// Defines the method that is called by the
+    /// <see cref="JsonStringBuilder.ForEach{T}"/> method for each element
+    /// in the collection passed to thar method.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of objects that the collection passed to the
+    /// <see cref="JsonStringBuilder.ForEach{T}"/> method contain.
+    /// </typeparam>
     /// <param name="obj"></param>
     /// <param name="builder"></param>
     public delegate void ForEachDelegate<T>(T obj, JsonStringBuilder builder);
@@ -147,6 +162,40 @@ namespace Nohros.Data.Json
       ++last_written_token_position_;
       return
         WriteReservedBeginToken(new Token(kBeginObject, TokenType.Structural));
+    }
+
+    /// <summary>
+    /// Appends the begin object token to the current json string, execute
+    /// the <see cref="Action{T}"/> and appends the end object token the the
+    /// current json string.
+    /// </summary>
+    /// <param name="action">
+    /// A <see cref="Action{T}"/> to be executed after appending the begin
+    /// object token to the current json string.
+    /// </param>
+    /// <returns></returns>
+    public JsonStringBuilder WrapInObject(Action<JsonStringBuilder> action) {
+      WriteBeginObject();
+      action(this);
+      WriteEndObject();
+      return this;
+    }
+
+    /// <summary>
+    /// Appends the begin array token to the current json string, execute
+    /// the <see cref="Action{T}"/> and appends the end array token the the
+    /// current json string.
+    /// </summary>
+    /// <param name="action">
+    /// A <see cref="Action{T}"/> to be executed after appending the begin
+    /// array token to the current json string.
+    /// </param>
+    /// <returns></returns>
+    public JsonStringBuilder WrapInArray(Action<JsonStringBuilder> action) {
+      WriteBeginArray();
+      action(this);
+      WriteEndArray();
+      return this;
     }
 
     /// <summary>

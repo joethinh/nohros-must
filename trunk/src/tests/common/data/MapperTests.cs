@@ -194,7 +194,7 @@ namespace Nohros.Common
         .Ignore("name")
         .Build();
       Assert.That(() => mapper.Map(reader).Name, Is.Null);
-      Dynamics_.AssemblyBuilder.Save("nohros.tests.dll");
+      //Dynamics_.AssemblyBuilder.Save("nohros.tests.dll");
     }
 
     [Test]
