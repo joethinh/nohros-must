@@ -75,11 +75,13 @@
     <Compile Include="concurrent\MailboxTests.cs" />
     <Compile Include="concurrent\YQueueTests.cs" />
     <Compile Include="configuration\common\provider\ProvidersNodeParserTests.cs" />
+    <Compile Include="data\HiLoGeneratorTests.cs" />
     <Compile Include="data\json\collection\JsonCollectionFactoryTest.cs" />
     <Compile Include="data\json\collection\JsonObjectTest.cs" />
     <Compile Include="data\json\collection\JsonTableTest.cs" />
     <Compile Include="data\json\JsonStringBuilderTest.cs" />
     <Compile Include="data\MapperTests.cs" />
+    <Compile Include="data\MultiHiLoGeneratorTests.cs" />
     <Compile Include="data\repositories\AbstractCriteriaTests.cs" />
     <Compile Include="data\repositories\CriteriaResolver.cs" />
     <Compile Include="GenericTest.cs" />

@@ -148,6 +148,8 @@
     <Compile Include="data\CommandBuilder.cs" />
     <Compile Include="CommandLine.cs" />
     <Compile Include="data\ICommand.cs" />
+    <Compile Include="data\id\HiLoGenerator.cs" />
+    <Compile Include="data\id\ThreadSafeHiLoGenerator.cs" />
     <Compile Include="data\IQuery.cs" />
     <Compile Include="data\json\datafields\JsonDataFieldDateTime.cs" />
     <Compile Include="data\mappers\BooleanMapType.cs" />
@@ -394,7 +396,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
