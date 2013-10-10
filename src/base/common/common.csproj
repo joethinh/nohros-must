@@ -148,6 +148,10 @@
     <Compile Include="CommandLine.cs" />
     <Compile Include="data\id\HiLoGenerator.cs" />
     <Compile Include="data\ICommand.cs" />
+    <Compile Include="data\id\IHiLoGenerator.cs" />
+    <Compile Include="data\id\IHiLoGeneratorFactory.cs" />
+    <Compile Include="data\id\IHiLoRange.cs" />
+    <Compile Include="data\id\NextHighDelegate.cs" />
     <Compile Include="data\id\ThreadSafeHiLoGenerator.cs" />
     <Compile Include="data\IQuery.cs" />
     <Compile Include="data\repositories\AbstractStateDao.cs" />
@@ -397,7 +401,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

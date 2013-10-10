@@ -11,10 +11,13 @@ namespace Nohros.Data.SqlServer
   public class NextHiQuery
   {
     const string kClassName = "Nohros.Data.SqlServer.NextHiQuery";
-    const string kExecute = ".nohros_hilo_get_next_hi";
-    const string kKeyParameter = "@key";
+    const string kExecute = SqlHiLoDao.kNextHiProc;
+    const string kKeyParameter = SqlHiLoDao.kKeyParameter;
+    const string kCurrentHiField = SqlHiLoDao.kCurrentHiField;
+    const string kMaxLoField = SqlHiLoDao.kMaxLoField;
 
     readonly MustLogger logger_ = MustLogger.ForCurrentProcess;
+    readonly IDataReaderMapper<HiLoRangeDto> mapper_;
     readonly SqlConnectionProvider sql_connection_provider_;
 
     #region .ctor
@@ -29,10 +32,11 @@ namespace Nohros.Data.SqlServer
     public NextHiQuery(SqlConnectionProvider sql_connection_provider) {
       sql_connection_provider_ = sql_connection_provider;
       logger_ = MustLogger.ForCurrentProcess;
+      mapper_ = CreateMapper();
     }
     #endregion
 
-    public long Execute(string key) {
+    public IHiLoRange Execute(string key) {
       using (SqlConnection conn = sql_connection_provider_.CreateConnection())
       using (var builder = new CommandBuilder(conn)) {
         IDbCommand cmd = builder
@@ -41,18 +45,22 @@ namespace Nohros.Data.SqlServer
           .AddParameter(kKeyParameter, key)
           .Build();
         try {
-          conn.Open();
-          object obj = cmd.ExecuteScalar();
-          if (obj != null) {
-            return (long) obj;
+          using (IDataReader reader = cmd.ExecuteReader()) {
+            return mapper_.Map(reader);
           }
-          throw new NoResultException();
         } catch (SqlException e) {
           logger_.Error(string.Format(
             StringResources.Log_MethodThrowsException, "Execute", kClassName), e);
           throw new ProviderException(e);
         }
       }
+    }
+
+    IDataReaderMapper<HiLoRangeDto> CreateMapper() {
+      return new DataReaderMapperBuilder<HiLoRangeDto>(kClassName)
+        .Map(kCurrentHiField, "High")
+        .Map(kMaxLoField, "MaxLow")
+        .Build();
     }
   }
 }
