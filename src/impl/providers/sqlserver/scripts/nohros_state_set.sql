@@ -34,6 +34,20 @@ alter proc nohros_state_set (
 )
 as
 
-update nohros_state
-set [state] = @state
+declare @state_t varchar(8000)
+
+select @state_t = state
+from nohros_state
 where state_name = @name
+
+if @state_t is null
+begin
+  insert into nohros_state(state_name, [state])
+  values(@name, @state)
+end
+else
+begin
+  update nohros_state
+  set [state] = @state
+  where state_name = @name
+end
