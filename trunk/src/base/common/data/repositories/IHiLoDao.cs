@@ -9,14 +9,14 @@ namespace Nohros.Data
   public interface IHiLoDao
   {
     /// <summary>
-    /// Get the next Hi value for the given <see cref="key"/>.
+    /// Get the next High value for the given <see cref="key"/>.
     /// </summary>
     /// <param name="key">
-    /// The key to get the next Hi value.
+    /// The key to get the next High value.
     /// </param>
     /// <returns>
-    /// The next Hi value for the given key.
+    /// The next High value for the given key.
     /// </returns>
-    long GetNextHi(string key);
+    IHiLoRange GetNextHi(string key);
   }
 }

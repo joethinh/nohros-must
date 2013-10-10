@@ -6,6 +6,11 @@ namespace Nohros.Data.SqlServer
   {
     readonly SqlConnectionProvider sql_connection_provider_;
 
+    public const string kNextHiProc = ".nohros_hilo_get_next_hi";
+    public const string kKeyParameter = "@key";
+    public const string kCurrentHiField = "hilo_current_hi";
+    public const string kMaxLoField = "hilo_max_lo";
+
     #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlHiLoDao"/> class
@@ -21,7 +26,7 @@ namespace Nohros.Data.SqlServer
     #endregion
 
     /// <inheritdoc/>
-    public long GetNextHi(string key) {
+    public IHiLoRange GetNextHi(string key) {
       return new NextHiQuery(sql_connection_provider_).Execute(key);
     }
   }
