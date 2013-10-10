@@ -5,6 +5,7 @@ namespace Nohros.Data
   /// <summary>
   /// Associates a string representing a state with a given key.
   /// </summary>
+  [Obsolete("This interface is obsolete. Check the IStateDao interface.")]
   public interface ISetStateCommand
   {
     /// <summary>

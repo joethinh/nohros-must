@@ -177,12 +177,14 @@
     <Compile Include="data\readers\DataReaderReader.cs" />
     <Compile Include="data\repositories\AbstractCriteria.cs" />
     <Compile Include="data\repositories\AbstractCriteriaT2.cs" />
+    <Compile Include="data\repositories\AbstractStateDao.cs" />
     <Compile Include="data\repositories\ICriteria.cs" />
     <Compile Include="data\repositories\AbstractCriteriaT1.cs" />
-    <Compile Include="data\repositories\AbstractStateByNameQuery.cs" />
     <Compile Include="data\repositories\ICriteriaT.cs" />
+    <Compile Include="data\repositories\IHiLoDao.cs" />
     <Compile Include="data\repositories\ISetStateCommand.cs" />
     <Compile Include="data\repositories\IStateByNameQuery.cs" />
+    <Compile Include="data\repositories\IStateDao.cs" />
     <Compile Include="data\repositories\IStateRepository.cs" />
     <Compile Include="data\repositories\IStateRepositoryFactory.cs" />
     <Compile Include="data\repositories\CriteriaResolver.cs" />

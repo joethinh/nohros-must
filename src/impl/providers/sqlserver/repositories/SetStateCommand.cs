@@ -6,24 +6,13 @@ using R = Nohros.Resources.StringResources;
 
 namespace Nohros.Data.SqlServer
 {
-  public class SetStateCommand : ISetStateCommand
+  internal class SetStateCommand
   {
     const string kClassName = "Nohros.Data.SqlServer.SetStateCommand";
 
-    /// <summary>
-    /// The name of the procedure that will be used to persist the state.
-    /// </summary>
-    public const string kExecute = ".nohros_state_set";
-
-    /// <summary>
-    /// The name of the paramter that contains the name of the state.
-    /// </summary>
-    public const string kNameParameter = "@name";
-
-    /// <summary>
-    /// The name of the parameter that contains the state value.
-    /// </summary>
-    public const string kStateParameter = "@state";
+    const string kExecute = SqlStateDao.kSetStateProc;
+    const string kNameParameter = SqlStateDao.kStateNameParameter;
+    const string kStateParameter = SqlStateDao.kStateParameter;
 
     readonly MustLogger logger_ = MustLogger.ForCurrentProcess;
     readonly SqlConnectionProvider sql_connection_provider_;
@@ -50,8 +39,8 @@ namespace Nohros.Data.SqlServer
         IDbCommand cmd = builder
           .SetText(sql_connection_provider_.Schema + kExecute)
           .SetType(CommandType.StoredProcedure)
-          .AddParameter("@name", name)
-          .AddParameter("@state", state)
+          .AddParameter(kNameParameter, name)
+          .AddParameter(kStateParameter, state)
           .Build();
         try {
           conn.Open();

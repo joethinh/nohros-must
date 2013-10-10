@@ -5,34 +5,40 @@ namespace Nohros.Data
 {
   /// <summary>
   /// Provides an skeletal implementation of the
-  /// <see cref="IStateByNameQuery"/> interface to minimize the effort required
+  /// <see cref="IStateDao"/> interface to minimize the effort required
   /// to implement this interface.
   /// </summary>
   /// <remarks>
-  /// To implement a <see cref="IStateByNameQuery"/>, its required only to
+  /// To implement a <see cref="IStateDao"/>, its required only to
   /// extend this class and provide an implementation for the
-  /// <see cref="Execute(string, out string)"/> method.
+  /// <see cref="StateByName(string, out string)"/> and <see cref="SetState()"/>]
+  /// methods.
   /// </remarks>
-  public abstract class AbstractStateByNameQuery : IStateByNameQuery
+  public abstract class AbstractStateDao : IStateDao
   {
-    public string Execute(string name) {
+    /// <inheritdoc/>
+    public virtual string StateByName(string name) {
       string s;
-      if (Execute(name, out s)) {
+      if (StateByName(name, out s)) {
         return s;
       }
       throw new NoResultException();
     }
 
-    public abstract bool Execute(string name, out string state);
+    /// <inheritdoc/>
+    public abstract void SetState(string name, string state);
+
+    /// <inheritdoc/>
+    public abstract bool StateByName(string name, out string state);
 
     /// <remarks>
-    /// This method uses the <see cref="int.Parse"/> method to convert the
-    /// "state" into its corresponding signed 32-bit integer. Exceptions
+    /// This method uses the <see cref="int.Parse(string)"/> method to convert
+    /// the "state" into its corresponding signed 32-bit integer. Exceptions
     /// throwed by this method will be propagated to the caller.
     /// </remarks>
-    public bool Execute(string name, out int state) {
+    public virtual bool StateByName(string name, out int state) {
       string s;
-      if (Execute(name, out s)) {
+      if (StateByName(name, out s)) {
         state = int.Parse(s);
         return true;
       }
@@ -45,9 +51,9 @@ namespace Nohros.Data
     /// "state" into its <see cref="Guid"/>. Exceptions throwed by this method
     /// will be propagated to the caller.
     /// </remarks>
-    public bool Execute(string name, out Guid state) {
+    public virtual bool StateByName(string name, out Guid state) {
       string s;
-      if (Execute(name, out s)) {
+      if (StateByName(name, out s)) {
         state = new Guid(s);
         return true;
       }
@@ -60,9 +66,9 @@ namespace Nohros.Data
     /// convert the "state" into its <see cref="Guid"/>. Exceptions throwed by
     /// this method will be propagated to the caller.
     /// </remarks>
-    public bool Execute(string name, out DateTime state) {
+    public virtual bool StateByName(string name, out DateTime state) {
       string s;
-      if (Execute(name, out s)) {
+      if (StateByName(name, out s)) {
         state = DateTime.Parse(s);
         return true;
       }
@@ -76,9 +82,10 @@ namespace Nohros.Data
     /// method to convert the "state" into its <see cref="Guid"/>. Exceptions
     /// throwed by this method will be propagated to the caller.
     /// </remarks>
-    public bool Execute(string name, DateTimeStyles styles, out DateTime state) {
+    public virtual bool StateByName(string name, DateTimeStyles styles,
+      out DateTime state) {
       string s;
-      if (Execute(name, out s)) {
+      if (StateByName(name, out s)) {
         state = DateTime.Parse(s, null, styles);
         return true;
       }
