@@ -4,11 +4,10 @@ using System.Globalization;
 namespace Nohros.Data
 {
   /// <summary>
-  /// Represents a query that gets a state that is associated with a given
-  /// name.
+  /// Represents a state data access object which is a provide access to a
+  /// collection of key/value pairs representing states of something.
   /// </summary>
-  [Obsolete("This interface is obsolete. Check the IStateDao interface.")]
-  public interface IStateByNameQuery
+  public interface IStateDao
   {
     /// <summary>
     /// Gets the state that is associate with the given <paramref name="name"/>.
@@ -22,7 +21,7 @@ namespace Nohros.Data
     /// <exception cref="NoResultException">
     /// There is no state associated with the given <paramref name="name"/>.
     /// </exception>
-    string Execute(string name);
+    string StateByName(string name);
 
     /// <summary>
     /// Try to get the state that is associated with the given
@@ -40,7 +39,7 @@ namespace Nohros.Data
     /// <c>true</c> is a <paramref name="name"/> is found; otherwise
     /// <c>false</c>.
     /// </returns>
-    bool Execute(string name, out string state);
+    bool StateByName(string name, out string state);
 
     /// <summary>
     /// Try to get the state that is associated with the given
@@ -62,7 +61,7 @@ namespace Nohros.Data
     /// The state associated with <paramref name="name"/> cannot be converted
     /// to an signed 32-bit integer value.
     /// </exception>
-    bool Execute(string name, out int state);
+    bool StateByName(string name, out int state);
 
     /// <summary>
     /// Try to get the state that is associated with the given
@@ -84,7 +83,7 @@ namespace Nohros.Data
     /// The state associated with <paramref name="name"/> cannot be converted
     /// to an <see cref="Guid"/>
     /// </exception>
-    bool Execute(string name, out Guid state);
+    bool StateByName(string name, out Guid state);
 
     /// <summary>
     /// Try to get the state that is associated with the given
@@ -106,7 +105,7 @@ namespace Nohros.Data
     /// The state associated with <paramref name="name"/> cannot be converted
     /// to an <see cref="DateTime"/>.
     /// </exception>
-    bool Execute(string name, out DateTime state);
+    bool StateByName(string name, out DateTime state);
 
     /// <summary>
     /// Try to get the state that is associated with the given
@@ -135,6 +134,19 @@ namespace Nohros.Data
     /// The state associated with <paramref name="name"/> cannot be converted
     /// to an <see cref="DateTime"/>.
     /// </exception>
-    bool Execute(string name, DateTimeStyles styles, out DateTime state);
+    bool StateByName(string name, DateTimeStyles styles, out DateTime state);
+
+    /// <summary>
+    /// Associates the state represented by <paramref name="state"/> with the
+    /// given <paramref name="name"/>.
+    /// </summary>
+    /// <param name="name">
+    /// A string that can be used to identify the state within a state
+    /// repository.
+    /// </param>
+    /// <param name="state">
+    /// The state to be persisted.
+    /// </param>
+    void SetState(string name, string state);
   }
 }

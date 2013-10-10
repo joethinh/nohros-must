@@ -6,6 +6,7 @@ namespace Nohros.Data
   /// Represents a state repository which is a repository that contains a
   /// collection of key/value pairs representing states of something.
   /// </summary>
+  [Obsolete("This interface was obsolete and was replaced by the IStateDao", false)]
   public interface IStateRepository
   {
     /// <summary>
