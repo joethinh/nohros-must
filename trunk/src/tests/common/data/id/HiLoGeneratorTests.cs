@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Nohros.Data
@@ -32,6 +33,15 @@ namespace Nohros.Data
         id = generator.Generate();
       }
       Assert.That(id, Is.EqualTo(first_hi + kMaxLo));
+    }
+
+    [Test]
+    public void should_generate_ids_in_order() {
+      long next_hi = 1;
+      var generator = new HiLoGenerator(key => NextHi(ref next_hi));
+      for (int i = 0; i <= kMaxLo; i++) {
+        Assert.That(generator.Generate(), Is.EqualTo(i + 1));
+      }
     }
   }
 }

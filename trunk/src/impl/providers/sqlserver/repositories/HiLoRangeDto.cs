@@ -2,9 +2,15 @@
 
 namespace Nohros.Data.SqlServer
 {
-  class HiLoRangeDto : IHiLoRange
+  /// <summary>
+  /// A basic implementation of the <see cref="IHiLoRange"/> interface.
+  /// </summary>
+  public class HiLoRangeDto : IHiLoRange
   {
+    /// <inheritdoc/>
     public long High { get; set; }
-    public long MaxLow { get; set; }
+
+    /// <inheritdoc/>
+    public int MaxLow { get; set; }
   }
 }
