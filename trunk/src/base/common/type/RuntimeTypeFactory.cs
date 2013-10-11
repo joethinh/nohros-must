@@ -124,12 +124,13 @@ namespace Nohros
         BindingFlags.CreateInstance | BindingFlags.Public |
           BindingFlags.Instance | BindingFlags.NonPublic;
 
+      string error = string.Empty;
       T new_obj = null;
       Type type = RuntimeType.GetSystemType(runtime_type);
       if (type != null) {
         try {
-          // If no constructors arguments was specified or if we do not need
-          // to fallback do not waste time searching for a matching constructor.
+          // If no constructors arguments was specified or do not waste time
+          // searching for a matching constructor.
           if (args.Length == 0) {
             new_obj =
               Activator.CreateInstance(type, kFlags, null, args, null) as T;
@@ -145,19 +146,33 @@ namespace Nohros
             }
           }
         } catch (MissingMethodException) {
+          // A missing method exception means that a parameterless constructor
+          // was not found. We can raise the TyeLoadException already since
+          // fallback will only try to instantiate the class using the
+          // parameterless constructor.
+          throw new TypeLoadException(
+            GetDefaultConstructorNotFoundMessage(runtime_type.Type));
         }
 
         if (new_obj == null && fallback) {
           new_obj = Activator.CreateInstance(type, true) as T;
         }
+      } else {
+        throw new TypeLoadException(GetTypeNotFoundMessage(runtime_type.Type));
       }
 
       if (new_obj == null) {
         throw new TypeLoadException(
-          string.Format(Resources.Resources.TypeLoad_CreateInstance,
-            runtime_type.Type));
+          GetMatchingConstructorNotFoundMessage(runtime_type.Type, fallback,
+            args));
       }
       return new_obj;
+    }
+
+    static string GetTypeNotFoundMessage(string type) {
+      return
+        string.Format(Resources.Resources.TypeLoad_CreateInstance, type)
+          + Resources.Resources.TypeLoad_TypeNotFound;
     }
 
     static bool TryGetMatchingConstructor(
@@ -240,6 +255,29 @@ namespace Nohros
           return (x.Value.Length > y.Value.Length) ? -1 : 1;
         });
       return list.ToArray();
+    }
+
+    static string GetDefaultConstructorNotFoundMessage(string type) {
+      return
+        string.Format(Resources.Resources.TypeLoad_CreateInstance, type)
+          + Resources.Resources.TypeLoad_DefaultConstructorNotFound;
+    }
+
+    static string GetMatchingConstructorNotFoundMessage(string type,
+      bool fallback, params object[] args) {
+      string signature = string.Empty;
+      foreach (var o in args) {
+        signature += o.GetType() + ",";
+      }
+      signature = signature.Substring(0, signature.Length - 1);
+      string error =
+        string.Format(Resources.Resources.TypeLoad_CreateInstance, type)
+          + string.Format(Resources.Resources.TypeLoad_MissingConstructor,
+            signature);
+      if (fallback) {
+        error += Resources.Resources.TypeLoad_DefaultConstructorNotFound;
+      }
+      return error;
     }
   }
 }

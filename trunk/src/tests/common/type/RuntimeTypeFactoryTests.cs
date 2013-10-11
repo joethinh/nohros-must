@@ -73,6 +73,12 @@ namespace Nohros
     }
 
     [Test]
+    public void ShouldThrowExceptionWhenTypeLoadFail() {
+      Assert.That(() => RuntimeTypeFactory<TestFactory>
+        .CreateInstance(node_, string.Empty), Throws.Exception);
+    }
+
+    [Test]
     public void ShouldCreateInstanceForDefaultConstructor() {
       object obj = RuntimeTypeFactory<ITestFactory>.CreateInstance(node_);
       Assert.That(obj, Is.AssignableTo<TestFactory>());

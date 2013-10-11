@@ -737,11 +737,39 @@ namespace Nohros.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot create an instance of the type &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Cannot create an instance of the type &quot;{0}&quot;, because:
+        ///.
         /// </summary>
         internal static string TypeLoad_CreateInstance {
             get {
                 return ResourceManager.GetString("TypeLoad_CreateInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The default constructor was not found..
+        /// </summary>
+        internal static string TypeLoad_DefaultConstructorNotFound {
+            get {
+                return ResourceManager.GetString("TypeLoad_DefaultConstructorNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A constructor with the following signature .ctor({0}) was not found..
+        /// </summary>
+        internal static string TypeLoad_MissingConstructor {
+            get {
+                return ResourceManager.GetString("TypeLoad_MissingConstructor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type was not found..
+        /// </summary>
+        internal static string TypeLoad_TypeNotFound {
+            get {
+                return ResourceManager.GetString("TypeLoad_TypeNotFound", resourceCulture);
             }
         }
     }
