@@ -40,25 +40,25 @@ select @hilo_current_hi = hilo_current_hi
 from nohros_hilo with(updlock)
 where hilo_key = @key
 
+select @hilo_max_lo = hilo_max_lo
+from nohros_hilo_behavior
+where hilo_key = @key
+  or hilo_key = '*'
+
+if (@hilo_max_lo is null)
+begin
+  set @hilo_max_lo = 100
+end
+
 if (@hilo_current_hi is null)
 begin
   insert into nohros_hilo(hilo_key, hilo_current_hi)
   values(@key, 1)
   
-  select 1
+  select cast(1 as bigint) as hilo_current_hi, @hilo_max_lo as hilo_max_lo
 end
 else
 begin
-  select @hilo_max_lo = hilo_max_lo
-  from nohros_hilo_behavior
-  where hilo_key = @key
-    or hilo_key = '*'
-  
-  if (@hilo_max_lo is null)
-  begin
-    set @hilo_max_lo = 100
-  end
-
   update nohros_hilo
   set hilo_current_hi = hilo_current_hi+@hilo_max_lo+1
   output inserted.hilo_current_hi

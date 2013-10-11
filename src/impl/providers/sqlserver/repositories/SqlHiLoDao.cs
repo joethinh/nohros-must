@@ -4,12 +4,11 @@ namespace Nohros.Data.SqlServer
 {
   public class SqlHiLoDao : IHiLoDao
   {
-    readonly SqlConnectionProvider sql_connection_provider_;
-
     public const string kNextHiProc = ".nohros_hilo_get_next_hi";
     public const string kKeyParameter = "@key";
     public const string kCurrentHiField = "hilo_current_hi";
     public const string kMaxLoField = "hilo_max_lo";
+    readonly SqlConnectionProvider sql_connection_provider_;
 
     #region .ctor
     /// <summary>

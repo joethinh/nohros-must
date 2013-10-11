@@ -16,6 +16,6 @@ namespace Nohros.Data
     /// Get the maximum number of low values that could be generated using the
     /// <see cref="High"/> value.
     /// </summary>
-    long MaxLow { get; }
+    int MaxLow { get; }
   }
 }

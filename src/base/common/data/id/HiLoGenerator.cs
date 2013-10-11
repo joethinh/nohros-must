@@ -17,7 +17,7 @@ namespace Nohros.Data
       #endregion
 
       public long High { get; private set; }
-      public long MaxLow { get; private set; }
+      public int MaxLow { get; private set; }
     }
 
     readonly NextHighDelegate next_high_;
