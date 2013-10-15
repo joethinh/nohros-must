@@ -74,6 +74,7 @@ namespace Nohros.Data
     }
 
     public bool Map(IDataReader reader, out T t) {
+      GetOrdinals(reader);
       return Map(reader, true, out t);
     }
 

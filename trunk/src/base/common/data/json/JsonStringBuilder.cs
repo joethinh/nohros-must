@@ -489,7 +489,7 @@ namespace Nohros.Data.Json
     /// above:
     /// </para>
     /// <para>
-    /// "name":"value"
+    /// "name":value
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, int value) {
@@ -513,7 +513,7 @@ namespace Nohros.Data.Json
     /// above:
     /// </para>
     /// <para>
-    /// "name":"value"
+    /// "name":value
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, long value) {
@@ -537,10 +537,35 @@ namespace Nohros.Data.Json
     /// above:
     /// </para>
     /// <para>
-    /// "name":"value"
+    /// "name":value
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, double value) {
+      return WriteMember(name, value, kDefaultNumberFormat);
+    }
+
+    /// <summary>
+    /// Appends the json string that represents a member which name is
+    /// <paramref name="name"/> and value is <paramref name="value"/>.
+    /// </summary>
+    /// <param name="name">
+    /// The name part of the json member.
+    /// </param>
+    /// <param name="value">
+    /// The value part of the json member.
+    /// </param>
+    /// <remarks>
+    /// This method encloses the name in a double quotes.
+    /// <para>
+    /// The string that will be append should be something like the string
+    /// above:
+    /// </para>
+    /// <para>
+    /// "name":value
+    /// </para>
+    /// </remarks>
+    public JsonStringBuilder WriteMember(string name, decimal value)
+    {
       return WriteMember(name, value, kDefaultNumberFormat);
     }
 
@@ -566,7 +591,7 @@ namespace Nohros.Data.Json
     /// above:
     /// </para>
     /// <para>
-    /// "name":"value"
+    /// "name":value
     /// </para>
     /// <para>
     /// This method does not check if the specified format is a valid json
@@ -607,7 +632,7 @@ namespace Nohros.Data.Json
     /// above:
     /// </para>
     /// <para>
-    /// "name":"value"
+    /// "name":value
     /// </para>
     /// <para>
     /// This method does not check if the specified format is a valid json
@@ -648,7 +673,7 @@ namespace Nohros.Data.Json
     /// above:
     /// </para>
     /// <para>
-    /// "name":"value"
+    /// "name":value
     /// </para>
     /// <para>
     /// This method does not check if the specified format is a valid json
@@ -657,6 +682,49 @@ namespace Nohros.Data.Json
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, double value,
       string format) {
+      ++last_written_token_position_;
+      return
+        WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(name, TokenType.Value))
+          .WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
+          .WriteReservedBeginToken(new Token(kNameValueSeparator,
+            TokenType.Structural))
+          .WriteContentToken(new Token(value.ToString(format, numeric_format_),
+            TokenType.Value));
+    }
+
+    /// <summary>
+    /// Appends the json string that represents a member which name is
+    /// <paramref name="name"/> and value is the string representation of
+    /// <paramref name="value"/> formatted using the specified
+    /// <paramref name="format"/>.
+    /// </summary>
+    /// <param name="name">
+    /// The name part of the json member.
+    /// </param>
+    /// <param name="value">
+    /// The value part of the json member.
+    /// </param>
+    /// <param name="format">
+    /// A standard or custom numeric format string.
+    /// </param>
+    /// <remarks>
+    /// This method encloses the name in a double quotes.
+    /// <para>
+    /// The string that will be append should be something like the string
+    /// above:
+    /// </para>
+    /// <para>
+    /// "name":value
+    /// </para>
+    /// <para>
+    /// This method does not check if the specified format is a valid json
+    /// format.
+    /// </para>
+    /// </remarks>
+    public JsonStringBuilder WriteMember(string name, decimal value,
+      string format)
+    {
       ++last_written_token_position_;
       return
         WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
