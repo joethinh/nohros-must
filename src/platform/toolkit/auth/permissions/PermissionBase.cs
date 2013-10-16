@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Nohros.Security.Auth
 {
@@ -7,122 +8,142 @@ namespace Nohros.Security.Auth
   /// interface.
   /// <para>
   /// This class implements the <see cref="IPermission.Name"/>,
-  /// <see cref="IPermission.Mask"/> and the <see cref="Object.GetHashCode"/>
+  /// <see cref="IPermission.Actions"/> and the <see cref="Object.GetHashCode"/>
   /// method.
   /// </para>
   /// </summary>
   public abstract class PermissionBase : IPermission
   {
-    /// <summary>
-    /// The permission actions bitmask.
-    /// </summary>
-    protected long mask_;
+    readonly IEnumerable<string> actions_;
+    readonly int hash_;
 
     /// <summary>
     /// The name of the permission name.
     /// </summary>
-    protected string name_;
+    readonly string name_;
 
     #region .ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="PermissionBase"/> class with the specified name.
+    /// Initializes a new instance of the <see cref="PermissionBase"/> class
+    /// with the specified name.
     /// </summary>
-    /// <param name="name">The name of the permission.</param>
+    /// <param name="name">
+    /// The name of the permission.
+    /// </param>
     /// <remarks>
-    /// Permissions objects created by using this constructor have the value of the actions
-    /// bitmask equals to zero.
+    /// Permissions objects created by using this constructor have a empty list
+    /// of actions.
     /// </remarks>
-    protected PermissionBase(string name) {
+    protected PermissionBase(string name)
+      : this(name, new string[0]) {
       name_ = name;
-      mask_ = 0;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PermissionBase"/> class by using the specified
-    /// permission name and action bit mask.
+    /// Initializes a new instance of the <see cref="PermissionBase"/> class
+    /// by using the specified permission name and actions list.
     /// </summary>
-    protected PermissionBase(string name, long mask) {
+    protected PermissionBase(string name, IEnumerable<string> actions) {
+      if (name == null) {
+        throw new ArgumentNullException("name");
+      }
+
+      if (actions == null) {
+        throw new ArgumentNullException("actions");
+      }
+
       name_ = name;
-      mask_ = mask;
+      actions_ = actions;
+      hash_ = ComputeHash();
     }
     #endregion
 
-    /// <summary>
-    /// Checks if the specified permission's actions are "implied by" this object's actions. This must
-    /// be implemented by derived classes of IPermission, as they are the only ones that can impose
-    /// semantics on a IPermission object. The implies method is used by the SecurityContext to determine
-    /// whether or not a requested permission is implied by another permission that is known to be valid
-    /// in the current execution context.
-    /// </summary>
-    /// <param name="perm">The permission to check against.</param>
-    /// <returns>true if the specified permission is implied by this object, false if not.</returns>
+    /// <inheritdoc/>
     public abstract bool Implies(IPermission perm);
 
     /// <summary>
     /// Serves as a hash function for the <see cref="PermisionBase"/> class.
     /// </summary>
-    /// <returns>A hash code for the current permission.</returns>
-    /// <remarks>
-    /// The hash code is calculated by invoking the GethashCode method of the resulting string of the
-    /// concatenation between the permission name and the string representation of the actions bitmask
-    /// flag. In this way we can guarantee that two permissions with the same name and actions bitmask
-    /// have the same hash code.
-    /// </remarks>
+    /// <returns>
+    /// A hash code for the current permission.
+    /// </returns>
     public override int GetHashCode() {
-      return string.Concat(name_, mask_).GetHashCode();
+      return hash_;
     }
 
     /// <summary>
-    /// Determines whether this instance of <see cref="IPermission"/> and a specified object, which
-    /// must also be a <see cref="IPermission"/> object, refers to the same permission.
+    /// Determines whether this instance of <see cref="IPermission"/> and a
+    /// specified object, which must also be a <see cref="IPermission"/>
+    /// object, refers to the same permission.
     /// </summary>
-    /// <param name="obj">An object.</param>
-    /// <returns>true if the specified object is an <see cref="IPermission"/> and its name and action
-    /// mask value are the same as this instance; otherwise, false.</returns>
+    /// <param name="obj">
+    /// The object to compare.
+    /// </param>
+    /// <returns><c>true</c> if the specified object is an
+    /// <see cref="IPermission"/> and its name and action list are the same as
+    /// this instance; otherwise, <c>false</c>.
+    /// </returns>
     /// <remarks>
     /// <para>
-    /// This class uses the permission name and its action mask when comparing permissions. This
-    /// method performs an ordinal(case-insensitive and culture-insensitive) comparison.
+    /// This class uses the permission name and its action list when comparing
+    /// permissions. This method performs an ordinal (case-insensitive and
+    /// culture-insensitive) comparison.
     /// </para>
-    /// This methods does not throw any exception, even if the specified permission is null.
     /// </remarks>
     public override bool Equals(object obj) {
-      IPermission permission = obj as IPermission;
+      var permission = obj as IPermission;
       return Equals(permission);
     }
 
     /// <summary>
-    /// Determines whether this instance of <see cref="IPermission"/> and another specified
-    /// <see cref="IPermission"/> refers to the same permission.
+    /// Determines whether this instance of <see cref="IPermission"/> and
+    /// another specified <see cref="IPermission"/> refers to the same
+    /// permission.
     /// </summary>
-    /// <param name="perm">A <see cref="IPermission"/> object.</param>
-    /// <returns>true if the name and action mask value of the <paramref name="perm"/> parameter is
-    /// the same as this instance; otherwise, false.</returns>
+    /// <param name="perm">
+    /// A <see cref="IPermission"/> object.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the permission's name and actions list of the
+    /// <paramref name="perm"/> object is the same as this instance;
+    /// otherwise, <c>false</c>.
+    /// </returns>
     /// <remarks>
     /// <para>
-    /// This class uses the permission name and its action mask when comparing permissions. This
-    /// method performs an ordinal(case-insensitive and culture-insensitive) comparison.
+    /// This class uses the permission name and its action list when comparing
+    /// permissions. This method performs an ordinal (case-insensitive and
+    /// culture-insensitive) comparison.
     /// </para>
-    /// This methods does not throw any exception, even if the specified permission is null.
     /// </remarks>
-    public bool Equals(IPermission perm) {
-      if (perm == null)
+    public virtual bool Equals(IPermission perm) {
+      if ((object) perm == null) {
         return false;
-      return (string.Compare(perm.Name, name_) == 0 && perm.Mask == mask_);
+      }
+      return name_ == perm.Name && GetHashCode() == perm.GetHashCode();
     }
 
     /// <summary>
     /// Gets the name of this permission.
     /// </summary>
-    public string Name {
+    public virtual string Name {
       get { return name_; }
     }
 
     /// <summary>
-    /// Gets the actions bitmask that tells the actions that are permited for the object.
+    /// Gets the actions bitmask that tells the actions that are permited for
+    /// this object.
     /// </summary>
-    public long Mask {
-      get { return mask_; }
+    public virtual IEnumerable<string> Actions {
+      get { return actions_; }
+    }
+
+    int ComputeHash() {
+      int hash = 17;
+      hash = hash*23 + name_.GetHashCode();
+      foreach (string action in actions_) {
+        hash = hash*23 + action.GetHashCode();
+      }
+      return hash;
     }
   }
 }
