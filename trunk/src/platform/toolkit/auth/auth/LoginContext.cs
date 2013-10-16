@@ -55,17 +55,17 @@ namespace Nohros.Security.Auth
   /// the overall authentication succeeded, whereas the abort method for each
   /// login module gets invoked if the overall authentication failed. Each
   /// successful login module's commit method associates the relevant
-  /// permissions with the <see cref="Subject"/>. Each login module's abort
+  /// permissions with the <see cref="AbstractSubject"/>. Each login module's abort
   /// method cleans up or removes/destroys any previously stored authentication
   /// state.
   /// </para>
   /// <para>
   /// If the login method returns without throwing an exception, then the
   /// overall authentication succeeded. The caller can then retrieve the
-  /// newly authenticated <see cref="Subject"/> by getting the value of the
-  /// <see cref="Subject"/> property. Permissions associated with the subject
+  /// newly authenticated <see cref="AbstractSubject"/> by getting the value of the
+  /// <see cref="AbstractSubject"/> property. Permissions associated with the subject
   /// may be retrieved by getting the value associated with the subject
-  /// respective <see cref="Subject.Permissions"/> property.
+  /// respective <see cref="AbstractSubject.Permissions"/> property.
   /// </para>
   /// <para>
   /// To logout the subject, the caller simple needs to invoke the
@@ -77,7 +77,7 @@ namespace Nohros.Security.Auth
   /// </para>
   /// <para>
   /// Each of the configured login module invoked by the login context is
-  /// initialized with a <see cref="Subject"/> object to be authenticated, a
+  /// initialized with a <see cref="AbstractSubject"/> object to be authenticated, a
   /// <see cref="IAuthCallbackHandler"/> object used to communicate with users,
   /// shared login module state, and login module specific options.
   /// </para>
@@ -99,7 +99,7 @@ namespace Nohros.Security.Auth
   /// state, or the login module specific options.
   /// </para>
   /// </remarks>
-  /// <seealso cref="Subject"/>
+  /// <seealso cref="AbstractSubject"/>
   /// <seealso cref="IAuthCallbackHandler"/>
   /// <seealso cref="ILoginModule"/>
   /// <seealso cref="ILoginModuleFactory"/>
@@ -145,7 +145,7 @@ namespace Nohros.Security.Auth
     /// each configured <see cref="ILoginModule.Abort"/> method if the overall
     /// authentication failed. If the authentication succeeded, each successful
     /// <see cref="ILoginModule.Commit"/> method associates the relevant
-    /// <see cref="IPermission"/> with the <see cref="Subject"/>.
+    /// <see cref="IPermission"/> with the <see cref="AbstractSubject"/>.
     /// If authentication failed, each <see cref="ILoginModule.Abort"/> method
     /// removes/destroys any previous stored state.
     /// </para>
@@ -167,7 +167,7 @@ namespace Nohros.Security.Auth
     /// guarantees that proper cleanup and state restoration can take place.
     /// </para>
     /// </remarks>
-    public bool Login(Subject subject,
+    public bool Login(ISubject subject,
       IAuthCallbackHandler auth_callback_handler) {
       int i, j;
       bool overall_login_succeeds = true;
@@ -272,7 +272,7 @@ namespace Nohros.Security.Auth
     }
 
     /// <summary>
-    /// Logs the <see cref="Subject"/> out, cleaning up any state that may be
+    /// Logs the <see cref="AbstractSubject"/> out, cleaning up any state that may be
     /// in memory.
     /// </summary>
     /// <returns></returns>
@@ -281,7 +281,7 @@ namespace Nohros.Security.Auth
     /// <see cref="ILoginModule"/> configured for this
     /// <see cref="LoginContext"/>. Each <see cref="ILoginModule"/> performs
     /// its respective logout procedure which may include removing/destroying
-    /// <see cref="Subject"/> informations and state cleanup.
+    /// <see cref="AbstractSubject"/> informations and state cleanup.
     /// <para>
     /// Note that this method invokes all <see cref="ILoginModule"/> configured
     /// for the application regardless of their respective control flag.
@@ -290,7 +290,7 @@ namespace Nohros.Security.Auth
     /// restoration can take place.
     /// </para>
     /// </remarks>
-    public void Logout(Subject subject) {
+    public void Logout(AbstractSubject subject) {
       ILoginModule[] login_modules = CreateLoginModules(subject,
         new NopAuthCallbackHandler());
       for (int i = 0, j = login_modules.Length; i < j; i++) {
@@ -305,7 +305,7 @@ namespace Nohros.Security.Auth
       }
     }
 
-    ILoginModule[] CreateLoginModules(Subject subject,
+    ILoginModule[] CreateLoginModules(ISubject subject,
       IAuthCallbackHandler auth_callback_handler) {
       var shared_state = new Dictionary<string, string>();
       return login_module_factories_

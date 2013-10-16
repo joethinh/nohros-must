@@ -20,7 +20,7 @@ namespace Nohros.Security.Auth
     /// <see cref="ILoginModule"/>.
     /// </param>
     /// <param name="subject">
-    /// The <see cref="Subject"/> to authenticate.
+    /// The <see cref="AbstractSubject"/> to authenticate.
     /// </param>
     /// <param name="callback">
     /// A <see cref="IAuthCallbackHandler"/> for communicating with the end
@@ -34,7 +34,7 @@ namespace Nohros.Security.Auth
     /// they can be ignored.
     /// </remarks>
     ILoginModule CreateLoginModule(
-      Subject subject,
+      ISubject subject,
       IAuthCallbackHandler callback,
       IDictionary<string, string> shared,
       IDictionary<string, string> options);
