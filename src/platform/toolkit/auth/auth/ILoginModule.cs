@@ -41,7 +41,7 @@ namespace Nohros.Security.Auth
   /// <see cref="LoginContext"/> authentication succeeded and the login
   /// module's own authentication succeeded, then the commit method
   /// associates the relevant credentials (authentication data) with the
-  /// <see cref="Subject"/> located within the login module.
+  /// <see cref="AbstractSubject"/> located within the login module.
   /// </para>
   /// <para>
   /// If the <see cref="LoginContext"/>'s overall authentication failed (the
@@ -107,8 +107,8 @@ namespace Nohros.Security.Auth
     /// Method to authenticate a subject.
     /// </summary>
     /// <remarks>
-    /// The implementation of this method authenticates a <see cref="Subject"/>.
-    /// For exemple, it may prompt for <see cref="Subject"/> information
+    /// The implementation of this method authenticates a <see cref="AbstractSubject"/>.
+    /// For exemple, it may prompt for <see cref="AbstractSubject"/> information
     /// such as username and password adn then attempt to verify the password.
     /// This method saves the result of authentication attempt as private
     /// state within <see cref="ILoginModule"/>.
@@ -123,12 +123,12 @@ namespace Nohros.Security.Auth
     bool Login();
 
     /// <summary>
-    /// Method which logs out a <see cref="Subject"/>.
+    /// Method which logs out a <see cref="AbstractSubject"/>.
     /// </summary>
     /// <exception cref="LoginException">
     /// The <see cref="Logout"/> operation fails.
     /// </exception>
-    bool Logout(Subject subject);
+    bool Logout(AbstractSubject subject);
 
     /// <summary>
     /// Gets the login's module control flag.

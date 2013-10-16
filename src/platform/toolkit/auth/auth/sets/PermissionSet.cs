@@ -10,7 +10,7 @@ namespace Nohros.Security.Auth
     /// </summary>
     public class PermissionSet : ISecureSet<IPermission>, IEnumerable<IPermission>, IEnumerable
     {
-        SecureSet<IPermission> permissions_;
+        readonly SecureSet<IPermission> permissions_;
 
         #region .ctor
         /// <summary>

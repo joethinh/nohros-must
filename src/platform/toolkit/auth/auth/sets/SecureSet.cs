@@ -26,7 +26,7 @@ namespace Nohros.Security.Auth
     /// </summary>
     class SecureSet<T> : IEnumerable<T>, IEnumerable, ISecureSet<T>
     {
-        Dictionary<int, T> elements_;
+        readonly Dictionary<int, T> elements_;
 
         #region .ctor
         /// <summary>

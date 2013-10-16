@@ -20,7 +20,7 @@ namespace Nohros.Security.Auth
 
     /// <inheritdoc/>
     public abstract ILoginModule CreateLoginModule(
-      Subject subject,
+      ISubject subject,
       IAuthCallbackHandler callback,
       IDictionary<string, string> shared,
       IDictionary<string, string> options);
