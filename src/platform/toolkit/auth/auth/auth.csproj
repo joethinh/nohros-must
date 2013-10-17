@@ -45,6 +45,8 @@
     <Compile Include="callback\AuthCallbackHandlers.cs" />
     <Compile Include="callback\ActionableAuthCallbackHandler.cs" />
     <Compile Include="callback\ThrowableAuthCallbackHandler.cs" />
+    <Compile Include="FailedAuthenticationInfo.cs" />
+    <Compile Include="IAuthenticationInfo.cs" />
     <Compile Include="ISubject.cs" />
     <Compile Include="LoginModuleControlFlag.cs" />
     <Compile Include="permissions\BasicPermission.cs" />
