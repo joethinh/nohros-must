@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Nohros.Configuration;
 using Nohros.Security.Auth;
 using Telerik.JustMock;
+using Telerik.JustMock.Helpers;
 
 namespace Nohros.Security
 {
@@ -12,7 +13,7 @@ namespace Nohros.Security
     [Test]
     public void should_authenticate_a_valid_user() {
       var login_module_factory = Mock.Create<ILoginModuleFactory>();
-      var subject = new Subject();
+      var subject = Mock.Create<ISubject>();
       var callback = new NopAuthCallbackHandler();
       var shared_state = new Dictionary<string, string>();
       var options = new Dictionary<string, string>();
@@ -27,8 +28,8 @@ namespace Nohros.Security
 
       Mock
         .Arrange(() =>
-          login_module_factory.CreateLoginModule(subject, callback,
-            shared_state, options))
+          login_module_factory.CreateLoginModule(callback, shared_state,
+            options))
         .Returns(module);
 
       var pair =
@@ -42,7 +43,7 @@ namespace Nohros.Security
     [Test]
     public void should_abort_when_authentication_fail() {
       var login_module_factory = Mock.Create<ILoginModuleFactory>();
-      var subject = new Subject();
+      var subject = Mock.Create<ISubject>();
       var callback = new NopAuthCallbackHandler();
       var shared_state = new Dictionary<string, string>();
       var options = new Dictionary<string, string>();
@@ -63,8 +64,8 @@ namespace Nohros.Security
 
       Mock
         .Arrange(() =>
-          login_module_factory.CreateLoginModule(subject, callback,
-            shared_state, options))
+          login_module_factory.CreateLoginModule(callback, shared_state,
+            options))
         .Returns(module);
 
       var pair =

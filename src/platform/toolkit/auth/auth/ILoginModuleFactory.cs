@@ -19,9 +19,6 @@ namespace Nohros.Security.Auth
     /// A collection of key/value pair containing the state shared with other
     /// <see cref="ILoginModule"/>.
     /// </param>
-    /// <param name="subject">
-    /// The <see cref="AbstractSubject"/> to authenticate.
-    /// </param>
     /// <param name="callback">
     /// A <see cref="IAuthCallbackHandler"/> for communicating with the end
     /// user (prompting for usernames and passwords, for example).
@@ -34,7 +31,6 @@ namespace Nohros.Security.Auth
     /// they can be ignored.
     /// </remarks>
     ILoginModule CreateLoginModule(
-      ISubject subject,
       IAuthCallbackHandler callback,
       IDictionary<string, string> shared,
       IDictionary<string, string> options);

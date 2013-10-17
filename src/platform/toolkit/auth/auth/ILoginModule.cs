@@ -128,7 +128,7 @@ namespace Nohros.Security.Auth
     /// <exception cref="LoginException">
     /// The <see cref="Logout"/> operation fails.
     /// </exception>
-    bool Logout(AbstractSubject subject);
+    bool Logout(ISubject subject);
 
     /// <summary>
     /// Gets the login's module control flag.
