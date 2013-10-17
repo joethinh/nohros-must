@@ -290,7 +290,7 @@ namespace Nohros.Security.Auth
     /// restoration can take place.
     /// </para>
     /// </remarks>
-    public void Logout(AbstractSubject subject) {
+    public void Logout(ISubject subject) {
       ILoginModule[] login_modules = CreateLoginModules(subject,
         new NopAuthCallbackHandler());
       for (int i = 0, j = login_modules.Length; i < j; i++) {
@@ -311,8 +311,8 @@ namespace Nohros.Security.Auth
       return login_module_factories_
         .Select(
           tuple =>
-            tuple.Key.CreateLoginModule(subject, auth_callback_handler,
-              shared_state, tuple.Value))
+            tuple.Key.CreateLoginModule(auth_callback_handler, shared_state,
+              tuple.Value))
         .ToArray();
     }
   }
