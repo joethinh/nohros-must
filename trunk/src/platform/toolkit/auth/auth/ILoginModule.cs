@@ -41,7 +41,7 @@ namespace Nohros.Security.Auth
   /// <see cref="LoginContext"/> authentication succeeded and the login
   /// module's own authentication succeeded, then the commit method
   /// associates the relevant credentials (authentication data) with the
-  /// <see cref="AbstractSubject"/> located within the login module.
+  /// <see cref="ISubject"/> located within the login module.
   /// </para>
   /// <para>
   /// If the <see cref="LoginContext"/>'s overall authentication failed (the
@@ -79,7 +79,7 @@ namespace Nohros.Security.Auth
     /// <exception cref="LoginException">
     /// The <see cref="Login"/> operation fails.
     /// </exception>
-    bool Abort();
+    bool Abort(IAuthenticationInfo info);
 
     /// <summary>
     /// Method to commit the authentication process (phase 2).
@@ -101,17 +101,17 @@ namespace Nohros.Security.Auth
     /// <exception cref="LoginException">
     /// The <see cref="Commit"/> operation fails.
     /// </exception>
-    bool Commit();
+    bool Commit(IAuthenticationInfo info);
 
     /// <summary>
     /// Method to authenticate a subject.
     /// </summary>
     /// <remarks>
-    /// The implementation of this method authenticates a <see cref="AbstractSubject"/>.
-    /// For exemple, it may prompt for <see cref="AbstractSubject"/> information
-    /// such as username and password adn then attempt to verify the password.
+    /// The implementation of this method authenticates a <see cref="ISubject"/>.
+    /// For exemple, it may prompt for <see cref="ISubject"/> information
+    /// such as username and password and then attempt to verify the password.
     /// This method saves the result of authentication attempt as private
-    /// state within <see cref="ILoginModule"/>.
+    /// state within a <see cref="IAuthenticationInfo"/> object.
     /// </remarks>
     /// <returns>
     /// <c>true</c> if the authentication succeeded, or <c>false</c> if this
@@ -120,10 +120,10 @@ namespace Nohros.Security.Auth
     /// <exception cref="LoginException">
     /// The <see cref="Login"/> operation fails.
     /// </exception>
-    bool Login();
+    IAuthenticationInfo Login();
 
     /// <summary>
-    /// Method which logs out a <see cref="AbstractSubject"/>.
+    /// Method which logs out a <see cref="ISubject"/>.
     /// </summary>
     /// <exception cref="LoginException">
     /// The <see cref="Logout"/> operation fails.

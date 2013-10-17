@@ -189,6 +189,7 @@
     <Compile Include="data\repositories\ISetStateCommand.cs" />
     <Compile Include="data\repositories\IStateByNameQuery.cs" />
     <Compile Include="data\repositories\IStateDao.cs" />
+    <Compile Include="data\repositories\IStateDaoFactory.cs" />
     <Compile Include="data\repositories\IStateRepository.cs" />
     <Compile Include="data\repositories\IStateRepositoryFactory.cs" />
     <Compile Include="data\repositories\CriteriaResolver.cs" />
@@ -402,7 +403,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

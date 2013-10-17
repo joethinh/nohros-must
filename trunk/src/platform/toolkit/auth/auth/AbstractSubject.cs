@@ -19,66 +19,6 @@ namespace Nohros.Security.Auth
       permissions_ = new PermissionSet();
       principals_ = new PrincipalSet();
     }
-
-    /// <summary>
-    /// Creates an instance of a <see cref="AbstractSubject"/> class with the
-    /// specified permissions and a empty set of princiapals.
-    /// </summary>
-    /// <param name="permissions">
-    /// The subject's permissions collection.
-    /// </param>
-    /// <exception cref="ArgumentNullException">permissions is null.</exception>
-    protected AbstractSubject(PermissionSet permissions) {
-      if (permissions == null) {
-        throw new ArgumentNullException("permissions");
-      }
-
-      permissions_ = permissions;
-      principals_ = new PrincipalSet();
-    }
-
-    /// <summary>
-    /// Creates an instance of a <see cref="AbstractSubject"/> class with the
-    /// specified principals and a empty set of permissions.
-    /// </summary>
-    /// <param name="principals">
-    /// The subject's principals collection.
-    /// </param>
-    /// <exception cref="ArgumentNullException"><paramref name="principals"/>
-    /// is <c>null</c>.</exception>
-    protected AbstractSubject(PrincipalSet principals) {
-      if (principals == null) {
-        throw new ArgumentNullException("principals");
-      }
-
-      permissions_ = new PermissionSet();
-      principals_ = principals;
-    }
-
-    /// <summary>
-    /// Creates an instance of a <see cref="AbstractSubject"/> class with the
-    /// specified principals set and permissions set.
-    /// </summary>
-    /// <param name="permissions">
-    /// The subject's principals collection.
-    /// </param>
-    /// <param name="principals">
-    /// The subject's principals collection.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="principals"/> or <paramref name="permissions"/> are
-    /// <c>null</c>.
-    /// </exception>
-    protected AbstractSubject(PermissionSet permissions, PrincipalSet principals) {
-      if (permissions == null || principals == null) {
-        throw new ArgumentNullException((permissions == null)
-          ? "permissions"
-          : "principals");
-      }
-
-      permissions_ = permissions;
-      principals_ = principals;
-    }
     #endregion
 
     /// <inheritdoc/>
