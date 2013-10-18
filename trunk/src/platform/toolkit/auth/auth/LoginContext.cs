@@ -115,31 +115,36 @@ namespace Nohros.Security.Auth
       }
       #endregion
 
+      public bool Commit() {
+        return Module.Commit(AuthenticationInfo);
+      }
+
+      public bool Abort() {
+        return Module.Abort(AuthenticationInfo);
+      }
+
       public ILoginModule Module { get; private set; }
       public IAuthenticationInfo AuthenticationInfo { get; private set; }
     }
 
-    readonly
-      IEnumerable<LoginModuleFactoryTuple> login_module_factories_;
+    readonly IList<ILoginModule> login_modules_;
 
     #region .ctor
     /// <summary>
     /// Initialize a new instance of the <see cref="LoginContext"/> class by
     /// using the specified login modules.
     /// </summary>
-    /// <param name="login_module_factories">
-    /// A array containing the factories that can be used to create an instance
-    /// of all the configured <see cref="ILoginModule"/>s.
+    /// <param name="login_modules">
+    /// A array containing all the configured login modules.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// <paramref name="login_module_factories"/> is <c>null</c>.
+    /// <paramref name="login_modules"/> is <c>null</c>.
     /// </exception>
-    public LoginContext(
-      IEnumerable<LoginModuleFactoryTuple> login_module_factories) {
-      if (login_module_factories == null) {
-        throw new ArgumentNullException("login_module_factories");
+    public LoginContext(IEnumerable<ILoginModule> login_modules) {
+      if (login_modules == null) {
+        throw new ArgumentNullException("login_modules");
       }
-      login_module_factories_ = login_module_factories;
+      login_modules_ = login_modules.ToList();
     }
     #endregion
 
@@ -183,63 +188,56 @@ namespace Nohros.Security.Auth
     /// </remarks>
     public bool Login(ISubject subject,
       IAuthCallbackHandler auth_callback_handler) {
-      int i, j;
       bool overall_login_succeeds = true;
 
-      ILoginModule[] login_modules = CreateLoginModules(subject,
-        auth_callback_handler);
-      IList<ModuleAuthInfo> succeeded_login_modules =
-        new List<ModuleAuthInfo>(login_modules.Length);
+      var attempted_login_modules =
+        new List<ModuleAuthInfo>(login_modules_.Count);
 
-      for (i = 0, j = login_modules.Length; i < j; i++) {
-        ILoginModule login_module = login_modules[i];
-
+      foreach (ILoginModule login_module in login_modules_) {
         // A try/catch block is used here to ensure that the login method will
         // be called for each configured module (respecting the control flag
         // semantics).
         IAuthenticationInfo auth_info;
         try {
-          auth_info = login_module.Login();
+          auth_info = login_module.Login(auth_callback_handler);
+          attempted_login_modules.Add(
+            new ModuleAuthInfo(login_module, auth_info));
         } catch (Exception ex) {
           MustLogger.ForCurrentProcess.Error(string.Format(
             StringResources.Log_MethodThrowsException, "login"), ex);
-          auth_info = new FailedAuthenticationInfo();
+          auth_info = AuthenticationInfos.Failed();
         }
 
         if (auth_info.Authenticated) {
-          succeeded_login_modules.Add(new ModuleAuthInfo(login_module, auth_info));
           if (login_module.ControlFlag == LoginModuleControlFlag.Sufficient) {
             break;
           }
         } else {
           // The login has failed, if the failed module is "requisite" or
           // "required" the overall login should fail.
-          LoginModuleControlFlag login_module_control_flag =
-            login_module.ControlFlag;
-
-          // The login has failed, if the failed module is "requisite" or
-          // "required" the overall login should fail.
-          if (login_module_control_flag == LoginModuleControlFlag.Requisite) {
-            // if the failed module is "requisite" we need to stop procceding
+          if (login_module.ControlFlag == LoginModuleControlFlag.Requisite) {
+            // If the failed module is "requisite" we need to stop procceding
             // down the login module list.
             overall_login_succeeds = false;
             break;
           }
 
-          if (login_module_control_flag == LoginModuleControlFlag.Required) {
+          // If the failed module is "required", authentication should still
+          // continues to proceed down the login module list.
+          if (login_module.ControlFlag == LoginModuleControlFlag.Required) {
             overall_login_succeeds = false;
           }
         }
       }
 
       if (!overall_login_succeeds) {
-        Abort(login_modules);
+        Abort(attempted_login_modules);
         return false;
       }
 
       try {
-        if (!Commit(succeeded_login_modules)) {
-          Abort(login_modules);
+        if (!Commit(attempted_login_modules)) {
+          Abort(attempted_login_modules);
           return false;
         }
       } catch (Exception e) {
@@ -253,16 +251,12 @@ namespace Nohros.Security.Auth
     /// <summary>
     /// Execute the commit method for the login modules that has succeed.
     /// </summary>
-    /// <param name="succeeded_login_modules"></param>
+    /// <param name="attempted_login_modules"></param>
     /// <returns></returns>
-    bool Commit(IList<ModuleAuthInfo> succeeded_login_modules) {
-      for (int i = 0, j = succeeded_login_modules.Count; i < j; i++) {
-        ILoginModule login_module = succeeded_login_modules[i].Module;
-        if (!login_module.Commit(succeeded_login_modules[i].AuthenticationInfo)) {
-          return false;
-        }
-      }
-      return true;
+    bool Commit(IEnumerable<ModuleAuthInfo> attempted_login_modules) {
+      return
+        attempted_login_modules.All(
+          module_auth_info => module_auth_info.Commit());
     }
 
     /// <summary>
@@ -273,14 +267,13 @@ namespace Nohros.Security.Auth
     /// If a <see cref="ILoginModule"/> throws an exception, it will be logged
     /// and we proceed down the list of login modules.
     /// </remarks>
-    void Abort(ModuleAuthInfo[] login_modules) {
-      for (int i = 0, j = login_modules.Length; i < j; i++) {
-        ILoginModule login_module = login_modules[i].Module;
+    void Abort(IEnumerable<ModuleAuthInfo> attempted_login_modules) {
+      foreach (ModuleAuthInfo module_auth_info in attempted_login_modules) {
         try {
-          login_module.Abort(login_modules[i].AuthenticationInfo);
+          module_auth_info.Abort();
         } catch (Exception exception) {
           MustLogger.ForCurrentProcess.Error(string.Format(
-            StringResources.Log_MethodThrowsException, "commit"), exception);
+            StringResources.Log_MethodThrowsException, "Abort"), exception);
         }
       }
     }
@@ -305,29 +298,15 @@ namespace Nohros.Security.Auth
     /// </para>
     /// </remarks>
     public void Logout(ISubject subject) {
-      ILoginModule[] login_modules = CreateLoginModules(subject,
-        new NopAuthCallbackHandler());
-      for (int i = 0, j = login_modules.Length; i < j; i++) {
-        ILoginModule login_module = login_modules[i];
+      foreach (ILoginModule login_module in login_modules_) {
         try {
           login_module.Logout(subject);
         } catch (Exception ex) {
           // Don't punish the other login modules if we're given a bad one.
           MustLogger.ForCurrentProcess.Error(string.Format(
-            StringResources.Log_MethodThrowsException, "logout"), ex);
+            StringResources.Log_MethodThrowsException, "Logout"), ex);
         }
       }
-    }
-
-    ILoginModule[] CreateLoginModules(ISubject subject,
-      IAuthCallbackHandler auth_callback_handler) {
-      var shared_state = new Dictionary<string, string>();
-      return login_module_factories_
-        .Select(
-          tuple =>
-            tuple.Key.CreateLoginModule(auth_callback_handler, shared_state,
-              tuple.Value))
-        .ToArray();
     }
   }
 }

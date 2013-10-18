@@ -20,8 +20,6 @@ namespace Nohros.Security.Auth
 
     /// <inheritdoc/>
     public abstract ILoginModule CreateLoginModule(
-      IAuthCallbackHandler callback,
-      IDictionary<string, string> shared,
       IDictionary<string, string> options);
 
     protected LoginModuleControlFlag GetControlFlag(

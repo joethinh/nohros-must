@@ -42,10 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthenticationInfos.cs" />
     <Compile Include="callback\AuthCallbackHandlers.cs" />
     <Compile Include="callback\ActionableAuthCallbackHandler.cs" />
     <Compile Include="callback\ThrowableAuthCallbackHandler.cs" />
-    <Compile Include="FailedAuthenticationInfo.cs" />
+    <Compile Include="BasicAuthenticationInfo.cs" />
     <Compile Include="IAuthenticationInfo.cs" />
     <Compile Include="ISubject.cs" />
     <Compile Include="LoginModuleControlFlag.cs" />
