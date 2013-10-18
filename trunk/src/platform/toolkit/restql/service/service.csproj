@@ -85,10 +85,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\base\extensions\extensions.csproj">
-      <Project>{438798C5-7FC8-4238-9AE4-D6B87012B5E2}</Project>
-      <Name>extensions %28%28base%29\extensions%29</Name>
-    </ProjectReference>
     <ProjectReference Include="..\core\restQL.csproj">
       <Project>{1A4ED279-F59C-4E37-AE66-D323A89C36ED}</Project>
       <Name>restQL</Name>

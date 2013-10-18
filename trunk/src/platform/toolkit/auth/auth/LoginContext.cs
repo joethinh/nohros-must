@@ -190,6 +190,7 @@ namespace Nohros.Security.Auth
       IAuthCallbackHandler auth_callback_handler) {
       bool overall_login_succeeds = true;
 
+      var shared = new Dictionary<string, object>();
       var attempted_login_modules =
         new List<ModuleAuthInfo>(login_modules_.Count);
 
@@ -199,7 +200,7 @@ namespace Nohros.Security.Auth
         // semantics).
         IAuthenticationInfo auth_info;
         try {
-          auth_info = login_module.Login(auth_callback_handler);
+          auth_info = login_module.Login(auth_callback_handler, subject, shared);
           attempted_login_modules.Add(
             new ModuleAuthInfo(login_module, auth_info));
         } catch (Exception ex) {

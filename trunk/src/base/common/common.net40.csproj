@@ -204,6 +204,8 @@
     <Compile Include="extensions\Configurations.cs" />
     <Compile Include="extensions\ProviderOptions.cs" />
     <Compile Include="extensions\Providers.cs" />
+    <Compile Include="extensions\Security.cs" />
+    <Compile Include="extensions\Sets.cs" />
     <Compile Include="extensions\Strings.cs" />
     <Compile Include="extensions\StringSet.cs" />
     <Compile Include="io\Path.cs" />

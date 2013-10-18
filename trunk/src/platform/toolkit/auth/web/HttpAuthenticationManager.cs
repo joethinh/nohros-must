@@ -7,47 +7,31 @@ using Nohros.Caching.Providers;
 
 namespace Nohros.Security.Auth
 {
-  public class HttpAuthenticationManager
+  public class HttpAuthenticationManager : AuthenticationManager
   {
     public const string kTokenKey = "Nohros.Security.Auth.Token";
     public const string kCookieName = "Nohros.Security.Auth.Cookie";
 
-    readonly ICacheProvider cache_;
-    readonly LoginContext login_context_;
-
     #region .ctor
     public HttpAuthenticationManager(LoginContext login_context,
-      ICacheProvider cache) {
-      if (login_context == null || cache == null) {
-        throw new ArgumentNullException(login_context == null
-          ? "login_context"
-          : "cache");
-      }
-      login_context_ = login_context;
-      cache_ = cache;
+      ICacheProvider cache) : base(login_context, cache) {
     }
     #endregion
 
     public bool Authenticate(ISubject subject, IAuthCallbackHandler callback,
       HttpContext context) {
-      if (subject == null || callback == null || context == null) {
-        throw new ArgumentNullException(context == null
-          ? "context"
-          : callback == null
-            ? "callback"
-            : "context");
+      if (context == null) {
+        throw new ArgumentNullException("context");
       }
 
-      if (!login_context_.Login(subject, callback)) {
+      AuthenticationToken token = Authenticate(subject, callback);
+      if (!token.Authenticated) {
         return false;
       }
 
-      var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-
-      cache_.Add(token, subject);
-
-      var ticket = new FormsAuthenticationTicket(1, token, DateTime.Now,
-        DateTime.Now.AddMinutes(ExpirationInMinutes), false, token);
+      var ticket = new FormsAuthenticationTicket(1, token.Token, DateTime.Now,
+        DateTime.Now.AddMinutes(TokenExpiration.TotalMinutes), false,
+        token.Token);
       string e_ticket = FormsAuthentication.Encrypt(ticket);
 
       var cookie = new HttpCookie(kCookieName, e_ticket);
@@ -70,7 +54,6 @@ namespace Nohros.Security.Auth
 
       var token = context.Items[kTokenKey] as string;
       if (token != null) {
-        cache_.Remove(token);
         context.Items.Remove(kTokenKey);
         context.Response.Cookies.Remove(kCookieName);
       }
@@ -104,12 +87,7 @@ namespace Nohros.Security.Auth
         subject = default(T);
         return false;
       }
-      return cache_.Get(token, out subject);
+      return GetSubject(token, out subject);
     }
-
-    /// <summary>
-    /// Gets or set a value indicating
-    /// </summary>
-    public int ExpirationInMinutes { get; set; }
   }
 }

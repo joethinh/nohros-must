@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Nohros.Configuration;
 
 namespace Nohros.Security.Auth
@@ -106,12 +107,24 @@ namespace Nohros.Security.Auth
     /// <summary>
     /// Method to authenticate a subject.
     /// </summary>
+    /// <param name="shared">
+    /// A <see cref="IDictionary{TKey,TValue}"/> containing shared login
+    /// module's state.
+    /// </param>
     /// <remarks>
     /// The implementation of this method authenticates a <see cref="ISubject"/>.
     /// For exemple, it may prompt for <see cref="ISubject"/> information
     /// such as username and password and then attempt to verify the password.
     /// This method saves the result of authentication attempt as private
     /// state within a <see cref="IAuthenticationInfo"/> object.
+    /// <para>
+    /// The <paramref name="shared"/> state enables one login module to share
+    /// state with other. It can be used, for example, to share the user ID
+    /// and password between authentication module instances to avoid
+    /// duplicated request of that information to the user. You can also
+    /// use this shared state to share the result of an authentication process
+    /// with another dependant login module.
+    /// </para>
     /// </remarks>
     /// <returns>
     /// <c>true</c> if the authentication succeeded, or <c>false</c> if this
@@ -120,7 +133,8 @@ namespace Nohros.Security.Auth
     /// <exception cref="LoginException">
     /// The <see cref="Login"/> operation fails.
     /// </exception>
-    IAuthenticationInfo Login(IAuthCallbackHandler callback);
+    IAuthenticationInfo Login(IAuthCallbackHandler callback, ISubject subject,
+      IDictionary<string, object> shared);
 
     /// <summary>
     /// Method which logs out a <see cref="ISubject"/>.
