@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthenticationInfos.cs" />
+    <Compile Include="AuthenticationManager.cs" />
+    <Compile Include="AuthenticationToken.cs" />
     <Compile Include="callback\AuthCallbackHandlers.cs" />
     <Compile Include="callback\ActionableAuthCallbackHandler.cs" />
     <Compile Include="callback\ThrowableAuthCallbackHandler.cs" />
@@ -79,10 +81,6 @@
     <ProjectReference Include="..\..\..\..\base\common\common.net40.csproj">
       <Project>{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}</Project>
       <Name>common.net40</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\base\extensions\extensions.csproj">
-      <Project>{438798C5-7FC8-4238-9AE4-D6B87012B5E2}</Project>
-      <Name>extensions %28%28base%29\extensions%29</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

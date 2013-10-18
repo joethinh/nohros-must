@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security;
 using NUnit.Framework;
 using Nohros.Configuration;
 using Nohros.Security.Auth;
 using Telerik.JustMock;
 using Telerik.JustMock.Helpers;
+using IPermission = Nohros.Security.Auth.IPermission;
 
 namespace Nohros.Security
 {
@@ -24,7 +26,8 @@ namespace Nohros.Security
 
       module_ = Mock.Create<ILoginModule>();
       Mock
-        .Arrange(() => module_.Login(Arg.IsAny<IAuthCallbackHandler>()))
+        .Arrange(
+          () => module_.Login(Arg.IsAny<IAuthCallbackHandler>(), subject_))
         .Returns(AuthenticationInfos.Sucessful());
       Mock
         .Arrange(() => module_.Commit(Arg.IsAny<IAuthenticationInfo>()))
@@ -36,10 +39,10 @@ namespace Nohros.Security
       subject_ = Mock.Create<ISubject>();
       Mock
         .Arrange(() => subject_.Permissions)
-        .Returns(new PermissionSet());
+        .Returns(new HashSet<IPermission>());
       Mock
         .Arrange(() => subject_.Principals)
-        .Returns(new PrincipalSet());
+        .Returns(new HashSet<IPrincipal>());
     }
 
     [Test]
@@ -56,7 +59,8 @@ namespace Nohros.Security
         .Arrange(() => module_.ControlFlag)
         .Returns(LoginModuleControlFlag.Required);
       Mock
-        .Arrange(() => module_.Login(Arg.IsAny<IAuthCallbackHandler>()))
+        .Arrange(
+          () => module_.Login(Arg.IsAny<IAuthCallbackHandler>(), subject_))
         .Returns(AuthenticationInfos.Failed());
       Mock
         .Arrange(() => module_.Commit(Arg.IsAny<IAuthenticationInfo>()))
@@ -66,7 +70,7 @@ namespace Nohros.Security
         .MustBeCalled();
 
       var callback = new NopAuthCallbackHandler();
-      var context = new LoginContext(new[] { module_ });
+      var context = new LoginContext(new[] {module_});
 
       Assert.That(context.Login(subject_, callback), Is.False);
       Mock.Assert(module_);
