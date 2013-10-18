@@ -40,7 +40,7 @@
       <HintPath>..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net40\Google.ProtocolBuffers.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="nohros">
-      <HintPath>..\..\..\..\packages\must.common.1.7.7.0\lib\net40\nohros.dll</HintPath>
+      <HintPath>..\..\..\..\packages\must.common.1.8.17.0\lib\net40\nohros.dll</HintPath>
     </Reference>
     <Reference Include="nohros.extensions, Version=0.0.2.11, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\must.extensions.0.0.2.11\lib\net40\nohros.extensions.dll</HintPath>

@@ -47,7 +47,7 @@
       <HintPath>..\..\..\..\..\packages\Google.ProtocolBuffers.2.4.1.473\lib\net20\Google.ProtocolBuffers.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="nohros">
-      <HintPath>..\..\..\..\..\packages\must.common.1.7.7.0\lib\net20\nohros.dll</HintPath>
+      <HintPath>..\..\..\..\..\packages\must.common.1.8.17.0\lib\net20\nohros.dll</HintPath>
     </Reference>
     <Reference Include="nohros.ruby.net, Version=0.5.7.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
