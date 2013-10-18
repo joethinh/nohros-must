@@ -10,9 +10,10 @@ namespace Nohros.Security.Auth
   public interface IPrincipal
   {
     /// <summary>
-    /// Gets the name of the principal.
+    /// Gets a string that uniquely identifies the principal within some
+    /// context.
     /// </summary>
-    string Name { get; }
+    object Id { get; }
 
     /// <summary>
     /// Determines whether this instance of <see cref="IPrincipal"/> and a

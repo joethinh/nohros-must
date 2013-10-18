@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>must.security.auth.web</id>
-        <version>0.0.2.0</version>
+        <version>0.0.3.0</version>
         <title>Must Framework: Auth for Web</title>
         <authors>Nohros Inc</authors>
         <owners>Nohros Inc</owners>
@@ -19,8 +19,11 @@
         <copyright>Nohros Inc</copyright>
         <language>en-US</language>
         <tags>csharp framework nohros security auth</tags>
+        <dependencies>
+			<dependency id="must.security.auth" version="0.0.5.0" />
+        </dependencies>
     </metadata>
     <files>
-        <file src="..\bin\release\auth\nohros.security.auth.web.dll" target="lib\net20\nohros.security.auth.web.dll" />
+        <file src="..\bin\release\auth\nohros.security.auth.web.dll" target="lib\net40\nohros.security.auth.web.dll" />
     </files>
 </package>
