@@ -201,6 +201,10 @@
     <Compile Include="exception\NoUniqueResultException.cs" />
     <Compile Include="exception\ReferentialIntegrityException.cs" />
     <Compile Include="exception\RepositoryException.cs" />
+    <Compile Include="extensions\Configurations.cs" />
+    <Compile Include="extensions\ProviderOptions.cs" />
+    <Compile Include="extensions\Providers.cs" />
+    <Compile Include="extensions\Strings.cs" />
     <Compile Include="extensions\StringSet.cs" />
     <Compile Include="io\Path.cs" />
     <Compile Include="IRuntimeType.cs" />
@@ -403,7 +407,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
