@@ -54,15 +54,15 @@ namespace Nohros.Security.Auth
       string provider_node_group) {
       IProvidersNodeGroup providers = settings.Providers[provider_node_group];
       var modules = from provider in providers
-                    select CreateTuple(settings, provider);
+                    select CreateLoginModule(settings, provider);
       return new LoginContext(modules);
     }
 
-    LoginModuleFactoryTuple CreateTuple(IConfiguration settings,
+    ILoginModule CreateLoginModule(IConfiguration settings,
       IProviderNode provider) {
-      var module = RuntimeTypeFactory<ILoginModuleFactory>
-        .CreateInstanceFallback(provider, settings);
-      return new LoginModuleFactoryTuple(module, provider.Options.ToDictionary());
+      return RuntimeTypeFactory<ILoginModuleFactory>
+        .CreateInstanceFallback(provider, settings)
+        .CreateLoginModule(provider.Options.ToDictionary());
     }
   }
 }

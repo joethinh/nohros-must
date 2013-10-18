@@ -68,7 +68,6 @@ namespace web
     ICacheProvider cache_;
 
     IAuthCallbackHandler callback_;
-    ILoginModuleFactory login_module_factory_;
     ILoginModule module_;
     IDictionary<string, string> options_;
     IDictionary<string, string> shared_;
@@ -76,26 +75,20 @@ namespace web
 
     [SetUp]
     public void SetUp() {
-      login_module_factory_ = Mock.Create<ILoginModuleFactory>();
       callback_ = new NopAuthCallbackHandler();
       shared_ = new Dictionary<string, string>();
       options_ = new Dictionary<string, string>();
 
       module_ = Mock.Create<ILoginModule>();
       Mock
-        .Arrange(() => module_.Login())
-        .Returns(true);
+        .Arrange(() => module_.Login(Arg.IsAny<IAuthCallbackHandler>()))
+        .Returns(AuthenticationInfos.Sucessful());
       Mock
-        .Arrange(() => module_.Commit())
+        .Arrange(() => module_.Commit(Arg.IsAny<IAuthenticationInfo>()))
         .Returns(true);
       Mock
         .Arrange(() => module_.ControlFlag)
         .Returns(LoginModuleControlFlag.Required);
-
-      Mock
-        .Arrange(() =>
-          login_module_factory_.CreateLoginModule(callback_, shared_, options_))
-        .Returns(module_);
 
       cache_ = new Cache();
       subject_ = Mock.Create<ISubject>();
@@ -110,11 +103,7 @@ namespace web
     [Test]
     public void
       should_create_cookie_and_put_subject_on_cache_when_authentication_succeed() {
-      var context =
-        new LoginContext(new[] {
-          new KeyValuePair<ILoginModuleFactory, IDictionary<string, string>>(
-            login_module_factory_, options_)
-        });
+      var context = new LoginContext(new[] {module_});
       var manager = new HttpAuthenticationManager(context, cache_);
       var http_response = new HttpResponse(new StringWriter());
       var http_context =
@@ -134,14 +123,10 @@ namespace web
     [Test]
     public void should_not_touch_cookies_or_cache_when_authentication_fails() {
       Mock
-        .Arrange(() => module_.Login())
-        .Returns(false);
+        .Arrange(() => module_.Login(Arg.IsAny<IAuthCallbackHandler>()))
+        .Returns(AuthenticationInfos.Failed());
 
-      var context =
-        new LoginContext(new[] {
-          new KeyValuePair<ILoginModuleFactory, IDictionary<string, string>>(
-            login_module_factory_, options_)
-        });
+      var context = new LoginContext(new[] {module_});
       var manager = new HttpAuthenticationManager(context, cache_);
       var http_response = new HttpResponse(new StringWriter());
       var http_context =
@@ -160,11 +145,7 @@ namespace web
 
     [Test]
     public void should_delete_cookies_and_cache_entries_on_signout() {
-      var context =
-        new LoginContext(new[] {
-          new KeyValuePair<ILoginModuleFactory, IDictionary<string, string>>(
-            login_module_factory_, options_)
-        });
+      var context = new LoginContext(new[] {module_});
       var manager = new HttpAuthenticationManager(context, cache_);
       var http_response = new HttpResponse(new StringWriter());
       var http_context =

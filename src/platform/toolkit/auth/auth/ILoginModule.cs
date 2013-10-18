@@ -120,7 +120,7 @@ namespace Nohros.Security.Auth
     /// <exception cref="LoginException">
     /// The <see cref="Login"/> operation fails.
     /// </exception>
-    IAuthenticationInfo Login();
+    IAuthenticationInfo Login(IAuthCallbackHandler callback);
 
     /// <summary>
     /// Method which logs out a <see cref="ISubject"/>.
