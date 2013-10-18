@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Nohros.Security.Auth
 {
@@ -84,7 +85,7 @@ namespace Nohros.Security.Auth
     /// <see cref="PermissionSet"/> object affects the internal permission set
     /// as well.
     /// </remarks>
-    PermissionSet Permissions { get; }
+    ISet<IPermission> Permissions { get; }
 
     /// <summary>
     /// Gets a set of principals associated with this subject.
@@ -96,6 +97,6 @@ namespace Nohros.Security.Auth
     /// <see cref="PrincipalSet"/> object affects the internal principal set
     /// as well.
     /// </remarks>
-    PrincipalSet Principals { get; }
+    ISet<IPrincipal> Principals { get; }
   }
 }

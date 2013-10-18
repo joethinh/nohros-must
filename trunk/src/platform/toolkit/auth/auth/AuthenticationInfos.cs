@@ -16,7 +16,7 @@ namespace Nohros.Security.Auth
     /// authentication.
     /// </returns>
     public static IAuthenticationInfo Sucessful() {
-      return new BasicAuthenticationInfo(true);
+      return new AuthenticationInfo(true);
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ namespace Nohros.Security.Auth
     /// authentication.
     /// </returns>
     public static IAuthenticationInfo Failed() {
-      return new BasicAuthenticationInfo(false);
+      return new AuthenticationInfo(false);
     }
   }
 }
