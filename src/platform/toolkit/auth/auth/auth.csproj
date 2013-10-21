@@ -54,6 +54,7 @@
     <Compile Include="IAuthenticationInfo.cs" />
     <Compile Include="ISubject.cs" />
     <Compile Include="LoginModuleControlFlag.cs" />
+    <Compile Include="events\PermissionEventHandler.cs" />
     <Compile Include="permissions\BasicPermission.cs" />
     <Compile Include="callback\IAuthCallback.cs" />
     <Compile Include="callback\IAuthCallbackHandler.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="ILoginModule.cs" />
     <Compile Include="ILoginModuleFactory.cs" />
     <Compile Include="LoginContextFactory.cs" />
+    <Compile Include="events\PrincipalEventHandler.cs" />
     <Compile Include="principals\Principal.cs" />
     <Compile Include="permissions\IPermission.cs" />
     <Compile Include="principals\IPrincipal.cs" />
