@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Nohros.Collections;
 using Nohros.Security.Auth.Extensions;
 
 namespace Nohros.Security.Auth
@@ -9,8 +10,8 @@ namespace Nohros.Security.Auth
   /// </summary>
   public abstract class AbstractSubject : ISubject
   {
-    readonly ISet<IPermission> permissions_;
-    readonly ISet<IPrincipal> principals_;
+    readonly EventedSet<IPermission> permissions_;
+    readonly EventedSet<IPrincipal> principals_;
 
     #region .ctor
     /// <summary>
@@ -18,8 +19,11 @@ namespace Nohros.Security.Auth
     /// with an empty set of permissions and principals.
     /// </summary>
     protected AbstractSubject() {
-      permissions_ = new HashSet<IPermission>();
-      principals_ = new HashSet<IPrincipal>();
+      permissions_ = new EventedSet<IPermission>(new HashSet<IPermission>());
+      principals_ = new EventedSet<IPrincipal>(new HashSet<IPrincipal>());
+
+      permissions_.ItemAdded += OnPermissionAdded;
+      principals_.ItemAdded += OnPrincipalAdded;
     }
     #endregion
 
@@ -88,6 +92,34 @@ namespace Nohros.Security.Auth
         }
         return hash;
       }
+    }
+
+    /// <summary>
+    /// Occurs when an permission is added to the subject.
+    /// </summary>
+    public event PermissionEventHandler PermissionAdded;
+
+    /// <summary>
+    /// Raises the <see cref="PermissionAdded"/> event.
+    /// </summary>
+    /// <param name="permission"></param>
+    protected virtual void OnPermissionAdded(IPermission permission) {
+      Listeners.SafeInvoke<PermissionEventHandler>(PermissionAdded,
+        handler => handler(permission));
+    }
+
+    /// <summary>
+    /// Occurs when an <see cref="IPrincipal"/> is added to the subject.
+    /// </summary>
+    public event PrincipalEventHandler PrincipalAdded;
+
+    /// <summary>
+    /// Raises the <see cref="PrincipalAdded"/> event.
+    /// </summary>
+    /// <param name="principal"></param>
+    protected virtual void OnPrincipalAdded(IPrincipal principal) {
+      Listeners.SafeInvoke<PrincipalEventHandler>(PrincipalAdded,
+        handler => handler(principal));
     }
   }
 }
