@@ -20,8 +20,9 @@ namespace Nohros.Security.Auth
     /// <c>true</c> is the authentication process completed successfully;
     /// otherwise, <c>false</c>.
     /// </param>
-    public AuthenticationInfo(bool authenticated) {
-      Authenticated = authenticated;
+    public AuthenticationInfo(bool authenticated)
+      : this(
+        authenticated, new HashSet<IPrincipal>(), new HashSet<IPermission>()) {
     }
 
     /// <summary>

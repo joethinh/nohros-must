@@ -26,7 +26,7 @@ namespace Nohros.Extensions
     /// This method checks for existence for each specified key and if one
     /// of them does not exists returns <c>false</c>.
     /// </remarks>
-    public static bool ContainsKeys(this IDictionary<string, string> options,
+    public static bool ContainsKeys<T>(this IDictionary<string, T> options,
       params string[] keys) {
       if (options == null) {
         throw new ArgumentNullException("options");
@@ -42,6 +42,32 @@ namespace Nohros.Extensions
         }
       }
       return true;
+    }
+
+    /// <summary>
+    /// Checks if the specified options keys exists in the options dictionary.
+    /// </summary>
+    /// <param name="options">
+    /// A <see cref="IDictionary{TKey,TValue}"/> to check for key existence.
+    /// </param>
+    /// <param name="keys">
+    /// THe options keys to check for existence.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="options"/> is a null reference.
+    /// </exception>
+    /// <returns>
+    /// <c>true</c> if all the specified keys exists in the given 
+    /// <paramref name="options"/> dictionary; otherwise, <c>false</c>. If no
+    /// keys is specified this method returns <c>true</c>.
+    /// </returns>
+    /// <remarks>
+    /// This method checks for existence for each specified key and if one
+    /// of them does not exists returns <c>false</c>.
+    /// </remarks>
+    public static bool ContainsKeys(this IDictionary<string, string> options,
+      params string[] keys) {
+      return ContainsKeys<string>(options, keys);
     }
 
     /// <summary>
@@ -64,11 +90,7 @@ namespace Nohros.Extensions
     /// </returns>
     public static string GetString(this IDictionary<string, string> options,
       string key, string default_value) {
-      string value;
-      if (!options.TryGetValue(key, out value)) {
-        return default_value;
-      }
-      return value;
+      return GetValue(options, key, default_value);
     }
 
     /// <summary>
@@ -93,7 +115,7 @@ namespace Nohros.Extensions
     /// <paramref name="key"/> is found and is convertible to an 32-bit integer;
     /// otherwise, <c>false</c>
     /// </returns>
-    public static bool TryGetInteger(this IDictionary<string, string> options,
+    public static bool TryGetInteger<T>(this IDictionary<string, string> options,
       string key, out int value) {
       string option;
       if (options.TryGetValue(key, out option)) {
@@ -215,7 +237,53 @@ namespace Nohros.Extensions
     /// <returns></returns>
     public static string GetString(this IDictionary<string, string> options,
       string key) {
-      string option;
+      return GetValue(options, key);
+    }
+
+    /// <summary>
+    /// Gets the value associated with the key <paramref name="key"/>
+    /// from the <paramref name="options"/>.
+    /// </summary>
+    /// <param name="options">
+    /// The <see cref="IDictionary{TKey,TValue}"/> to search for the key
+    /// <paramref name="key"/>.
+    /// </param>
+    /// <param name="key">
+    /// The key to search for.
+    /// </param>
+    /// <param name="default_value">
+    /// A value that will be returned when the key <paramref name="key"/> is
+    /// not found.
+    /// </param>
+    /// <returns>
+    /// The value associated with the key <paramref name="key"/>.
+    /// </returns>
+    public static T GetValue<T>(this IDictionary<string, T> options,
+      string key, T default_value) {
+      T option;
+      if (!options.TryGetValue(key, out option)) {
+        return default_value;
+      }
+      return option;
+    }
+
+    /// <summary>
+    /// Gets the value associated with the key <paramref name="key"/>
+    /// from the <paramref name="options"/>.
+    /// </summary>
+    /// <param name="options">
+    /// The <see cref="IDictionary{TKey,TValue}"/> to search for the key
+    /// <paramref name="key"/>.
+    /// </param>
+    /// <param name="key">
+    /// The key to search for.
+    /// </param>
+    /// <returns>
+    /// The value associated with the key <paramref name="key"/>.
+    /// </returns>
+    public static T GetValue<T>(this IDictionary<string, T> options,
+      string key) {
+      T option;
       if (!options.TryGetValue(key, out option)) {
         throw
           new KeyNotFoundException("There is no value associated with the key \""
