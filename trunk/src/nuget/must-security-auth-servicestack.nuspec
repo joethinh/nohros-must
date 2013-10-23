@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>must.security.servicestack</id>
+        <version>0.0.1.0</version>
+        <title>Must Framework: Auth for Web/ServiceStack</title>
+        <authors>Nohros Inc</authors>
+        <owners>Nohros Inc</owners>
+        <projectUrl>http://code.google.com/p/nohros-must</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>
+		  This project contains the Nohros security framework.
+		  Which is a port of the JAAS for the .NET.
+		  **
+		  This module contains the web related functionality that is associated
+		  with the ServiceStack framework.
+		</description>
+        <summary>
+		  The security portion of the must framework.
+		</summary>
+        <copyright>Nohros Inc</copyright>
+        <language>en-US</language>
+        <tags>csharp framework nohros security auth</tags>
+        <dependencies>
+			<dependency id="must.security.web" version="0.0.4.0" />
+			<dependency id="ServiceStack" version="3.9.0.0" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="..\bin\release\auth\nohros.security.servicestack.dll" target="lib\net40\nohros.security.auth.servicestack.dll" />
+    </files>
+</package>
