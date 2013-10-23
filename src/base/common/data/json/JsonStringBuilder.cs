@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Nohros.Configuration;
 
 namespace Nohros.Data.Json
 {
@@ -153,6 +154,23 @@ namespace Nohros.Data.Json
     public JsonStringBuilder WriteEndArray() {
       ++last_written_token_position_;
       return WriteReservedEndToken(new Token(kEndArray, TokenType.Structural));
+    }
+
+    /// <summary>
+    /// Executes the action <paramref name="action"/> and returns the instance
+    /// of the <see cref="JsonStringBuilder"/> object where the
+    /// <see cref="Run"/> method was called.
+    /// </summary>
+    /// <param name="action">
+    /// A <see cref="Action{T}"/> to be executed.
+    /// </param>
+    /// <returns>
+    /// The instance of the <see cref="JsonStringBuilder"/> where the
+    /// <see cref="Run"/> method was called.
+    /// </returns>
+    public JsonStringBuilder Run(Action<JsonStringBuilder> action) {
+      action(this);
+      return this;
     }
 
     /// <summary>
@@ -564,8 +582,7 @@ namespace Nohros.Data.Json
     /// "name":value
     /// </para>
     /// </remarks>
-    public JsonStringBuilder WriteMember(string name, decimal value)
-    {
+    public JsonStringBuilder WriteMember(string name, decimal value) {
       return WriteMember(name, value, kDefaultNumberFormat);
     }
 
@@ -723,8 +740,7 @@ namespace Nohros.Data.Json
     /// </para>
     /// </remarks>
     public JsonStringBuilder WriteMember(string name, decimal value,
-      string format)
-    {
+      string format) {
       ++last_written_token_position_;
       return
         WriteReservedBeginToken(new Token(kDoubleQuote, TokenType.Structural))
