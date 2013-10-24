@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Web;
-using Nohros.Security.Auth;
 using ServiceStack.Common.Web;
 using ServiceStack.ServiceInterface;
 
-namespace Nohros.Security.ServiceStack
+namespace Nohros.Security.Auth.ServiceStack
 {
   [Secure]
   public class SecureService : Service

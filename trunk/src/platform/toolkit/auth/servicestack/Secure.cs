@@ -5,7 +5,7 @@ using ServiceStack.Common.Web;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 
-namespace Nohros.Security.ServiceStack
+namespace Nohros.Security.Auth.ServiceStack
 {
   /// <summary>
   /// Indicates that the request, which is associated with this attribute,

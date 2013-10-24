@@ -8,8 +8,8 @@
     <ProjectGuid>{382B5312-CCEC-4ACD-A0EF-8CF67EAE0034}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nohros.Security.ServiceStack</RootNamespace>
-    <AssemblyName>nohros.security.servicestack</AssemblyName>
+    <RootNamespace>Nohros.Security.Auth.ServiceStack</RootNamespace>
+    <AssemblyName>nohros.security.auth.servicestack</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\</SolutionDir>
