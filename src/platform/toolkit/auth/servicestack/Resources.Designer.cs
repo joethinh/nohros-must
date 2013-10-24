@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Nohros.Security.ServiceStack {
+namespace Nohros.Security.Auth.ServiceStack {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Nohros.Security.ServiceStack {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Nohros.Security.ServiceStack.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Nohros.Security.Auth.ServiceStack.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
