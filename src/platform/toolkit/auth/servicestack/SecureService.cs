@@ -37,6 +37,8 @@ namespace Nohros.Security.Auth.ServiceStack
         var context = HttpContext.Current;
         // Sanity check the context and subject.
         if (authenticator_manager_.GetSubject(context, out subject)) {
+          context.Response.AddHeader(HttpHeaders.WwwAuthenticate,
+            Strings.kWwwAuthenticateHeader);
           throw HttpError.Unauthorized(Resources.Request_Unauthorized);
         }
         return subject;

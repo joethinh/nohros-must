@@ -45,6 +45,8 @@ namespace Nohros.Security.Auth.ServiceStack
       HttpContext context = context_base.ApplicationInstance.Context;
       ISubject subject;
       if (!AuthenticationManager.GetSubject(context, out subject)) {
+        response.AddHeader(HttpHeaders.WwwAuthenticate,
+          Strings.kWwwAuthenticateHeader);
         throw HttpError.Unauthorized(Resources.Request_Unauthorized);
       }
     }
