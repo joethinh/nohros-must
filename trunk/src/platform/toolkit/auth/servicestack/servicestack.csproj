@@ -75,6 +75,7 @@
     </Compile>
     <Compile Include="Secure.cs" />
     <Compile Include="SecureService.cs" />
+    <Compile Include="Strings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\auth\auth.csproj">
