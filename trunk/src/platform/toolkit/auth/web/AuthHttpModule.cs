@@ -6,7 +6,8 @@ namespace Nohros.Security.Auth
 {
   public class AuthHttpModule : IHttpModule
   {
-    public const string kTokenKey = HttpAuthenticationManager.kTokenKey;
+    const string kTokenKey = HttpAuthenticationManager.kTokenKey;
+    const string kCookieName = HttpAuthenticationManager.kCookieName;
 
     public void Init(HttpApplication app) {
       FormsAuthentication.Initialize();
@@ -26,7 +27,7 @@ namespace Nohros.Security.Auth
       FormsAuthenticationTicket ticket;
       // If the request does not have an authentication ticket associated
       // the user is not authenticated.
-      if (!GetTicketFromCookie(context, FormsAuthentication.FormsCookieName,
+      if (!GetTicketFromCookie(context, kCookieName,
         out ticket)) {
         return;
       }

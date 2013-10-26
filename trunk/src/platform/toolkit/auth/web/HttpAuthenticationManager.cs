@@ -18,13 +18,20 @@ namespace Nohros.Security.Auth
     }
     #endregion
 
-    public bool Authenticate(ISubject subject, IAuthCallbackHandler callback,
-      HttpContext context) {
+    public override AuthenticationToken Authenticate(ISubject subject,
+      IAuthCallbackHandler callback) {
+      AuthenticationToken token;
+      Authenticate(subject, callback, HttpContext.Current, out token);
+      return token;
+    }
+
+    bool Authenticate(ISubject subject, IAuthCallbackHandler callback,
+      HttpContext context, out AuthenticationToken token) {
       if (context == null) {
         throw new ArgumentNullException("context");
       }
 
-      AuthenticationToken token = Authenticate(subject, callback);
+      token = base.Authenticate(subject, callback);
       if (!token.Authenticated) {
         return false;
       }
@@ -36,8 +43,14 @@ namespace Nohros.Security.Auth
 
       var cookie = new HttpCookie(kCookieName, e_ticket);
       context.Items[kTokenKey] = token;
-      context.Response.Cookies.Add(cookie);
+      context.Response.SetCookie(cookie);
       return true;
+    }
+
+    public bool Authenticate(ISubject subject, IAuthCallbackHandler callback,
+      HttpContext context) {
+      AuthenticationToken token;
+      return Authenticate(subject, callback, context, out token);
     }
 
     /// <summary>
