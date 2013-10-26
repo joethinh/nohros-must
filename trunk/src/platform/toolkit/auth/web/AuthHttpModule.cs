@@ -33,7 +33,7 @@ namespace Nohros.Security.Auth
       }
 
       // If the ticket is expired the user should login again.
-      if (!ticket.Expired) {
+      if (ticket.Expired) {
         return;
       }
 
