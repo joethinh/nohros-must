@@ -31,18 +31,43 @@ namespace Nohros.Security.Auth.ServiceStack
     /// <exception cref="HttpError.Unauthorized">
     /// There is not subject associated with the current request.
     /// </exception>
-    public ISubject Subject {
-      get {
-        ISubject subject = null;
-        var context = HttpContext.Current;
-        // Sanity check the context and subject.
-        if (authenticator_manager_.GetSubject(context, out subject)) {
-          context.Response.AddHeader(HttpHeaders.WwwAuthenticate,
-            Strings.kWwwAuthenticateHeader);
-          throw HttpError.Unauthorized(Resources.Request_Unauthorized);
-        }
-        return subject;
+    /// <remarks>
+    /// If there is no subject associated with the current request, this method
+    /// will add a WWW-Authenticate header to the response using the given
+    /// authentication challenge and throw a <see cref="HttpError.Unauthorized"/>
+    /// exception.
+    /// </remarks>
+    public ISubject GetSubject(string challenge) {
+      ISubject subject = null;
+      var context = HttpContext.Current;
+      // Sanity check the context and subject.
+      if (!authenticator_manager_.GetSubject(context, out subject)) {
+        context.Response.AddHeader(HttpHeaders.WwwAuthenticate, challenge);
+        throw HttpError.Unauthorized(Resources.Request_Unauthorized);
       }
+      return subject;
+    }
+
+    /// <summary>
+    /// Gets the <see cref="ISubject"/> object that is associated with the
+    /// current HTTP request.
+    /// </summary>
+    /// <exception cref="HttpError.Unauthorized">
+    /// There is not subject associated with the current request.
+    /// </exception>
+    /// <remarks>
+    /// If there is no subject associated with the current request, this method
+    /// will add a WWW-Authenticate header to the response using the default
+    /// authentication challenge and throw a <see cref="HttpError.Unauthorized"/>
+    /// exception.
+    /// <para>
+    /// This property is a shortcut for the <see cref="GetSubject(string)"/>
+    /// method that uses the <see cref="SecureAttribute.kWwwAuthenticateHeader"/>
+    /// as the authentication challenge.
+    /// </para>
+    /// </remarks>
+    public ISubject Subject {
+      get { return GetSubject(Strings.kWwwAuthenticateHeader); }
     }
   }
 }
