@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Web;
 using System.Web.Security;
 using Nohros.Caching;
 using Nohros.Caching.Providers;
+using Nohros.Extensions;
 
 namespace Nohros.Security.Auth
 {
   public class HttpAuthenticationManager : AuthenticationManager
   {
     public const string kTokenKey = "Nohros.Security.Auth.Token";
-    public const string kCookieName = "Nohros.Security.Auth.Cookie";
+    public const string kCookieName = "NHSAUTHID";
 
     #region .ctor
     public HttpAuthenticationManager(LoginContext login_context,
@@ -39,9 +41,11 @@ namespace Nohros.Security.Auth
       var ticket = new FormsAuthenticationTicket(1, token.Token, DateTime.Now,
         DateTime.Now.AddMinutes(TokenExpiration.TotalMinutes), false,
         token.Token);
+
       string e_ticket = FormsAuthentication.Encrypt(ticket);
 
-      var cookie = new HttpCookie(kCookieName, e_ticket);
+      var cookie = new HttpCookie(kCookieName,
+        e_ticket.AsBase64(Encoding.Default));
       context.Items[kTokenKey] = token;
       context.Response.SetCookie(cookie);
       return true;

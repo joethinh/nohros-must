@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
-using Nohros.Data.Json;
 
 namespace Nohros.Extensions
 {
+  /// <summary>
+  /// A collection of useful extensions for the <see cref="string"/> class.
+  /// </summary>
   public static class StringExtensions
   {
     /// <summary>
@@ -180,6 +182,37 @@ namespace Nohros.Extensions
         }
       }
       return builder.ToString();
+    }
+
+    /// <summary>
+    /// Encodes the given string using the base64 digits.
+    /// </summary>
+    /// <param name="str">
+    /// The string to be encoded.
+    /// </param>
+    /// <param name="encoding">
+    /// The character encoding of string <paramref name="str"/>.
+    /// </param>
+    /// <returns>
+    /// The <paramref name="str"/> string encoded using the base64 digits
+    /// </returns>
+    public static string AsBase64(this string str, Encoding encoding) {
+      return Convert.ToBase64String(encoding.GetBytes(str));
+    }
+
+    /// <summary>
+    /// Gets the original version of a string that was encoded using the
+    /// base64 digits.
+    /// </summary>
+    /// <param name="str">
+    /// The base64 encoded version of the string to get the original version.
+    /// </param>
+    /// <param name="encoding">
+    /// The character encoding of the original string.
+    /// </param>
+    /// <returns></returns>
+    public static string FromBase64String(this string str, Encoding encoding) {
+      return encoding.GetString(Convert.FromBase64String(str));
     }
   }
 }
