@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Text;
 using System.Web;
 using System.Web.Security;
+using Nohros.Extensions;
 
 namespace Nohros.Security.Auth
 {
@@ -50,7 +52,8 @@ namespace Nohros.Security.Auth
       }
 
       try {
-        ticket = FormsAuthentication.Decrypt(cookie.Value);
+        string cookie_data = cookie.Value.FromBase64String(Encoding.Default);
+        ticket = FormsAuthentication.Decrypt(cookie_data);
         return true;
       } catch {
         context.Request.Cookies.Remove(name);
