@@ -14,7 +14,6 @@ namespace Nohros.Caching
   public partial class LoadingCache<T> : ILoadingCache<T>
   {
     const string kTypeForLogger = "[Nohros.Caching.AbstractCache.";
-    static readonly IExecutor same_thread_executor_thread;
 
     readonly string cache_guid_;
     readonly ICacheProvider cache_provider_;
@@ -40,19 +39,6 @@ namespace Nohros.Caching
     // is a value type. It exists to avoid checking the type of the parameter
     // each time a delegate returns something.
     readonly bool t_is_value_type_;
-
-    // the executor used to execute refreshes.
-
-    // The default cache loader to use on loading operations.
-
-    #region .ctor
-    /// <summary>
-    /// Initializes the static members.
-    /// </summary>
-    static LoadingCache() {
-      same_thread_executor_thread = Executors.SameThreadExecutor();
-    }
-    #endregion
 
     #region .ctor
     /// <summary>
@@ -85,6 +71,8 @@ namespace Nohros.Caching
       strength_type_ = builder.ValueStrength;
       mutex_ = new object();
       t_is_value_type_ = typeof (T).IsValueType;
+      default_cache_loader_ =
+        CacheLoader<T>.From(delegate { throw new NotSupportedException(); });
     }
 
     /// <summary>
@@ -116,7 +104,6 @@ namespace Nohros.Caching
     }
     #endregion
 
-    #region ILoadingCache<T> Members
     /// <inheritdoc/>
     public T GetIfPresent(string key) {
       T value;
@@ -223,7 +210,7 @@ namespace Nohros.Caching
         return LockedGetOrLoad(key, loader);
       } catch (Exception e) {
         MustLogger.ForCurrentProcess.Error(kTypeForLogger + "Get]", e);
-        throw new ExecutionException(e);
+        throw;
       }
     }
 
@@ -255,7 +242,6 @@ namespace Nohros.Caching
       T value;
       Refresh(key, default_cache_loader_, out value);
     }
-    #endregion
 
     /// <summary>
     /// Generates a string that uniquely identifies the key within a cache
@@ -574,8 +560,7 @@ namespace Nohros.Caching
     IFuture<T> LoadAsync(string key,
       LoadingValueReference<T> loading_value_reference, CacheLoader<T> loader) {
       IFuture<T> loading_future = loading_value_reference.LoadFuture(key, loader);
-      loading_future.AddListener(delegate()
-      {
+      loading_future.AddListener(delegate() {
         try {
           T new_value = GetUninterruptibly(key, loading_value_reference,
             loading_future);
@@ -585,7 +570,7 @@ namespace Nohros.Caching
           MustLogger.ForCurrentProcess.Warn("Exception thrown during refresh",
             exception);
         }
-      }, same_thread_executor_thread);
+      }, Executors.SameThreadExecutor());
       return loading_future;
     }
 
