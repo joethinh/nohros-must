@@ -47,6 +47,7 @@
     <Compile Include="AuthenticationToken.cs" />
     <Compile Include="callback\AuthCallbackHandlers.cs" />
     <Compile Include="callback\ActionableAuthCallbackHandler.cs" />
+    <Compile Include="callback\LoginPasswordCallbackHandler.cs" />
     <Compile Include="callback\ThrowableAuthCallbackHandler.cs" />
     <Compile Include="AuthenticationInfo.cs" />
     <Compile Include="extensions\Permissions.cs" />

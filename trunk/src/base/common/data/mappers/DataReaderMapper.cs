@@ -88,7 +88,7 @@ namespace Nohros.Data
         return false;
       }
       t = MapInternal(reader);
-      return false;
+      return true;
     }
 
     public T Map(IDataReader reader) {
@@ -102,10 +102,9 @@ namespace Nohros.Data
 
     public T MapCurrent(IDataReader reader) {
       T t;
+      // Ensure that the ordinals array is populated.
       GetOrdinals(reader);
-      if (!Map(reader, false, out t)) {
-        throw new NoResultException();
-      }
+      Map(reader, false, out t);
       return t;
     }
 

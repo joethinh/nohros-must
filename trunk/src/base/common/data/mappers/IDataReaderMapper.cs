@@ -44,14 +44,33 @@ namespace Nohros.Data
     bool Map(IDataReader reader, out T t);
 
     /// <summary>
-    /// maps a element of a query result to a object of type
+    /// Maps a element of a query result to a object of type
+    /// <typeparamref name="T"/>.
+    /// </summary>
+    /// <returns>
+    /// A object of type <typeparamref name="T"/> containing the data readed
+    /// from the next row of the given <paramref name="reader"/>.
+    /// </returns>
+    /// <remarks>
+    /// The <see cref="IDataReader.Read"/> method will be called to fetch the
+    /// next record.
+    /// </remarks>
+    T Map(IDataReader reader, Action<T> post_map);
+
+    /// <summary>
+    /// Maps a element of a query result to a object of type using the current
+    /// record of the <see cref="IDataReader"/>.
     /// <typeparamref name="T"/>.
     /// </summary>
     /// <returns>
     /// A object of type <typeparamref name="T"/> containing the data readed
     /// from the current row of the given <paramref name="reader"/>.
     /// </returns>
-    T Map(IDataReader reader, Action<T> post_map);
+    /// <remarks>
+    /// The given <paramref name="reader"/> should be positioned at a valid
+    /// record.
+    /// </remarks>
+    T MapCurrent(IDataReader reader);
 
     /// <summary>
     /// Maps a element of a query result to a collection of object of type
