@@ -73,6 +73,7 @@ namespace Nohros.Security.Auth
       if (token != null) {
         context.Items.Remove(kTokenKey);
         context.Response.Cookies.Remove(kCookieName);
+        base.SignOut(token);
       }
     }
 
