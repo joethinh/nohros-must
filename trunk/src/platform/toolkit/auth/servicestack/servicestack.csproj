@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="services\auth\AuthRequest.cs" />
-    <Compile Include="services\auth\AuthService.cs" />
+    <Compile Include="services\auth\AbstractAuthService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>

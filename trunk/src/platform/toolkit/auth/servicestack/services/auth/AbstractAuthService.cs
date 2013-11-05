@@ -9,12 +9,12 @@ namespace Nohros.Security.Auth.ServiceStack
   /// A <see cref="Service"/> that can be used to handle authentication request
   /// that uses the well know "login/password" credentials.
   /// </summary>
-  public abstract class AuthService : Service
+  public abstract class AbstractAuthService : Service
   {
     readonly HttpAuthenticationManager authenticator_;
 
     #region .ctor
-    protected AuthService(HttpAuthenticationManager authenticator) {
+    protected AbstractAuthService(HttpAuthenticationManager authenticator) {
       authenticator_ = authenticator;
     }
     #endregion
