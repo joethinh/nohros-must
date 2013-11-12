@@ -255,6 +255,8 @@
     <Compile Include="providers\data\IConnectionProvider.cs" />
     <Compile Include="providers\data\transaction\ITransactionContext.cs" />
     <Compile Include="providers\data\transaction\ITransactionContextFactory.cs" />
+    <Compile Include="providers\IProviderFactory.cs" />
+    <Compile Include="providers\IProviderFactoryT.cs" />
     <Compile Include="RuntimeType.cs" />
     <Compile Include="type\Clocks.cs" />
     <Compile Include="type\collections\AbstractRingQueue.cs" />
@@ -401,7 +403,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
