@@ -9,7 +9,7 @@ namespace Nohros.Data
     class HiLoRange : IHiLoRange
     {
       public long High { get; set; }
-      public long MaxLow { get; set; }
+      public int MaxLow { get; set; }
     }
 
     const int kMaxLo = 100;

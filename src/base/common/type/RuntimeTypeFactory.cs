@@ -51,16 +51,7 @@ namespace Nohros
     /// <seealso cref="IRuntimeType"/>
     public static T CreateInstanceNoException(IRuntimeType runtime_type,
       params object[] args) {
-      // A try/catch block is used here because this method should not throw
-      // any exception.
-      try {
-        return CreateInstance(runtime_type, args);
-      } catch (Exception exception) {
-        MustLogger.ForCurrentProcess.Error(
-          string.Format(StringResources.TypeLoad_CreateInstance,
-            runtime_type.Type));
-      }
-      return default(T);
+      return CreateInstance(runtime_type, false, false, args);
     }
 
     /// <summary>
@@ -91,7 +82,7 @@ namespace Nohros
     /// <seealso cref="IRuntimeType"/>
     public static T CreateInstanceFallback(IRuntimeType runtime_type,
       params object[] args) {
-      return CreateInstance(runtime_type, true, args);
+      return CreateInstance(runtime_type, true, true, args);
     }
 
     /// <summary>
@@ -113,11 +104,11 @@ namespace Nohros
     /// </returns>
     public static T CreateInstance(IRuntimeType runtime_type,
       params object[] args) {
-      return CreateInstance(runtime_type, false, args);
+      return CreateInstance(runtime_type, false, true, args);
     }
 
-    static T CreateInstance(IRuntimeType runtime_type, bool fallback,
-      params object[] args) {
+    internal static T CreateInstance(IRuntimeType runtime_type, bool fallback,
+      bool throw_exceptions, params object[] args) {
       // create a new object instance using a public or non-public
       // constructor.
       const BindingFlags kFlags =
@@ -129,11 +120,11 @@ namespace Nohros
       Type type = RuntimeType.GetSystemType(runtime_type);
       if (type != null) {
         try {
-          // If no constructors arguments was specified or do not waste time
-          // searching for a matching constructor.
+          // If no constructors arguments was specified do not waste time
+          // searching for a matching constructor and try to instantiate
+          // the class using the parameterless constructor.
           if (args.Length == 0) {
-            new_obj =
-              Activator.CreateInstance(type, kFlags, null, args, null) as T;
+            new_obj = Activator.CreateInstance(type, true) as T;
           } else {
             KeyValuePair<ConstructorInfo, ParameterInfo[]>[] list =
               GetOrderedConstructors(type, kFlags, args.Length);
@@ -145,23 +136,31 @@ namespace Nohros
               }
             }
           }
+
+          // A null |new_obj| means that a matching constructor was not found.
+          // Fallback to the parameterless constructor if desired.
+          if (new_obj == null && fallback) {
+            new_obj = Activator.CreateInstance(type, true) as T;
+          }
         } catch (MissingMethodException) {
           // A missing method exception means that a parameterless constructor
           // was not found. We can raise the TyeLoadException already since
           // fallback will only try to instantiate the class using the
           // parameterless constructor.
+          if (!throw_exceptions) {
+            return default(T);
+          }
           throw new TypeLoadException(
             GetDefaultConstructorNotFoundMessage(runtime_type.Type));
         }
-
-        if (new_obj == null && fallback) {
-          new_obj = Activator.CreateInstance(type, true) as T;
-        }
       } else {
+        if (!throw_exceptions) {
+          return default(T);
+        }
         throw new TypeLoadException(GetTypeNotFoundMessage(runtime_type.Type));
       }
 
-      if (new_obj == null) {
+      if (new_obj == null && throw_exceptions) {
         throw new TypeLoadException(
           GetMatchingConstructorNotFoundMessage(runtime_type.Type, fallback,
             args));

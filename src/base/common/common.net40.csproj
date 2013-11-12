@@ -265,6 +265,8 @@
     <Compile Include="providers\data\transaction\ITransactionContext.cs" />
     <Compile Include="providers\data\transaction\ITransactionContextFactory.cs" />
     <Compile Include="providers\data\transaction\TransactionContext.cs" />
+    <Compile Include="providers\IProviderFactory.cs" />
+    <Compile Include="providers\IProviderFactoryT.cs" />
     <Compile Include="RuntimeType.cs" />
     <Compile Include="type\collections\AbstractRingQueue.cs" />
     <Compile Include="type\collections\IForwardOnlyEnumerable.cs" />
@@ -410,7 +412,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

@@ -22,6 +22,23 @@ namespace Nohros.Configuration
       /// <param name="type">
       /// The provider's fully qualified assembly name.
       /// </param>
+      public Builder(string name, Type type) {
+        if (name == null || type == null) {
+          throw new ArgumentNullException(type == null ? "type" : "location");
+        }
+        node_ = new ProviderNode(name, type.AssemblyQualifiedName);
+      }
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="Builder"/> class by
+      /// using the provider name and type.
+      /// </summary>
+      /// <param name="name">
+      /// A string that uniquely identifies the provider within an application.
+      /// </param>
+      /// <param name="type">
+      /// The provider's fully qualified assembly name.
+      /// </param>
       public Builder(string name, string type) {
         if (name == null || type == null) {
           throw new ArgumentNullException(type == null ? "type" : "location");

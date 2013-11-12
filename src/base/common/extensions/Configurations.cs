@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Nohros.Configuration;
+using Nohros.Logging;
+using Nohros.Providers;
+using Nohros.Resources;
 
 namespace Nohros.Extensions
 {
@@ -9,6 +12,8 @@ namespace Nohros.Extensions
   /// </summary>
   public static class Configurations
   {
+    const string kClassName = "Nohros.Extensions.Configurations";
+
     /// <summary>
     /// Creates an instance of the <see cref="TResult"/> class using the
     /// information contained in the provider node named
@@ -48,6 +53,61 @@ namespace Nohros.Extensions
       TFactory factory = RuntimeTypeFactory<TFactory>
         .CreateInstanceFallback(node, settings);
       return instantiator(factory, node.Options.ToDictionary());
+    }
+
+    /// <summary>
+    /// Creates an instance of all configured providers that implements the
+    /// the <see cref="IProviderFactory"/> intrface and has a constructor
+    /// that accepts no parameters or a single parameter of the type
+    /// <see cref="IConfiguration"/>.
+    /// </summary>
+    /// <param name="settings">
+    /// A <see cref="IConfiguration"/> containing the configured providers.
+    /// </param>
+    /// <param name="callback">
+    /// A <see cref="Action{T}"/> method that will be called for every
+    /// provider that is sucessfully created.
+    /// </param>
+    public static void CreateProviders(this IConfiguration settings,
+      Action<object> callback) {
+      var providers = settings.CreateProviders();
+      foreach (var provider in providers) {
+        callback(provider);
+      }
+    }
+
+    /// <summary>
+    /// Creates an instance of all configured providers that has a factory
+    /// that implements the <see cref="IProviderFactory"/> intrface and has a
+    /// constructor that accepts no parameters or a single parameter of the type
+    /// <see cref="IConfiguration"/>.
+    /// </summary>
+    /// <param name="settings">
+    /// A <see cref="IConfiguration"/> containing the configured providers.
+    /// </param>
+    /// <returns>
+    /// A array containing all providers that was created using the configured
+    /// factories that implements the <see cref="IProviderFactory"/> interface.
+    /// </returns>
+    public static object[] CreateProviders(this IConfiguration settings) {
+      var providers = settings.Providers;
+      var list = new List<object>();
+      foreach (IProvidersNodeGroup group in providers) {
+        foreach (IProviderNode node in group) {
+          var factory = RuntimeTypeFactory<IProviderFactory>
+            .CreateInstance(node, true, false, settings);
+          if (factory != null) {
+            try {
+              list.Add(factory.CreateProvider(node.Options.ToDictionary()));
+            } catch (Exception e) {
+              MustLogger.ForCurrentProcess.Error(
+                StringResources.Log_MethodThrowsException.Fmt(
+                  "CreateProviders", kClassName), e);
+            }
+          }
+        }
+      }
+      return list.ToArray();
     }
   }
 }
