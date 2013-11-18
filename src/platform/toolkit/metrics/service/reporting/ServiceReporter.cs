@@ -44,7 +44,7 @@ namespace Nohros.Metrics.Reporting
       registry.Report(Report, now, predicate);
     }
 
-    void Report(KeyValuePair<MetricName, MetricValue[]> metrics,
+    void Report(KeyValuePair<string, MetricValue[]> metrics,
       DateTime timestamp) {
       MetricName name = metrics.Key;
       var protos = new StoreMetricsMessage.Builder();

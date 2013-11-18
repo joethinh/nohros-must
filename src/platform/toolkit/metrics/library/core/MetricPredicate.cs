@@ -21,5 +21,5 @@ namespace Nohros.Metrics
   /// This delegate is used by implementations of the IMetricsReporter class
   /// to filter metrics while reporting.
   /// </remarks>
-  public delegate bool MetricPredicate(MetricName name, IMetric metric);
+  public delegate bool MetricPredicate(string name, IMetric metric);
 }

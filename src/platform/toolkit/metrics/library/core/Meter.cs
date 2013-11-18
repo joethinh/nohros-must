@@ -11,18 +11,9 @@ namespace Nohros.Metrics
   ///   http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average
   /// </para>
   /// </remarks>
-  public class Meter : IMetered, IMeter
+  public class Meter : ManualMeter, IMetered, IMeter
   {
-    const long kTickInterval = 5000000000; // 5 seconds in nanoseconds
     readonly Clock clock_;
-    readonly string event_type_;
-    readonly ExponentialWeightedMovingAverage ewma_15_rate_;
-    readonly ExponentialWeightedMovingAverage ewma_1_rate_;
-    readonly ExponentialWeightedMovingAverage ewma_5_rate_;
-    readonly TimeUnit rate_unit_;
-    readonly long start_time_;
-    long count_;
-    long last_tick_;
 
     #region .ctor
     /// <summary>
@@ -44,16 +35,9 @@ namespace Nohros.Metrics
       : this(event_type, rate_unit, new UserTimeClock()) {
     }
 
-    public Meter(string event_type, TimeUnit rate_unit, Clock clock) {
-      count_ = 0;
+    public Meter(string event_type, TimeUnit rate_unit, Clock clock)
+      : base(event_type, rate_unit, clock.Tick) {
       clock_ = clock;
-      rate_unit_ = rate_unit;
-      event_type_ = event_type;
-      start_time_ = clock_.Tick;
-      last_tick_ = start_time_;
-      ewma_1_rate_ = ExponentialWeightedMovingAverages.OneMinute();
-      ewma_5_rate_ = ExponentialWeightedMovingAverages.FiveMinute();
-      ewma_15_rate_ = ExponentialWeightedMovingAverages.FifteenMinute();
     }
     #endregion
 
@@ -71,44 +55,30 @@ namespace Nohros.Metrics
     /// The number of events.
     /// </param>
     public virtual void Mark(long n) {
-      TickIfNecessary(clock_.Tick);
-      count_ += n;
-      ewma_1_rate_.Update(n);
-      ewma_5_rate_.Update(n);
-      ewma_15_rate_.Update(n);
+      base.Mark(n, clock_.Tick);
     }
 
     /// <inheritdoc/>
-    public TimeUnit RateUnit {
-      get { return rate_unit_; }
-    }
-
-    /// <inheritdoc/>
-    public string EventType {
-      get { return event_type_; }
-    }
-
-    /// <inheritdoc/>
-    public double FifteenMinuteRate {
+    public override double FifteenMinuteRate {
       get {
         TickIfNecessary(clock_.Tick);
-        return ewma_15_rate_.Rate(rate_unit_);
+        return base.FifteenMinuteRate;
       }
     }
 
     /// <inheritdoc/>
-    public double FiveMinuteRate {
+    public override double FiveMinuteRate {
       get {
         TickIfNecessary(clock_.Tick);
-        return ewma_5_rate_.Rate(rate_unit_);
+        return base.FiveMinuteRate;
       }
     }
 
     /// <inheritdoc/>
-    public double OneMinuteRate {
+    public override double OneMinuteRate {
       get {
         TickIfNecessary(clock_.Tick);
-        return ewma_1_rate_.Rate(rate_unit_);
+        return base.OneMinuteRate;
       }
     }
 
@@ -117,43 +87,8 @@ namespace Nohros.Metrics
       get { return GetMeanRate(clock_.Tick); }
     }
 
-    /// <inheritdoc/>
-    public long Count {
-      get { return count_; }
-    }
-
     public void Report<T>(MetricReportCallback<T> callback, T context) {
       callback(Report(), context);
-    }
-
-    internal double GetMeanRate(long timestamp) {
-      if (count_ == 0) {
-        return 0.0;
-      }
-
-      long elapsed = timestamp - start_time_;
-      double rate = count_/(double) elapsed;
-      return ConvertNsRate(rate);
-    }
-
-    /// <summary>
-    /// Updates the moving average.
-    /// </summary>
-    void Tick() {
-      ewma_1_rate_.Tick();
-      ewma_5_rate_.Tick();
-      ewma_15_rate_.Tick();
-    }
-
-    void TickIfNecessary(long now) {
-      long age = now - last_tick_;
-      last_tick_ = now;
-      if (age > kTickInterval) {
-        long required_ticks = age/kTickInterval;
-        for (long i = 0; i < required_ticks; i++) {
-          Tick();
-        }
-      }
     }
 
     public MetricValue[] Report() {
@@ -165,10 +100,6 @@ namespace Nohros.Metrics
         new MetricValue("FiveMinuteRate", FiveMinuteRate, rate_unit),
         new MetricValue("FifteenMinuteRate", FifteenMinuteRate, rate_unit)
       };
-    }
-
-    double ConvertNsRate(double rate_per_ns) {
-      return rate_per_ns*TimeUnitHelper.ToNanos(1, rate_unit_);
     }
   }
 }

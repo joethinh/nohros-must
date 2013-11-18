@@ -28,5 +28,5 @@ namespace Nohros.Metrics
   /// The values associated with a <see cref="IMetric"/>.
   /// </param>
   public delegate void MetricsReportCallback<in T>(
-    KeyValuePair<MetricName, MetricValue[]> values, T context);
+    KeyValuePair<string, MetricValue[]> values, T context);
 }
