@@ -17,11 +17,11 @@ namespace Nohros.Metrics
     #endregion
 
     public Service CreateService() {
-      IMetricsRepository metrics_repository = CreateMetricsRepository();
-      return new Service(settings_, metrics_repository);
+      IMetricsDao metrics_dao = CreateMetricsRepository();
+      return new Service(settings_, metrics_dao);
     }
 
-    IMetricsRepository CreateMetricsRepository() {
+    IMetricsDao CreateMetricsRepository() {
       IProviderNode provider = settings_.Providers
         .GetProviderNode(R.kMetricsDataProviderName);
       return RuntimeTypeFactory<IMetricsRepositoryFactory>

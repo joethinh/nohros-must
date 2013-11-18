@@ -9,19 +9,6 @@ namespace Nohros.Metrics
   public interface IMetricsRegistry
   {
     /// <summary>
-    /// Gets the counter that is associated with the specified
-    /// <see cref="MetricName"/> or create a new one if no association exists.
-    /// </summary>
-    /// <param name="name">
-    /// The name of the metric.
-    /// </param>
-    /// <returns>
-    /// A <see cref="Counter"/> that could be identified by the specified
-    /// <paramref name="name"/>.
-    /// </returns>
-    Counter GetCounter(MetricName name);
-
-    /// <summary>
     /// Gets the the collection of values associated with all the registered
     /// metrics.
     /// </summary>
@@ -55,157 +42,60 @@ namespace Nohros.Metrics
       MetricPredicate predicate);
 
     /// <summary>
-    /// Gets the counter that is associated with the specified
-    /// <see cref="MetricName"/> or create a new one if no association exists.
-    /// </summary>
-    /// <param name="name">
-    /// The name of the metric.
-    /// </param>
-    /// <param name="biased">
-    /// Whether or not the histogram should be biased.
-    /// </param>
-    /// <returns>
-    /// A <see cref="IHistogram"/> that could be identified by the
-    /// specified <see cref="MetricName"/>.
-    /// </returns>
-    IHistogram GetHistogram(MetricName name, bool biased);
-
-    /// <summary>
-    /// Gets the meter that is associaed with the specified
-    /// <see cref="MetricName"/> or create a new one if no association exists.
-    /// </summary>
-    /// <param name="name">
-    /// The name of the metric.
-    /// </param>
-    /// <param name="rate_unit">
-    /// The rate unit of the new meter.
-    /// </param>
-    /// <param name="event_type">
-    /// The plural name of the event meter is measuring
-    /// <example>
-    /// <code>
-    /// "requests"
-    /// </code>
-    /// </example>
-    /// </param>
-    /// <returns></returns>
-    IMeter GetMeter(MetricName name, string event_type, TimeUnit rate_unit);
-
-    /// <summary>
-    /// Given a new <see cref="Gauge{T}"/>, registers it under the given metric
-    /// name.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="name">
-    /// The name of the metric.
-    /// </param>
-    /// <param name="metric">
-    /// The gauge metric to be added.
-    /// </param>
-    /// <returns></returns>
-    void AddGauge<T>(MetricName name, Gauge<T> metric);
-
-    /// <summary>
-    /// Gets the timer that is associated with the specified
-    /// <see cref="MetricName"/> or create a new one if no association exists.
-    /// </summary>
-    /// <param name="name">
-    /// The name of the metric.
-    /// </param>
-    /// <param name="duration_unit">
-    /// The duration unit of the new timer.
-    /// </param>
-    /// <returns>
-    /// The timer associated with the key <paramref name="name"/>.
-    /// </returns>
-    ITimer GetTimer(MetricName name, TimeUnit duration_unit);
-
-    /// <summary>
-    /// Gets the value associated with the specified metric name.
+    /// Gets the <see cref="IMetric"/> that is associated with the given
+    /// metric's <paramref name="name"/>
     /// </summary>
     /// <param name="name">
     /// The name of the metric to get.
     /// </param>
-    /// <param name="histogram">
-    /// When this method returns, contains the value associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
-    /// </param>
     /// <returns>
-    /// <c>true</c> if a <see cref="IHistogram"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
+    /// The metric that is associated with the given <paramref name="name"/>.
     /// </returns>
-    bool TryGetHistogram(MetricName name, out IHistogram histogram);
+    /// <exception cref="KeyNotFoundException">
+    /// A metric associated with hte given key was not found.
+    /// </exception>
+    T GetMetric<T>(string name) where T : IMetric;
 
+    /// <summary>
+    /// Gets the <see cref="IMetric"/> that is associated with the given
+    /// metric's <paramref name="name"/>
+    /// </summary>
     /// <param name="name">
     /// The name of the metric to get.
     /// </param>
-    /// <param name="gauge">
-    /// When this method returns, contains the gauge associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
+    /// <param name="factory">
+    /// A <see cref="CallableDelegate{T}"/> that can be used to create a
+    /// metric.
     /// </param>
     /// <returns>
-    /// <c>true</c> if a <see cref="Gauge{T}"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
+    /// The metric that is associated with the given <paramref name="name"/>
+    /// or the value returned by the <see cref="CallableDelegate{T}"/> method
+    /// if there is no metric associated with the given name.
     /// </returns>
-    bool TryGetGauge<T>(MetricName name, out Gauge<T> gauge);
+    /// <remarks>
+    /// If a metric associated with the given <paramref name="name"/> is not
+    /// found, the <paramref name="factory"/> delegate will be executed and its
+    /// return value will be associated with the given <paramref name="name"/>.
+    /// </remarks>
+    T GetMetric<T>(string name, CallableDelegate<T> factory) where T : IMetric;
 
-    /// <param name="name">
-    /// The name of the metric to get.
-    /// </param>
-    /// <param name="counter">
-    /// When this method returns, contains the counter associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if a <see cref="Counter"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
-    /// </returns>
-    bool TryGetCounter(MetricName name, out Counter counter);
-
-    /// <param name="name">
-    /// The name of the metric to get.
-    /// </param>
-    /// <param name="timer">
-    /// When this method returns, contains the timer associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if a <see cref="Counter"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
-    /// </returns>
-    bool TryGetTimer(MetricName name, out ITimer timer);
-
+    /// <summary>
+    /// Gets the <see cref="IMetric"/> that is associated with the given
+    /// metric's <paramref name="name"/>
+    /// </summary>
     /// <param name="name">
     /// The name of the metric to get.
     /// </param>
     /// <param name="metric">
-    /// When this method returns, contains the timer associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
+    /// When this mthod return contains the metric that is associated with the
+    /// given <paramref name="name"/> or <c>null</c> if a there is no metric
+    /// associated with the given metric's name.
     /// </param>
     /// <returns>
-    /// <c>true</c> if a <see cref="Counter"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
+    /// <c>true</c> if a metric associated with the given name is found;
+    /// otherwise, <c>false</c>.
     /// </returns>
-    bool TryGetMetric<T>(MetricName name, out T metric) where T : class, IMetric;
-
-    /// <param name="name">
-    /// The name of the metric to get.
-    /// </param>
-    /// <param name="meter">
-    /// When this method returns, contains the meter associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if a <see cref="IMetered"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
-    /// </returns>
-    bool TryGetMeter(MetricName name, out IMeter meter);
+    bool TryGetMetric<T>(string name, out T metric) where T : IMetric;
 
     /// <summary>
     /// Adds an metric to the metrics collection using the metrics name.
@@ -220,7 +110,7 @@ namespace Nohros.Metrics
     /// A metric with the same name already exists in the
     /// <see cref="IMetricsRegistry"/>.
     /// </exception>
-    void Add(MetricName name, IMetric metric);
+    void Add(string name, IMetric metric);
 
     /// <summary>
     /// Raised when a new metric is added to the registry.
@@ -242,6 +132,6 @@ namespace Nohros.Metrics
     /// <exception cref="KeyNotFoundException">
     /// <param name="name"> is not found.</param>
     /// </exception>
-    IMetric this[MetricName name] { get; set; }
+    IMetric this[string name] { get; set; }
   }
 }

@@ -6,16 +6,16 @@ namespace Nohros.Metrics.Data
   public interface IMetricsRepositoryFactory
   {
     /// <summary>
-    /// Create a new instance of the <see cref="IMetricsRepository"/>
+    /// Create a new instance of the <see cref="IMetricsDao"/>
     /// using the specified options.
     /// </summary>
     /// <param name="options">
     /// A collection of key/value pairs containing the user configured options.
     /// </param>
     /// <returns>
-    /// The newly created <see cref="IMetricsRepository"/> object.
+    /// The newly created <see cref="IMetricsDao"/> object.
     /// </returns>
-    IMetricsRepository CreateMetricsDataProvider(
+    IMetricsDao CreateMetricsDataProvider(
       IDictionary<string, string> options);
   }
 }

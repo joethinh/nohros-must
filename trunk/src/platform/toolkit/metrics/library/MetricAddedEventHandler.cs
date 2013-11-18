@@ -11,5 +11,5 @@ namespace Nohros.Metrics
   /// <param name="metric">
   /// The added metric.
   /// </param>
-  public delegate void MetricAddedEventHandler(MetricName name, IMetric metric);
+  public delegate void MetricAddedEventHandler(string name, IMetric metric);
 }

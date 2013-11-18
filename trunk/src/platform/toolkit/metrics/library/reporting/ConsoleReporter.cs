@@ -28,9 +28,9 @@ namespace Nohros.Metrics.Reporting
       registry.Report(Report, now);
     }
 
-    void Report(KeyValuePair<MetricName, MetricValue[]> metrics,
+    void Report(KeyValuePair<string, MetricValue[]> metrics,
       DateTime timestamp) {
-      MetricName name = metrics.Key;
+      string name = metrics.Key;
       foreach (MetricValue metric in metrics.Value) {
         Console.Write(timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ") + ":"
           + name + ".");
