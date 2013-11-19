@@ -7,7 +7,7 @@ namespace Nohros.Configuration
 {
   internal class ProviderAliasesNode
   {
-    public static ICollection<string> Parse(XmlElement element) {
+    public static string[] Parse(XmlElement element) {
       List<string> aliases = new List<string>(element.ChildNodes.Count);
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element &&
@@ -17,7 +17,7 @@ namespace Nohros.Configuration
           aliases.Add(name);
         }
       }
-      return aliases;
+      return aliases.ToArray();
     }
   }
 }

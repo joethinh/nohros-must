@@ -9,7 +9,7 @@ namespace Nohros.Configuration
   public partial class ProviderNode : AbstractConfigurationNode, IProviderNode
   {
     readonly string type_;
-    ICollection<string> aliases_;
+    string[] aliases_;
 
     string group_;
     string location_;
@@ -95,7 +95,7 @@ namespace Nohros.Configuration
     }
 
     /// <inheritdoc/>
-    public ICollection<string> Aliases {
+    public string[] Aliases {
       get { return aliases_; }
       protected set {
         if (aliases_ == null) {
@@ -103,6 +103,26 @@ namespace Nohros.Configuration
         }
         aliases_ = value;
       }
+    }
+
+    /// <summary>
+    /// Creates a deep copy of the current <see cref="ProviderNode"/>.
+    /// </summary>
+    /// <returns>
+    /// A deep copy of the current <see cref="ProviderNode"/>.
+    /// </returns>
+    public ProviderNode Clone() {
+      ProviderNode clone = new ProviderNode(name, type_, location_);
+      foreach (KeyValuePair<string, string> option in options_) {
+        clone.options_[option.Key] = option.Value;
+      }
+
+      List<string> list = new List<string>();
+      foreach (string alias in aliases_) {
+        list.Add(alias);
+      }
+      clone.aliases_ = list.ToArray();
+      return clone;
     }
   }
 }

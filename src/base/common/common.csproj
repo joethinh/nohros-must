@@ -130,6 +130,10 @@
     <Compile Include="configuration\common\provider\ProvidersNode.cs" />
     <Compile Include="configuration\common\provider\ProvidersNodeGroup.cs" />
     <Compile Include="configuration\common\provider\ProvidersNodeParser.cs" />
+    <Compile Include="configuration\common\provider\ReplicaNode.cs" />
+    <Compile Include="configuration\common\provider\ReplicaNodeParser.cs" />
+    <Compile Include="configuration\common\provider\ReplicasNode.cs" />
+    <Compile Include="configuration\common\provider\ReplicasNodeParser.cs" />
     <Compile Include="configuration\common\RepositoriesNode.cs" />
     <Compile Include="configuration\common\RepositoryNodeParser.cs" />
     <Compile Include="configuration\common\RepositoriesNodeParser.cs" />
@@ -403,7 +407,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

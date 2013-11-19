@@ -93,6 +93,6 @@ namespace Nohros.Configuration
     /// <exception cref="ArgumentNullException">
     /// An attempt to set the value of the property to null was performed.
     /// </exception>
-    ICollection<string> Aliases { get; }
+    string[] Aliases { get; }
   }
 }
