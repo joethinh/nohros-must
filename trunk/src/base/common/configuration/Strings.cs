@@ -8,7 +8,7 @@ namespace Nohros
   /// Defines the constant string that could appear on the nohros
   /// configuration files.
   /// </summary>
-  public sealed class Strings
+  internal sealed class Strings
   {
     public const string kNohrosNodeName = "nohros";
     public const string kBaseDirectoryAttribute = "base-directory";
@@ -27,6 +27,8 @@ namespace Nohros
     public const string kRepositoriesNodeName = "repositories";
     public const string kRepositoryNodeName = "repository";
     public const string kProvidersNodeName = "providers";
+    public const string kReplicasNodeName = "replicas";
+    public const string kReplicaNodeName = "replica";
     public const string kProvidersNodeGroupName = "";
     public const string kDataProvidersNodeName = "data";
     public const string kCacheProvidersNodeName = "cache";

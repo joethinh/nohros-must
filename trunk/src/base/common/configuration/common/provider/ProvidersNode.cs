@@ -26,11 +26,10 @@ namespace Nohros.Configuration
 
     /// <inheritdoc/>
     public bool GetProvidersNodeGroup(string name, out IProvidersNodeGroup node) {
-      if (!GetChildNode(name, out node)) {
-        node = new ProvidersNodeGroup();
-        return false;
-      }
-      return true;
+      ProvidersNodeGroup impl;
+      bool exists = GetProvidersNodeGroup(name, out impl);
+      node = impl;
+      return exists;
     }
 
     /// <inheritdoc/>
@@ -52,6 +51,14 @@ namespace Nohros.Configuration
 
     IEnumerator IEnumerable.GetEnumerator() {
       return GetEnumerator();
+    }
+
+    public bool GetProvidersNodeGroup(string name, out ProvidersNodeGroup node) {
+      if (!GetChildNode(name, out node)) {
+        node = new ProvidersNodeGroup();
+        return false;
+      }
+      return true;
     }
 
     /// <summary>

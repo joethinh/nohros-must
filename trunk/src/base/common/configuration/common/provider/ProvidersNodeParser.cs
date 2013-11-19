@@ -43,13 +43,14 @@ namespace Nohros.Configuration
       CheckPreconditions(element, base_directory);
       IList<UnresolvedOptions> unresolved_options_references =
         new List<UnresolvedOptions>();
+      List<ReplicasNode> replicas = new List<ReplicasNode>();
       Dictionary<string, IProviderOptions> reference_table =
         new Dictionary<string, IProviderOptions>();
       ProvidersNode providers = new ProvidersNode();
       foreach (XmlNode node in element.ChildNodes) {
         if (node.NodeType == XmlNodeType.Element) {
-          IList<string> references = new List<string>();
           if (Strings.AreEquals(node.Name, Strings.kProviderNodeName)) {
+            IList<string> references;
             IProviderNode provider =
               ProviderNode
                 .Parse((XmlElement) node, base_directory, out references);
@@ -76,19 +77,69 @@ namespace Nohros.Configuration
           } else if (Strings.AreEquals(node.Name, Strings.kOptionsNodeName)) {
             ParseReferenceTable((XmlElement) node,
               unresolved_options_references, reference_table);
+          } else if (Strings.AreEquals(node.Name, Strings.kReplicasNodeName)) {
+            replicas.Add(ReplicasNode.Parse((XmlElement) node));
           }
         }
 
         if (unresolved_options_references.Count > 0) {
-          if (reference_table.Count  == 0) {
+          if (reference_table.Count == 0) {
             throw new ConfigurationException(
               Resources.Resources.Configuration_providers_missing_reference);
           }
           ResolveOptionsReferences(unresolved_options_references,
             reference_table);
         }
+
+        if (replicas.Count > 0) {
+          CreateReplicas(replicas, providers);
+        }
       }
       return providers;
+    }
+
+    static void CreateReplicas(IList<ReplicasNode> replicas,
+      ProvidersNode providers) {
+      ProvidersNodeGroup group;
+      List<IProviderNode> clones =
+        new List<IProviderNode>(providers.Count*replicas.Count);
+      foreach (ReplicasNode replica in replicas) {
+        if (!providers.GetProvidersNodeGroup(replica.Group, out group)) {
+          throw new ConfigurationException(string.Format(
+            Resources.Resources.
+              Configuration_providers_inexistent_replicas_group,
+            replica.Group));
+        }
+        clones.AddRange(Replicate(replica, group));
+      }
+    }
+
+    static IEnumerable<IProviderNode> Replicate(ReplicasNode replicas,
+      ProvidersNodeGroup group) {
+      List<ProviderNode> clones = new List<ProviderNode>();
+      foreach (ReplicaNode replica in replicas) {
+        clones.AddRange(Replicate(replica, group));
+      }
+      return clones.ToArray();
+    }
+
+    static IEnumerable<ProviderNode> Replicate(ReplicaNode replica,
+      ProvidersNodeGroup group) {
+      List<ProviderNode> clones = new List<ProviderNode>(group.Count);
+      foreach (ProviderNode provider in group) {
+        ProviderNode clone = provider.Clone();
+
+        List<string> aliases = new List<string>();
+        foreach (string alias in clone.Aliases) {
+          aliases.Add(alias + replica.Name);
+        }
+        // replace/add the cloned options with the replica's options
+        foreach (KeyValuePair<string, string> option in replica.Options) {
+          clone.Options[option.Key] = option.Value;
+        }
+        clones.Add(clone);
+      }
+      return clones;
     }
 
     static void ParseReferenceTable(XmlElement element,
