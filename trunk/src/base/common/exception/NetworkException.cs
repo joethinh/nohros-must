@@ -6,6 +6,7 @@ namespace Nohros
   /// <summary>
   /// Thrown if there is a network communication failure.
   /// </summary>
+  [Serializable]
   public class NetworkException : Exception
   {
     #region .ctor

@@ -7,6 +7,7 @@ namespace Nohros
   /// An exception that is throwed when a portion of code that should be not
   /// reached is reached.
   /// </summary>
+  [Serializable]
   public class NotReachedException : Exception
   {
     #region .ctor

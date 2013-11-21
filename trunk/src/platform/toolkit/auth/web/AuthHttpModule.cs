@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Web;
 using System.Web.Security;
@@ -10,6 +11,12 @@ namespace Nohros.Security.Auth
   {
     const string kTokenKey = HttpAuthenticationManager.kTokenKey;
     const string kCookieName = HttpAuthenticationManager.kCookieName;
+
+    /// <summary>
+    /// The key that should be added ot the context.Items to debug this
+    /// module.
+    /// </summary>
+    public const string kDebugKey = "Nohros.Security.Auth.Debug";
 
     public void Init(HttpApplication app) {
       FormsAuthentication.Initialize();
@@ -23,8 +30,9 @@ namespace Nohros.Security.Auth
       var app = (HttpApplication) source;
       HttpContext context = app.Context;
 
-      Listeners.SafeInvoke<AuthenticationEventHandler>(Authenticate,
-        handler => handler());
+      if (context.Items.Contains(kDebugKey)) {
+        Debugger.Break();
+      }
 
       FormsAuthenticationTicket ticket;
       // If the request does not have an authentication ticket associated
@@ -43,7 +51,7 @@ namespace Nohros.Security.Auth
       context.Items[kTokenKey] = ticket.UserData;
     }
 
-    public bool GetTicketFromCookie(HttpContext context, string name,
+    bool GetTicketFromCookie(HttpContext context, string name,
       out FormsAuthenticationTicket ticket) {
       ticket = null;
       HttpCookie cookie = context.Request.Cookies[name];
@@ -60,7 +68,5 @@ namespace Nohros.Security.Auth
       }
       return false;
     }
-
-    public event AuthenticationEventHandler Authenticate;
   }
 }

@@ -6,6 +6,7 @@ namespace Nohros
   /// <summary>
   /// Thrown by a provider when a problem occurs.
   /// </summary>
+  [Serializable]
   public class ProviderException : Exception
   {
     #region .ctor

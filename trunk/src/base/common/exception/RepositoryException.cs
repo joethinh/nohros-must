@@ -9,6 +9,7 @@ namespace Nohros
   /// <remarks>
   /// A repository is a provider that provides data.
   /// </remarks>
+  [Serializable]
   public class RepositoryException : ProviderException
   {
     #region .ctor

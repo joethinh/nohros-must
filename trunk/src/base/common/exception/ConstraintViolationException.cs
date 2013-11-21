@@ -8,6 +8,7 @@ namespace Nohros
   /// structure. For example, when an attempt is made to persistently add an
   /// item to a repository that would violate that repository's constraint.
   /// </summary>
+  [Serializable]
   public class ConstraintViolationException : RepositoryException
   {
     #region .ctor

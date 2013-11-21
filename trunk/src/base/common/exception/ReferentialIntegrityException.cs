@@ -6,6 +6,7 @@ namespace Nohros
   /// <summary>
   /// Exception throws when referential integrity is violated.
   /// </summary>
+  [Serializable]
   public class ReferentialIntegrityException : RepositoryException
   {
     #region .ctor

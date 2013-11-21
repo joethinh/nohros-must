@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Nohros.Configuration;
+using Nohros.Providers;
 
 namespace Nohros.Data.SqlServer
 {
-  public class SqlHiLoGeneratorFactory : IHiLoGeneratorFactory
+  public class SqlHiLoGeneratorFactory : IHiLoGeneratorFactory,
+    IProviderFactory<IHiLoGenerator>
+
   {
     /// <summary>
     /// The key that should be associated with the option that contains
@@ -50,6 +53,15 @@ namespace Nohros.Data.SqlServer
     /// value indicating if the created generator should be thread safe.
     /// </summary>
     public const string kThreadSafe = "threadSafe";
+
+    /// <inheritdoc/>
+    object IProviderFactory.CreateProvider(IDictionary<string, string> options) {
+      return CreateProvider(options);
+    }
+    /// <inheritdoc/>
+    public IHiLoGenerator CreateProvider(IDictionary<string, string> options) {
+      return CreateHiLoGenerator(options);
+    }
 
     /// <inheritdoc/>
     public IHiLoGenerator CreateHiLoGenerator(

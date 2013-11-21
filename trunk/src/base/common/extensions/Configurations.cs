@@ -90,15 +90,139 @@ namespace Nohros.Extensions
     /// factories that implements the <see cref="IProviderFactory"/> interface.
     /// </returns>
     public static object[] CreateProviders(this IConfiguration settings) {
+      return settings.CreateProviders(@group => true);
+    }
+
+    /// <summary>
+    /// Creates an instance of all configured providers that has a factory
+    /// that implements the <see cref="IProviderFactory"/> intrface and has a
+    /// constructor that accepts no parameters or a single parameter of the type
+    /// <see cref="IConfiguration"/>.
+    /// </summary>
+    /// <param name="settings">
+    /// A <see cref="IConfiguration"/> containing the configured providers.
+    /// </param>
+    /// <param name="predicate">
+    /// A <see cref="Func{TResult}"/> that is used to evaluate if we need to
+    /// create instances of the providers associated with a given providers
+    /// group node.
+    /// </param>
+    /// <returns>
+    /// A array containing all providers that was created using the configured
+    /// factories that implements the <see cref="IProviderFactory"/> interface.
+    /// </returns>
+    public static object[] CreateProviders(this IConfiguration settings,
+      Func<IProvidersNodeGroup, bool> predicate) {
+      return settings.CreateProviders((@group, provider) => predicate(@group));
+    }
+
+    /// <summary>
+    /// Creates an instance of all configured providers that has a factory
+    /// that implements the <see cref="IProviderFactory"/> intrface and has a
+    /// constructor that accepts no parameters or a single parameter of the type
+    /// <see cref="IConfiguration"/>.
+    /// </summary>
+    /// <param name="predicate">
+    /// A <see cref="Func{TResult}"/> that is used to evaluate if we need to
+    /// create a instance of the given provider node.
+    /// </param>
+    /// <param name="settings">
+    /// A <see cref="IConfiguration"/> containing the configured providers.
+    /// </param>
+    /// <returns>
+    /// A array containing all providers that was created using the configured
+    /// factories that implements the <see cref="IProviderFactory"/> interface.
+    /// </returns>
+    public static object[] CreateProviders(this IConfiguration settings,
+      Func<IProvidersNodeGroup, IProviderNode, bool> predicate) {
+      return settings
+        .CreateProviders<IProviderFactory, object>(predicate,
+          (factory, options) => factory.CreateProvider(options));
+    }
+
+    /// <summary>
+    /// Creates an instance of all configured providers that has a factory
+    /// that implements the <see cref="IProviderFactory"/> intrface and has a
+    /// constructor that accepts no parameters or a single parameter of the type
+    /// <see cref="IConfiguration"/>.
+    /// </summary>
+    /// <param name="settings">
+    /// A <see cref="IConfiguration"/> containing the configured providers.
+    /// </param>
+    /// <returns>
+    /// A array containing all providers that was created using the configured
+    /// factories that implements the <see cref="IProviderFactory"/> interface.
+    /// </returns>
+    public static TResult[] CreateProviders<TFactory, TResult>(
+      this IConfiguration settings,
+      Func<TFactory, IDictionary<string, string>, TResult> factory)
+      where TFactory : class {
+      return settings.CreateProviders(@group => true, factory);
+    }
+
+    /// <summary>
+    /// Creates an instance of all configured providers that has a factory
+    /// that implements the <see cref="IProviderFactory"/> intrface and has a
+    /// constructor that accepts no parameters or a single parameter of the type
+    /// <see cref="IConfiguration"/>.
+    /// </summary>
+    /// <param name="settings">
+    /// A <see cref="IConfiguration"/> containing the configured providers.
+    /// </param>
+    /// <param name="predicate">
+    /// A <see cref="Func{TResult}"/> that is used to evaluate if we need to
+    /// create instances of the providers associated with a given providers
+    /// group node.
+    /// </param>
+    /// <returns>
+    /// A array containing all providers that was created using the configured
+    /// factories that implements the <see cref="IProviderFactory"/> interface.
+    /// </returns>
+    public static TResult[] CreateProviders<TFactory, TResult>(
+      this IConfiguration settings,
+      Func<IProvidersNodeGroup, bool> predicate,
+      Func<TFactory, IDictionary<string, string>, TResult> factory)
+      where TFactory : class {
+      return settings.CreateProviders((@group, provider) => predicate(@group),
+        factory);
+    }
+
+    /// <summary>
+    /// Creates an instance of all configured providers that has a factory
+    /// that implements the <see cref="IProviderFactory"/> intrface and has a
+    /// constructor that accepts no parameters or a single parameter of the type
+    /// <see cref="IConfiguration"/>.
+    /// </summary>
+    /// <param name="predicate">
+    /// A <see cref="Func{TResult}"/> that is used to evaluate if we need to
+    /// create a instance of the given provider node.
+    /// </param>
+    /// <param name="settings">
+    /// A <see cref="IConfiguration"/> containing the configured providers.
+    /// </param>
+    /// <returns>
+    /// A array containing all providers that was created using the configured
+    /// factories that implements the <see cref="IProviderFactory"/> interface.
+    /// </returns>
+    public static TResult[] CreateProviders<TFactory, TResult>(
+      this IConfiguration settings,
+      Func<IProvidersNodeGroup, IProviderNode, bool> predicate,
+      Func<TFactory, IDictionary<string, string>, TResult> factory)
+      where TFactory : class {
       var providers = settings.Providers;
-      var list = new List<object>();
+      var list = new List<TResult>();
       foreach (IProvidersNodeGroup group in providers) {
         foreach (IProviderNode node in group) {
-          var factory = RuntimeTypeFactory<IProviderFactory>
+          if (!predicate(group, node)) {
+            continue;
+          }
+
+          TFactory factory_t = RuntimeTypeFactory<TFactory>
             .CreateInstance(node, true, false, settings);
-          if (factory != null) {
+
+          if (factory_t != null) {
             try {
-              list.Add(factory.CreateProvider(node.Options.ToDictionary()));
+              list.Add(factory(factory_t, node.Options.ToDictionary()));
             } catch (Exception e) {
               MustLogger.ForCurrentProcess.Error(
                 StringResources.Log_MethodThrowsException.Fmt(
