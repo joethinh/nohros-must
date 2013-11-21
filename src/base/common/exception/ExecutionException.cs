@@ -7,6 +7,7 @@ namespace Nohros
   /// Exception thrown when attempting to retrieve the result of a task that
   /// aborted by throwing an exception.
   /// </summary>
+  [Serializable]
   public class ExecutionException : Exception
   {
     #region .ctor

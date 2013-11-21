@@ -6,6 +6,7 @@ namespace Nohros.Configuration
   /// <summary>
   /// The exception that is thrown when a configuration error has occured.
   /// </summary>
+  [Serializable]
   public class ConfigurationException : Exception
   {
     #region .ctor

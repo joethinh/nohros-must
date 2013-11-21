@@ -51,7 +51,7 @@ namespace Nohros.Caching
       var policy = new CacheItemPolicy();
       policy.AbsoluteExpiration =
         DateTimeOffset.Now.AddMilliseconds(
-          TimeUnitHelper.ToSeconds(duration, unit));
+          TimeUnitHelper.ToMillis(duration, unit));
       memory_cache_.Set(key, value, policy);
     }
 
@@ -64,7 +64,7 @@ namespace Nohros.Caching
       var policy = new CacheItemPolicy();
       policy.AbsoluteExpiration =
         DateTimeOffset.Now.AddMilliseconds(
-          TimeUnitHelper.ToSeconds(duration, unit));
+          TimeUnitHelper.ToMillis(duration, unit));
       memory_cache_.Add(key, value, policy);
     }
 
