@@ -43,6 +43,7 @@
     <Compile Include="AsyncTimerTests.cs" />
     <Compile Include="CallableGaugeTests.cs" />
     <Compile Include="CounterTest.cs" />
+    <Compile Include="DottedMetricNameTests.cs" />
     <Compile Include="HistogramTests.cs" />
     <Compile Include="MeterTests.cs" />
     <Compile Include="TimerTests.cs" />
