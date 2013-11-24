@@ -7,13 +7,11 @@ namespace Nohros.Data.SqlServer
   /// An implementation of the <see cref="IStateDaoFactory"/> class for the
   /// SQL Server.
   /// </summary>
-  public class SqlDaoFactory : IStateDaoFactory
+  public class SqlDaoFactory : AbstractSqlDaoFactory<IStateDao>,
+                               IStateDaoFactory
   {
     public IStateDao CreateStateDao(IDictionary<string, string> options) {
-      var factory = new SqlConnectionProviderFactory();
-      var sql_connection_provider = factory
-        .CreateProvider(options) as SqlConnectionProvider;
-      return new SqlStateDao(sql_connection_provider);
+      return CreateProvider(options, provider => new SqlStateDao(provider));
     }
   }
 }
