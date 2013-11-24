@@ -87,11 +87,11 @@ namespace Nohros.Metrics
       get { return GetMeanRate(clock_.Tick); }
     }
 
-    public void Report<T>(MetricReportCallback<T> callback, T context) {
+    public override void Report<T>(MetricReportCallback<T> callback, T context) {
       callback(Report(), context);
     }
 
-    public MetricValue[] Report() {
+    public override MetricValue[] Report() {
       string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
       return new[] {
         new MetricValue("Count", Count, EventType),
