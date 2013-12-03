@@ -13,11 +13,9 @@ namespace Nohros.Security.Auth.ServiceStack
   {
     readonly HttpAuthenticationManager authenticator_;
 
-    #region .ctor
     protected AbstractAuthService(HttpAuthenticationManager authenticator) {
       authenticator_ = authenticator;
     }
-    #endregion
 
     /// <summary>
     /// Attempts to sign the given subject in by using the given login and
@@ -64,6 +62,17 @@ namespace Nohros.Security.Auth.ServiceStack
       Response.AddHeader(HttpHeaders.WwwAuthenticate,
         "Auth br.com.nohros");
       throw HttpError.Unauthorized(Resources.Request_Unauthorized);
+    }
+
+    /// <summary>
+    /// Gets a value indicating if the current request is associated with
+    /// an authenticated subject.
+    /// </summary>
+    public bool IsAuthenticated {
+      get {
+        ISubject subject;
+        return authenticator_.GetSubject(HttpContext.Current, out subject);
+      }
     }
   }
 }
