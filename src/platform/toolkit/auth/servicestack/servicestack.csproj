@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="services\auth\IsAuthenticatedRequest.cs" />
     <Compile Include="services\auth\AuthRequest.cs" />
     <Compile Include="services\auth\AbstractAuthService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
