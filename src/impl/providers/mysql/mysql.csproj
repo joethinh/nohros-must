@@ -34,12 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=6.6.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+    <Reference Include="MySQL.Data, Version=6.7.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\MySql.Data.6.6.5\lib\net20\MySql.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="nohros, Version=1.8.16.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\must.common.1.8.16.0\lib\net20\nohros.dll</HintPath>
+      <HintPath>..\..\..\packages\MySql.Data.6.7.4\lib\net20\MySQL.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -53,8 +50,13 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\base\common\common.csproj">
+      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
+      <Name>common %28%28base%29\common%29</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

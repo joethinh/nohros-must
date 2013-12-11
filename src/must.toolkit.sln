@@ -57,6 +57,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "auth.web", "tests\auth\web\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "servicestack", "platform\toolkit\auth\servicestack\servicestack.csproj", "{382B5312-CCEC-4ACD-A0EF-8CF67EAE0034}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "(servicestack)", "(servicestack)", "{3FF0AF02-C020-4444-810F-CEA03B7F1954}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "servicestack", "platform\toolkit\servicestack\servicestack.csproj", "{7E962296-235B-447D-A20D-0C1A25B06B1A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -287,6 +291,16 @@ Global
 		{382B5312-CCEC-4ACD-A0EF-8CF67EAE0034}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{382B5312-CCEC-4ACD-A0EF-8CF67EAE0034}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{382B5312-CCEC-4ACD-A0EF-8CF67EAE0034}.Release|x86.ActiveCfg = Release|Any CPU
+		{7E962296-235B-447D-A20D-0C1A25B06B1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E962296-235B-447D-A20D-0C1A25B06B1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E962296-235B-447D-A20D-0C1A25B06B1A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7E962296-235B-447D-A20D-0C1A25B06B1A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7E962296-235B-447D-A20D-0C1A25B06B1A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7E962296-235B-447D-A20D-0C1A25B06B1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E962296-235B-447D-A20D-0C1A25B06B1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E962296-235B-447D-A20D-0C1A25B06B1A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7E962296-235B-447D-A20D-0C1A25B06B1A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{7E962296-235B-447D-A20D-0C1A25B06B1A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -314,6 +328,7 @@ Global
 		{8A8C316D-1CF2-4D63-978B-3C87CF11E7A3} = {7C227EFF-5201-411D-BBDD-4BD0C64F6520}
 		{5D2EA0E5-414D-4AD8-AC9B-FCA35B07F4AD} = {7C227EFF-5201-411D-BBDD-4BD0C64F6520}
 		{ADB9EF6A-EBC9-45A9-A645-279F2C80C41F} = {7C227EFF-5201-411D-BBDD-4BD0C64F6520}
+		{7E962296-235B-447D-A20D-0C1A25B06B1A} = {3FF0AF02-C020-4444-810F-CEA03B7F1954}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35

@@ -61,6 +61,8 @@ namespace Nohros
 
     const long MAX = long.MaxValue;
 
+    static DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
     /// <summary>
     /// Scale <paramref name="d"/> by <paramref name="m"/>, checking for
     /// overflow. This has a short name to make above code more readable.
@@ -114,20 +116,27 @@ namespace Nohros
     /// <summary>
     /// Converts the specified datetime to the unix time unit.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// The number of seconds since unix epoch.
+    /// </returns>
+    /// <remarks>
+    /// If <see cref="DateTime.Kind"/> property of the given
+    /// <see cref="duration"/> is <see cref="DateTimeKind.Unspecified"/>
+    /// <paramref name="duration"/> is assumed to be a UTC time.
+    /// </remarks>
     public static long ToUnixTime(DateTime duration) {
-      DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
       return (long) duration.ToUniversalTime().Subtract(epoch).TotalSeconds;
     }
 
     /// <summary>
-    /// Converts the specified epoch time to its corresponding date and time.
+    /// Converts the specified epoch time to its corresponding local date
+    /// and time.
     /// </summary>
     /// <param name="timestamp">
     /// A Unix epoch time.
     /// </param>
     /// <returns>
-    /// The <see cref="DateTime"/> representation of the specified unix epoch
+    /// The local time representation of the specified unix epoch
     /// time.
     /// </returns>
     /// <remarks>
@@ -156,9 +165,7 @@ namespace Nohros
     /// <see cref="DateTimeKind.Local"/> will be used.
     /// </remarks>
     public static DateTime FromUnixEpoch(long timestamp, DateTimeKind kind) {
-      var date =
-        new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-          .AddSeconds(timestamp);
+      var date = epoch.AddSeconds(timestamp);
       return kind == DateTimeKind.Utc ? date : date.ToLocalTime();
     }
 
