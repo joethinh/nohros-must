@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Nohros.Data.SqlServer</RootNamespace>
     <AssemblyName>nohros.data.sqlserver</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -52,9 +54,9 @@
     <Compile Include="SqlConnectionProviderFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\base\common\common.csproj">
-      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
-      <Name>common %28%28base%29\common%29</Name>
+    <ProjectReference Include="..\..\..\base\common\common.net40.csproj">
+      <Project>{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}</Project>
+      <Name>common.net40</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

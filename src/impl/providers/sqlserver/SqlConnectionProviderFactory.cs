@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using Nohros.Data.Providers;
+using Nohros.Extensions;
 using Nohros.Resources;
 
 namespace Nohros.Data.SqlServer
@@ -52,14 +53,12 @@ namespace Nohros.Data.SqlServer
     /// </summary>
     public const string kInitialCatalogOption = "database";
 
-    #region .ctor
     /// <summary>
     /// Constructor implied by the interface
     /// <see cref="IConnectionProviderFactory"/>.
     /// </summary>
     public SqlConnectionProviderFactory() {
     }
-    #endregion
 
     /// <inheritdoc/>
     public IConnectionProvider CreateProvider(
@@ -78,15 +77,20 @@ namespace Nohros.Data.SqlServer
       if (!options.TryGetValue(kLoginOption, out user_id)) {
         user_id = GetOption(kUserNameOption, options);
       }
+
       builder.UserID = user_id;
       builder.Password = GetOption(kPasswordOption, options);
-      builder.InitialCatalog = GetOption(kInitialCatalogOption, options);
+
+      string catalog;
+      if (options.TryGetValue(kInitialCatalogOption, out catalog)) {
+        builder.InitialCatalog = catalog;
+      }
       return new SqlConnectionProvider(builder.ConnectionString);
     }
 
-    string GetOption(string name, IDictionary<string,string> options) {
+    string GetOption(string name, IDictionary<string, string> options) {
       string option;
-      if(!options.TryGetValue(name, out option)) {
+      if (!options.TryGetValue(name, out option)) {
         throw new KeyNotFoundException(
           string.Format(StringResources.Arg_KeyNotFound, name));
       }

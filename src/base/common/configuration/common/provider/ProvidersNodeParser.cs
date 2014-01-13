@@ -100,7 +100,7 @@ namespace Nohros.Configuration
 
     static void CreateReplicas(IList<ReplicasNode> replicas,
       ProvidersNode providers) {
-      ProvidersNodeGroup group;
+      ProvidersNodeGroup group = null;
       List<IProviderNode> clones =
         new List<IProviderNode>(providers.Count*replicas.Count);
       foreach (ReplicasNode replica in replicas) {
@@ -111,6 +111,10 @@ namespace Nohros.Configuration
             replica.Group));
         }
         clones.AddRange(Replicate(replica, group));
+      }
+
+      if (group != null) {
+        group.AddRange(clones);
       }
     }
 
@@ -127,7 +131,7 @@ namespace Nohros.Configuration
       ProvidersNodeGroup group) {
       List<ProviderNode> clones = new List<ProviderNode>(group.Count);
       foreach (ProviderNode provider in group) {
-        ProviderNode clone = provider.Clone();
+        ProviderNode clone = provider.Clone(provider.Name + replica.Name);
 
         List<string> aliases = new List<string>();
         foreach (string alias in clone.Aliases) {
