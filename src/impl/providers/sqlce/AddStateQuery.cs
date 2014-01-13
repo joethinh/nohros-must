@@ -7,7 +7,7 @@ using Nohros.Extensions;
 using Nohros.Logging;
 using Nohros.Resources;
 
-namespace Nohros.Data.SqlServer
+namespace Nohros.Data.SqlCe
 {
   public class AddStateQuery
   {
