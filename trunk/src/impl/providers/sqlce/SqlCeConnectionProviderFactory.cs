@@ -6,7 +6,7 @@ using Nohros.Extensions;
 using Nohros.Providers;
 using Nohros.Resources;
 
-namespace Nohros.Data.SqlServer
+namespace Nohros.Data.SqlCe
 {
   /// <summary>
   /// A implementation of the <see cref="IConnectionProviderFactory"/> that

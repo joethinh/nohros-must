@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using Nohros.Data;
 
-namespace Nohros.Data.SqlServer
+namespace Nohros.Data.SqlCe
 {
   public class SqlAppState : IAppState
   {

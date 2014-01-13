@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using System.Data.SqlServerCe;
 using Nohros.Data.Providers;
 
-namespace Nohros.Data.SqlServer
+namespace Nohros.Data.SqlCe
 {
   /// <summary>
   /// A implementation of the <see cref="IConnectionProvider"/> that

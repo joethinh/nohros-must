@@ -8,7 +8,7 @@ using Nohros.Resources;
 using Nohros.Extensions;
 using Nohros.Resources;
 
-namespace Nohros.Data.SqlServer
+namespace Nohros.Data.SqlCe
 {
   internal class CreateTableQuery
   {
