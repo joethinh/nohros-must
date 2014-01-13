@@ -111,8 +111,8 @@ namespace Nohros.Configuration
     /// <returns>
     /// A deep copy of the current <see cref="ProviderNode"/>.
     /// </returns>
-    public ProviderNode Clone() {
-      ProviderNode clone = new ProviderNode(name, type_, location_);
+    public ProviderNode Clone(string clone_name) {
+      ProviderNode clone = new ProviderNode(clone_name, type_, location_);
       foreach (KeyValuePair<string, string> option in options_) {
         clone.options_[option.Key] = option.Value;
       }

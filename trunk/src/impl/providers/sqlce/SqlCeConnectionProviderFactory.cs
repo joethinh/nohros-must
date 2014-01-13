@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using Nohros.Data.Providers;
 using Nohros.Extensions;
+using Nohros.Providers;
 using Nohros.Resources;
 
 namespace Nohros.Data.SqlServer
@@ -11,7 +12,9 @@ namespace Nohros.Data.SqlServer
   /// A implementation of the <see cref="IConnectionProviderFactory"/> that
   /// create instances of the <see cref="SqlConnection"/> class.
   /// </summary>
-  public class SqlCeConnectionProviderFactory : IConnectionProviderFactory
+  public class SqlCeConnectionProviderFactory : IConnectionProviderFactory,
+                                                IProviderFactory
+                                                  <SqlCeConnectionProvider>
   {
     /// <summary>
     /// The key that should be associated with the option that contains
@@ -40,7 +43,7 @@ namespace Nohros.Data.SqlServer
       IDictionary<string, string> options) {
       string connection_string;
       if (options.TryGetValue(kConnectionStringOption, out connection_string)) {
-        return new SqlConnectionProvider(connection_string);
+        return new SqlCeConnectionProvider(connection_string);
       }
 
       var builder = new SqlConnectionStringBuilder();
@@ -50,8 +53,20 @@ namespace Nohros.Data.SqlServer
       if (options.TryGetValue(kPasswordOption, out password)) {
         builder.Password = password;
       }
-      return new SqlConnectionProvider(builder.ConnectionString);
+      return new SqlCeConnectionProvider(builder.ConnectionString);
     }
+
+    /// <inheritdoc/>
+    object IProviderFactory.CreateProvider(IDictionary<string, string> options) {
+      return CreateProvider(options);
+    }
+
+    /// <inheritdoc/>
+    SqlCeConnectionProvider IProviderFactory<SqlCeConnectionProvider>.
+      CreateProvider(IDictionary<string, string> options) {
+      return CreateProvider(options) as SqlCeConnectionProvider;
+    }
+
 
     string GetOption(string name, IDictionary<string, string> options) {
       string option;

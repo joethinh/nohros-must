@@ -12,7 +12,6 @@ namespace Nohros.Configuration
   {
     readonly string group_;
 
-    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="IProvidersNodeGroup"/>
     /// that is not associated with any group.
@@ -29,7 +28,6 @@ namespace Nohros.Configuration
     public ProvidersNodeGroup(string group) : base(group) {
       group_ = group;
     }
-    #endregion
 
     /// <inheritdoc/>
     public void Add(IProviderNode node) {
@@ -75,6 +73,12 @@ namespace Nohros.Configuration
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() {
       return GetEnumerator();
+    }
+
+    public void AddRange(IEnumerable<IProviderNode> nodes) {
+      foreach (var node in nodes) {
+        Add(node);
+      }
     }
   }
 }

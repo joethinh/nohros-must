@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>must.data.sqlce</id>
+        <version>0.0.2.0</version>
+        <title>Must Data for Sql CE</title>
+        <authors>Nohros Inc</authors>
+        <owners>Nohros Inc</owners>
+        <projectUrl>http://code.google.com/p/nohros-must</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>This project contains the SQL Server implementation of the nohros data API.</description>
+        <summary>The SQL Server implementation of the nohros data API.</summary>
+        <copyright>Nohros Inc</copyright>
+        <language>en-US</language>
+        <tags>csharp framework nohros log4net logging</tags>
+        <dependencies>
+            <dependency id="must.common" version="1.9.5" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="..\bin\release\sqlce\nohros.data.sqlce.dll" target="lib\net20\nohros.data.sqlce.dll" />
+    </files>
+</package>

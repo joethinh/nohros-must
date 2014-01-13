@@ -49,5 +49,9 @@ namespace Nohros.Data.SqlServer
     public SqlCeConnection CreateConnection() {
       return new SqlCeConnection(connection_string_);
     }
+
+    public string ConnectionString {
+      get { return connection_string_; }
+    }
   }
 }

@@ -186,11 +186,11 @@
     <Compile Include="data\repositories\AbstractCriteriaT1.cs" />
     <Compile Include="data\repositories\ICriteriaT.cs" />
     <Compile Include="data\repositories\IHiLoDao.cs" />
+    <Compile Include="data\repositories\IAppState.cs" />
     <Compile Include="data\repositories\ISetStateCommand.cs" />
     <Compile Include="data\repositories\IStateByNameQuery.cs" />
     <Compile Include="data\repositories\IStateDao.cs" />
     <Compile Include="data\repositories\IStateDaoFactory.cs" />
-    <Compile Include="data\repositories\IStateRepository.cs" />
     <Compile Include="data\repositories\IStateRepositoryFactory.cs" />
     <Compile Include="data\repositories\CriteriaResolver.cs" />
     <Compile Include="data\TransactionScopes.cs" />
@@ -413,7 +413,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
