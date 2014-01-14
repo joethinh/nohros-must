@@ -8,7 +8,7 @@
     <ProjectGuid>{BE854EB6-AAF5-4BDF-B162-5B217B88DFB4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>nohros.data.sqlce</RootNamespace>
+    <RootNamespace>Nohros.Data.SqlCe</RootNamespace>
     <AssemblyName>nohros.data.sqlce</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -48,7 +48,8 @@
     <Compile Include="CreateTableQuery.cs" />
     <Compile Include="GetStateQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlAppState.cs" />
+    <Compile Include="SqlCeAppState.cs" />
+    <Compile Include="SqlAppStateFactory.cs" />
     <Compile Include="SqlCeConnectionProviderFactory.cs" />
     <Compile Include="SqlCeConnectionProvider.cs" />
     <Compile Include="TableExistsQuery.cs" />

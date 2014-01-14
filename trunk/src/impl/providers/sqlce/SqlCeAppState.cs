@@ -8,7 +8,7 @@ using Nohros.Data;
 
 namespace Nohros.Data.SqlCe
 {
-  public class SqlAppState : IAppState
+  public class SqlCeAppState : IAppState
   {
     // Tables
     const string kBoolTableName = "bool_state";
@@ -40,7 +40,7 @@ namespace Nohros.Data.SqlCe
 
     readonly UpdateStateQuery update_state_;
 
-    public SqlAppState(SqlCeConnectionProvider sql_connection_provider) {
+    public SqlCeAppState(SqlCeConnectionProvider sql_connection_provider) {
       sql_connection_provider_ = sql_connection_provider;
       update_state_ = new UpdateStateQuery(sql_connection_provider);
       get_state_ = new GetStateQuery(sql_connection_provider);
