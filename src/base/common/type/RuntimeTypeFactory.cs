@@ -204,8 +204,8 @@ namespace Nohros
       return CreateInstance(type, fallback, throw_exceptions, args);
     }
 
-    static T CreateInstance(Type type, bool fallback, bool throw_exceptions,
-      params object[] args) {
+    internal static T CreateInstance(Type type, bool fallback,
+      bool throw_exceptions, params object[] args) {
       string error = string.Empty;
       T new_obj = null;
       try {

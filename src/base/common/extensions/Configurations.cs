@@ -217,8 +217,9 @@ namespace Nohros.Extensions
             continue;
           }
 
+          Type type = GetType(node);
           TFactory factory_t = RuntimeTypeFactory<TFactory>
-            .CreateInstance(node, true, false, settings);
+            .CreateInstance(type, true, false, settings);
 
           if (factory_t != null) {
             try {
@@ -227,11 +228,23 @@ namespace Nohros.Extensions
               MustLogger.ForCurrentProcess.Error(
                 StringResources.Log_MethodThrowsException.Fmt(
                   "CreateProviders", kClassName), e);
+              throw new ConfigurationException(e);
             }
           }
         }
       }
       return list.ToArray();
+    }
+
+    static Type GetType(IRuntimeType runtime_type) {
+      Type type = RuntimeType.GetSystemType(runtime_type);
+      if (type == null) {
+        throw new TypeLoadException(
+          string.Format(Resources.Resources.TypeLoad_CreateInstance,
+            runtime_type.Type)
+            + Resources.Resources.TypeLoad_TypeNotFound);
+      }
+      return type;
     }
   }
 }
