@@ -9,10 +9,8 @@ namespace Nohros.Metrics.Reporting
   /// </summary>
   public class ConsoleReporter : AbstractPollingReporter
   {
-    #region .ctor
     public ConsoleReporter(IMetricsRegistry registry) : base(registry) {
     }
-    #endregion
 
     /// <inheritdoc/>
     public override void Run(MetricPredicate predicate) {
@@ -31,12 +29,16 @@ namespace Nohros.Metrics.Reporting
     void Report(KeyValuePair<string, MetricValue[]> metrics,
       DateTime timestamp) {
       string name = metrics.Key;
-      foreach (MetricValue metric in metrics.Value) {
+      foreach (MetricValue mtc in metrics.Value) {
         Console.Write(timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ") + ":"
           + name + ".");
-        Console.Write(metric.Name + "=" + metric.Value.ToString("f4"));
-        Console.WriteLine(" " + metric.Unit);
+        Console.Write(GetMetricName(mtc.Type) + "=" + mtc.Value.ToString("f4"));
+        Console.WriteLine(" " + mtc.Unit);
       }
+    }
+
+    string GetMetricName(int type) {
+      return string.Empty;
     }
   }
 }

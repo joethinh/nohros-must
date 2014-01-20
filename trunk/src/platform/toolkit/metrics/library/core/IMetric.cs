@@ -19,10 +19,5 @@ namespace Nohros.Metrics
     /// reporting operation.
     /// </param>
     void Report<T>(MetricReportCallback<T> callback, T context);
-
-    /// <summary>
-    /// Gets the date and time when the metric was last updated.
-    /// </summary>
-    DateTime LastUpdated { get; }
   }
 }

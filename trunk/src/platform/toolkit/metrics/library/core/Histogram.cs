@@ -12,7 +12,6 @@ namespace Nohros.Metrics
   {
     readonly double[] variance_;
     long count_;
-    DateTime last_updated_;
     long max_;
     long min_;
     long sum_;
@@ -26,7 +25,6 @@ namespace Nohros.Metrics
       sum_ = 0;
       count_ = 0;
       variance_ = new double[] {-1, 0}; //M,S
-      last_updated_ = DateTime.Now;
     }
 
     /// <summary>
@@ -42,7 +40,6 @@ namespace Nohros.Metrics
       }
       sum_ += value;
       UpdateVariance(value);
-      last_updated_ = DateTime.Now;
     }
 
     /// <inheritdoc/>
@@ -80,11 +77,6 @@ namespace Nohros.Metrics
       callback(Report(), context);
     }
 
-    /// <inheritdoc/>
-    public DateTime LastUpdated {
-      get { return last_updated_; }
-    }
-
     /// <summary>
     /// Adds the specified long value to the variance calculation.
     /// </summary>
@@ -105,16 +97,16 @@ namespace Nohros.Metrics
     protected MetricValue[] Report() {
       Snapshot snapshot = Snapshot;
       return new[] {
-        new MetricValue("min", Min),
-        new MetricValue("max", Max),
-        new MetricValue("mean", Mean),
-        new MetricValue("stddev", StandardDeviation),
-        new MetricValue("median", snapshot.Median),
-        new MetricValue("percentile75", snapshot.Percentile75),
-        new MetricValue("percentile95", snapshot.Percentile95),
-        new MetricValue("percentile98", snapshot.Percentile98),
-        new MetricValue("percentile99", snapshot.Percentile99),
-        new MetricValue("percentile999", snapshot.Percentile999)
+        new MetricValue(MetricValueType.Min, Min),
+        new MetricValue(MetricValueType.Max, Max),
+        new MetricValue(MetricValueType.Mean, Mean),
+        new MetricValue(MetricValueType.StandardDeviation, StandardDeviation),
+        new MetricValue(MetricValueType.Median, snapshot.Median),
+        new MetricValue(MetricValueType.Percentile75, snapshot.Percentile75),
+        new MetricValue(MetricValueType.Percentile95, snapshot.Percentile95),
+        new MetricValue(MetricValueType.Percentile98, snapshot.Percentile98),
+        new MetricValue(MetricValueType.Percentile99, snapshot.Percentile99),
+        new MetricValue(MetricValueType.Percentile999, snapshot.Percentile999)
       };
     }
 

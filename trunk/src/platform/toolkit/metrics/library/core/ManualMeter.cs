@@ -22,7 +22,7 @@ namespace Nohros.Metrics
     readonly long start_time_;
     long count_;
     long last_tick_;
-    DateTime last_update_;
+    DateTime last_updated_;
 
     /// <summary>
     /// Initializes a new instance of the <see cref=" Meter"/> class by using
@@ -48,16 +48,11 @@ namespace Nohros.Metrics
       ewma_1_rate_ = ExponentialWeightedMovingAverages.OneMinute();
       ewma_5_rate_ = ExponentialWeightedMovingAverages.FiveMinute();
       ewma_15_rate_ = ExponentialWeightedMovingAverages.FifteenMinute();
-      last_update_ = DateTime.Now;
+      last_updated_ = DateTime.Now;
     }
 
     public virtual void Report<T>(MetricReportCallback<T> callback, T context) {
       callback(Report(), context);
-    }
-
-    /// <inheritdoc/>
-    public DateTime LastUpdated {
-      get { return last_update_; }
     }
 
     /// <summary>
@@ -75,7 +70,7 @@ namespace Nohros.Metrics
       ewma_1_rate_.Update(n);
       ewma_5_rate_.Update(n);
       ewma_15_rate_.Update(n);
-      last_update_ = DateTime.Now;
+      last_updated_ = DateTime.Now;
     }
 
     public virtual double GetMeanRate(long timestamp) {
@@ -117,11 +112,21 @@ namespace Nohros.Metrics
     public virtual MetricValue[] Report() {
       string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
       return new[] {
-        new MetricValue("Count", Count, EventType),
-        new MetricValue("OneMinuteRate", OneMinuteRate, rate_unit),
-        new MetricValue("FiveMinuteRate", FiveMinuteRate, rate_unit),
-        new MetricValue("FifteenMinuteRate", FifteenMinuteRate, rate_unit)
+        new MetricValue((int) MetricValueType.Count, Count, EventType),
+        new MetricValue((int) MetricValueType.OneMinuteRate, OneMinuteRate,
+          rate_unit),
+        new MetricValue((int) MetricValueType.FiveMinuteRate, FiveMinuteRate,
+          rate_unit),
+        new MetricValue((int) MetricValueType.FifteenMinuteRate,
+          FifteenMinuteRate, rate_unit)
       };
+    }
+
+    /// <summary>
+    /// Gets the date and time when the metric was last updated.
+    /// </summary>
+    public DateTime LastUpdated {
+      get { return last_updated_; }
     }
 
     /// <inheritdoc/>

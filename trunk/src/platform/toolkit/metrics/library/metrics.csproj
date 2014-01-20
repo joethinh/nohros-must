@@ -70,6 +70,7 @@
     <Compile Include="core\MetricPredicate.cs" />
     <Compile Include="core\MetricReportCallback.cs" />
     <Compile Include="core\MetricValue.cs" />
+    <Compile Include="core\MetricValueType.cs" />
     <Compile Include="core\UniformHistogram.cs" />
     <Compile Include="core\Unit.cs" />
     <Compile Include="MetricAddedEventHandler.cs" />
