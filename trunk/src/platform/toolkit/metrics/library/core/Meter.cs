@@ -35,6 +35,18 @@ namespace Nohros.Metrics
       : this(event_type, rate_unit, new UserTimeClock()) {
     }
 
+    /// <summary>
+    /// Initialize a new instance of the <see cref="Meter"/> class by using
+    /// the given clock, the work "events" as event type and
+    /// <see cref="TimeUnit.Seconds"/> as event rate unit.
+    /// </summary>
+    /// <param name="clock">
+    /// The clock to mark the passege of time.
+    /// </param>
+    public Meter(Clock clock) : this("events", TimeUnit.Seconds, clock) {
+      clock_ = clock;
+    }
+
     public Meter(string event_type, TimeUnit rate_unit, Clock clock)
       : base(event_type, rate_unit, clock.Tick) {
       clock_ = clock;
@@ -56,6 +68,11 @@ namespace Nohros.Metrics
     /// </param>
     public virtual void Mark(long n) {
       base.Mark(n, clock_.Tick);
+    }
+
+    public override void Mark(long n, long time) {
+      throw new NotSupportedException(
+        "The time could not be manualy set on Meter. If you want to manually set the time of events, use the ManualMeter.");
     }
 
     /// <inheritdoc/>
@@ -96,9 +113,12 @@ namespace Nohros.Metrics
       return new[] {
         new MetricValue(MetricValueType.Count, Count, EventType),
         new MetricValue(MetricValueType.MeanRate, MeanRate, rate_unit),
-        new MetricValue(MetricValueType.OneMinuteRate, OneMinuteRate, rate_unit),
-        new MetricValue(MetricValueType.FiveMinuteRate, FiveMinuteRate, rate_unit),
-        new MetricValue(MetricValueType.FifteenMinuteRate, FifteenMinuteRate, rate_unit)
+        new MetricValue(MetricValueType.OneMinuteRate, OneMinuteRate, rate_unit)
+        ,
+        new MetricValue(MetricValueType.FiveMinuteRate, FiveMinuteRate,
+          rate_unit),
+        new MetricValue(MetricValueType.FifteenMinuteRate, FifteenMinuteRate,
+          rate_unit)
       };
     }
   }
