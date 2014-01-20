@@ -14,8 +14,8 @@ namespace Nohros.Metrics
     readonly TimeUnit duration_unit_;
     readonly BiasedHistogram histogram_;
     readonly Meter meter_;
+    DateTime last_updated_;
 
-    #region .ctor
     /// <summary>
     /// Creates a new <see cref="Timer"/>.
     /// </summary>
@@ -35,7 +35,6 @@ namespace Nohros.Metrics
       async_tasks_mailbox_ = new Mailbox<RunnableDelegate>(Run, executor);
       clock_ = clock;
     }
-    #endregion
 
     public void GetFifteenMinuteRate(DoubleMetricCallback callback) {
       var now = DateTime.Now;
@@ -50,7 +49,8 @@ namespace Nohros.Metrics
     public void GetMeanRate(DoubleMetricCallback callback) {
       var now = DateTime.Now;
       var timestamp = clock_.Tick;
-      async_tasks_mailbox_.Send(() => callback(meter_.GetMeanRate(timestamp), now));
+      async_tasks_mailbox_.Send(
+        () => callback(meter_.GetMeanRate(timestamp), now));
     }
 
     public void GetOneMinuteRate(DoubleMetricCallback callback) {
@@ -160,6 +160,10 @@ namespace Nohros.Metrics
       return new TimerContext(this, clock_);
     }
 
+    public DateTime LastUpdated {
+      get { return last_updated_; }
+    }
+
     protected MetricValue[] Report(long timestamp) {
       Snapshot snapshot = histogram_.Snapshot;
       string duration_unit = UnitHelper.FromTimeUnit(duration_unit_);
@@ -207,6 +211,7 @@ namespace Nohros.Metrics
         async_tasks_mailbox_.Send(
           () => histogram_.Update(duration, timestamp));
         meter_.Mark();
+        last_updated_ = TimeUnitHelper.FromUnixEpoch(timestamp);
       }
     }
 

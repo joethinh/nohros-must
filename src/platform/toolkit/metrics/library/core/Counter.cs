@@ -10,8 +10,8 @@ namespace Nohros.Metrics
   {
     readonly Mailbox<long> async_update_mailbox_;
     long count_;
+    DateTime last_updated_;
 
-    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="Counter"/> class that
     /// uses a thread pool to perform the counter update.
@@ -38,10 +38,13 @@ namespace Nohros.Metrics
       count_ = 0;
       async_update_mailbox_ = new Mailbox<long>(AsyncUpdate, executor);
     }
-    #endregion
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
-      callback(new[] { new MetricValue("count", Count) }, context);
+      callback(new[] {new MetricValue("count", Count)}, context);
+    }
+
+    public DateTime LastUpdated {
+      get { return last_updated_; }
     }
 
     /// <summary>
@@ -78,6 +81,7 @@ namespace Nohros.Metrics
 
     void AsyncUpdate(long delta) {
       count_ += delta;
+      last_updated_ = DateTime.Now;
     }
 
     /// <summary>

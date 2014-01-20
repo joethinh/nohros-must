@@ -14,20 +14,28 @@ namespace Nohros.Metrics
       }
     }
 
+    readonly Histogram histogram_ = new Histogram();
     readonly UniformSample sample_;
+    DateTime last_updated_;
 
-    #region .ctor
     public AsyncUniformHistogram(UniformSample sample, IExecutor executor)
-      : base(executor, new Histogram()) {
-      sample_ = sample;
+      : this(sample, executor, new Histogram()) {
     }
-    #endregion
+
+    AsyncUniformHistogram(UniformSample sample, IExecutor executor,
+      Histogram histogram)
+      : base(executor, histogram) {
+      histogram_ = histogram;
+      sample_ = sample;
+      last_updated_ = DateTime.Now;
+    }
 
     /// <inheritdoc/>
     public override void Update(long value) {
       async_tasks_mailbox_.Send(() => {
-        Update(value);
+        histogram_.Update(value);
         sample_.Update(value);
+        last_updated_ = DateTime.Now;
       });
     }
 
@@ -35,6 +43,10 @@ namespace Nohros.Metrics
     public override void GetSnapshot(SnapshotCallback callback) {
       var now = DateTime.Now;
       async_tasks_mailbox_.Send(() => callback(sample_.Snapshot, now));
+    }
+
+    public override DateTime LastUpdated {
+      get { return last_updated_; }
     }
   }
 }

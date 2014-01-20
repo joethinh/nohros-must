@@ -58,6 +58,8 @@ namespace Nohros.Metrics
       async_tasks_mailbox_.Send(() => callback(Report(), context));
     }
 
+    public abstract DateTime LastUpdated { get; }
+
     protected MetricValue[] Report() {
       Snapshot snapshot = histogram_.Snapshot;
       return new[] {
