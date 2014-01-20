@@ -54,11 +54,11 @@ namespace Nohros.Extensions.Time
       long epoch = TimeUnitHelper.ToUnixEpoch(duration);
       switch (unit) {
         case TimeUnit.Milliseconds:
-          return epoch.ToMilliseconds(unit);
+          return epoch.ToMilliseconds(TimeUnit.Seconds);
         case TimeUnit.Nanoseconds:
-          return epoch.ToNanoseconds(unit);
+          return epoch.ToNanoseconds(TimeUnit.Seconds);
         case TimeUnit.Seconds:
-          return epoch.ToSeconds(unit);
+          return epoch;
         default:
           throw new NotSupportedException();
       }
