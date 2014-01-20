@@ -157,30 +157,35 @@ namespace Nohros.Metrics
       return new TimerContext(this, clock_);
     }
 
-    public DateTime LastUpdated {
-      get { return last_updated_; }
-    }
-
     protected MetricValue[] Report() {
       Snapshot snapshot = Snapshot;
       string duration_unit = UnitHelper.FromTimeUnit(duration_unit_);
       string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
       return new[] {
-        new MetricValue("min", Min, duration_unit),
-        new MetricValue("max", Max, duration_unit),
-        new MetricValue("mean", Mean, duration_unit),
-        new MetricValue("stddev", StandardDeviation, duration_unit),
-        new MetricValue("median", snapshot.Median, duration_unit),
-        new MetricValue("percentile75", snapshot.Percentile75, duration_unit),
-        new MetricValue("percentile95", snapshot.Percentile95, duration_unit),
-        new MetricValue("percentile98", snapshot.Percentile98, duration_unit),
-        new MetricValue("percentile99", snapshot.Percentile99, duration_unit),
-        new MetricValue("percentile999", snapshot.Percentile999, duration_unit),
-        new MetricValue("count", Count, EventType),
-        new MetricValue("meanRate", MeanRate, rate_unit),
-        new MetricValue("oneMinuteRate", OneMinuteRate, rate_unit),
-        new MetricValue("fiveMinuteRate", FiveMinuteRate, rate_unit),
-        new MetricValue("fifteenMinuteRate", FifteenMinuteRate, rate_unit)
+        new MetricValue(MetricValueType.Min, Min, duration_unit),
+        new MetricValue(MetricValueType.Max, Max, duration_unit),
+        new MetricValue(MetricValueType.Mean, Mean, duration_unit),
+        new MetricValue(MetricValueType.StandardDeviation, StandardDeviation,
+          duration_unit),
+        new MetricValue(MetricValueType.Median, snapshot.Median, duration_unit),
+        new MetricValue(MetricValueType.Percentile75, snapshot.Percentile75,
+          duration_unit),
+        new MetricValue(MetricValueType.Percentile95, snapshot.Percentile95,
+          duration_unit),
+        new MetricValue(MetricValueType.Percentile98, snapshot.Percentile98,
+          duration_unit),
+        new MetricValue(MetricValueType.Percentile99, snapshot.Percentile99,
+          duration_unit),
+        new MetricValue(MetricValueType.Percentile999, snapshot.Percentile999,
+          duration_unit),
+        new MetricValue(MetricValueType.Count, Count, EventType),
+        new MetricValue(MetricValueType.MeanRate, MeanRate, rate_unit),
+        new MetricValue(MetricValueType.OneMinuteRate, OneMinuteRate, rate_unit)
+        ,
+        new MetricValue(MetricValueType.FiveMinuteRate, FiveMinuteRate,
+          rate_unit),
+        new MetricValue(MetricValueType.FifteenMinuteRate, FifteenMinuteRate,
+          rate_unit)
       };
     }
 
@@ -198,6 +203,10 @@ namespace Nohros.Metrics
 
     double ConvertFromNs(double ns) {
       return ns/TimeUnitHelper.ToNanos(1, duration_unit_);
+    }
+
+    public DateTime LastUpdated {
+      get { return last_updated_; }
     }
 
     /// <summary>

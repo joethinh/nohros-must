@@ -31,10 +31,10 @@ namespace Nohros.Metrics
 
     public override void Report<V>(MetricReportCallback<V> callback, V context) {
       try {
-        callback(new[] {new MetricValue("value", Convert.ToDouble(Value))},
-          context);
+        callback(new[] {new MetricValue((int)MetricValueType.Value,
+          Convert.ToDouble(Value))}, context);
       } catch (InvalidCastException e) {
-        callback(new[] {new MetricValue("value", 0.0)}, context);
+        callback(new[] {new MetricValue(MetricValueType.Value, 0.0)}, context);
       }
     }
 

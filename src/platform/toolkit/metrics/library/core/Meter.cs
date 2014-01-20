@@ -94,11 +94,11 @@ namespace Nohros.Metrics
     public override MetricValue[] Report() {
       string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
       return new[] {
-        new MetricValue("Count", Count, EventType),
-        new MetricValue("MeanRate", MeanRate, rate_unit),
-        new MetricValue("OneMinuteRate", OneMinuteRate, rate_unit),
-        new MetricValue("FiveMinuteRate", FiveMinuteRate, rate_unit),
-        new MetricValue("FifteenMinuteRate", FifteenMinuteRate, rate_unit)
+        new MetricValue(MetricValueType.Count, Count, EventType),
+        new MetricValue(MetricValueType.MeanRate, MeanRate, rate_unit),
+        new MetricValue(MetricValueType.OneMinuteRate, OneMinuteRate, rate_unit),
+        new MetricValue(MetricValueType.FiveMinuteRate, FiveMinuteRate, rate_unit),
+        new MetricValue(MetricValueType.FifteenMinuteRate, FifteenMinuteRate, rate_unit)
       };
     }
   }

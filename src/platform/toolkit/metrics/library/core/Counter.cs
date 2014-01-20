@@ -40,7 +40,7 @@ namespace Nohros.Metrics
     }
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
-      callback(new[] {new MetricValue("count", Count)}, context);
+      callback(new[] {new MetricValue(MetricValueType.Count, Count)}, context);
     }
 
     public DateTime LastUpdated {
