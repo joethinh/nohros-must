@@ -12,8 +12,8 @@ namespace Nohros.Metrics
     internal readonly TimeUnit duration_unit_;
     readonly BiasedHistogram histogram_;
     readonly Meter meter_;
+    DateTime last_updated_;
 
-    #region .ctor
     /// <summary>
     /// Creates a new <see cref="Timer"/>.
     /// </summary>
@@ -30,8 +30,8 @@ namespace Nohros.Metrics
       meter_ = meter;
       histogram_ = histogram;
       clock_ = clock;
+      last_updated_ = DateTime.Now;
     }
-    #endregion
 
     /// <inheritdoc/>
     public TimeUnit RateUnit {
@@ -157,6 +157,10 @@ namespace Nohros.Metrics
       return new TimerContext(this, clock_);
     }
 
+    public DateTime LastUpdated {
+      get { return last_updated_; }
+    }
+
     protected MetricValue[] Report() {
       Snapshot snapshot = Snapshot;
       string duration_unit = UnitHelper.FromTimeUnit(duration_unit_);
@@ -188,6 +192,7 @@ namespace Nohros.Metrics
       if (duration >= 0) {
         histogram_.Update(duration);
         meter_.Mark();
+        last_updated_ = DateTime.Now;
       }
     }
 

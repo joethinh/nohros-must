@@ -12,6 +12,7 @@ namespace Nohros.Metrics
   public class CallableGauge<T> : Gauge<T>
   {
     readonly CallableDelegate<T> callable_;
+    DateTime last_updated_;
 
     #region .ctor
     /// <summary>
@@ -24,6 +25,7 @@ namespace Nohros.Metrics
     /// </param>
     public CallableGauge(CallableDelegate<T> callable) {
       callable_ = callable;
+      last_updated_ = DateTime.Now;
     }
     #endregion
 
@@ -39,6 +41,11 @@ namespace Nohros.Metrics
     /// <inheritdoc/>
     public override T Value {
       get { return callable_(); }
+    }
+
+    /// <inheritdoc/>
+    public override DateTime LastUpdated {
+      get { return last_updated_; }
     }
   }
 }

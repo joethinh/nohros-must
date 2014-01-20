@@ -23,6 +23,7 @@ namespace Nohros.Metrics
     readonly ExponentialWeightedMovingAverage ewma_5_rate_;
     readonly TimeUnit rate_unit_;
     readonly long start_time_;
+    DateTime last_updated_;
     long count_;
     long last_tick_;
 
@@ -165,6 +166,7 @@ namespace Nohros.Metrics
         ewma_1_rate_.Update(n);
         ewma_5_rate_.Update(n);
         ewma_15_rate_.Update(n);
+        last_updated_ = DateTime.Now;
       });
     }
 
@@ -237,5 +239,8 @@ namespace Nohros.Metrics
     long Count {
       get { return count_; }
     }
+
+    /// <inheritdoc/>
+    public DateTime LastUpdated { get { return last_updated_; } }
   }
 }

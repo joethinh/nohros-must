@@ -12,11 +12,11 @@ namespace Nohros.Metrics
   {
     readonly double[] variance_;
     long count_;
+    DateTime last_updated_;
     long max_;
     long min_;
     long sum_;
 
-    #region .ctor
     /// <summary>
     /// Initialize a new instance of the <see cref="AbstractHistogram"/> class.
     /// </summary>
@@ -26,8 +26,8 @@ namespace Nohros.Metrics
       sum_ = 0;
       count_ = 0;
       variance_ = new double[] {-1, 0}; //M,S
+      last_updated_ = DateTime.Now;
     }
-    #endregion
 
     /// <summary>
     /// Adds a recorded value.
@@ -42,6 +42,7 @@ namespace Nohros.Metrics
       }
       sum_ += value;
       UpdateVariance(value);
+      last_updated_ = DateTime.Now;
     }
 
     /// <inheritdoc/>
@@ -77,6 +78,11 @@ namespace Nohros.Metrics
 
     public virtual void Report<T>(MetricReportCallback<T> callback, T context) {
       callback(Report(), context);
+    }
+
+    /// <inheritdoc/>
+    public DateTime LastUpdated {
+      get { return last_updated_; }
     }
 
     /// <summary>

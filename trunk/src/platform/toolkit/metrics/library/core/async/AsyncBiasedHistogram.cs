@@ -14,22 +14,30 @@ namespace Nohros.Metrics
       }
     }
 
+    readonly Histogram histogram_;
     readonly ExponentiallyDecayingSample sample_;
+    DateTime last_updated_;
 
-    #region .ctor
     public AsyncBiasedHistogram(ExponentiallyDecayingSample sample,
-      IExecutor executor) : base(executor, new Histogram()) {
-      sample_ = sample;
+      IExecutor executor) : this(sample, executor, new Histogram()) {
     }
-    #endregion
+
+    AsyncBiasedHistogram(ExponentiallyDecayingSample sample,
+      IExecutor executor, Histogram histogram)
+      : base(executor, histogram) {
+      sample_ = sample;
+      histogram_ = histogram;
+      last_updated_ = DateTime.Now;
+    }
 
     /// <inheritdoc/>
     public override void Update(long value) {
       long timestamp = TimeUnitHelper
         .ToSeconds(Clock.CurrentTimeMilis, TimeUnit.Milliseconds);
       async_tasks_mailbox_.Send(() => {
-        Update(value);
+        histogram_.Update(value);
         sample_.Update(value, timestamp);
+        last_updated_ = DateTime.Now;
       });
     }
 
@@ -37,6 +45,11 @@ namespace Nohros.Metrics
     public override void GetSnapshot(SnapshotCallback callback) {
       var now = DateTime.Now;
       async_tasks_mailbox_.Send(() => callback(sample_.Snapshot, now));
+    }
+
+    /// <inheritdoc/>
+    public override DateTime LastUpdated {
+      get { return last_updated_; }
     }
   }
 }

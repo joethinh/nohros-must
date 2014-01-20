@@ -16,12 +16,15 @@ namespace Nohros.Metrics
   /// <typeparam name="T">The type of the metric's value.</typeparam>
   public abstract class Gauge<T> : IMetric
   {
+    /// <inheritdoc/>
+    public abstract void Report<V>(MetricReportCallback<V> callback, V context);
+
+    /// <inheritdoc/>
+    public abstract DateTime LastUpdated { get; }
+
     /// <summary>
     /// Gets the metric's current value.
     /// </summary>
     public abstract T Value { get; }
-
-    /// <inheritdoc/>
-    public abstract void Report<V>(MetricReportCallback<V> callback, V context);
   }
 }

@@ -22,8 +22,8 @@ namespace Nohros.Metrics
     readonly long start_time_;
     long count_;
     long last_tick_;
+    DateTime last_update_;
 
-    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref=" Meter"/> class by using
     /// the specified meter name, rate unit and clock.
@@ -48,11 +48,16 @@ namespace Nohros.Metrics
       ewma_1_rate_ = ExponentialWeightedMovingAverages.OneMinute();
       ewma_5_rate_ = ExponentialWeightedMovingAverages.FiveMinute();
       ewma_15_rate_ = ExponentialWeightedMovingAverages.FifteenMinute();
+      last_update_ = DateTime.Now;
     }
-    #endregion
 
     public virtual void Report<T>(MetricReportCallback<T> callback, T context) {
       callback(Report(), context);
+    }
+
+    /// <inheritdoc/>
+    public DateTime LastUpdated {
+      get { return last_update_; }
     }
 
     /// <summary>
@@ -61,12 +66,16 @@ namespace Nohros.Metrics
     /// <param name="n">
     /// The number of events.
     /// </param>
+    /// <param name="time">
+    /// The time when the event has occured.
+    /// </param>
     public virtual void Mark(long n, long time) {
       TickIfNecessary(time);
       count_ += n;
       ewma_1_rate_.Update(n);
       ewma_5_rate_.Update(n);
       ewma_15_rate_.Update(n);
+      last_update_ = DateTime.Now;
     }
 
     public virtual double GetMeanRate(long timestamp) {
