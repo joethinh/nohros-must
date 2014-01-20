@@ -2,6 +2,9 @@
 
 namespace Nohros.Extensions
 {
+  /// <summary>
+  /// Extension methods for the <see cref="TimeUnit"/>.
+  /// </summary>
   public static class TimeUnits
   {
     /// <summary>
@@ -15,7 +18,23 @@ namespace Nohros.Extensions
     /// <see cref="duration"/> is <see cref="DateTimeKind.Unspecified"/>
     /// <paramref name="duration"/> is assumed to be a UTC time.
     /// </remarks>
+    [Obsolete("Use ToUnixEpoch instead", true)]
     public static long ToUnixTime(this DateTime duration) {
+      return TimeUnitHelper.ToUnixTime(duration);
+    }
+
+    /// <summary>
+    /// Converts the specified datetime to the unix time unit.
+    /// </summary>
+    /// <returns>
+    /// The number of seconds since unix epoch.
+    /// </returns>
+    /// <remarks>
+    /// If <see cref="DateTime.Kind"/> property of the given
+    /// <see cref="duration"/> is <see cref="DateTimeKind.Unspecified"/>
+    /// <paramref name="duration"/> is assumed to be a UTC time.
+    /// </remarks>
+    public static long ToUnixEpoch(this DateTime duration) {
       return TimeUnitHelper.ToUnixTime(duration);
     }
 
@@ -57,6 +76,15 @@ namespace Nohros.Extensions
     /// </remarks>
     public static DateTime FromUnixEpoch(this long timestamp, DateTimeKind kind) {
       return TimeUnitHelper.FromUnixEpoch(timestamp, kind);
+    }
+
+    /// <summary>
+    /// Convert the specified time duration in the given unit to the
+    /// nanoseconds units.
+    /// </summary>
+    /// <returns></returns>
+    public static long ToNanos(this long duration, TimeUnit unit) {
+      return TimeUnitHelper.ToNanos(duration, unit);
     }
   }
 }
