@@ -22,7 +22,9 @@ namespace Nohros.Metrics
     readonly long start_time_;
     long count_;
     long last_tick_;
+    long last_mark_;
     DateTime last_updated_;
+    bool ignore_old_events_;
 
     /// <summary>
     /// Initializes a new instance of the <see cref=" Meter"/> class by using
@@ -48,6 +50,7 @@ namespace Nohros.Metrics
       ewma_1_rate_ = ExponentialWeightedMovingAverages.OneMinute();
       ewma_5_rate_ = ExponentialWeightedMovingAverages.FiveMinute();
       ewma_15_rate_ = ExponentialWeightedMovingAverages.FifteenMinute();
+      ignore_old_events_ = false;
       last_updated_ = DateTime.Now;
     }
 
@@ -65,12 +68,19 @@ namespace Nohros.Metrics
     /// The time when the event has occured.
     /// </param>
     public virtual void Mark(long n, long time) {
+      if (time < last_mark_) {
+        if (!ignore_old_events_) {
+          throw new ArgumentOutOfRangeException(
+            "You can not mark events that has been occured before the last marked.");
+        }
+      }
       TickIfNecessary(time);
       count_ += n;
       ewma_1_rate_.Update(n);
       ewma_5_rate_.Update(n);
       ewma_15_rate_.Update(n);
       last_updated_ = DateTime.Now;
+      last_mark_ = time;
     }
 
     public virtual double GetMeanRate(long timestamp) {
@@ -94,8 +104,8 @@ namespace Nohros.Metrics
 
     protected void TickIfNecessary(long now) {
       long age = now - last_tick_;
-      last_tick_ = now;
       if (age > kTickInterval) {
+        last_tick_ = now - age % kTickInterval;
         long required_ticks = age/kTickInterval;
         for (long i = 0; i < required_ticks; i++) {
           Tick();
@@ -129,6 +139,13 @@ namespace Nohros.Metrics
       get { return last_updated_; }
     }
 
+    /// <summary>
+    /// Gets the time associated with of the last marked event.
+    /// </summary>
+    public long LastMark {
+      get { return last_mark_; }
+    }
+
     /// <inheritdoc/>
     public TimeUnit RateUnit {
       get { return rate_unit_; }
@@ -157,6 +174,19 @@ namespace Nohros.Metrics
     /// <inheritdoc/>
     public long Count {
       get { return count_; }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating if events that has been occured before
+    /// the last marked, should be ignored. The default is false.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> to ignore events that has been occured before
+    /// the last marked; otherwise, <c>false</c>.
+    /// </value>
+    public virtual bool IgnoreOldEvets {
+      get { return ignore_old_events_; }
+      set { ignore_old_events_ = value; }
     }
   }
 }

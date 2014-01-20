@@ -88,7 +88,7 @@
     </ProjectReference>
     <ProjectReference Include="..\library\metrics.csproj">
       <Project>{EE140ABF-C917-44D7-B89F-D6946332F507}</Project>
-      <Name>metrics %28%28metrics%29\metrics%29</Name>
+      <Name>metrics</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
