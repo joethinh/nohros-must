@@ -8,7 +8,7 @@
     <ProjectGuid>{876848CE-99F0-4AA1-8468-365204B77123}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Nohros.Toolkit.Metrics</RootNamespace>
+    <RootNamespace>Nohros.Metrics.Tests</RootNamespace>
     <AssemblyName>nohros.toolkit.metrics.tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
@@ -45,26 +45,43 @@
     <Compile Include="CounterTest.cs" />
     <Compile Include="DottedMetricNameTests.cs" />
     <Compile Include="HistogramTests.cs" />
+    <Compile Include="ListClock.cs" />
     <Compile Include="MeterTests.cs" />
     <Compile Include="TimerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\..\..\..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\..\..\..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration">
+      <HintPath>..\..\..\..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\third_party\nunit\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="Telerik.JustMock, Version=2014.1.1307.2, Culture=neutral, PublicKeyToken=721b6c5bc0326b3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\JustMock.2014.1.1307.2\lib\Net35\Telerik.JustMock.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.JustMock.Container">
+      <HintPath>..\..\..\..\packages\JustMock.2014.1.1307.2\lib\Net35\Telerik.JustMock.Container.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\base\common\common.csproj">
-      <Project>{903B5354-C424-4ADD-BC2B-892E1AA4342A}</Project>
-      <Name>common %28%28base%29\common%29</Name>
+    <ProjectReference Include="..\..\..\..\base\common\common.net40.csproj">
+      <Project>{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}</Project>
+      <Name>common.net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\platform\toolkit\metrics\library\metrics.csproj">
       <Project>{EE140ABF-C917-44D7-B89F-D6946332F507}</Project>
-      <Name>metrics %28%28metrics%29\metrics%29</Name>
+      <Name>metrics</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
