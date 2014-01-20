@@ -124,8 +124,25 @@ namespace Nohros
     /// <see cref="duration"/> is <see cref="DateTimeKind.Unspecified"/>
     /// <paramref name="duration"/> is assumed to be a UTC time.
     /// </remarks>
+    [Obsolete("Use ToUnixEpoch instead", true)]
     public static long ToUnixTime(DateTime duration) {
       return (long) duration.ToUniversalTime().Subtract(epoch).TotalSeconds;
+    }
+
+    /// <summary>
+    /// Converts the specified datetime to the unix time unit.
+    /// </summary>
+    /// <returns>
+    /// The number of seconds since unix epoch.
+    /// </returns>
+    /// <remarks>
+    /// If <see cref="DateTime.Kind"/> property of the given
+    /// <see cref="duration"/> is <see cref="DateTimeKind.Unspecified"/>
+    /// <paramref name="duration"/> is assumed to be a UTC time.
+    /// </remarks>
+    public static long ToUnixEpoch(DateTime duration)
+    {
+      return (long)duration.ToUniversalTime().Subtract(epoch).TotalSeconds;
     }
 
     /// <summary>
@@ -174,28 +191,40 @@ namespace Nohros
     /// seconds units.
     /// </summary>
     /// <returns></returns>
+    [Obsolete("Use ToMilliseconds instead", true)]
     public static long ToMillis(long duration, TimeUnit unit) {
-      switch (unit) {
+      return ToMilliseconds(duration, unit);
+    }
+
+    /// <summary>
+    /// Convert the specified time duration in the given unit to the
+    /// seconds units.
+    /// </summary>
+    /// <returns></returns>
+    public static long ToMilliseconds(long duration, TimeUnit unit)
+    {
+      switch (unit)
+      {
         case TimeUnit.Nanoseconds:
-          return duration/(C2/C0);
+          return duration / (C2 / C0);
 
         case TimeUnit.Microseconds:
-          return duration/(C2/C1);
+          return duration / (C2 / C1);
 
         case TimeUnit.Milliseconds:
           return duration;
 
         case TimeUnit.Seconds:
-          return x(duration, C3/C2, MAX/(C3/C2));
+          return x(duration, C3 / C2, MAX / (C3 / C2));
 
         case TimeUnit.Minutes:
-          return x(duration, C4/C2, MAX/(C4/C2));
+          return x(duration, C4 / C2, MAX / (C4 / C2));
 
         case TimeUnit.Hours:
-          return x(duration, C5/C2, MAX/(C5/C2));
+          return x(duration, C5 / C2, MAX / (C5 / C2));
 
         case TimeUnit.Days:
-          return x(duration, (C6/C2), MAX/(C6/C2));
+          return x(duration, (C6 / C2), MAX / (C6 / C2));
       }
       throw new ArgumentOutOfRangeException("unit");
     }
