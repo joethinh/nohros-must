@@ -28,7 +28,8 @@ namespace Nohros.Metrics.Tests
     public void should_mark_evets_and_update_rates_count() {
       var meter =
         new Meter(
-          new ListClock(new[] {0L, 0L, 10L.ToNanos(TimeUnit.Seconds)}));
+          new ListClock(new[]
+          {0L, 0L, 10L.ToNanos(TimeUnit.Seconds), 0L, 0L, 0L}));
       meter.Mark();
       meter.Mark(2);
       Assert.That(meter.OneMinuteRate, Is.InRange(0.1830, 0.1850));

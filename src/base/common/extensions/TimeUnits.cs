@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nohros.Extensions
+namespace Nohros.Extensions.Time
 {
   /// <summary>
   /// Extension methods for the <see cref="TimeUnit"/>.
@@ -35,7 +35,33 @@ namespace Nohros.Extensions
     /// <paramref name="duration"/> is assumed to be a UTC time.
     /// </remarks>
     public static long ToUnixEpoch(this DateTime duration) {
-      return TimeUnitHelper.ToUnixTime(duration);
+      return TimeUnitHelper.ToUnixEpoch(duration);
+    }
+
+    /// <summary>
+    /// Converts the specified datetime to the unix time unit in the given
+    /// time unit.
+    /// </summary>
+    /// <returns>
+    /// The number of seconds since unix epoch.
+    /// </returns>
+    /// <remarks>
+    /// If <see cref="DateTime.Kind"/> property of the given
+    /// <see cref="duration"/> is <see cref="DateTimeKind.Unspecified"/>
+    /// <paramref name="duration"/> is assumed to be a UTC time.
+    /// </remarks>
+    public static long ToUnixEpoch(this DateTime duration, TimeUnit unit) {
+      long epoch = TimeUnitHelper.ToUnixEpoch(duration);
+      switch (unit) {
+        case TimeUnit.Milliseconds:
+          return epoch.ToMilliseconds(unit);
+        case TimeUnit.Nanoseconds:
+          return epoch.ToNanoseconds(unit);
+        case TimeUnit.Seconds:
+          return epoch.ToSeconds(unit);
+        default:
+          throw new NotSupportedException();
+      }
     }
 
     /// <summary>
@@ -83,8 +109,27 @@ namespace Nohros.Extensions
     /// nanoseconds units.
     /// </summary>
     /// <returns></returns>
-    public static long ToNanos(this long duration, TimeUnit unit) {
+    public static long ToNanoseconds(this long duration, TimeUnit unit) {
       return TimeUnitHelper.ToNanos(duration, unit);
+    }
+
+
+    /// <summary>
+    /// Convert the specified time duration in the given unit to the
+    /// milliseconds units.
+    /// </summary>
+    /// <returns></returns>
+    public static long ToMilliseconds(this long duration, TimeUnit unit) {
+      return TimeUnitHelper.ToMilliseconds(duration, unit);
+    }
+
+    /// <summary>
+    /// Convert the specified time duration in the given unit to the
+    /// seconds units.
+    /// </summary>
+    /// <returns></returns>
+    public static long ToSeconds(this long duration, TimeUnit unit) {
+      return TimeUnitHelper.ToSeconds(duration, unit);
     }
   }
 }

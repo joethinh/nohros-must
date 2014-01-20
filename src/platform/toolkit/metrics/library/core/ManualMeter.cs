@@ -21,10 +21,22 @@ namespace Nohros.Metrics
     readonly TimeUnit rate_unit_;
     readonly long start_time_;
     long count_;
-    long last_tick_;
-    long last_mark_;
-    DateTime last_updated_;
     bool ignore_old_events_;
+    long last_mark_;
+    long last_tick_;
+    DateTime last_updated_;
+
+    /// <summary>
+    /// Initialize a new instance of the <see cref="Meter"/> class by using
+    /// the given clock, the work "events" as event type and
+    /// <see cref="TimeUnit.Seconds"/> as event rate unit.
+    /// </summary>
+    /// <param name="start_time">
+    /// The starting point.
+    /// </param>
+    public ManualMeter(long start_time)
+      : this("events", TimeUnit.Seconds, start_time) {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref=" Meter"/> class by using
@@ -65,7 +77,7 @@ namespace Nohros.Metrics
     /// The number of events.
     /// </param>
     /// <param name="time">
-    /// The time when the event has occured.
+    /// The time when the event has occured in nanoseconds.
     /// </param>
     public virtual void Mark(long n, long time) {
       if (time < last_mark_) {
@@ -105,7 +117,7 @@ namespace Nohros.Metrics
     protected void TickIfNecessary(long now) {
       long age = now - last_tick_;
       if (age > kTickInterval) {
-        last_tick_ = now - age % kTickInterval;
+        last_tick_ = now - age%kTickInterval;
         long required_ticks = age/kTickInterval;
         for (long i = 0; i < required_ticks; i++) {
           Tick();

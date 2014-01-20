@@ -46,6 +46,7 @@
     <Compile Include="DottedMetricNameTests.cs" />
     <Compile Include="HistogramTests.cs" />
     <Compile Include="ListClock.cs" />
+    <Compile Include="ManualMeterTests.cs" />
     <Compile Include="MeterTests.cs" />
     <Compile Include="TimerTests.cs" />
   </ItemGroup>
@@ -63,8 +64,7 @@
       <HintPath>..\..\..\third_party\nunit\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="Telerik.JustMock, Version=2014.1.1307.2, Culture=neutral, PublicKeyToken=721b6c5bc0326b3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Telerik.JustMock">
       <HintPath>..\..\..\..\packages\JustMock.2014.1.1307.2\lib\Net35\Telerik.JustMock.dll</HintPath>
     </Reference>
     <Reference Include="Telerik.JustMock.Container">
@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\base\common\common.net40.csproj">

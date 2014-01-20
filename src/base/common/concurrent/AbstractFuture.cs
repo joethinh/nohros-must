@@ -149,7 +149,7 @@ namespace Nohros.Concurrent
         throw new ArgumentOutOfRangeException("timeout",
           StringResources.ArgumentOutOfRange_NeedNonNegNum);
       }
-      return TryGet((int) TimeUnitHelper.ToMillis(timeout, unit), out result);
+      return TryGet((int) TimeUnitHelper.ToMilliseconds(timeout, unit), out result);
     }
 
     public void AddListener(RunnableDelegate listener, IExecutor executor) {
