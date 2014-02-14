@@ -5,6 +5,7 @@ using System.Data.SqlServerCe;
 using System.Diagnostics;
 using System.IO;
 using Nohros.Data;
+using Nohros.IO;
 
 namespace Nohros.Data.SqlCe
 {
@@ -85,7 +86,13 @@ namespace Nohros.Data.SqlCe
         new SqlCeConnectionStringBuilder(
           sql_connection_provider_.ConnectionString);
 
+      // Relative database paths should be resolved using the calling
+      // assembly path as base directory.
       string db_file_name = builder.DataSource;
+      if (!IO.Path.IsPathRooted(db_file_name)) {
+        db_file_name = IO.Path.AbsoluteForCallingAssembly(db_file_name);
+      }
+
       if (!File.Exists(db_file_name)) {
         new SqlCeEngine(sql_connection_provider_.ConnectionString)
           .CreateDatabase();
