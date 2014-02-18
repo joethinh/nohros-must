@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>must.metrics</id>
-        <version>0.4.0.0</version>
+        <version>0.5.0.0</version>
         <title>Must Framework - Metrics</title>
         <authors>Nohros Inc</authors>
         <owners>Nohros Inc</owners>
@@ -19,7 +19,7 @@
         <language>en-US</language>
         <tags>csharp framework nohros security metrics codahale</tags>
     <dependencies>
-      <dependency id="must.common" version="1.6" />
+      <dependency id="must.common" version="1.9.17" />
     </dependencies>
     </metadata>
     <files>

@@ -47,7 +47,14 @@ namespace Nohros.Data.SqlCe
       }
 
       var builder = new SqlConnectionStringBuilder();
-      builder.DataSource = GetOption(kServerOption, options);
+
+      // Relative database paths should be resolved using the calling
+      // assembly path as base directory.
+      string data_source = GetOption(kServerOption, options);
+      if (!IO.Path.IsPathRooted(data_source)) {
+        data_source = IO.Path.AbsoluteForCallingAssembly(data_source);
+      }
+      builder.DataSource = data_source;
 
       string password;
       if (options.TryGetValue(kPasswordOption, out password)) {
