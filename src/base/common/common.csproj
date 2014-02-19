@@ -98,6 +98,7 @@
     <Compile Include="concurrent\IRunnableFuture.cs" />
     <Compile Include="concurrent\IThreadFactory.cs" />
     <Compile Include="concurrent\MailboxReceiveCallback.cs" />
+    <Compile Include="concurrent\NonReentrantSchedule.cs" />
     <Compile Include="concurrent\NoStateExecutorStateT.cs" />
     <Compile Include="concurrent\ExecutionList.cs" />
     <Compile Include="concurrent\Future.cs" />
@@ -403,7 +404,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
