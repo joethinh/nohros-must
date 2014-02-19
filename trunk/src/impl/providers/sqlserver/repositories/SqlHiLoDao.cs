@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Transactions;
 
 namespace Nohros.Data.SqlServer
 {
@@ -26,7 +27,11 @@ namespace Nohros.Data.SqlServer
 
     /// <inheritdoc/>
     public IHiLoRange GetNextHi(string key) {
-      return new NextHiQuery(sql_connection_provider_).Execute(key);
+      // The acquired hi should be discarded if we are inside a transaction
+      // scope and it fails.
+      using (new TransactionScope(TransactionScopeOption.Suppress)) {
+        return new NextHiQuery(sql_connection_provider_).Execute(key);
+      }
     }
   }
 }
