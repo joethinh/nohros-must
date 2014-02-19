@@ -99,6 +99,7 @@
     <Compile Include="concurrent\IRunnableFuture.cs" />
     <Compile Include="concurrent\IThreadFactory.cs" />
     <Compile Include="concurrent\MailboxReceiveCallback.cs" />
+    <Compile Include="concurrent\NonReentrantSchedule.cs" />
     <Compile Include="concurrent\NoStateExecutorStateT.cs" />
     <Compile Include="concurrent\ExecutionList.cs" />
     <Compile Include="concurrent\SameThreadExecutor.cs" />
