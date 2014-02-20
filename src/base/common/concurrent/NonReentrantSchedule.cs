@@ -85,6 +85,7 @@ namespace Nohros.Concurrent
     /// overloads returns imediatelly.
     /// </remarks>
     public WaitHandle Stop() {
+      signaler_.Set();
       return signaler_;
     }
   }
