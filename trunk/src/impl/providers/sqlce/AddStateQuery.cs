@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlServerCe;
+using System.Transactions;
 using Nohros.Data;
 using Nohros.Extensions;
 using Nohros.Logging;
@@ -19,26 +20,35 @@ namespace Nohros.Data.SqlCe
     public AddStateQuery(SqlCeConnectionProvider sql_connection_provider) {
       sql_connection_provider_ = sql_connection_provider;
       logger_ = MustLogger.ForCurrentProcess;
+      SupressTransactions = true;
     }
 
     public void Execute(string state_name, string table_name, object state) {
-      using (SqlCeConnection conn = sql_connection_provider_.CreateConnection())
-      using (var builder = new CommandBuilder(conn)) {
-        IDbCommand cmd = builder
-          .SetText(@"
+      using (
+        new TransactionScope(SupressTransactions
+          ? TransactionScopeOption.Suppress
+          : TransactionScopeOption.Required)) {
+        using (
+          SqlCeConnection conn = sql_connection_provider_.CreateConnection())
+        using (var builder = new CommandBuilder(conn)) {
+          IDbCommand cmd = builder
+            .SetText(@"
 insert into " + table_name + @"(name, state)
 values(@name, @state)")
-          .SetType(CommandType.Text)
-          .AddParameter("@name", state_name)
-          .AddParameterWithValue("@state", state)
-          .Build();
-        try {
-          conn.Open();
-          cmd.ExecuteNonQuery();
-        } catch (SqlCeException e) {
-          throw new ProviderException(e);
+            .SetType(CommandType.Text)
+            .AddParameter("@name", state_name)
+            .AddParameterWithValue("@state", state)
+            .Build();
+          try {
+            conn.Open();
+            cmd.ExecuteNonQuery();
+          } catch (SqlCeException e) {
+            throw new ProviderException(e);
+          }
         }
       }
     }
+
+    public bool SupressTransactions { get; set; }
   }
 }

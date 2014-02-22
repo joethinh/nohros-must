@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Nohros.Extensions;
 using Nohros.Providers;
 
 namespace Nohros.Data.SqlCe
@@ -11,6 +12,12 @@ namespace Nohros.Data.SqlCe
   /// </summary>
   public class SqlAppStateFactory : IProviderFactory<SqlCeAppState>
   {
+    /// <summary>
+    /// The key that should be associated with the option that caontains the
+    /// flag that indicates if transactions should be suppressed.
+    /// </summary>
+    public const string kSupressTransactions = "supressTransactions";
+
     object IProviderFactory.CreateProvider(IDictionary<string, string> options) {
       return CreateProvider(options);
     }
@@ -23,7 +30,9 @@ namespace Nohros.Data.SqlCe
       var factory = new SqlCeConnectionProviderFactory();
       var sql_connection_provider = factory
         .CreateProvider(options) as SqlCeConnectionProvider;
-      var states = new SqlCeAppState(sql_connection_provider);
+      bool supress_dtc =
+        bool.Parse(options.GetString(kSupressTransactions, "false"));
+      var states = new SqlCeAppState(sql_connection_provider, supress_dtc);
       states.Initialize();
       return states;
     }

@@ -41,13 +41,18 @@ namespace Nohros.Data.SqlCe
 
     readonly UpdateStateQuery update_state_;
 
-    public SqlCeAppState(SqlCeConnectionProvider sql_connection_provider) {
+    bool supress_dtc_;
+
+    public SqlCeAppState(SqlCeConnectionProvider sql_connection_provider,
+      bool supress_dtc = true) {
       sql_connection_provider_ = sql_connection_provider;
       update_state_ = new UpdateStateQuery(sql_connection_provider);
       get_state_ = new GetStateQuery(sql_connection_provider);
       add_state_ = new AddStateQuery(sql_connection_provider);
+      SupressTransactions = supress_dtc;
     }
 
+    /// <inheritdoc/>
     public T Get<T>(string name) {
       T state;
       if (!Get(name, out state)) {
@@ -56,6 +61,16 @@ namespace Nohros.Data.SqlCe
       return state;
     }
 
+    /// <inheritdoc/>
+    public T Get<T>(string name, T def) {
+      T state;
+      if (!Get(name, out state)) {
+        return def;
+      }
+      return state;
+    }
+
+    /// <inheritdoc/>
     public bool Get<T>(string name, out T state) {
       dynamic d = default(T);
       bool got;
@@ -63,13 +78,18 @@ namespace Nohros.Data.SqlCe
       return got;
     }
 
+    /// <inheritdoc/>
     public void Set<T>(string name, T state) {
-      ExplicitSet(name, (dynamic)state);
+      ExplicitSet(name, (dynamic) state);
     }
 
     /// <summary>
     /// Initialize the state repository.
     /// </summary>
+    /// <remarks>
+    /// The initialization process checks if the database referenced by the
+    /// associated connection string exists and created a new one if not.
+    /// </remarks>
     public void Initialize() {
       EnsureDatabase();
       var create_table = new CreateTableQuery(sql_connection_provider_);
@@ -239,6 +259,26 @@ namespace Nohros.Data.SqlCe
         update_state_.Execute(name, kStringTableName, state);
       } else {
         add_state_.Execute(name, kStringTableName, state);
+      }
+    }
+
+    /// <summary>
+    /// Gets a value indicating if transaction should be supressed.
+    /// </summary>
+    /// <remarks>
+    /// SqlCe does not fully support distributed transactions. The engine
+    /// allows only one connection to be enlisted in a transaction. The
+    /// <see cref="SupressTransactions"/> property provides a convenient
+    /// way to use more than one connection inside a single transaction by
+    /// creating an isolated <see cref="TransactionScopes"/>.
+    /// </remarks>
+    public bool SupressTransactions {
+      get { return supress_dtc_; }
+      set {
+        supress_dtc_ = value;
+        update_state_.SupressTransactions = value;
+        get_state_.SupressTransactions = value;
+        add_state_.SupressTransactions = value;
       }
     }
   }

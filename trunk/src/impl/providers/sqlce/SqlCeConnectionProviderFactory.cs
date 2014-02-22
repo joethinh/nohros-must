@@ -60,6 +60,7 @@ namespace Nohros.Data.SqlCe
       if (options.TryGetValue(kPasswordOption, out password)) {
         builder.Password = password;
       }
+
       return new SqlCeConnectionProvider(builder.ConnectionString);
     }
 
