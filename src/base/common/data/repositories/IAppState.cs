@@ -28,6 +28,30 @@ namespace Nohros.Data
     T Get<T>(string name);
 
     /// <summary>
+    /// Returns the state associated with the key <paramref name="name"/> or
+    /// the given <paramref name="def"/> if a <paramref name="name"/> state is
+    /// not found.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the state to get.
+    /// </param>
+    /// <param name="def">
+    /// The value to be returned if <paramref name="name"/> state is not found.
+    /// </param>
+    /// <returns>
+    /// The value of the state associated with the key <paramref name="name"/>.
+    /// </returns>
+    /// <exception cref="NotSupportedException">
+    /// The type <typeparamref name="T"/> is not supported by the local
+    /// database.
+    /// <typeparamref name="T"/>.
+    /// <exception cref="NoResultException">
+    /// There is no state associated with the key <paramref name="name"/>.
+    /// </exception>
+    /// </exception>
+    T Get<T>(string name, T def);
+
+    /// <summary>
     /// Gets the state associated with the key <paramref name="name"/>.
     /// </summary>
     /// <param name="name">
