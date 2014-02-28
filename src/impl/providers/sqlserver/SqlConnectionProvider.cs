@@ -17,7 +17,6 @@ namespace Nohros.Data.SqlServer
     readonly string connection_string_;
     readonly string schema_;
 
-    #region .ctor
     /// <summary>
     /// Initializes a new instance of the
     /// <see cref="SqlConnectionProvider"/> class using the specified
@@ -36,7 +35,6 @@ namespace Nohros.Data.SqlServer
       connection_string_ = connection_string;
       schema_ = schema;
     }
-    #endregion
 
     /// <inheritdoc/>
     IDbConnection IConnectionProvider.CreateConnection() {
@@ -66,6 +64,16 @@ namespace Nohros.Data.SqlServer
     /// </remarks>
     public SqlConnection CreateConnection() {
       return new SqlConnection(connection_string_);
+    }
+
+    /// <summary>
+    /// Gets the associated connection string.
+    /// </summary>
+    /// <value>
+    /// The string that is used to connect to a SQLCE database.
+    /// </value>
+    public string ConnectionString {
+      get { return connection_string_; }
     }
   }
 }

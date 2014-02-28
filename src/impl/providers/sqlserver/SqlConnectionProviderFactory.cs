@@ -53,13 +53,6 @@ namespace Nohros.Data.SqlServer
     /// </summary>
     public const string kInitialCatalogOption = "database";
 
-    /// <summary>
-    /// Constructor implied by the interface
-    /// <see cref="IConnectionProviderFactory"/>.
-    /// </summary>
-    public SqlConnectionProviderFactory() {
-    }
-
     /// <inheritdoc/>
     public IConnectionProvider CreateProvider(
       IDictionary<string, string> options) {
