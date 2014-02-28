@@ -50,6 +50,12 @@ namespace Nohros.Data.SqlCe
       return new SqlCeConnection(connection_string_);
     }
 
+    /// <summary>
+    /// Gets the associated connection string.
+    /// </summary>
+    /// <value>
+    /// The string that is used to connect to a SQLCE database.
+    /// </value>
     public string ConnectionString {
       get { return connection_string_; }
     }
