@@ -14,7 +14,7 @@
         <language>en-US</language>
         <tags>csharp framework nohros log4net logging</tags>
         <dependencies>
-            <dependency id="must.common" version="1.9.5" />
+            <dependency id="must.common" version="1.9.18" />
         </dependencies>
     </metadata>
     <files>
