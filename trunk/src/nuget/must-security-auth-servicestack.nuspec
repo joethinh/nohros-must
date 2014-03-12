@@ -23,7 +23,7 @@
         <tags>csharp framework nohros security auth</tags>
         <dependencies>
 			<dependency id="must.security.auth.web" version="0.0.4.0" />
-			<dependency id="ServiceStack" version="[3,4)" />
+			<dependency id="ServiceStack" version="[3.9.71]" />
         </dependencies>
     </metadata>
     <files>
