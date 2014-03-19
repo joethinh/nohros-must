@@ -2,6 +2,7 @@
 using System.Web;
 using ServiceStack.Common.Web;
 using ServiceStack.ServiceInterface;
+using Nohros.ServiceStack;
 
 namespace Nohros.Security.Auth.ServiceStack
 {
