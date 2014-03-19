@@ -89,6 +89,7 @@
     <Compile Include="GenericTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="time\DateRangeTests.cs" />
     <Compile Include="type\collection\AndersonTreeTests.cs" />
     <Compile Include="type\collection\AbstractRingQueueTests.cs" />
     <Compile Include="type\collection\RingQueueTests.cs" />
