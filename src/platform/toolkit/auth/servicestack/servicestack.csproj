@@ -84,11 +84,11 @@
   <ItemGroup>
     <ProjectReference Include="..\auth\auth.csproj">
       <Project>{9913BB99-D7DE-4F9B-9DB2-42F039209C27}</Project>
-      <Name>auth %28%28auth%29\auth%29</Name>
+      <Name>auth</Name>
     </ProjectReference>
-    <ProjectReference Include="..\web\web.csproj">
+    <ProjectReference Include="..\web\auth.web.csproj">
       <Project>{60D0035D-3AA2-45A8-A872-C2050C36EBFC}</Project>
-      <Name>web</Name>
+      <Name>auth.web</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
