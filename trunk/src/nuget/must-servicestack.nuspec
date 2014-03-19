@@ -2,8 +2,8 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>must.servicestack</id>
-        <version>0.0.4.0</version>
-        <title>Must Framework: Auth for Web/ServiceStack</title>
+        <version>0.0.5.0</version>
+        <title>Must Framework: ServiceStack extends</title>
         <authors>Nohros Inc</authors>
         <owners>Nohros Inc</owners>
         <projectUrl>http://code.google.com/p/nohros-must</projectUrl>
@@ -19,6 +19,7 @@
         <tags>csharp framework nohros security auth</tags>
         <dependencies>
 			<dependency id="ServiceStack" version="[3.9.71]" />
+			<dependency id="must.common" version="[1.10.0,)" />
         </dependencies>
     </metadata>
     <files>

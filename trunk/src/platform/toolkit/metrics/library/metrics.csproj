@@ -67,10 +67,11 @@
     <Compile Include="core\ITimed.cs" />
     <Compile Include="core\ITimer.cs" />
     <Compile Include="core\ManualMeter.cs" />
-    <Compile Include="core\MetricPredicate.cs" />
-    <Compile Include="core\MetricReportCallback.cs" />
-    <Compile Include="core\MetricValue.cs" />
-    <Compile Include="core\MetricValueType.cs" />
+    <Compile Include="reporting\MetricPredicate.cs" />
+    <Compile Include="reporting\MetricReportCallback.cs" />
+    <Compile Include="reporting\MetricValueSet.cs" />
+    <Compile Include="reporting\MetricValue.cs" />
+    <Compile Include="reporting\MetricValueType.cs" />
     <Compile Include="core\UniformHistogram.cs" />
     <Compile Include="core\Unit.cs" />
     <Compile Include="MetricAddedEventHandler.cs" />
