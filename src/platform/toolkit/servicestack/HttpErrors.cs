@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using ServiceStack.Common.Web;
+using Nohros.ServiceStack;
 
 namespace Nohros.Security.Auth.ServiceStack
 {
