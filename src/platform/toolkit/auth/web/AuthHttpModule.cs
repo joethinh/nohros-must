@@ -30,10 +30,6 @@ namespace Nohros.Security.Auth
       var app = (HttpApplication) source;
       HttpContext context = app.Context;
 
-      if (context.Items.Contains(kDebugKey)) {
-        Debugger.Break();
-      }
-
       FormsAuthenticationTicket ticket;
       // If the request does not have an authentication ticket associated
       // the user is not authenticated.

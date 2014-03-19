@@ -20,11 +20,61 @@ namespace Nohros.Security.Auth
     }
     #endregion
 
+    /// <summary>
+    /// Authenticates the given subject using the associated
+    /// <see cref="LoginContext"/> and if the login succeed, creates and
+    /// attach a cookie in the response, containg the token associated with
+    /// the authenticated subject.
+    /// </summary>
+    /// <param name="subject">
+    /// The subject to be authenticated.
+    /// </param>
+    /// <param name="callback">
+    /// The <see cref="IAuthCallbackHandler"/> that should be called to
+    /// retrieve the <paramref name="subject"/> authentication information.
+    /// </param>
+    /// <remarks>
+    /// The token of the authenticated subject is associated with the key
+    /// <see cref="kTokenKey"/> on the <see cref="HttpContext.Items"/>
+    /// collection of the <see cref="HttpContext.Current"/> object and the
+    /// authenticated token is added to the associated
+    /// <see cref="ICacheProvider"/> using the authentication token as a key.
+    /// </remarks>
     public override AuthenticationToken Authenticate(ISubject subject,
       IAuthCallbackHandler callback) {
       AuthenticationToken token;
       Authenticate(subject, callback, HttpContext.Current, out token);
       return token;
+    }
+
+    /// <summary>
+    /// Authenticates the given subject using the associated
+    /// <see cref="LoginContext"/> and if the login succeed, creates and
+    /// attach a cookie in the response, containg the token associated with
+    /// the authenticated subject.
+    /// </summary>
+    /// <param name="subject">
+    /// The subject to be authenticated.
+    /// </param>
+    /// <param name="callback">
+    /// The <see cref="IAuthCallbackHandler"/> that should be called to
+    /// retrieve the <paramref name="subject"/> authentication information.
+    /// </param>
+    /// <param name="context">
+    /// The <see cref="HttpContext"/> object that should be used to store
+    /// the authenticated subject.
+    /// </param>
+    /// <remarks>
+    /// The token of the authenticated subject is associated with the key
+    /// <see cref="kTokenKey"/> on the <see cref="HttpContext.Items"/>
+    /// collection of the <paramref name="context"/> object and the
+    /// authenticated token is added to the associated
+    /// <see cref="ICacheProvider"/> using the authentication token as a key.
+    /// </remarks>
+    public bool Authenticate(ISubject subject, IAuthCallbackHandler callback,
+      HttpContext context) {
+      AuthenticationToken token;
+      return Authenticate(subject, callback, context, out token);
     }
 
     bool Authenticate(ISubject subject, IAuthCallbackHandler callback,
@@ -46,15 +96,9 @@ namespace Nohros.Security.Auth
 
       var cookie = new HttpCookie(kCookieName,
         e_ticket.AsBase64(Encoding.Default));
-      context.Items[kTokenKey] = token;
+      context.Items[kTokenKey] = token.Token;
       context.Response.SetCookie(cookie);
       return true;
-    }
-
-    public bool Authenticate(ISubject subject, IAuthCallbackHandler callback,
-      HttpContext context) {
-      AuthenticationToken token;
-      return Authenticate(subject, callback, context, out token);
     }
 
     /// <summary>
