@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web;
+using Nohros.Security.Auth;
 using ServiceStack.Common.Web;
 using ServiceStack.ServiceInterface;
 
