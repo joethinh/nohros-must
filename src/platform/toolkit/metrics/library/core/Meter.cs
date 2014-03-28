@@ -108,9 +108,9 @@ namespace Nohros.Metrics
       callback(Report(), context);
     }
 
-    public override MetricValue[] Report() {
+    protected override MetricValueSet Report() {
       string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
-      return new[] {
+      var values =new[] {
         new MetricValue(MetricValueType.Count, Count, EventType),
         new MetricValue(MetricValueType.MeanRate, MeanRate, rate_unit),
         new MetricValue(MetricValueType.OneMinuteRate, OneMinuteRate, rate_unit)
@@ -120,6 +120,7 @@ namespace Nohros.Metrics
         new MetricValue(MetricValueType.FifteenMinuteRate, FifteenMinuteRate,
           rate_unit)
       };
+      return new MetricValueSet(this, values);
     }
   }
 }

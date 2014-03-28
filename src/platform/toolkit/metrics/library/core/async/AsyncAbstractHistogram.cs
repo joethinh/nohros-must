@@ -60,9 +60,9 @@ namespace Nohros.Metrics
 
     public abstract DateTime LastUpdated { get; }
 
-    protected MetricValue[] Report() {
+    protected MetricValueSet Report() {
       Snapshot snapshot = histogram_.Snapshot;
-      return new[] {
+      var values= new[] {
         new MetricValue(MetricValueType.Min, histogram_.Min),
         new MetricValue(MetricValueType.Max, histogram_.Max),
         new MetricValue(MetricValueType.Mean, histogram_.Mean),
@@ -74,6 +74,7 @@ namespace Nohros.Metrics
         new MetricValue(MetricValueType.Percentile99, snapshot.Percentile99),
         new MetricValue(MetricValueType.Percentile999, snapshot.Percentile999)
       };
+      return new MetricValueSet(this, values);
     }
   }
 }

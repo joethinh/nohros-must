@@ -131,9 +131,9 @@ namespace Nohros.Metrics
     }
 
     /// <inheritdoc/>
-    public virtual MetricValue[] Report() {
+    protected virtual MetricValueSet Report() {
       string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
-      return new[] {
+      var values = new[] {
         new MetricValue((int) MetricValueType.Count, Count, EventType),
         new MetricValue((int) MetricValueType.OneMinuteRate, OneMinuteRate,
           rate_unit),
@@ -142,6 +142,7 @@ namespace Nohros.Metrics
         new MetricValue((int) MetricValueType.FifteenMinuteRate,
           FifteenMinuteRate, rate_unit)
       };
+      return new MetricValueSet(this, values);
     }
 
     /// <summary>

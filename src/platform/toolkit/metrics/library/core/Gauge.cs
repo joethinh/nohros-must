@@ -19,9 +19,6 @@ namespace Nohros.Metrics
     /// <inheritdoc/>
     public abstract void Report<V>(MetricReportCallback<V> callback, V context);
 
-    /// <inheritdoc/>
-    public abstract DateTime LastUpdated { get; }
-
     /// <summary>
     /// Gets the metric's current value.
     /// </summary>

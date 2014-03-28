@@ -94,9 +94,9 @@ namespace Nohros.Metrics
       }
     }
 
-    protected MetricValue[] Report() {
+    protected virtual MetricValueSet Report() {
       Snapshot snapshot = Snapshot;
-      return new[] {
+      var values = new[] {
         new MetricValue(MetricValueType.Min, Min),
         new MetricValue(MetricValueType.Max, Max),
         new MetricValue(MetricValueType.Mean, Mean),
@@ -108,6 +108,7 @@ namespace Nohros.Metrics
         new MetricValue(MetricValueType.Percentile99, snapshot.Percentile99),
         new MetricValue(MetricValueType.Percentile999, snapshot.Percentile999)
       };
+      return new MetricValueSet(this, values);
     }
 
     double Variance {

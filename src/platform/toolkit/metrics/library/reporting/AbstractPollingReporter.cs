@@ -52,7 +52,7 @@ namespace Nohros.Metrics.Reporting
     /// </param>
     public virtual void Start(long period, TimeUnit unit) {
       timer_ = new System.Threading.Timer(obj => Run(), null, 0,
-        TimeUnitHelper.ToMillis(period, unit));
+        TimeUnitHelper.ToMilliseconds(period, unit));
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ namespace Nohros.Metrics.Reporting
     public virtual void Start(long period, TimeUnit unit,
       MetricPredicate predicate) {
       timer_ = new System.Threading.Timer(obj => Run((MetricPredicate) obj),
-        predicate, 0, TimeUnitHelper.ToMillis(period, unit));
+        predicate, 0, TimeUnitHelper.ToMilliseconds(period, unit));
     }
 
     /// <summary>

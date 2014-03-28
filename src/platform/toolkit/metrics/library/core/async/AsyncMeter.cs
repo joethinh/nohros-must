@@ -213,15 +213,16 @@ namespace Nohros.Metrics
       return rate_per_ns*TimeUnitHelper.ToNanos(1, rate_unit_);
     }
 
-    MetricValue[] Report(long timestamp) {
+    protected virtual MetricValueSet Report(long timestamp) {
       string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
-      return new[] {
+      var values = new[] {
         new MetricValue(MetricValueType.Count, count_, EventType),
         new MetricValue(MetricValueType.MeanRate, GetMeanRate(timestamp), rate_unit),
         new MetricValue(MetricValueType.OneMinuteRate, OneMinuteRate, rate_unit),
         new MetricValue(MetricValueType.FiveMinuteRate, FiveMinuteRate, rate_unit),
         new MetricValue(MetricValueType.FifteenMinuteRate, FifteenMinuteRate, rate_unit)
       };
+      return new MetricValueSet(this, values);
     }
 
     double FifteenMinuteRate {
