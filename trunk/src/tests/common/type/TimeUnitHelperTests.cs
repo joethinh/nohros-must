@@ -8,20 +8,20 @@ namespace Nohros.Common
     [Test]
     public void ShouldConvertToUnixEpoch() {
       var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-      var epoch = TimeUnitHelper.ToUnixTime(date);
+      var epoch = TimeUnitHelper.ToUnixEpoch(date);
       Assert.AreEqual(0, epoch);
 
       date = new DateTime(1970, 1, 1, 23, 0, 0, 0, DateTimeKind.Utc);
-      epoch = TimeUnitHelper.ToUnixTime(date);
+      epoch = TimeUnitHelper.ToUnixEpoch(date);
       Assert.AreEqual(23*60*60, epoch);
     }
 
     [Test]
     public void ShouldConvertToMilliseconds() {
-      var millis = TimeUnitHelper.ToMillis(10, TimeUnit.Seconds);
+      var millis = TimeUnitHelper.ToMilliseconds(10, TimeUnit.Seconds);
       Assert.That(millis, Is.EqualTo(10*1000));
 
-      var minutes = TimeUnitHelper.ToMillis(10, TimeUnit.Minutes);
+      var minutes = TimeUnitHelper.ToMilliseconds(10, TimeUnit.Minutes);
       Assert.That(minutes, Is.EqualTo(10*60*1000));
     }
 

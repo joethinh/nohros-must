@@ -12,9 +12,7 @@ namespace Nohros.Metrics
   public class CallableGauge<T> : Gauge<T>
   {
     readonly CallableDelegate<T> callable_;
-    DateTime last_updated_;
 
-    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="CallableGauge{T}"/>
     /// by using the specified <see cref="CallableDelegate{T}"/>.
@@ -25,27 +23,23 @@ namespace Nohros.Metrics
     /// </param>
     public CallableGauge(CallableDelegate<T> callable) {
       callable_ = callable;
-      last_updated_ = DateTime.Now;
     }
-    #endregion
 
     public override void Report<V>(MetricReportCallback<V> callback, V context) {
+      double gauge;
       try {
-        callback(new[] {new MetricValue((int)MetricValueType.Value,
-          Convert.ToDouble(Value))}, context);
+        gauge = Convert.ToDouble(Value);
       } catch (InvalidCastException e) {
-        callback(new[] {new MetricValue(MetricValueType.Value, 0.0)}, context);
+        gauge = 0.0;
       }
+      var value = new MetricValue(MetricValueType.Value, gauge);
+      var set = new MetricValueSet(this, new[] {value});
+      callback(set, context);
     }
 
     /// <inheritdoc/>
     public override T Value {
       get { return callable_(); }
-    }
-
-    /// <inheritdoc/>
-    public override DateTime LastUpdated {
-      get { return last_updated_; }
     }
   }
 }

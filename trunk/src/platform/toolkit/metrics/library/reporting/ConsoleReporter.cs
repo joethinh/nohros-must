@@ -26,7 +26,7 @@ namespace Nohros.Metrics.Reporting
       registry.Report(Report, now);
     }
 
-    void Report(KeyValuePair<string, MetricValue[]> metrics,
+    void Report(KeyValuePair<string, MetricValueSet> metrics,
       DateTime timestamp) {
       string name = metrics.Key;
       foreach (MetricValue mtc in metrics.Value) {

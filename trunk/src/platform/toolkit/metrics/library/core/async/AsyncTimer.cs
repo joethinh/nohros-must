@@ -160,11 +160,11 @@ namespace Nohros.Metrics
       return new TimerContext(this, clock_);
     }
 
-    protected MetricValue[] Report(long timestamp) {
+    protected virtual MetricValueSet Report(long timestamp) {
       Snapshot snapshot = histogram_.Snapshot;
       string duration_unit = UnitHelper.FromTimeUnit(duration_unit_);
       string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
-      return new[] {
+      var values = new[] {
         new MetricValue(MetricValueType.Min, ConvertFromNs(histogram_.Min),duration_unit),
         new MetricValue(MetricValueType.Max, ConvertFromNs(histogram_.Max),duration_unit),
         new MetricValue(MetricValueType.Mean, ConvertFromNs(histogram_.Mean),duration_unit),
@@ -181,6 +181,7 @@ namespace Nohros.Metrics
         new MetricValue(MetricValueType.FiveMinuteRate, meter_.FiveMinuteRate,rate_unit),
         new MetricValue(MetricValueType.FifteenMinuteRate,meter_.FifteenMinuteRate, rate_unit)
       };
+      return new MetricValueSet(this, values);
     }
 
     void Run(RunnableDelegate runnable) {

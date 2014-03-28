@@ -26,7 +26,7 @@ namespace Nohros.Metrics
       foreach (KeyValuePair<string, IMetric> metric in metrics_) {
         var name = metric.Key;
         metric.Value.Report((metrics, ctx) => {
-          var pair = new KeyValuePair<string, MetricValue[]>(name, metrics);
+          var pair = new KeyValuePair<string, MetricValueSet>(name, metrics);
           callback(pair, ctx);
         }, context);
       }
@@ -39,7 +39,7 @@ namespace Nohros.Metrics
         var name = metric.Key;
         if (predicate(name, metric.Value)) {
           metric.Value.Report((metrics, ctx) => {
-            var pair = new KeyValuePair<string, MetricValue[]>(name, metrics);
+            var pair = new KeyValuePair<string, MetricValueSet>(name, metrics);
             callback(pair, ctx);
           }, context);
         }
