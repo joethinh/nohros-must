@@ -115,7 +115,8 @@ namespace Nohros.Extensions
     /// <paramref name="key"/> is found and is convertible to an 32-bit integer;
     /// otherwise, <c>false</c>
     /// </returns>
-    public static bool TryGetInteger<T>(this IDictionary<string, string> options,
+    public static bool TryGetInteger<T>(
+      this IDictionary<string, string> options,
       string key, out int value) {
       string option;
       if (options.TryGetValue(key, out option)) {
@@ -221,6 +222,70 @@ namespace Nohros.Extensions
         }
       }
       return default_value;
+    }
+
+    /// <summary>
+    /// Gets the string value associated with the key
+    /// <paramref name="key"/> and try to convert it to its boolean
+    /// equivalent.
+    /// </summary>
+    /// <param name="options">
+    /// A <see cref="IDictionary{TKey,TValue}"/> to get the value from.
+    /// </param>
+    /// <param name="key">
+    /// The key that is associated with the value to get.
+    /// </param>
+    /// <param name="value">
+    /// When this method returns contains the value associated with the key
+    /// <paramref name="key"/> converted to a boolean - or- the default
+    /// value for the bool type if the key is not found or cannot be
+    /// converted to an boolean.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the value associated with the key
+    /// <paramref name="key"/> is found and is convertible to an boolean;
+    /// otherwise, <c>false</c>
+    /// </returns>
+    public static bool TryGetBoolean(this IDictionary<string, string> options,
+      string key, out bool value) {
+      string option;
+      if (options.TryGetValue(key, out option)) {
+        if (bool.TryParse(option, out value)) {
+          return true;
+        }
+      }
+      value = default(bool);
+      return false;
+    }
+
+    /// <summary>
+    /// Gets the string value associated with the key
+    /// <paramref name="key"/> and try to convert it to its boolean equivalent.
+    /// </summary>
+    /// <param name="options">
+    /// A <see cref="IDictionary{TKey,TValue}"/> to get the value from.
+    /// </param>
+    /// <param name="key">
+    /// The key that is associated with the value to get.
+    /// </param>
+    /// <param name="default">
+    /// A boolean that will be returned when the key
+    /// <paramref name="key"/> is not found.
+    /// </param>
+    /// <returns>
+    /// The value associated with the key <paramref name="key"/> or
+    /// <paramref name="default"/> if the key was not found.
+    /// </returns>
+    public static bool GetLong(this IDictionary<string, string> options,
+      string key, bool @default) {
+      string option;
+      if (options.TryGetValue(key, out option)) {
+        bool i;
+        if (bool.TryParse(option, out i)) {
+          return i;
+        }
+      }
+      return @default;
     }
 
     /// <summary>
