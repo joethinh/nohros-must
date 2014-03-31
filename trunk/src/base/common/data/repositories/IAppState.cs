@@ -87,66 +87,57 @@ namespace Nohros.Data
     void Set<T>(string name, T state);
 
     /// <summary>
-    /// Sets the values of the state associated with the key
-    /// <paramref name="name"/> if the current value is greater than
-    /// <see cref="comparand"/> in an atomic operation.
+    /// Sets ,in an atomic operation., the values of the state associated
+    /// with the key <paramref name="name"/> if the current value is greater
+    /// than given state
     /// </summary>
     /// <param name="name">
     /// The name of the state to set.
     /// </param>
     /// <param name="state">
     /// The value of the state to set.
-    /// </param>
-    /// <param name="comparand">
-    /// The value that should be lesser than the current state value.
     /// </param>
     /// <exception cref="NotSupportedException">
     /// The local database does not support the type <see cref="int"/>
     /// </exception>
-    void SetIfGreaterThan(string name, int state, int comparand);
+    void SetIfGreaterThan(string name, int state);
 
     /// <summary>
-    /// Sets the values of the state associated with the key
-    /// <paramref name="name"/> if the current value is greater than
-    /// <see cref="comparand"/> in an atomic operation.
+    /// Sets ,in an atomic operation., the values of the state associated
+    /// with the key <paramref name="name"/> if the current value is greater
+    /// than given state
     /// </summary>
     /// <param name="name">
     /// The name of the state to set.
     /// </param>
     /// <param name="state">
     /// The value of the state to set.
-    /// </param>
-    /// <param name="comparand">
-    /// The value that should be lesser than the current state value.
     /// </param>
     /// <exception cref="NotSupportedException">
     /// The local database does not support the type <see cref="long"/>
     /// </exception>
-    void SetIfGreaterThan(string name, long state, long comparand);
+    void SetIfGreaterThan(string name, long state);
 
     /// <summary>
-    /// Sets the values of the state associated with the key
-    /// <paramref name="name"/> if the current value is lesser than
-    /// <see cref="comparand"/> in an atomic operation.
+    /// Sets ,in an atomic operation., the values of the state associated
+    /// with the key <paramref name="name"/> if the current value is less
+    /// than given state
     /// </summary>
     /// <param name="name">
     /// The name of the state to set.
     /// </param>
     /// <param name="state">
     /// The value of the state to set.
-    /// </param>
-    /// <param name="comparand">
-    /// The value that should be lesser than the current state value.
     /// </param>
     /// <exception cref="NotSupportedException">
     /// The local database does not support the type <see cref="int"/>
     /// </exception>
-    void SetIfLessThan(string name, int state, int comparand);
+    void SetIfLessThan(string name, int state);
 
     /// <summary>
-    /// Sets the values of the state associated with the key
-    /// <paramref name="name"/> if the current value is lesser than
-    /// <see cref="comparand"/> in an atomic operation.
+    /// Sets ,in an atomic operation., the values of the state associated
+    /// with the key <paramref name="name"/> if the current value is less
+    /// than given state
     /// </summary>
     /// <param name="name">
     /// The name of the state to set.
@@ -154,12 +145,9 @@ namespace Nohros.Data
     /// <param name="state">
     /// The value of the state to set.
     /// </param>
-    /// <param name="comparand">
-    /// The value that should be lesser than the current state value.
-    /// </param>
     /// <exception cref="NotSupportedException">
     /// The local database does not support the type <see cref="long"/>
     /// </exception>
-    void SetIfLessThan(string name, long state, long comparand);
+    void SetIfLessThan(string name, long state);
   }
 }

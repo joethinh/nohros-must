@@ -37,7 +37,7 @@ namespace Nohros.Data.SqlCe
         IDbCommand cmd = builder
           .SetText(@"
 create table " + table_name + @"(
-  name nvarchar(1024), state " + state_type + ")")
+  name nvarchar(1024) unique, state " + state_type + ")")
           .SetType(CommandType.Text)
           .Build();
         try {
