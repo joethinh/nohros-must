@@ -6,7 +6,7 @@ using Nohros.Data.SqlServer;
 using Nohros.Logging;
 using Nohros.Resources;
 
-namespace Nohros.Data.SqlCe
+namespace Nohros.Data.SqlServer
 {
   internal class UpdateStateQuery
   {
@@ -21,7 +21,7 @@ namespace Nohros.Data.SqlCe
       SupressTransactions = true;
     }
 
-    public void Execute(string name, string table_name, object state) {
+    public bool Execute(string name, string table_name, object state) {
       using (
         new TransactionScope(SupressTransactions
           ? TransactionScopeOption.Suppress
@@ -40,7 +40,7 @@ where name = @name")
             .Build();
           try {
             conn.Open();
-            cmd.ExecuteNonQuery();
+            return cmd.ExecuteNonQuery() > 0;
           } catch (SqlException e) {
             throw new ProviderException(e);
           }

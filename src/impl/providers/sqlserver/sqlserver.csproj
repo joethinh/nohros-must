@@ -53,10 +53,13 @@
     <Compile Include="repositories\SqlDaoFactory.cs" />
     <Compile Include="repositories\SqlThreadSafeHiLoGenerator.cs" />
     <Compile Include="repositories\StateByNameQuery.cs" />
+    <Compile Include="SetIfGreaterThanQuery.cs" />
+    <Compile Include="SetIfLessThanQuery.cs" />
     <Compile Include="SqlAppStateFactory.cs" />
     <Compile Include="SqlAppState.cs" />
     <Compile Include="SqlConnectionProvider.cs" />
     <Compile Include="SqlConnectionProviderFactory.cs" />
+    <Compile Include="exceptions\SqlExceptionExtensions.cs" />
     <Compile Include="UpdateStateQuery.cs" />
   </ItemGroup>
   <ItemGroup>

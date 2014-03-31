@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlServerCe;
 using Nohros.Data;
+using Nohros.Data.SqlCe.Extensions;
 using Nohros.Logging;
 using Nohros.Resources;
 using Nohros.Extensions;
@@ -10,34 +11,40 @@ using Nohros.Resources;
 
 namespace Nohros.Data.SqlCe
 {
-  internal class TableExistsQuery
+  internal class CreateTableQuery
   {
-    const string kClassName = "Nohros.Data.SqlServer.TableExistsQuery";
+    const string kClassName = "Nohros.Data.SqlServer.CreateTableQuery";
 
     readonly MustLogger logger_ = MustLogger.ForCurrentProcess;
     readonly SqlCeConnectionProvider sql_connection_provider_;
+    readonly TableExistsQuery table_exists_;
 
-    public TableExistsQuery(SqlCeConnectionProvider sql_connection_provider) {
+    public CreateTableQuery(SqlCeConnectionProvider sql_connection_provider) {
       sql_connection_provider_ = sql_connection_provider;
       logger_ = MustLogger.ForCurrentProcess;
+      table_exists_ = new TableExistsQuery(sql_connection_provider);
     }
 
-    public bool Execute(string table_name) {
+    public void Execute(string table_name, string state_type) {
+      if (!table_exists_.Execute(table_name)) {
+        ExecuteInternal(table_name, state_type);
+      }
+    }
+
+    void ExecuteInternal(string table_name, string state_type) {
       using (SqlCeConnection conn = sql_connection_provider_.CreateConnection())
       using (var builder = new CommandBuilder(conn)) {
         IDbCommand cmd = builder
           .SetText(@"
-select table_name
-from information_schema.tables
-where table_name = @name")
+create table " + table_name + @"(
+  name nvarchar(1024), state " + state_type + ")")
           .SetType(CommandType.Text)
-          .AddParameter("@name", table_name)
           .Build();
         try {
           conn.Open();
-          return cmd.ExecuteScalar() != null;
+          cmd.ExecuteNonQuery();
         } catch (SqlCeException e) {
-          throw new ProviderException(e);
+          e.AsProviderException();
         }
       }
     }

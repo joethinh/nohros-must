@@ -58,6 +58,9 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>$(SolutionDir)..\docs\nohros.xml</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -202,6 +205,7 @@
     <Compile Include="exception\NoUniqueResultException.cs" />
     <Compile Include="exception\ReferentialIntegrityException.cs" />
     <Compile Include="exception\RepositoryException.cs" />
+    <Compile Include="exception\UniqueConstraintViolationException.cs" />
     <Compile Include="extensions\Configurations.cs" />
     <Compile Include="extensions\TimeUnits.cs" />
     <Compile Include="extensions\ProviderOptions.cs" />
@@ -415,7 +419,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

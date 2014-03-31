@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Nohros.Data.SqlCe;
 using Nohros.Extensions;
 using Nohros.Providers;
 

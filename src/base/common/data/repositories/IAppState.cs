@@ -85,5 +85,81 @@ namespace Nohros.Data
     /// The local database does not support the type <typeparamref name="T"/>.
     /// </exception>
     void Set<T>(string name, T state);
+
+    /// <summary>
+    /// Sets the values of the state associated with the key
+    /// <paramref name="name"/> if the current value is greater than
+    /// <see cref="comparand"/> in an atomic operation.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the state to set.
+    /// </param>
+    /// <param name="state">
+    /// The value of the state to set.
+    /// </param>
+    /// <param name="comparand">
+    /// The value that should be lesser than the current state value.
+    /// </param>
+    /// <exception cref="NotSupportedException">
+    /// The local database does not support the type <see cref="int"/>
+    /// </exception>
+    void SetIfGreaterThan(string name, int state, int comparand);
+
+    /// <summary>
+    /// Sets the values of the state associated with the key
+    /// <paramref name="name"/> if the current value is greater than
+    /// <see cref="comparand"/> in an atomic operation.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the state to set.
+    /// </param>
+    /// <param name="state">
+    /// The value of the state to set.
+    /// </param>
+    /// <param name="comparand">
+    /// The value that should be lesser than the current state value.
+    /// </param>
+    /// <exception cref="NotSupportedException">
+    /// The local database does not support the type <see cref="long"/>
+    /// </exception>
+    void SetIfGreaterThan(string name, long state, long comparand);
+
+    /// <summary>
+    /// Sets the values of the state associated with the key
+    /// <paramref name="name"/> if the current value is lesser than
+    /// <see cref="comparand"/> in an atomic operation.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the state to set.
+    /// </param>
+    /// <param name="state">
+    /// The value of the state to set.
+    /// </param>
+    /// <param name="comparand">
+    /// The value that should be lesser than the current state value.
+    /// </param>
+    /// <exception cref="NotSupportedException">
+    /// The local database does not support the type <see cref="int"/>
+    /// </exception>
+    void SetIfLessThan(string name, int state, int comparand);
+
+    /// <summary>
+    /// Sets the values of the state associated with the key
+    /// <paramref name="name"/> if the current value is lesser than
+    /// <see cref="comparand"/> in an atomic operation.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the state to set.
+    /// </param>
+    /// <param name="state">
+    /// The value of the state to set.
+    /// </param>
+    /// <param name="comparand">
+    /// The value that should be lesser than the current state value.
+    /// </param>
+    /// <exception cref="NotSupportedException">
+    /// The local database does not support the type <see cref="long"/>
+    /// </exception>
+    void SetIfLessThan(string name, long state, long comparand);
   }
 }
