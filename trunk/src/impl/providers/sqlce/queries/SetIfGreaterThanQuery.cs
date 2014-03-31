@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Data.SqlServerCe;
 using System.Transactions;
 using Nohros.Data;
+using Nohros.Data.SqlCe.Extensions;
 using Nohros.Logging;
 using Nohros.Resources;
 using Nohros.Extensions;
@@ -11,20 +13,29 @@ using Nohros.Resources;
 
 namespace Nohros.Data.SqlCe
 {
-  public class GetStateQuery
+  public class SetIfGreaterThanQuery
   {
-    const string kClassName = "Nohros.Data.SqlServer.GetStateQuery";
+    const string kClassName = "Nohros.Data.SqlCe.SetIfGreaterThanQuery";
 
     readonly MustLogger logger_ = MustLogger.ForCurrentProcess;
     readonly SqlCeConnectionProvider sql_connection_provider_;
 
-    public GetStateQuery(SqlCeConnectionProvider sql_connection_provider) {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SetIfGreaterThanQuery"/>
+    /// using the given <param ref="sql_connection_provider" />
+    /// </summary>
+    /// <param name="sql_connection_provider">
+    /// A <see cref="SqlCeConnectionProvider"/> object that can be used to
+    /// create connections to the data provider.
+    /// </param>
+    public SetIfGreaterThanQuery(SqlCeConnectionProvider sql_connection_provider) {
       sql_connection_provider_ = sql_connection_provider;
       logger_ = MustLogger.ForCurrentProcess;
       SupressTransactions = true;
     }
 
-    public bool Execute<T>(string state_name, string table_name, out T state) {
+    public bool Execute(string name, string table_name, long state,
+      long comparand) {
       using (
         new TransactionScope(SupressTransactions
           ? TransactionScopeOption.Suppress
@@ -33,25 +44,21 @@ namespace Nohros.Data.SqlCe
           SqlCeConnection conn = sql_connection_provider_.CreateConnection())
         using (var builder = new CommandBuilder(conn)) {
           IDbCommand cmd = builder
-            .SetText("select state from " + table_name + " where name=@name")
+            .SetText(@"
+update " + table_name + @"
+set state = @state" + @"
+where name = @name
+  and state > @comparand")
             .SetType(CommandType.Text)
-            .AddParameter("@name", state_name)
+            .AddParameter("@name", name)
+            .AddParameterWithValue("@state", state)
+            .AddParameterWithValue("@comparand", comparand)
             .Build();
           try {
             conn.Open();
-            object obj = cmd.ExecuteScalar();
-            if (obj == null) {
-              state = default(T);
-              return false;
-            }
-            state = (T) obj;
-            return true;
+            return cmd.ExecuteNonQuery() > 0;
           } catch (SqlCeException e) {
-            logger_.Error(
-              StringResources.Log_MethodThrowsException.Fmt("Execute",
-                kClassName),
-              e);
-            throw new ProviderException(e);
+            throw e.AsProviderException();
           }
         }
       }

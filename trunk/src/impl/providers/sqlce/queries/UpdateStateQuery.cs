@@ -1,49 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SqlServerCe;
 using System.Transactions;
 using Nohros.Data;
-using Nohros.Data.SqlServer;
-using Nohros.Data.SqlServer.Extensions;
+using Nohros.Data.SqlCe.Extensions;
 using Nohros.Extensions;
 using Nohros.Logging;
 using Nohros.Resources;
 
-namespace Nohros.Data.SqlServer
+namespace Nohros.Data.SqlCe
 {
-  public class AddStateQuery
+  internal class UpdateStateQuery
   {
-    const string kClassName = "Nohros.Data.SqlServer.AddStateQuery";
+    const string kClassName = "Nohros.Data.SqlServer.UpdateStateQuery";
 
     readonly MustLogger logger_ = MustLogger.ForCurrentProcess;
-    readonly SqlConnectionProvider sql_connection_provider_;
+    readonly SqlCeConnectionProvider sql_connection_provider_;
 
-    public AddStateQuery(SqlConnectionProvider sql_connection_provider) {
+    public UpdateStateQuery(SqlCeConnectionProvider sql_connection_provider) {
       sql_connection_provider_ = sql_connection_provider;
       logger_ = MustLogger.ForCurrentProcess;
       SupressTransactions = true;
     }
 
-    public void Execute(string state_name, string table_name, object state) {
+    public bool Execute(string name, string table_name, object state) {
       using (
         new TransactionScope(SupressTransactions
           ? TransactionScopeOption.Suppress
           : TransactionScopeOption.Required)) {
-        using (SqlConnection conn = sql_connection_provider_.CreateConnection())
+        using (
+          SqlCeConnection conn = sql_connection_provider_.CreateConnection())
         using (var builder = new CommandBuilder(conn)) {
           IDbCommand cmd = builder
             .SetText(@"
-insert into " + table_name + @"(name, state)
-values(@name, @state)")
+update " + table_name + @"
+set state = @state" + @"
+where name = @name")
             .SetType(CommandType.Text)
-            .AddParameter("@name", state_name)
+            .AddParameter("@name", name)
             .AddParameterWithValue("@state", state)
             .Build();
           try {
             conn.Open();
-            cmd.ExecuteNonQuery();
-          } catch (SqlException e) {
+            return cmd.ExecuteNonQuery() > 0;
+          } catch (SqlCeException e) {
             throw e.AsProviderException();
           }
         }

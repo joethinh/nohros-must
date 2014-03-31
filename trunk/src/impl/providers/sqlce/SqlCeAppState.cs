@@ -24,6 +24,8 @@ namespace Nohros.Data.SqlCe
 
     readonly AddStateQuery add_state_;
     readonly GetStateQuery get_state_;
+    readonly SetIfGreaterThanQuery if_greater_than_query_;
+    readonly SetIfLessThanQuery if_less_than_query_;
 
     readonly SqlCeConnectionProvider sql_connection_provider_;
 
@@ -49,6 +51,8 @@ namespace Nohros.Data.SqlCe
       update_state_ = new UpdateStateQuery(sql_connection_provider);
       get_state_ = new GetStateQuery(sql_connection_provider);
       add_state_ = new AddStateQuery(sql_connection_provider);
+      if_greater_than_query_ = new SetIfGreaterThanQuery(sql_connection_provider);
+      if_less_than_query_ = new SetIfLessThanQuery(sql_connection_provider);
       SupressTransactions = supress_dtc;
     }
 
@@ -81,6 +85,26 @@ namespace Nohros.Data.SqlCe
     /// <inheritdoc/>
     public void Set<T>(string name, T state) {
       ExplicitSet(name, (dynamic) state);
+    }
+
+    /// <inheritdoc/>
+    public void SetIfGreaterThan(string name, int state, int comparand) {
+      SetIfGreater(name, state, comparand, kIntTableName);
+    }
+
+    /// <inheritdoc/>
+    public void SetIfGreaterThan(string name, long state, long comparand) {
+      SetIfGreater(name, state, comparand, kLongTableName);
+    }
+
+    /// <inheritdoc/>
+    public void SetIfLessThan(string name, int state, int comparand) {
+      SetIfLessThan(name, state, comparand, kIntTableName);
+    }
+
+    /// <inheritdoc/>
+    public void SetIfLessThan(string name, long state, long comparand) {
+      SetIfLessThan(name, state, comparand, kLongTableName);
     }
 
     /// <summary>
@@ -173,92 +197,94 @@ namespace Nohros.Data.SqlCe
     }
 
     void ExplicitSet(string name, bool state) {
-      object obj;
-      if (get_state_.Execute(name, kBoolTableName, out obj)) {
-        update_state_.Execute(name, kBoolTableName, state);
-      } else {
-        add_state_.Execute(name, kBoolTableName, state);
-      }
+      ExplicitSet(name, state, kBoolTableName);
     }
 
     void ExplicitSet(string name, short state) {
-      object obj;
-      if (get_state_.Execute(name, kShortTableName, out obj)) {
-        update_state_.Execute(name, kShortTableName, state);
-      } else {
-        add_state_.Execute(name, kShortTableName, state);
-      }
+      ExplicitSet(name, state, kShortTableName);
     }
 
     void ExplicitSet(string name, int state) {
-      object obj;
-      if (get_state_.Execute(name, kIntTableName, out obj)) {
-        update_state_.Execute(name, kIntTableName, state);
-      } else {
-        add_state_.Execute(name, kIntTableName, state);
-      }
+      ExplicitSet(name, state, kIntTableName);
     }
 
     void ExplicitSet(string name, long state) {
-      object obj;
-      if (get_state_.Execute(name, kLongTableName, out obj)) {
-        update_state_.Execute(name, kLongTableName, state);
-      } else {
-        add_state_.Execute(name, kLongTableName, state);
-      }
+      ExplicitSet(name, state, kLongTableName);
     }
 
     void ExplicitSet(string name, decimal state) {
-      object obj;
-      if (get_state_.Execute(name, kDecimalTableName, out obj)) {
-        update_state_.Execute(name, kDecimalTableName, state);
-      } else {
-        add_state_.Execute(name, kDecimalTableName, state);
-      }
+      ExplicitSet(name, state, kDecimalTableName);
     }
 
     void ExplicitSet(string name, double state) {
-      object obj;
-      if (get_state_.Execute(name, kDoubleTableName, out obj)) {
-        update_state_.Execute(name, kDoubleTableName, state);
-      } else {
-        add_state_.Execute(name, kDoubleTableName, state);
-      }
+      ExplicitSet(name, state, kDoubleTableName);
     }
 
     void ExplicitSet(string name, string state) {
-      object obj;
-      if (get_state_.Execute(name, kStringTableName, out obj)) {
-        update_state_.Execute(name, kStringTableName, state);
-      } else {
-        add_state_.Execute(name, kStringTableName, state);
-      }
+      ExplicitSet(name, state, kStringTableName);
     }
 
     void ExplicitSet(string name, Guid state) {
-      object obj;
-      if (get_state_.Execute(name, kGuidTableName, out obj)) {
-        update_state_.Execute(name, kGuidTableName, state);
-      } else {
-        add_state_.Execute(name, kGuidTableName, state);
-      }
+      ExplicitSet(name, state, kGuidTableName);
     }
 
     void ExplicitSet(string name, DateTime state) {
-      object obj;
-      if (get_state_.Execute(name, kDateTimeTableName, out obj)) {
-        update_state_.Execute(name, kDateTimeTableName, state);
-      } else {
-        add_state_.Execute(name, kDateTimeTableName, state);
-      }
+      ExplicitSet(name, state, kDateTimeTableName);
     }
 
     void ExplicitSet(string name, object state) {
-      object obj;
-      if (get_state_.Execute(name, kStringTableName, out obj)) {
-        update_state_.Execute(name, kStringTableName, state);
-      } else {
-        add_state_.Execute(name, kStringTableName, state);
+      ExplicitSet(name, state, kStringTableName);
+    }
+
+    void ExplicitSet(string name, object state, string table_name) {
+      // lets try to update the value upfront and if nothing changes,
+      // try to add the value to the table.
+      if (!update_state_.Execute(name, table_name, state)) {
+        // If a insert is performed after our update attempt and before
+        // our insert attempt a unique constraint exception will be throw.
+        // In that case we will try to perform the update again.
+        try {
+          add_state_.Execute(name, table_name, state);
+        } catch (UniqueConstraintViolationException) {
+          update_state_.Execute(name, table_name, state);
+        }
+      }
+    }
+
+    void SetIfGreater(string name, long state, long comparand, string table_name) {
+      // lets try to update the value upfront and if nothing changes,
+      // check if the value exists and create a new one if not.
+      if (!if_greater_than_query_.Execute(name, table_name, state, comparand)) {
+        long obj;
+        if (!get_state_.Execute(name, table_name, out obj)) {
+          // If a insert is performed after our update attempt and before
+          // our insert attempt a unique constraint exception will be throw.
+          // In that case we will try to perform the update again.
+          try {
+            add_state_.Execute(name, table_name, state);
+          } catch (UniqueConstraintViolationException) {
+            if_greater_than_query_.Execute(name, table_name, state, comparand);
+          }
+        }
+      }
+    }
+
+    void SetIfLessThan(string name, long state, long comparand,
+      string table_name) {
+      // lets try to update the value upfront and if nothing changes,
+      // check if the value exists and create a new one if not.
+      if (!if_less_than_query_.Execute(name, table_name, state, comparand)) {
+        long obj;
+        if (!get_state_.Execute(name, table_name, out obj)) {
+          // If a insert is performed after our update attempt and before
+          // our insert attempt a unique constraint exception will be throw.
+          // In that case we will try to perform the update again.
+          try {
+            add_state_.Execute(name, table_name, state);
+          } catch (UniqueConstraintViolationException) {
+            if_less_than_query_.Execute(name, table_name, state, comparand);
+          }
+        }
       }
     }
 

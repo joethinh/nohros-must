@@ -276,7 +276,7 @@ namespace Nohros.Extensions
     /// The value associated with the key <paramref name="key"/> or
     /// <paramref name="default"/> if the key was not found.
     /// </returns>
-    public static bool GetLong(this IDictionary<string, string> options,
+    public static bool GetBoolean(this IDictionary<string, string> options,
       string key, bool @default) {
       string option;
       if (options.TryGetValue(key, out option)) {

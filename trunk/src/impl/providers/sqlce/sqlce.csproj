@@ -45,16 +45,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddStateQuery.cs" />
-    <Compile Include="CreateTableQuery.cs" />
-    <Compile Include="GetStateQuery.cs" />
+    <Compile Include="queries\AddStateQuery.cs" />
+    <Compile Include="queries\CreateTableQuery.cs" />
+    <Compile Include="exceptions\SqlCeExceptionExtensions.cs" />
+    <Compile Include="queries\GetStateQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="queries\SetIfGreaterThanQuery.cs" />
+    <Compile Include="queries\SetIfLessThanQuery.cs" />
     <Compile Include="SqlCeAppState.cs" />
     <Compile Include="SqlAppStateFactory.cs" />
     <Compile Include="SqlCeConnectionProviderFactory.cs" />
     <Compile Include="SqlCeConnectionProvider.cs" />
-    <Compile Include="TableExistsQuery.cs" />
-    <Compile Include="UpdateStateQuery.cs" />
+    <Compile Include="queries\TableExistsQuery.cs" />
+    <Compile Include="queries\UpdateStateQuery.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\base\common\common.net40.csproj">
