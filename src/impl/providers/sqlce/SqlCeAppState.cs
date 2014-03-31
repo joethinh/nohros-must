@@ -88,23 +88,23 @@ namespace Nohros.Data.SqlCe
     }
 
     /// <inheritdoc/>
-    public void SetIfGreaterThan(string name, int state, int comparand) {
-      SetIfGreater(name, state, comparand, kIntTableName);
+    public void SetIfGreaterThan(string name, int state) {
+      SetIfGreater(name, state, kIntTableName);
     }
 
     /// <inheritdoc/>
-    public void SetIfGreaterThan(string name, long state, long comparand) {
-      SetIfGreater(name, state, comparand, kLongTableName);
+    public void SetIfGreaterThan(string name, long state) {
+      SetIfGreater(name, state, kLongTableName);
     }
 
     /// <inheritdoc/>
-    public void SetIfLessThan(string name, int state, int comparand) {
-      SetIfLessThan(name, state, comparand, kIntTableName);
+    public void SetIfLessThan(string name, int state) {
+      SetIfLessThan(name, state, kIntTableName);
     }
 
     /// <inheritdoc/>
-    public void SetIfLessThan(string name, long state, long comparand) {
-      SetIfLessThan(name, state, comparand, kLongTableName);
+    public void SetIfLessThan(string name, long state) {
+      SetIfLessThan(name, state, kLongTableName);
     }
 
     /// <summary>
@@ -251,10 +251,10 @@ namespace Nohros.Data.SqlCe
       }
     }
 
-    void SetIfGreater(string name, long state, long comparand, string table_name) {
+    void SetIfGreater(string name, long state, string table_name) {
       // lets try to update the value upfront and if nothing changes,
       // check if the value exists and create a new one if not.
-      if (!if_greater_than_query_.Execute(name, table_name, state, comparand)) {
+      if (!if_greater_than_query_.Execute(name, table_name, state)) {
         long obj;
         if (!get_state_.Execute(name, table_name, out obj)) {
           // If a insert is performed after our update attempt and before
@@ -263,17 +263,16 @@ namespace Nohros.Data.SqlCe
           try {
             add_state_.Execute(name, table_name, state);
           } catch (UniqueConstraintViolationException) {
-            if_greater_than_query_.Execute(name, table_name, state, comparand);
+            if_greater_than_query_.Execute(name, table_name, state);
           }
         }
       }
     }
 
-    void SetIfLessThan(string name, long state, long comparand,
-      string table_name) {
+    void SetIfLessThan(string name, long state, string table_name) {
       // lets try to update the value upfront and if nothing changes,
       // check if the value exists and create a new one if not.
-      if (!if_less_than_query_.Execute(name, table_name, state, comparand)) {
+      if (!if_less_than_query_.Execute(name, table_name, state)) {
         long obj;
         if (!get_state_.Execute(name, table_name, out obj)) {
           // If a insert is performed after our update attempt and before
@@ -282,7 +281,7 @@ namespace Nohros.Data.SqlCe
           try {
             add_state_.Execute(name, table_name, state);
           } catch (UniqueConstraintViolationException) {
-            if_less_than_query_.Execute(name, table_name, state, comparand);
+            if_less_than_query_.Execute(name, table_name, state);
           }
         }
       }

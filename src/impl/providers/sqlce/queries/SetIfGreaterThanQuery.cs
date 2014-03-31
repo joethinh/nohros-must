@@ -34,8 +34,7 @@ namespace Nohros.Data.SqlCe
       SupressTransactions = true;
     }
 
-    public bool Execute(string name, string table_name, long state,
-      long comparand) {
+    public bool Execute(string name, string table_name, long state) {
       using (
         new TransactionScope(SupressTransactions
           ? TransactionScopeOption.Suppress
@@ -48,11 +47,10 @@ namespace Nohros.Data.SqlCe
 update " + table_name + @"
 set state = @state" + @"
 where name = @name
-  and state > @comparand")
+  and state > @state")
             .SetType(CommandType.Text)
             .AddParameter("@name", name)
             .AddParameterWithValue("@state", state)
-            .AddParameterWithValue("@comparand", comparand)
             .Build();
           try {
             conn.Open();
