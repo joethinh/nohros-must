@@ -2,7 +2,8 @@
 
 namespace Nohros.Bus
 {
-  public interface IHandle<T> where T : IMessage
+  public interface IHandle<in T>
   {
+    void Handle(T msg);
   }
 }

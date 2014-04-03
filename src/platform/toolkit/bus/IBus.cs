@@ -2,8 +2,8 @@
 
 namespace Nohros.Bus
 {
-  public interface IBus : IPublisher, ISubscriber
+  public interface IBus : IPublisher
   {
-    void Send<T>() where T : ICommand;
+    void Send<T>(T msg);
   }
 }
