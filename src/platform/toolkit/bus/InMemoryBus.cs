@@ -41,7 +41,7 @@ namespace Nohros.Bus
         throw new ArgumentNullException("command");
       }
 
-      var handlers = builder_.CreateHandlersOf<T>().ToArray();
+      var handlers = builder_.CreateHandlersForType<T>().ToArray();
       if (handlers.Length > 1) {
         throw new InvalidOperationException(
           string.Format(Resources.MultipleCommandHandlers, (typeof (T).Name)));
@@ -68,7 +68,7 @@ namespace Nohros.Bus
         throw new ArgumentNullException("event");
       }
 
-      var handlers = builder_.CreateHandlersOf<T>().ToArray();
+      var handlers = builder_.CreateHandlersForType<T>().ToArray();
       Dispatch(@event, handlers);
     }
 

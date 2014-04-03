@@ -40,9 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lifecycle.cs" />
     <Compile Include="IBus.cs" />
+    <Compile Include="IConfigureTypes.cs" />
     <Compile Include="IHandle.cs" />
     <Compile Include="ICreateHandlers.cs" />
+    <Compile Include="ITypeConfig.cs" />
     <Compile Include="InMemoryBus.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

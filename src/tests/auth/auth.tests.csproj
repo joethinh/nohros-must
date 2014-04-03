@@ -75,7 +75,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\platform\toolkit\auth\auth\auth.csproj">
       <Project>{9913BB99-D7DE-4F9B-9DB2-42F039209C27}</Project>
-      <Name>auth %28%28auth%29\auth%29</Name>
+      <Name>auth</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
