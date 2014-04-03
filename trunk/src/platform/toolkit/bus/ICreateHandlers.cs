@@ -5,6 +5,6 @@ namespace Nohros.Bus
 {
   public interface ICreateHandlers
   {
-    IEnumerable<IHandle<T>> CreateHandlersOf<T>();
+    IEnumerable<IHandle<T>> CreateHandlersForType<T>();
   }
 }
