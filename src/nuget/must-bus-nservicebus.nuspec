@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>must.bus.nservicebus</id>
+        <version>0.0.1</version>
+        <title>Must Framework - Bus</title>
+        <authors>Nohros Inc</authors>
+        <owners>Nohros Inc</owners>
+        <projectUrl>http://code.google.com/p/nohros-must</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>
+         A binding for the Nohros Bus IOC to the NServiceBus IOC. This should
+         be used for hosting services that uses the Nohros in memory bus on
+         NServiceBus endpoints.
+        </description>
+        <summary>
+         A binding for the Nohros Bus IOC to the NServiceBus IOC.
+        </summary>
+        <copyright>Nohros Inc</copyright>
+        <language>en-US</language>
+        <tags>csharp framework nohros bus</tags>
+    </metadata>
+    <files>
+        <file src="..\bin\release\nohros.bus.dll" target="lib\net40\nohros.bus.nservicebus.dll" />
+    </files>
+</package>
