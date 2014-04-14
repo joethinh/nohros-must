@@ -2,8 +2,8 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>must.bus</id>
-        <version>0.0.4</version>
-        <title>Must Framework - Bus</title>
+        <version>0.0.6</version>
+        <title>Must In Memory Bus</title>
         <authors>Nohros Inc</authors>
         <owners>Nohros Inc</owners>
         <projectUrl>http://code.google.com/p/nohros-must</projectUrl>
