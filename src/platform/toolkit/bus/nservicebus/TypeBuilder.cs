@@ -6,7 +6,7 @@ using NServiceBus.ObjectBuilder;
 
 namespace Nohros.Bus.NServiceBus
 {
-  internal class TypeBuilder : ICreateHandlers, IConfigureTypes
+  public class TypeBuilder : ICreateHandlers, IConfigureTypes
   {
     readonly IBuilder builder_;
 
@@ -70,6 +70,9 @@ namespace Nohros.Bus.NServiceBus
       switch (lifecycle) {
         case Lifecycle.InstancePerCall:
           return DependencyLifecycle.InstancePerCall;
+
+        case Lifecycle.InstancePerTransaction:
+          return DependencyLifecycle.InstancePerUnitOfWork;
 
         case Lifecycle.SingleInstance:
           return DependencyLifecycle.SingleInstance;
