@@ -6,21 +6,20 @@ namespace Nohros.Metrics
   /// <summary>
   /// An incrementing and decrementing counter metric.
   /// </summary>
-  public class Counter : IMetric
+  public class AsyncCounter : IMetric, IAsyncCounter, ICounted
   {
-    readonly Mailbox<long> async_update_mailbox_;
+    readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
     long count_;
-    DateTime last_updated_;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Counter"/> class that
+    /// Initializes a new instance of the <see cref="AsyncCounter"/> class that
     /// uses a thread pool to perform the counter update.
     /// </summary>
-    public Counter() : this(Executors.ThreadPoolExecutor()) {
+    public AsyncCounter() : this(Executors.ThreadPoolExecutor()) {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Counter"/> class that
+    /// Initializes a new instance of the <see cref="AsyncCounter"/> class that
     /// uses the specified executor to perform the counter updates (
     /// increment/decrement).
     /// </summary>
@@ -34,19 +33,19 @@ namespace Nohros.Metrics
     /// this can cause significant pauses in the thread that is executing the
     /// sample update.
     /// </remarks>
-    public Counter(IExecutor executor) {
+    public AsyncCounter(IExecutor executor) {
       count_ = 0;
-      async_update_mailbox_ = new Mailbox<long>(AsyncUpdate, executor);
+      async_tasks_mailbox_ = new Mailbox<RunnableDelegate>(Run, executor);
+    }
+
+    void Run(RunnableDelegate runnable) {
+      runnable();
     }
 
     public void Report<T>(MetricReportCallback<T> callback, T context) {
       var value = new MetricValue(MetricValueType.Count, Count);
       var set = new MetricValueSet(this, value);
       callback(set, context);
-    }
-
-    public DateTime LastUpdated {
-      get { return last_updated_; }
     }
 
     /// <summary>
@@ -62,7 +61,7 @@ namespace Nohros.Metrics
     /// <param name="n">The amount by which the counter will be increased.
     /// </param>
     public void Increment(long n) {
-      async_update_mailbox_.Send(n);
+      async_tasks_mailbox_.Send(() => Update(n));
     }
 
     /// <summary>
@@ -78,18 +77,48 @@ namespace Nohros.Metrics
     /// <param name="n">The amount by which the counter will be increased.
     /// </param>
     public void Decrement(long n) {
-      async_update_mailbox_.Send(-n);
+      async_tasks_mailbox_.Send(() => Update(-n));
     }
 
-    void AsyncUpdate(long delta) {
+    void Update(long delta) {
       count_ += delta;
-      last_updated_ = DateTime.Now;
+    }
+
+    public void GetCount(LongMetricCallback callback) {
+      DateTime now = DateTime.Now;
+      async_tasks_mailbox_.Send(() => callback(count_, now));
+    }
+
+    public void Increment(CountedCallback callback) {
+      Increment(1, callback);
+    }
+
+    public void Increment(long n, CountedCallback callback) {
+      async_tasks_mailbox_.Send(() => {
+        Update(n);
+        callback(this);
+      });
+    }
+
+    public void Decrement(CountedCallback callback) {
+      Decrement(1);
+    }
+
+    public void Decrement(long n, CountedCallback callback) {
+      async_tasks_mailbox_.Send(() => {
+        Update(-n);
+        callback(this);
+      });
     }
 
     /// <summary>
     /// Gets the counter current value.
     /// </summary>
-    public long Count {
+    long ICounted.Count {
+      get { return count_; }
+    }
+
+    long Count {
       get { return count_; }
     }
   }
