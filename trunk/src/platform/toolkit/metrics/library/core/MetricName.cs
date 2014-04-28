@@ -29,9 +29,14 @@ namespace Nohros.Metrics
     public MetricName(string key) : this(key, new Dictionary<string, string>()) {
     }
 
-    public MetricName(string key, IDictionary<string, string> tags) {
-      tags_ = tags;
+    public MetricName(string key, IEnumerable<KeyValuePair<string, string>> tags) {
       Key = key;
+
+      tags_ = new Dictionary<string, string>();
+      foreach (var tag in tags) {
+        tags_.Add(tag);
+      }
+
       hashcode_ = ComputeHashCode();
     }
 
@@ -47,6 +52,20 @@ namespace Nohros.Metrics
     /// </summary>
     public IEnumerable<KeyValuePair<string, string>> Tags {
       get { return tags_; }
+    }
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public bool HasTag(string name, string value) {
+      string tag;
+      if (tags_.TryGetValue(name, out tag)) {
+        return tag == value;
+      }
+      return false;
     }
 
     public override bool Equals(object obj) {
