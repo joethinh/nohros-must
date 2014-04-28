@@ -55,25 +55,8 @@ namespace Nohros.Metrics
     /// <see cref="Shutdown"/> method is called.
     /// </para>
     /// </remarks>
-    public static void RegisterReporter(string name, IMetricsReporter reporter) {
+    public static void AddReporter(string name, IMetricsReporter reporter) {
       reporters_[name] = reporter;
-    }
-
-    /// <param name="name">
-    /// The name of the metric to get.
-    /// </param>
-    /// <param name="metric">
-    /// When this method returns, contains the timer associated with the
-    /// specified metric name, if a metric name is found; otherwise, the
-    /// <c>null</c>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if a <see cref="Counter"/> associated with the
-    /// <paramref name="name"/> exists; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool TryGetMetric<T>(string name, out T metric)
-      where T : class, IMetric {
-      return registry_.TryGetMetric(name, out metric);
     }
 
     /// <summary>
@@ -89,51 +72,29 @@ namespace Nohros.Metrics
     /// A metric with the same name already exists in the
     /// <see cref="IMetricsRegistry"/>.
     /// </exception>
-    public static void Add(string name, IMetric metric) {
+    public static void AddMetric(string name, IMetric metric) {
       registry_.Add(name, metric);
     }
 
-    /// <summary>
-    /// Gets the <see cref="IMetric"/> that is associated with the given
-    /// metric's <paramref name="name"/>
-    /// </summary>
-    /// <param name="name">
-    /// The name of the metric to get.
-    /// </param>
-    /// <returns>
-    /// The metric that is associated with the given <paramref name="name"/>.
-    /// </returns>
-    /// <exception cref="KeyNotFoundException">
-    /// A metric associated with hte given key was not found.
-    /// </exception>
-    public static T GetMetric<T>(string name) where T : IMetric {
-      return registry_.GetMetric<T>(name);
+    public static bool HasMetric(MetricName name) {
+      return registry_.HasMetric(name);
     }
 
     /// <summary>
-    /// Gets the <see cref="IMetric"/> that is associated with the given
-    /// metric's <paramref name="name"/>
+    /// Adds an metric to the metrics collection using the metrics name.
     /// </summary>
     /// <param name="name">
-    /// The name of the metric to get.
+    /// The name of the metric.
     /// </param>
-    /// <param name="factory">
-    /// A <see cref="CallableDelegate{T}"/> that can be used to create a
-    /// metric.
+    /// <param name="metric">
+    /// The metric to be added.
     /// </param>
-    /// <returns>
-    /// The metric that is associated with the given <paramref name="name"/>
-    /// or the value returned by the <see cref="CallableDelegate{T}"/> method
-    /// if there is no metric associated with the given name.
-    /// </returns>
-    /// <remarks>
-    /// If a metric associated with the given <paramref name="name"/> is not
-    /// found, the <paramref name="factory"/> delegate will be executed and its
-    /// return value will be associated with the given <paramref name="name"/>.
-    /// </remarks>
-    public static T GetMetric<T>(string name, CallableDelegate<T> factory)
-      where T : IMetric {
-      return registry_.GetMetric(name, factory);
+    /// <exception cref="ArgumentException">
+    /// A metric with the same name already exists in the
+    /// <see cref="IMetricsRegistry"/>.
+    /// </exception>
+    public static void AddMetric(MetricName name, IMetric metric) {
+      registry_.Add(name, metric);
     }
 
     /// <summary>
