@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nohros.Metrics.Reporting;
 
 namespace Nohros.Metrics
 {
@@ -111,6 +112,21 @@ namespace Nohros.Metrics
     /// <see cref="IMetricsRegistry"/>.
     /// </exception>
     void Add(string name, IMetric metric);
+
+    /// <summary>
+    /// Adds an metric to the metrics collection using the metrics name.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the metric.
+    /// </param>
+    /// <param name="metric">
+    /// The metric to be added.
+    /// </param>
+    /// <exception cref="ArgumentException">
+    /// A metric with the same name already exists in the
+    /// <see cref="IMetricsRegistry"/>.
+    /// </exception>
+    void Add(MetricName name, IMetric metric);
 
     /// <summary>
     /// Raised when a new metric is added to the registry.

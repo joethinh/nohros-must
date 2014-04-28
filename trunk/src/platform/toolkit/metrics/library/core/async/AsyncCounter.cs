@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Nohros.Concurrent;
 
 namespace Nohros.Metrics
@@ -101,7 +102,7 @@ namespace Nohros.Metrics
     }
 
     public void Decrement(CountedCallback callback) {
-      Decrement(1);
+      Decrement(1, callback);
     }
 
     public void Decrement(long n, CountedCallback callback) {

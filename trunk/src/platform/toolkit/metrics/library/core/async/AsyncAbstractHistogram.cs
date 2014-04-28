@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Nohros.Concurrent;
 
 namespace Nohros.Metrics
@@ -8,14 +9,14 @@ namespace Nohros.Metrics
     protected readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
     readonly ISyncHistogram histogram_;
 
-    #region .ctor
     protected AbstractAsyncHistogram(IExecutor executor,
       ISyncHistogram histogram) {
       histogram_ = histogram;
       async_tasks_mailbox_ = new Mailbox<RunnableDelegate>(
         runnable => runnable(), executor);
+
+      Tags = new Dictionary<string, string>();
     }
-    #endregion
 
     /// <inheritdoc/>
     public abstract void GetSnapshot(SnapshotCallback callback);
@@ -76,5 +77,7 @@ namespace Nohros.Metrics
       };
       return new MetricValueSet(this, values);
     }
+
+    public IDictionary<string, string> Tags { get; private set; }
   }
 }

@@ -14,7 +14,6 @@ namespace Nohros.Metrics
     readonly TimeUnit duration_unit_;
     readonly BiasedHistogram histogram_;
     readonly Meter meter_;
-    DateTime last_updated_;
 
     /// <summary>
     /// Creates a new <see cref="Timer"/>.
@@ -201,18 +200,12 @@ namespace Nohros.Metrics
         async_tasks_mailbox_.Send(
           () => histogram_.Update(duration, timestamp));
         meter_.Mark();
-        last_updated_ = TimeUnitHelper.FromUnixEpoch(timestamp);
       }
     }
 
     double ConvertFromNs(double ns) {
       return ns/TimeUnitHelper.ToNanos(1, duration_unit_);
     }
-
-    public DateTime LastUpdated {
-      get { return last_updated_; }
-    }
-
 
     /// <summary>
     /// Gets the timer's duration scale unit.

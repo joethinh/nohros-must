@@ -18,7 +18,6 @@ namespace Nohros.Metrics
     static IMetricsRegistry registry_;
     static readonly IDictionary<string, IMetricsReporter> reporters_;
 
-    #region .ctor
     /// <summary>
     /// Initializes the siatic members.
     /// </summary>
@@ -26,7 +25,6 @@ namespace Nohros.Metrics
       registry_ = new SyncMetricsRegistry();
       reporters_ = new Dictionary<string, IMetricsReporter>();
     }
-    #endregion
 
     /// <summary>
     /// Stops all the registered reporters and deallocates any associated

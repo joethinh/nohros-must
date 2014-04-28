@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using Nohros.Extensions.Time;
 using Telerik.JustMock;
 using Nohros.Extensions;
 
@@ -26,10 +27,10 @@ namespace Nohros.Metrics.Tests
 
     [Test]
     public void should_mark_evets_and_update_rates_count() {
-      var meter =
-        new Meter(
-          new ListClock(new[]
-          {0L, 0L, 10L.ToNanos(TimeUnit.Seconds), 0L, 0L, 0L}));
+      var clock = new ListClock(new[] {
+        0L, 0L, 10L.ToNanoseconds(TimeUnit.Seconds), 0L, 0L, 0L
+      });
+      var meter = new Meter(clock);
       meter.Mark();
       meter.Mark(2);
       Assert.That(meter.OneMinuteRate, Is.InRange(0.1830, 0.1850));

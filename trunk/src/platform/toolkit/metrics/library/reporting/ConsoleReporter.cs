@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Nohros.Metrics.Reporting
 {
@@ -26,12 +25,11 @@ namespace Nohros.Metrics.Reporting
       registry.Report(Report, now);
     }
 
-    void Report(KeyValuePair<string, MetricValueSet> metrics,
+    void Report(MetricName metric_name, MetricValue[] metrics,
       DateTime timestamp) {
-      string name = metrics.Key;
-      foreach (MetricValue mtc in metrics.Value) {
+      foreach (MetricValue mtc in metrics) {
         Console.Write(timestamp.ToString("yyyy-MM-ddTHH:mm:ssZ") + ":"
-          + name + ".");
+          + metric_name + ".");
         Console.Write(GetMetricName(mtc.Type) + "=" + mtc.Value.ToString("f4"));
         Console.WriteLine(" " + mtc.Unit);
       }

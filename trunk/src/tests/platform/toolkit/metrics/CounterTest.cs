@@ -5,42 +5,46 @@ using Nohros.Concurrent;
 namespace Nohros.Metrics
 {
   [TestFixture]
-  public class CounterTest
+  public class AsyncCounterTest
   {
     [Test]
-    public void ShouldStartsAtZero() {
-      Counter counter = new Counter(Executors.SameThreadExecutor());
-      Assert.That(counter.Count, Is.EqualTo(0));
+    public void should_start_counting_at_zero() {
+      var counter = new AsyncCounter(Executors.SameThreadExecutor());
+      long count = -1;
+      counter.GetCount((l, timestamp) => count = l);
+      Assert.That(count, Is.EqualTo(0));
     }
 
     [Test]
-    public void ShouldIncrementByOne() {
-      Counter counter = new Counter(Executors.SameThreadExecutor());
-      counter.Increment();
-      Assert.That(counter.Count, Is.EqualTo(1));
+    public void should_increment_counter_by_one() {
+      var counter = new AsyncCounter(Executors.SameThreadExecutor());
+      long count = 9;
+      counter.Increment(c => count = c.Count);
+      Assert.That(count, Is.EqualTo(1));
     }
 
     [Test]
-    public void ShouldIncrementBySpecifiedDelta() {
-      Counter counter = new Counter(Executors.SameThreadExecutor());
-      counter.Increment(12);
-      Assert.That(counter.Count, Is.EqualTo(12));
+    public void should_increment_counter_by_given_delta() {
+      var counter = new AsyncCounter(Executors.SameThreadExecutor());
+      long count = 3;
+      counter.Increment(15, c => count = c.Count);
+      Assert.That(count, Is.EqualTo(15));
     }
 
     [Test]
-    public void ShouldDecrementByOne()
-    {
-      Counter counter = new Counter(Executors.SameThreadExecutor());
-      counter.Decrement();
-      Assert.That(counter.Count, Is.EqualTo(-1));
+    public void should_decrement_counter_by_one() {
+      var counter = new AsyncCounter(Executors.SameThreadExecutor());
+      long count = 10;
+      counter.Decrement(c => count = c.Count);
+      Assert.That(count, Is.EqualTo(-1));
     }
 
     [Test]
-    public void ShouldDecrementBySpecifiedDelta()
-    {
-      Counter counter = new Counter(Executors.SameThreadExecutor());
-      counter.Decrement(12);
-      Assert.That(counter.Count, Is.EqualTo(-12));
+    public void should_decrement_counter_by_given_delta() {
+      var counter = new AsyncCounter(Executors.SameThreadExecutor());
+      long count = 15;
+      counter.Decrement(12, c => count = c.Count);
+      Assert.That(count, Is.EqualTo(-12));
     }
   }
 }
