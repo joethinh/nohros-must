@@ -9,11 +9,11 @@ namespace Nohros.Metrics
   /// <param name="name">
   /// The name of the metric.
   /// </param>
-  /// <param name="metric">
+  /// <param name="set">
   /// The metric itself.
   /// </param>
   /// <returns>
-  /// <c>true</c> if <paramref name="name"/> and <paramref name="metric"/>
+  /// <c>true</c> if <paramref name="name"/> and <paramref name="set"/>
   /// meets the criteria defined whithin the method represented by this
   /// delegate.
   /// </returns>
@@ -21,5 +21,5 @@ namespace Nohros.Metrics
   /// This delegate is used by implementations of the IMetricsReporter class
   /// to filter metrics while reporting.
   /// </remarks>
-  public delegate bool MetricPredicate(string name, IMetric metric);
+  public delegate bool MetricPredicate(MetricName name, MetricValue @value);
 }
