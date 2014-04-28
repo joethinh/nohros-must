@@ -12,7 +12,7 @@ namespace Nohros.Metrics
   ///   http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average
   /// </para>
   /// </remarks>
-  public class AsyncMeter : IAsyncMeter
+  public class AsyncMeter : IAsyncMeter, IMetered
   {
     const long kTickInterval = 5000000000; // 5 seconds in nanoseconds
     readonly Mailbox<RunnableDelegate> async_tasks_mailbox_;
@@ -27,7 +27,6 @@ namespace Nohros.Metrics
     long count_;
     long last_tick_;
 
-    #region .ctor
     /// <summary>
     /// Initializes a new instance of the <see cref=" Meter"/> class by using
     /// the specified meter name, rate unit and clock.
@@ -75,7 +74,6 @@ namespace Nohros.Metrics
       ewma_15_rate_ = ExponentialWeightedMovingAverages.FifteenMinute();
       async_tasks_mailbox_ = new Mailbox<RunnableDelegate>(Run, executor);
     }
-    #endregion
 
     /// <inheritdoc/>
     public TimeUnit RateUnit {
@@ -160,6 +158,35 @@ namespace Nohros.Metrics
     /// </param>
     public void Mark(long n) {
       long timestamp = clock_.Tick;
+      async_tasks_mailbox_.Send(() => Mark(n, timestamp));
+    }
+
+    /// <summary>
+    /// Mark the occurrence of an event.
+    /// </summary>
+    public void Mark(MeteredCallback callback) {
+      Mark(1, callback);
+    }
+
+    /// <summary>
+    /// Mark the occurrence of a given number of events.
+    /// </summary>
+    /// <param name="n">
+    /// The number of events.
+    /// </param>
+    /// <param name="callback">
+    /// A <see cref="MeteredCallback"/> that will be executed before the
+    /// mark operation completes.
+    /// </param>
+    public void Mark(long n, MeteredCallback callback) {
+      long timestamp = clock_.Tick;
+      async_tasks_mailbox_.Send(() => {
+        Mark(n, timestamp);
+        callback(this);
+      });
+    }
+
+    void Mark(long n, long timestamp) {
       async_tasks_mailbox_.Send(() => {
         TickIfNecessary(timestamp);
         count_ += n;
@@ -217,12 +244,36 @@ namespace Nohros.Metrics
       string rate_unit = UnitHelper.FromRate(EventType, RateUnit);
       var values = new[] {
         new MetricValue(MetricValueType.Count, count_, EventType),
-        new MetricValue(MetricValueType.MeanRate, GetMeanRate(timestamp), rate_unit),
-        new MetricValue(MetricValueType.OneMinuteRate, OneMinuteRate, rate_unit),
-        new MetricValue(MetricValueType.FiveMinuteRate, FiveMinuteRate, rate_unit),
-        new MetricValue(MetricValueType.FifteenMinuteRate, FifteenMinuteRate, rate_unit)
+        new MetricValue(MetricValueType.MeanRate, GetMeanRate(timestamp),
+          rate_unit),
+        new MetricValue(MetricValueType.OneMinuteRate, OneMinuteRate, rate_unit)
+        ,
+        new MetricValue(MetricValueType.FiveMinuteRate, FiveMinuteRate,
+          rate_unit),
+        new MetricValue(MetricValueType.FifteenMinuteRate, FifteenMinuteRate,
+          rate_unit)
       };
       return new MetricValueSet(this, values);
+    }
+
+    double IMetered.MeanRate {
+      get { return GetMeanRate(clock_.Tick); }
+    }
+
+    double IMetered.FifteenMinuteRate {
+      get { return FifteenMinuteRate; }
+    }
+
+    double IMetered.FiveMinuteRate {
+      get { return FiveMinuteRate; }
+    }
+
+    double IMetered.OneMinuteRate {
+      get { return OneMinuteRate; }
+    }
+
+    long IMetered.Count {
+      get { return count_; }
     }
 
     double FifteenMinuteRate {
@@ -242,6 +293,8 @@ namespace Nohros.Metrics
     }
 
     /// <inheritdoc/>
-    public DateTime LastUpdated { get { return last_updated_; } }
+    public DateTime LastUpdated {
+      get { return last_updated_; }
+    }
   }
 }
