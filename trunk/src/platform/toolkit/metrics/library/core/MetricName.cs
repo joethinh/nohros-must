@@ -18,8 +18,8 @@ namespace Nohros.Metrics
   /// 
   /// Tags simplifies that representation, these would be represented as:
   /// 
-  /// * interface.traffic {host=nohros.com, interface=eth0, direction=in}
-  /// * interface.traffic {host=nohros.com, interface=eth0, direction=out}
+  ///  * interface.traffic {host=nohros.com, interface=eth0, direction=in}
+  ///  * interface.traffic {host=nohros.com, interface=eth0, direction=out}
   /// </remarks>
   public class MetricName
   {
