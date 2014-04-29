@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Nohros.Metrics.Reporting;
 
 namespace Nohros.Metrics
@@ -73,9 +72,11 @@ namespace Nohros.Metrics
     void Add(MetricName name, IMetric metric);
 
     /// <summary>
-    /// TODO: Copy documentation from the NServiceBus HasCompoenent
+    /// Indicates if a metric of the given name has been registered.
     /// </summary>
-    /// <param name="name"></param>
+    /// <param name="name">
+    /// The name of the metric to check.
+    /// </param>
     bool HasMetric(MetricName name);
 
     /// <summary>

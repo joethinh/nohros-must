@@ -7,13 +7,13 @@ namespace Nohros.Metrics
   /// whether a metric shoudl be included when filtering metrics.
   /// </summary>
   /// <param name="name">
-  /// The name of the metric.
+  /// A <see cref="MetricName"/> object that uniquely identifies the metric.
   /// </param>
-  /// <param name="set">
-  /// The metric itself.
+  /// <param name="value">
+  /// The metric's value of the metric associated with the <paramref name="name"/>.
   /// </param>
   /// <returns>
-  /// <c>true</c> if <paramref name="name"/> and <paramref name="set"/>
+  /// <c>true</c> if <paramref name="name"/> and <paramref name="value"/>
   /// meets the criteria defined whithin the method represented by this
   /// delegate.
   /// </returns>
@@ -21,5 +21,5 @@ namespace Nohros.Metrics
   /// This delegate is used by implementations of the IMetricsReporter class
   /// to filter metrics while reporting.
   /// </remarks>
-  public delegate bool MetricPredicate(MetricName name, MetricValue @value);
+  public delegate bool MetricPredicate(MetricName name, MetricValue value);
 }
