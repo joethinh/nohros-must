@@ -108,7 +108,7 @@ namespace Nohros
     /// Convert the specified timestamp to the nano seconds unit.
     /// </summary>
     /// <returns>The total number of nanoseconds that the</returns>
-    public static long ToNanos(TimeSpan duration, TimeUnit unit) {
+    public static long ToNanos(TimeSpan duration) {
       // one tick have a undred nanoseconds.
       return duration.Ticks*100;
     }

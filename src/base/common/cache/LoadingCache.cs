@@ -144,7 +144,7 @@ namespace Nohros.Caching
       }
       lock (mutex_) {
         long now = Clock.NanoTime;
-        CacheEntry<T> entry = cache_provider_.Get<CacheEntry<T>>(key);
+        CacheEntry<T> entry = cache_provider_.Get<CacheEntry<T>>(CacheKey(key));
         if (entry != null) {
           // TODO(neylor.silva): notify the caller about the item removal
           // REPLACED.
@@ -185,14 +185,13 @@ namespace Nohros.Caching
           key == null ? ExceptionArgument.key : ExceptionArgument.loader);
       }
 
-      string cache_key = CacheKey(key);
       try {
         T value;
         CacheEntry<T> entry;
 
         // the cache provider should provide the thread safeness behavior for
         // the reading operation.
-        bool ok = cache_provider_.Get(cache_key, out entry);
+        bool ok = cache_provider_.Get(CacheKey(key), out entry);
         if (ok) {
           long now = Clock.NanoTime;
           if (GetLiveValue(entry, now, out value)) {
@@ -223,11 +222,11 @@ namespace Nohros.Caching
     /// </param>
     public void Remove(string key) {
       long now = Clock.NanoTime;
-      CacheEntry<T> entry = cache_provider_.Get<CacheEntry<T>>(key);
+      CacheEntry<T> entry = cache_provider_.Get<CacheEntry<T>>(CacheKey(key));
       if (entry != null) {
         // Notify the caller about the item removal(EXPLICIT).
       }
-      cache_provider_.Remove(key);
+      cache_provider_.Remove(CacheKey(key));
     }
 
     public long Size {
@@ -276,7 +275,7 @@ namespace Nohros.Caching
       lock (mutex_) {
         // re-read the time once inside the lock
         long now = Clock.NanoTime;
-        if (cache_provider_.Get(key, out entry)) {
+        if (cache_provider_.Get(CacheKey(key), out entry)) {
           value_reference = entry.ValueReference;
           if (value_reference.IsLoading) {
             create_new_entry = false;
@@ -301,7 +300,7 @@ namespace Nohros.Caching
           if (entry == null) {
             entry = new CacheEntry<T>(key);
             entry.ValueReference = loading_value_reference;
-            cache_provider_.Set(key, entry);
+            cache_provider_.Set(CacheKey(key), entry);
           } else {
             // entry exists but is expired, lets update it with a new
             // loading value.
@@ -366,7 +365,7 @@ namespace Nohros.Caching
     /// <paramref name="key"/> if it is not expired.
     /// </returns>
     CacheEntry<T> GetLiveEntry(string key, long now) {
-      CacheEntry<T> entry = cache_provider_.Get<CacheEntry<T>>(key);
+      CacheEntry<T> entry = cache_provider_.Get<CacheEntry<T>>(CacheKey(key));
       if (entry == null) {
         return null;
       } else if (IsExpired(entry, now)) {
@@ -492,7 +491,7 @@ namespace Nohros.Caching
 
         // look for an existing entry
         CacheEntry<T> entry;
-        if (cache_provider_.Get(key, out entry)) {
+        if (cache_provider_.Get(CacheKey(key), out entry)) {
           IValueReference<T> value_reference = entry.ValueReference;
           if (value_reference.IsLoading) {
             // refresh is a no-op if loading is pending.
@@ -510,7 +509,7 @@ namespace Nohros.Caching
         entry.ValueReference = loading_value_reference;
 
         // send the entry to the cache provider.
-        cache_provider_.Set(key, entry);
+        cache_provider_.Set(CacheKey(key), entry);
         return loading_value_reference;
       }
     }
@@ -634,7 +633,7 @@ namespace Nohros.Caching
       lock (mutex_) {
         long now = Clock.NanoTime;
         CacheEntry<T> entry;
-        if (cache_provider_.Get(key, out entry)) {
+        if (cache_provider_.Get(CacheKey(key), out entry)) {
           IValueReference<T> value_reference = entry.ValueReference;
           if (old_value_reference == value_reference) {
             // If the old value is still active notify the caller that we
@@ -680,7 +679,7 @@ namespace Nohros.Caching
       entry.ValueReference = Strength.ReferenceValue(entry, value,
         strength_type_);
       RecordWrite(entry, now);
-      cache_provider_.Set(key, entry);
+      cache_provider_.Set(CacheKey(key), entry);
     }
 
     /// <summary>
@@ -719,7 +718,7 @@ namespace Nohros.Caching
     bool RemoveLoadingValue(string key, LoadingValueReference<T> value_reference) {
       lock (mutex_) {
         CacheEntry<T> entry;
-        if (cache_provider_.Get(key, out entry)) {
+        if (cache_provider_.Get(CacheKey(key), out entry)) {
           IValueReference<T> value = entry.ValueReference;
           if (value == value_reference) {
             // If a loading value is active means that the new value has failed
@@ -727,7 +726,7 @@ namespace Nohros.Caching
             if (value_reference.IsActive) {
               entry.ValueReference = value_reference.OldValue;
             } else {
-              cache_provider_.Remove(key);
+              cache_provider_.Remove(CacheKey(key));
             }
             return true;
           }
