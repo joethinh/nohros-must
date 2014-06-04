@@ -94,23 +94,24 @@ namespace Nohros.Caching
     /// cache once a fixed duration has elapsed after entry's creation, the
     /// most recent replacement of its value, or its last access.
     /// </summary>
-    /// <param name="duration">The length of time after an entry is last
+    /// <param name="duration">
+    /// The length of time after an entry is last
     /// accessed that it should be automatically removed.</param>
-    /// <param name="unit">The unit taht <paramref name="duration"/> is
-    /// expressed in.</param>
-    /// <returns>This cache builder instance with the expire after nanos
+    /// <returns>
+    /// This cache builder instance with the expire after nanos
     /// set to the specified values.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">You set the
-    /// <paramref name="duration"/> to a value that is less than zero.
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// You set the <paramref name="duration"/> to a value that is less than
+    /// zero.
     /// </exception>
     /// <remarks>Expired entries may be counted in <see cref="ICache{T}.Size"/>,
     /// but should never be visible to read or write operations.
     /// </remarks>
-    public CacheBuilder<T> ExpireAfterAccess(long duration, TimeUnit unit) {
-      if (duration < 0) {
+    public CacheBuilder<T> ExpireAfterAccess(TimeSpan duration) {
+      if (duration < TimeSpan.Zero) {
         Thrower.ThrowArgumentOutOfRangeException(ExceptionArgument.duration);
       }
-      expiry_after_access_nanos_ = TimeUnitHelper.ToNanos(duration, unit);
+      expiry_after_access_nanos_ = TimeUnitHelper.ToNanos(duration);
       return this;
     }
 
@@ -119,23 +120,26 @@ namespace Nohros.Caching
     /// cache once a fixed duration has elapsed after the entry's creation,
     /// or the most recent replacement of its value.
     /// </summary>
-    /// <param name="duration">The length of time after an entry is created
-    /// that it should be automatically. removed.</param>
-    /// <param name="unit">The unit that <paramref name="duration"/> is
-    /// expressed in.</param>
+    /// <param name="duration">
+    /// The length of time after an entry is created
+    /// that it should be automatically. removed.
+    /// </param>
     /// <returns>This cache builder instance with the expire after nanos
-    /// set to the specified values.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">You set the
+    /// set to the specified values.
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// You set the
     /// <paramref name="duration"/> to a value that is less than zero.
     /// </exception>
-    /// <remarks>Expired entries may be counted in <see cref="ICache.Size"/>,
+    /// <remarks>
+    /// Expired entries may be counted in <see cref="ICache.Size"/>,
     /// but should never be visible to read or write operations.
     /// </remarks>
-    public CacheBuilder<T> ExpireAfterWrite(long duration, TimeUnit unit) {
-      if (duration < 0) {
+    public CacheBuilder<T> ExpireAfterWrite(TimeSpan duration) {
+      if (duration < TimeSpan.Zero) {
         Thrower.ThrowArgumentOutOfRangeException(ExceptionArgument.duration);
       }
-      expiry_after_write_nanos_ = TimeUnitHelper.ToNanos(duration, unit);
+      expiry_after_write_nanos_ = TimeUnitHelper.ToNanos(duration);
       return this;
     }
 
@@ -145,7 +149,6 @@ namespace Nohros.Caching
     /// recent replacement of its value.
     /// </summary>
     /// <param name="duration"></param>
-    /// <param name="unit"></param>
     /// <returns></returns>
     /// <remarks>
     /// <para>
@@ -158,11 +161,11 @@ namespace Nohros.Caching
     /// </para>
     /// </para>
     /// </remarks>
-    public CacheBuilder<T> RefreshAfterWrite(long duration, TimeUnit unit) {
-      if(duration < 0) {
+    public CacheBuilder<T> RefreshAfterWrite(TimeSpan duration) {
+      if(duration < TimeSpan.Zero) {
         Thrower.ThrowArgumentOutOfRangeException(ExceptionArgument.duration);
       }
-      refresh_nanos_ = TimeUnitHelper.ToNanos(duration, unit);
+      refresh_nanos_ = TimeUnitHelper.ToNanos(duration);
       return this;
     }
 
