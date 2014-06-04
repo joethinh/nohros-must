@@ -96,10 +96,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\base\common\common.net40.csproj">
-      <Project>{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}</Project>
-      <Name>common.net40</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\impl\providers\sqlce\sqlce.csproj">
       <Project>{BE854EB6-AAF5-4BDF-B162-5B217B88DFB4}</Project>
       <Name>sqlce</Name>
