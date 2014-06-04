@@ -103,7 +103,7 @@ namespace Nohros.Caching
     /// <paramref name="key"/> or <paramref name="value"/> is <c>null</c> (
     /// for reference exceptions).
     /// </exception>
-    void Put(string key, T value);
+    T Put(string key, T value);
 
     /// <summary>
     /// Discards any cached value for the key <paramref name="key"/>, so that

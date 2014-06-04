@@ -136,7 +136,7 @@ namespace Nohros.Caching
     }
 
     /// <inheritdoc/>
-    public void Put(string key, T value) {
+    public T Put(string key, T value) {
       if (key == null || IsNull(value)) {
         Thrower.ThrowArgumentNullException(key == null
           ? ExceptionArgument.key
@@ -156,6 +156,7 @@ namespace Nohros.Caching
         // add the clobber/new entry entry to cache.
         SetValue(entry, key, value, now);
       }
+      return value;
     }
 
     /// <inheritdoc/>
