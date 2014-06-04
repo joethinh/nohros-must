@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "(base)", "(base)", "{E179104F-9745-445C-BFAC-60133D7CC3B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "common", "base\common\common.csproj", "{903B5354-C424-4ADD-BC2B-892E1AA4342A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "common.net40", "base\common\common.net40.csproj", "{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "must.postsharp", "platform\toolkit\postsharp\must.postsharp.csproj", "{33359C3C-6205-464F-BF21-65D61990148C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A}.Release|x86.ActiveCfg = Release|Any CPU
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}.Release|x86.ActiveCfg = Release|Any CPU
+		{33359C3C-6205-464F-BF21-65D61990148C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33359C3C-6205-464F-BF21-65D61990148C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33359C3C-6205-464F-BF21-65D61990148C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{33359C3C-6205-464F-BF21-65D61990148C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{33359C3C-6205-464F-BF21-65D61990148C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{33359C3C-6205-464F-BF21-65D61990148C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33359C3C-6205-464F-BF21-65D61990148C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33359C3C-6205-464F-BF21-65D61990148C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{33359C3C-6205-464F-BF21-65D61990148C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{33359C3C-6205-464F-BF21-65D61990148C}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{903B5354-C424-4ADD-BC2B-892E1AA4342A} = {E179104F-9745-445C-BFAC-60133D7CC3B1}
+		{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1} = {E179104F-9745-445C-BFAC-60133D7CC3B1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35
+	EndGlobalSection
+EndGlobal

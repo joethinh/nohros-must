@@ -1,0 +1,40 @@
+﻿#wrapper
+{
+	width:290px;
+	height:600px;
+	background:transparent url(../img/main_bg.gif) no-repeat;
+	padding:0 5px;
+}
+
+#wrapper h3
+{
+	margin:0;
+}
+
+#wrapper h6
+{
+	margin:0;
+}
+
+#wrapper ul li
+{
+	list-style:none;
+	height:20px;
+	line-height:20px;
+	background:transparent url(../img/refresh.gif) no-repeat scroll 0 0;
+	padding:0 22px;
+}
+
+#wrapper ul li a,
+#wrapper ul li a:visited
+{
+	text-decoration:none;
+	color:#696969;
+}
+
+#wrapper ul li a:hover
+{
+	text-decoration:underline;
+	color:#696969;
+	font-weight:bold;	
+}

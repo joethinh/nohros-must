@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EE140ABF-C917-44D7-B89F-D6946332F507}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Nohros.Metrics</RootNamespace>
+    <AssemblyName>nohros.metrics</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\src\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(SolutionDir)bin\debug\metrics</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(SolutionDir)bin\release\metrics</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractMetricsRegistry.cs" />
+    <Compile Include="AsyncMetricsRegistry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\async\AsyncAbstractHistogram.cs" />
+    <Compile Include="core\async\AsyncMeter.cs" />
+    <Compile Include="core\async\AsyncBiasedHistogram.cs" />
+    <Compile Include="core\async\AsyncTimer.cs" />
+    <Compile Include="core\async\AsyncUniformHistogram.cs" />
+    <Compile Include="core\async\IAsyncCounted.cs" />
+    <Compile Include="core\async\IAsyncCounter.cs" />
+    <Compile Include="core\async\IAsyncHistogram.cs" />
+    <Compile Include="core\async\IAsyncMeter.cs" />
+    <Compile Include="core\async\IAsyncMetered.cs" />
+    <Compile Include="core\async\IAsyncSampling.cs" />
+    <Compile Include="core\async\IAsyncTimed.cs" />
+    <Compile Include="core\BiasedHistogram.cs" />
+    <Compile Include="core\CallableGauge.cs" />
+    <Compile Include="core\async\AsyncCounter.cs" />
+    <Compile Include="core\Callbacks.cs" />
+    <Compile Include="core\DottedMetricName.cs" />
+    <Compile Include="core\Histograms.cs" />
+    <Compile Include="core\async\IAsyncSummarizable.cs" />
+    <Compile Include="core\ICounted.cs" />
+    <Compile Include="core\IHistogram.cs" />
+    <Compile Include="core\IMeter.cs" />
+    <Compile Include="core\MetricName.cs" />
+    <Compile Include="IMetricsRegistry.cs" />
+    <Compile Include="core\ISyncHistogram.cs" />
+    <Compile Include="core\ITimed.cs" />
+    <Compile Include="core\ITimer.cs" />
+    <Compile Include="core\ManualMeter.cs" />
+    <Compile Include="core\MetricPredicate.cs" />
+    <Compile Include="core\MetricReportCallback.cs" />
+    <Compile Include="core\MetricValueSet.cs" />
+    <Compile Include="core\MetricValue.cs" />
+    <Compile Include="core\MetricValueType.cs" />
+    <Compile Include="core\UniformHistogram.cs" />
+    <Compile Include="core\Unit.cs" />
+    <Compile Include="MetricAddedEventHandler.cs" />
+    <Compile Include="MetricNameKeyEqualityComparer.cs" />
+    <Compile Include="Metrics.cs" />
+    <Compile Include="reporting\AbstractPollingReporter.cs" />
+    <Compile Include="reporting\ConsoleReporter.cs" />
+    <Compile Include="reporting\ForwarderReporter.cs" />
+    <Compile Include="reporting\IMetricsReporter.cs" />
+    <Compile Include="reporting\IMetricsReporterFactory.cs" />
+    <Compile Include="reporting\IPollingMetricsReporter.cs" />
+    <Compile Include="reporting\IPollingMetricsReporterFactory.cs" />
+    <Compile Include="reporting\MetricsReportCallback.cs" />
+    <Compile Include="reporting\NOPMetricsReporter.cs" />
+    <Compile Include="reporting\MetricReported.cs" />
+    <Compile Include="stats\ExponentialWeightedMovingAverage.cs" />
+    <Compile Include="stats\ExponentialWeightedMovingAverages.cs" />
+    <Compile Include="core\Gauge.cs" />
+    <Compile Include="core\Histogram.cs" />
+    <Compile Include="core\IMetric.cs" />
+    <Compile Include="stats\ExponentiallyDecayingSample.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="stats\ISample.cs" />
+    <Compile Include="stats\ISampling.cs" />
+    <Compile Include="core\IStoppable.cs" />
+    <Compile Include="core\Meter.cs" />
+    <Compile Include="core\IMetered.cs" />
+    <Compile Include="SyncMetricsRegistry.cs" />
+    <Compile Include="stats\Samples.cs" />
+    <Compile Include="stats\Snapshot.cs" />
+    <Compile Include="core\ISummarizable.cs" />
+    <Compile Include="core\Timer.cs" />
+    <Compile Include="core\TimerContext.cs" />
+    <Compile Include="stats\UniformSample.cs" />
+    <Compile Include="core\UserTimeClock.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\base\common\common.net40.csproj">
+      <Project>{EA6B35FF-1A1B-46D8-A599-4F9A467C75D1}</Project>
+      <Name>common.net40</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
