@@ -465,7 +465,16 @@ namespace Nohros.Data
 
       OnPreCreateType(builder);
 
-      return builder.CreateType();
+      try {
+        return builder.CreateType();
+      } catch {
+        // Check if the type was created by another thread.
+        Type type = Dynamics_.ModuleBuilder.GetType(dynamic_type_name);
+        if (type == null) {
+          throw;
+        }
+        return type;
+      }
     }
 
     void OnPreCreateType(TypeBuilder builder) {
