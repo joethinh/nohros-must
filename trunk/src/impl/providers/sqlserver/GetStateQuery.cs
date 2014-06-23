@@ -23,7 +23,7 @@ namespace Nohros.Data.SqlServer
     }
 
     public bool Execute<T>(string state_name, string table_name, out T state) {
-      using (
+      using (var scope =
         new TransactionScope(SupressTransactions
           ? TransactionScopeOption.Suppress
           : TransactionScopeOption.Required)) {
@@ -42,6 +42,7 @@ namespace Nohros.Data.SqlServer
               return false;
             }
             state = (T) obj;
+            scope.Complete();
             return true;
           } catch (SqlException e) {
             logger_.Error(

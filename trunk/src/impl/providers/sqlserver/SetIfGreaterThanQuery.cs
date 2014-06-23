@@ -34,7 +34,7 @@ namespace Nohros.Data.SqlServer
     }
 
     public bool Execute(string name, string table_name, long state) {
-      using (
+      using (var scope =
         new TransactionScope(SupressTransactions
           ? TransactionScopeOption.Suppress
           : TransactionScopeOption.Required)) {
@@ -53,6 +53,7 @@ where state_name = @name
             .Build();
           try {
             conn.Open();
+            scope.Complete();
             return cmd.ExecuteNonQuery() > 0;
           } catch (SqlException e) {
             throw e.AsProviderException();
