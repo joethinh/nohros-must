@@ -11,15 +11,15 @@ namespace Nohros.Data.SqlServer
   public class SqlAppState : IAppState
   {
     // Tables
-    const string kBoolTableName = "bool_state";
-    const string kShortTableName = "short_state";
-    const string kIntTableName = "int_state";
-    const string kLongTableName = "long_state";
-    const string kDecimalTableName = "decimal_state";
-    const string kDoubleTableName = "double_state";
-    const string kStringTableName = "string_state";
-    const string kGuidTableName = "guid_state";
-    const string kDateTimeTableName = "date_state";
+    const string kBoolTableName = "nohros_state_bool";
+    const string kShortTableName = "nohros_state_short";
+    const string kIntTableName = "nohros_state_int";
+    const string kLongTableName = "nohros_state_long";
+    const string kDecimalTableName = "nohros_state_decimal";
+    const string kDoubleTableName = "nohros_state_double";
+    const string kStringTableName = "nohros_state_string";
+    const string kGuidTableName = "nohros_state_guid";
+    const string kDateTimeTableName = "nohros_state_date";
 
     readonly AddStateQuery add_state_;
     readonly GetStateQuery get_state_;
@@ -30,7 +30,7 @@ namespace Nohros.Data.SqlServer
     bool supress_dtc_;
 
     public SqlAppState(SqlConnectionProvider sql_connection_provider,
-      bool supress_dtc = true) {
+      bool supress_dtc = false) {
       update_state_ = new UpdateStateQuery(sql_connection_provider);
       get_state_ = new GetStateQuery(sql_connection_provider);
       add_state_ = new AddStateQuery(sql_connection_provider);
@@ -149,7 +149,6 @@ namespace Nohros.Data.SqlServer
       got = get_state_.Execute(name, kStringTableName, out state);
       return state;
     }
-
 
     void ExplicitSet(string name, bool state) {
       ExplicitSet(name, state, kBoolTableName);
