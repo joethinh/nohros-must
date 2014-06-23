@@ -44,7 +44,7 @@ namespace Nohros.Data.SqlServer
             .SetText(@"
 update " + table_name + @"
 set state = @state" + @"
-where name = @name
+where state_name = @name
   and state < @state")
             .SetType(CommandType.Text)
             .AddParameter("@name", name)

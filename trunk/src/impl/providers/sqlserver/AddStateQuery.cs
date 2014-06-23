@@ -34,7 +34,7 @@ namespace Nohros.Data.SqlServer
         using (var builder = new CommandBuilder(conn)) {
           IDbCommand cmd = builder
             .SetText(@"
-insert into " + table_name + @"(name, state)
+insert into " + table_name + @"(state_name, state)
 values(@name, @state)")
             .SetType(CommandType.Text)
             .AddParameter("@name", state_name)
