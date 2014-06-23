@@ -26,7 +26,7 @@ namespace Nohros.Data.SqlServer
     }
 
     public void Execute(string state_name, string table_name, object state) {
-      using (
+      using (var scope =
         new TransactionScope(SupressTransactions
           ? TransactionScopeOption.Suppress
           : TransactionScopeOption.Required)) {
@@ -43,6 +43,7 @@ values(@name, @state)")
           try {
             conn.Open();
             cmd.ExecuteNonQuery();
+            scope.Complete();
           } catch (SqlException e) {
             throw e.AsProviderException();
           }
