@@ -30,7 +30,7 @@ namespace Nohros.Data.SqlServer
         using (SqlConnection conn = sql_connection_provider_.CreateConnection())
         using (var builder = new CommandBuilder(conn)) {
           IDbCommand cmd = builder
-            .SetText("select state from " + table_name + " where name=@name")
+            .SetText("select state from " + table_name + " where state_name=@name")
             .SetType(CommandType.Text)
             .AddParameter("@name", state_name)
             .Build();
