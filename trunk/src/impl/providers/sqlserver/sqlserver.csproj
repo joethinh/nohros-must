@@ -60,6 +60,7 @@
     <Compile Include="SqlConnectionProvider.cs" />
     <Compile Include="SqlConnectionProviderFactory.cs" />
     <Compile Include="exceptions\SqlExceptionExtensions.cs" />
+    <Compile Include="SqlQueryExecutor.cs" />
     <Compile Include="UpdateStateQuery.cs" />
   </ItemGroup>
   <ItemGroup>
